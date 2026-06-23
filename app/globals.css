@@ -2,26 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* =============================================================================
+   Arco — Design Tokens (brief sekcja 7)
+   Warstwy: primitive → semantic → zmienne shadcn (HSL) → Tailwind config.
+   Wartości jako surowe trójki HSL "H S% L%" (Tailwind owija je w hsl(var(--x))).
+   Komponenty czytają WYŁĄCZNIE warstwę semantyczną / zmienne shadcn. Zero magic numbers.
+   ============================================================================= */
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* ── L1 · PRIMITIVE — surowe wartości, bez znaczenia semantycznego ─────── */
+    --arco-neutral-0:   0 0% 100%;
+    --arco-neutral-50:  210 20% 98%;
+    --arco-neutral-100: 214 16% 95%;
+    --arco-neutral-200: 213 14% 89%;
+    --arco-neutral-300: 213 12% 80%;
+    --arco-neutral-400: 214 10% 60%;
+    --arco-neutral-500: 215 11% 45%;
+    --arco-neutral-600: 217 13% 34%;
+    --arco-neutral-700: 218 15% 24%;
+    --arco-neutral-800: 220 18% 15%;
+    --arco-neutral-900: 222 22% 10%;
+    --arco-neutral-950: 224 28% 6%;
+
+    --arco-accent-400: 28 96% 62%;
+    --arco-accent-500: 24 95% 53%;   /* główny akcent — energia */
+    --arco-accent-600: 20 90% 48%;
+
+    --arco-green-500: 142 71% 45%;
+    --arco-amber-500: 38 92% 50%;
+    --arco-red-500:   0 72% 51%;
+
+    /* skala spacingu (primitive) */
+    --space-2xs: 0.25rem;
+    --space-xs:  0.5rem;
+    --space-sm:  0.75rem;
+    --space-md:  1rem;
+    --space-lg:  1.5rem;
+    --space-xl:  2rem;
+    --space-2xl: 3rem;
+
+    /* promienie (primitive) */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.625rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+
+    /* ── L2 · SEMANTIC (light) — referencje do primitive, nigdy surowe HSL ─── */
+    --color-bg:              var(--arco-neutral-50);
+    --color-surface:         var(--arco-neutral-0);
+    --color-surface-muted:   var(--arco-neutral-100);
+    --color-text:            var(--arco-neutral-900);
+    --color-text-muted:      var(--arco-neutral-500);
+    --color-border:          var(--arco-neutral-200);
+    --color-accent:          var(--arco-accent-500);
+    --color-accent-contrast: var(--arco-neutral-0);
+    --color-success:         var(--arco-green-500);
+    --color-warning:         var(--arco-amber-500);
+    --color-danger:          var(--arco-red-500);
+    --color-ring:            var(--arco-accent-500);
+
+    /* ── L3-bridge · zmienne shadcn (czytają z warstwy semantycznej) ──────── */
+    --background:            var(--color-bg);
+    --foreground:            var(--color-text);
+    --card:                  var(--color-surface);
+    --card-foreground:       var(--color-text);
+    --popover:               var(--color-surface);
+    --popover-foreground:    var(--color-text);
+    --primary:               var(--color-accent);
+    --primary-foreground:    var(--color-accent-contrast);
+    --secondary:             var(--color-surface-muted);
+    --secondary-foreground:  var(--color-text);
+    --muted:                 var(--color-surface-muted);
+    --muted-foreground:      var(--color-text-muted);
+    --accent:                var(--color-surface-muted);
+    --accent-foreground:     var(--color-text);
+    --destructive:           var(--color-danger);
+    --destructive-foreground: var(--arco-neutral-0);
+    --border:                var(--color-border);
+    --input:                 var(--color-border);
+    --ring:                  var(--color-ring);
+    --radius:                var(--radius-md);
+  }
+
+  .dark {
+    /* ── L2 · SEMANTIC (dark) — nadpisanie referencji; primitive bez zmian ── */
+    --color-bg:              var(--arco-neutral-950);
+    --color-surface:         var(--arco-neutral-900);
+    --color-surface-muted:   var(--arco-neutral-800);
+    --color-text:            var(--arco-neutral-50);
+    --color-text-muted:      var(--arco-neutral-400);
+    --color-border:          var(--arco-neutral-800);
+    --color-accent:          var(--arco-accent-500);
+    --color-accent-contrast: var(--arco-neutral-950);
+    --color-success:         var(--arco-green-500);
+    --color-warning:         var(--arco-amber-500);
+    --color-danger:          var(--arco-red-500);
+    --color-ring:            var(--arco-accent-400);
+
+    --destructive-foreground: var(--arco-neutral-50);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-tap-highlight-color: transparent;
   }
 }
