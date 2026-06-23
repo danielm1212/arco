@@ -79,6 +79,35 @@ export default async function ProgressPage() {
     (a, b) => (b[1].e1rm ?? 0) - (a[1].e1rm ?? 0),
   );
 
+  // Aktywność / streak (zakończone sesje z ~120 dni)
+  const { data: finished } = await supabase
+    .from("sessions")
+    .select("started_at")
+    .not("finished_at", "is", null)
+    .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString());
+  const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+  const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
+  const DOW = ["N", "P", "W", "Ś", "C", "P", "S"];
+  const strip = Array.from({ length: 14 }, (_, idx) => {
+    const d = new Date(Date.now() - (13 - idx) * 86_400_000);
+    return { key: dayKey(d), on: doneDays.has(dayKey(d)), dow: DOW[d.getDay()] };
+  });
+  const weekStart = (d: Date) => {
+    const x = new Date(d);
+    x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+    x.setHours(0, 0, 0, 0);
+    return x.getTime();
+  };
+  const weeks = new Set((finished ?? []).map((s) => weekStart(new Date(s.started_at))));
+  const WEEK = 7 * 86_400_000;
+  let streak = 0;
+  let w = weekStart(new Date());
+  if (!weeks.has(w)) w -= WEEK; // bieżący tydzień bez treningu nie zeruje passy
+  while (weeks.has(w)) {
+    streak++;
+    w -= WEEK;
+  }
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
@@ -90,6 +119,24 @@ export default async function ProgressPage() {
       </header>
 
       <main className="flex-1 space-y-lg p-md">
+        <section className="space-y-sm rounded-lg border bg-card p-md">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold">Aktywność</h2>
+            <span className="text-sm font-medium text-primary">
+              🔥 {streak} {streak === 1 ? "tydzień" : "tyg."} z rzędu
+            </span>
+          </div>
+          <div className="flex gap-px">
+            {strip.map((d, i) => (
+              <div key={`${d.key}-${i}`} className="flex flex-1 flex-col items-center gap-0.5">
+                <div className={`h-6 w-full rounded-sm ${d.on ? "bg-primary" : "bg-muted"}`} />
+                <span className="text-[9px] text-muted-foreground">{d.dow}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground">Ostatnie 14 dni</p>
+        </section>
+
         <section className="grid grid-cols-3 gap-sm">
           <Stat label="Sesje (7 dni)" value={String(sessionIds.length)} />
           <Stat label="Serie" value={String(sets?.length ?? 0)} />

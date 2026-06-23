@@ -7,7 +7,7 @@ import {
   startFreestyle,
 } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, History, Scale, Settings, LogOut } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -30,26 +30,41 @@ export default async function HomePage() {
 
   const activeId = active?.program_id ?? null;
 
+  // Sugestia kolejnego dnia (rotacja wg ostatniej zakończonej sesji aktywnego programu)
+  let suggested: { dayId: string; label: string } | null = null;
+  if (activeId && programs) {
+    const ap = programs.find((p) => p.id === activeId);
+    const days = (
+      (ap?.program_days as { id: string; label: string; position: number }[]) ?? []
+    )
+      .slice()
+      .sort((a, b) => a.position - b.position);
+    if (days.length) {
+      const { data: last } = await supabase
+        .from("sessions")
+        .select("program_day_id")
+        .not("finished_at", "is", null)
+        .in(
+          "program_day_id",
+          days.map((d) => d.id),
+        )
+        .order("started_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      let idx = 0;
+      if (last?.program_day_id) {
+        const pos = days.findIndex((d) => d.id === last.program_day_id);
+        idx = pos >= 0 ? (pos + 1) % days.length : 0;
+      }
+      suggested = { dayId: days[idx].id, label: days[idx].label };
+    }
+  }
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-sm py-sm">
         <span className="pl-2xs text-lg font-bold tracking-tight">Arco</span>
         <nav className="flex items-center">
-          <Button variant="ghost" size="icon" aria-label="Postępy" asChild>
-            <Link href="/progress">
-              <TrendingUp />
-            </Link>
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="Historia" asChild>
-            <Link href="/history">
-              <History />
-            </Link>
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="Ciało" asChild>
-            <Link href="/body">
-              <Scale />
-            </Link>
-          </Button>
           <Button variant="ghost" size="icon" aria-label="Ustawienia" asChild>
             <Link href="/settings">
               <Settings />
@@ -64,7 +79,7 @@ export default async function HomePage() {
       </header>
 
       <main className="flex-1 space-y-lg p-md">
-        {openSession && (
+        {openSession ? (
           <Link
             href={`/session/${openSession.id}`}
             className="block rounded-lg border border-primary bg-primary/10 p-md"
@@ -72,6 +87,21 @@ export default async function HomePage() {
             <p className="font-medium text-primary">Wznów trening →</p>
             <p className="text-sm text-muted-foreground">Masz niezakończoną sesję.</p>
           </Link>
+        ) : (
+          suggested && (
+            <form action={startSession.bind(null, suggested.dayId)}>
+              <button
+                type="submit"
+                className="flex w-full items-center justify-between rounded-lg border border-primary bg-primary/10 p-md text-left"
+              >
+                <span>
+                  <span className="block text-xs text-muted-foreground">Sugerowane dziś</span>
+                  <span className="font-medium text-primary">{suggested.label}</span>
+                </span>
+                <span className="font-medium text-primary">Start →</span>
+              </button>
+            </form>
+          )
         )}
 
         <section className="space-y-sm">

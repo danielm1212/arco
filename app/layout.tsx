@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
+import { AppChrome } from "@/components/AppChrome";
 import "./globals.css";
 
 const geist = localFont({
@@ -39,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="pl" className={cn(geist.variable)} suppressHydrationWarning>
       <body className="min-h-dvh font-sans antialiased">
-        {children}
+        <AppChrome>{children}</AppChrome>
         <Toaster position="top-center" richColors closeButton />
       </body>
     </html>
