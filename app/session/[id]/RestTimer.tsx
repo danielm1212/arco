@@ -6,15 +6,18 @@ import { Button } from "@/components/ui/button";
 
 /**
  * Rest timer — wzorzec ze spike'a: liczony z zegara (endAt), odporny na throttling w tle.
- * `endAt` = znacznik czasu końca (ms). Zmiana `endAt` (nowy nonce) restartuje odliczanie.
+ * `endAt` = znacznik czasu końca (ms). Zmiana `endAt` restartuje odliczanie.
+ * 3-2-1: krótki beep co sekundę na finiszu + akcent wizualny.
  */
 export function RestTimer({
   endAt,
+  label,
   onDone,
   onDismiss,
   onExtend,
 }: {
   endAt: number;
+  label?: string | null;
   onDone: () => void;
   onDismiss: () => void;
   onExtend: (seconds: number) => void;
@@ -23,13 +26,21 @@ export function RestTimer({
     Math.max(0, Math.ceil((endAt - Date.now()) / 1000)),
   );
   const firedRef = useRef(false);
+  const lastBeepRef = useRef<number | null>(null);
 
   const tick = useCallback(() => {
     const rem = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
     setRemaining(rem);
+
+    // Odliczanie 3-2-1 — pojedynczy, wyższy beep raz na sekundę
+    if (rem <= 3 && rem > 0 && lastBeepRef.current !== rem) {
+      lastBeepRef.current = rem;
+      beep(660);
+    }
+
     if (rem === 0 && !firedRef.current) {
       firedRef.current = true;
-      beep();
+      beep(880);
       vibrate();
       onDone();
     }
@@ -37,6 +48,7 @@ export function RestTimer({
 
   useEffect(() => {
     firedRef.current = false;
+    lastBeepRef.current = null;
     tick();
     const id = window.setInterval(tick, 250);
     const onVis = () => document.visibilityState === "visible" && tick();
@@ -49,13 +61,24 @@ export function RestTimer({
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
+  const finishing = remaining <= 3;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-card/95 backdrop-blur">
+    <div
+      className={`fixed inset-x-0 bottom-0 z-50 border-t backdrop-blur transition-colors ${
+        finishing ? "bg-primary/15" : "bg-card/95"
+      }`}
+    >
       <div className="mx-auto flex max-w-md items-center gap-sm p-md">
-        <div className="flex-1">
-          <p className="text-xs text-muted-foreground">Przerwa</p>
-          <p className="font-mono text-2xl font-bold tabular-nums">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs text-muted-foreground">
+            Przerwa{label ? ` · ${label}` : ""}
+          </p>
+          <p
+            className={`font-mono text-2xl font-bold tabular-nums transition-transform ${
+              finishing ? "scale-110 text-primary" : ""
+            }`}
+          >
             {mm}:{ss}
           </p>
         </div>

@@ -471,6 +471,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      previous_session_sets: {
+        Args: { p_exercise: string; p_session: string; p_slot: string }
+        Returns: {
+          added_weight: number
+          duration_seconds: number
+          reps: number
+          set_index: number
+          weight: number
+        }[]
+      }
       previous_working_set: {
         Args: { p_exercise: string; p_session: string; p_slot: string }
         Returns: {

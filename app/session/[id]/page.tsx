@@ -38,16 +38,16 @@ export default async function SessionPage({ params }: { params: { id: string } }
         .order("set_index")
     : { data: [] };
 
-  // "Poprzedni wynik" per ćwiczenie (RPC, RLS-aware)
-  const previous: Record<string, LoggerExercise["previous"]> = {};
+  // Serie z poprzedniej sesji per ćwiczenie (inline "last set", RLS-aware)
+  const prevSets: Record<string, LoggerExercise["previousSets"]> = {};
   await Promise.all(
     (exercises ?? []).map(async (e) => {
-      const { data } = await supabase.rpc("previous_working_set", {
+      const { data } = await supabase.rpc("previous_session_sets", {
         p_slot: e.slot_id,
         p_exercise: e.exercise_id,
         p_session: sessionId,
       } as unknown as { p_slot: string; p_exercise: string; p_session: string });
-      previous[e.id] = data?.[0] ?? null;
+      prevSets[e.id] = data ?? [];
     }),
   );
 
@@ -58,6 +58,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
       equipment: string | null;
     };
     const slot = e.slot as unknown as LoggerExercise["slot"];
+    const ps = prevSets[e.id] ?? [];
     return {
       sessionExerciseId: e.id,
       exerciseId: e.exercise_id,
@@ -67,7 +68,8 @@ export default async function SessionPage({ params }: { params: { id: string } }
       slot: slot ?? null,
       supersetGroup: e.superset_group ?? null,
       sets: (sets ?? []).filter((s) => s.session_exercise_id === e.id),
-      previous: previous[e.id] ?? null,
+      previousSets: ps,
+      previous: ps.length ? ps[ps.length - 1] : null, // ostatnia seria — do hintu progresji
     };
   });
 
