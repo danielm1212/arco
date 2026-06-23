@@ -36,7 +36,15 @@ export default async function HomePage() {
         <span className="text-lg font-bold tracking-tight">Arco</span>
         <div className="flex items-center gap-2xs">
           <Button variant="ghost" size="sm" asChild>
+            <Link href="/progress">Postępy</Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
             <Link href="/history">Historia</Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/settings" aria-label="Ustawienia">
+              ⚙
+            </Link>
           </Button>
           <form action={logout}>
             <Button variant="ghost" size="sm" type="submit">

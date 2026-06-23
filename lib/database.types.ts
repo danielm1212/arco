@@ -405,6 +405,7 @@ export type Database = {
       }
       user_settings: {
         Row: {
+          available_equipment: string[]
           available_plates: number[]
           bar_weight: number
           created_at: string
@@ -414,6 +415,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          available_equipment?: string[]
           available_plates?: number[]
           bar_weight?: number
           created_at?: string
@@ -423,6 +425,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          available_equipment?: string[]
           available_plates?: number[]
           bar_weight?: number
           created_at?: string
@@ -447,6 +450,7 @@ export type Database = {
           weight: number
         }[]
       }
+      recompute_personal_records: { Args: never; Returns: undefined }
     }
     Enums: {
       exercise_type: "weighted" | "bodyweight" | "timed"

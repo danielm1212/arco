@@ -99,7 +99,7 @@ async function main() {
   });
   const pr = prev?.[0];
   if (!pr || pr.weight !== 100 || pr.reps !== 8)
-    fail(`poprzedni wynik nieprawidłowy: ${JSON.stringify(prev)}`);
+    return fail(`poprzedni wynik nieprawidłowy: ${JSON.stringify(prev)}`);
   ok(`"poprzedni wynik" RPC zwraca ${pr.weight}kg × ${pr.reps}`);
 
   // 5. Edycja i usuwanie seta

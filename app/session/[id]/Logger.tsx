@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { addSet, updateSet, deleteSet, deleteSessionExercise } from "@/app/actions/sets";
 import { finishSession, deleteSession } from "@/app/actions/session";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
+import { computePlates, formatPlates } from "@/lib/plates";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
+import { SwapPanel } from "./SwapPanel";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -52,12 +54,29 @@ function formatPrevious(ex: LoggerExercise, unit: UnitSystem): string | null {
   return p.weight != null && p.reps != null ? `${p.weight}${unit} × ${p.reps}` : null;
 }
 
+/** Hint progresji: ostatnio dobity górny zakres powtórzeń → zaproponuj +obciążenie. */
+function progressionHint(ex: LoggerExercise, unit: UnitSystem): string | null {
+  const top = ex.slot?.target_reps_max;
+  const p = ex.previous;
+  if (!top || !p) return null;
+  if (ex.type === "weighted" && p.weight != null && p.reps != null && p.reps >= top) {
+    const inc = unit === "kg" ? 2.5 : 5;
+    return `Ostatnio pełny zakres (${p.reps}) → spróbuj ${p.weight + inc}${unit}`;
+  }
+  if (ex.type === "bodyweight" && p.reps != null && p.reps >= top) {
+    return `Ostatnio ${p.reps} powt. → dołóż powtórzeń lub obciążenie`;
+  }
+  return null;
+}
+
 export function Logger({
   sessionId,
   title,
   isFinished,
   unit,
   defaultRest,
+  barWeight,
+  plates,
   initialExercises,
 }: {
   sessionId: string;
@@ -65,6 +84,8 @@ export function Logger({
   isFinished: boolean;
   unit: UnitSystem;
   defaultRest: number;
+  barWeight: number;
+  plates: number[];
   initialExercises: LoggerExercise[];
 }) {
   const router = useRouter();
@@ -199,6 +220,33 @@ export function Logger({
                 </button>
               </div>
 
+              <SwapPanel sessionId={sessionId} sessionExerciseId={ex.sessionExerciseId} />
+
+              {(() => {
+                const hint = progressionHint(ex, unit);
+                return hint ? (
+                  <p className="rounded-md bg-success/10 px-sm py-xs text-xs text-success">
+                    💡 {hint}
+                  </p>
+                ) : null;
+              })()}
+
+              {ex.type === "weighted" &&
+                barWeight > 0 &&
+                (() => {
+                  const ref =
+                    ex.sets[ex.sets.length - 1]?.weight ?? ex.previous?.weight ?? null;
+                  if (ref == null) return null;
+                  const load = computePlates(ref, barWeight, plates);
+                  if (!load.loadable) return null;
+                  return (
+                    <p className="text-xs text-muted-foreground">
+                      🏋 {ref}
+                      {unit} → talerze/str.: {formatPlates(load)}
+                    </p>
+                  );
+                })()}
+
               <ul className="space-y-2xs">
                 {ex.sets.map((set, i) => (
                   <SetRow
@@ -277,7 +325,7 @@ function SetRow({
   const isWarmup = set.set_type === "warmup";
 
   return (
-    <li className="flex items-center gap-xs">
+    <li className="flex flex-wrap items-center gap-xs">
       <button
         onClick={() => {
           const next: SetType = isWarmup ? "working" : "warmup";
@@ -330,6 +378,17 @@ function SetRow({
         </>
       )}
 
+      {type !== "timed" && (
+        <Field
+          value={set.rpe}
+          suffix="RPE"
+          step="0.5"
+          grow={false}
+          onPatch={(n) => onPatch({ rpe: n })}
+          onPersist={(n) => onPersist({ rpe: n })}
+        />
+      )}
+
       <button
         onClick={onToggle}
         aria-label="Zalicz serię"
@@ -356,17 +415,19 @@ function Field({
   value,
   suffix,
   step,
+  grow = true,
   onPatch,
   onPersist,
 }: {
   value: number | null;
   suffix: string;
   step?: string;
+  grow?: boolean;
   onPatch: (n: number | null) => void;
   onPersist: (n: number | null) => void;
 }) {
   return (
-    <div className="relative flex-1">
+    <div className={`relative ${grow ? "flex-1" : "w-16"}`}>
       <Input
         type="number"
         inputMode="decimal"

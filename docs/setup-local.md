@@ -15,9 +15,10 @@ npm run bootstrap:user         # tworzy jedyne konto z ADMIN_EMAIL/ADMIN_PASSWOR
 npm run dev                    # http://localhost:3000
 ```
 
-Smoke test warstwy danych (logowanie + pełny przepływ przez RLS):
+Smoke testy warstwy danych (logowanie + przepływ przez RLS):
 ```bash
-npm run smoke
+npm run smoke          # Phase 1: sesja, logger, poprzedni wynik, edycja, freestyle, historia
+npm run smoke:phase2   # Phase 2: podmiana+fallback, PR/e1RM, plate calc
 ```
 
 > Po każdym `supabase db reset` powtórz `npm run seed` i `npm run bootstrap:user`.
@@ -50,3 +51,14 @@ Werdykt i instrukcja testu: [`spike-rest-timer.md`](./spike-rest-timer.md). Tras
 - Freestyle: sesja bez programu + dodawanie ćwiczeń z katalogu (`ExercisePicker`).
 - Historia: `/history` + szczegóły `/history/[id]`.
 - Build zielony; trasy chronione (niezalogowany → 307 `/login`).
+
+## Acceptance Phase 2 (zweryfikowane — `npm run smoke:phase2`)
+- **Silnik podmiany** (`/session/[id]` → „⇄ Podmień"): kandydaci po movement_pattern + primary_muscles,
+  filtr sprzętu z profilu, ranking, **fallback nigdy nie zwraca pustej listy** (ostrzeżenie przy luźnym dopasowaniu).
+- **Filtr sprzętu** edytowalny w `/settings` (`user_settings.available_equipment`).
+- **e1RM (Epley) + PR** przeliczane z zera przy zakończeniu/usunięciu sesji (`recompute_personal_records`).
+- **Dashboard** `/progress`: objętość, serie, serie-na-partię (7 dni), rekordy (e1RM/max).
+- **Widok exercise-first** `/exercise/[id]`: agregacja po `exercise_id`.
+- **Plate calculator** (`lib/plates.ts`) z `bar_weight` + `available_plates`; podgląd w loggerze.
+- **RPE** na seriach roboczych; **hint progresji** po dobiciu górnego zakresu.
+- Odłożone post-MVP: edytor supersetów (schema gotowa), pełny offline (Phase 2.5).

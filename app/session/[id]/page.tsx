@@ -16,7 +16,10 @@ export default async function SessionPage({ params }: { params: { id: string } }
   if (!session) notFound();
 
   const [{ data: settings }, { data: exercises }] = await Promise.all([
-    supabase.from("user_settings").select("unit_system, default_rest_seconds").maybeSingle(),
+    supabase
+      .from("user_settings")
+      .select("unit_system, default_rest_seconds, bar_weight, available_plates")
+      .maybeSingle(),
     supabase
       .from("session_exercises")
       .select(
@@ -78,6 +81,8 @@ export default async function SessionPage({ params }: { params: { id: string } }
       isFinished={!!session.finished_at}
       unit={settings?.unit_system ?? "kg"}
       defaultRest={settings?.default_rest_seconds ?? 120}
+      barWeight={Number(settings?.bar_weight ?? 20)}
+      plates={(settings?.available_plates ?? []).map(Number)}
       initialExercises={model}
     />
   );

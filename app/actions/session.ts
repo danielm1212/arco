@@ -77,7 +77,10 @@ export async function finishSession(sessionId: string) {
     .update({ finished_at: new Date().toISOString() })
     .eq("id", sessionId);
   if (error) throw new Error(error.message);
+  // Przelicz PR z zera (Decyzja 2 — PR nigdy nie kłamie)
+  await supabase.rpc("recompute_personal_records");
   revalidatePath("/history");
+  revalidatePath("/progress");
   redirect(`/history/${sessionId}`);
 }
 
@@ -86,6 +89,8 @@ export async function deleteSession(sessionId: string) {
   const { supabase } = await requireUser();
   const { error } = await supabase.from("sessions").delete().eq("id", sessionId);
   if (error) throw new Error(error.message);
+  await supabase.rpc("recompute_personal_records");
   revalidatePath("/history");
+  revalidatePath("/progress");
   redirect("/history");
 }
