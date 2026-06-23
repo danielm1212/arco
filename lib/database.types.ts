@@ -41,6 +41,7 @@ export type Database = {
           date: string
           id: string
           notes: string | null
+          photo_path: string | null
           user_id: string
           weight: number | null
         }
@@ -50,6 +51,7 @@ export type Database = {
           date?: string
           id?: string
           notes?: string | null
+          photo_path?: string | null
           user_id: string
           weight?: number | null
         }
@@ -59,6 +61,7 @@ export type Database = {
           date?: string
           id?: string
           notes?: string | null
+          photo_path?: string | null
           user_id?: string
           weight?: number | null
         }
