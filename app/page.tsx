@@ -7,6 +7,7 @@ import {
   startFreestyle,
 } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
+import { TrendingUp, History, Scale, Settings, LogOut } from "lucide-react";
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -31,29 +32,35 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <span className="text-lg font-bold tracking-tight">Arco</span>
-        <div className="flex items-center gap-2xs">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/progress">Postępy</Link>
+      <header className="flex items-center justify-between border-b px-sm py-sm">
+        <span className="pl-2xs text-lg font-bold tracking-tight">Arco</span>
+        <nav className="flex items-center">
+          <Button variant="ghost" size="icon" aria-label="Postępy" asChild>
+            <Link href="/progress">
+              <TrendingUp />
+            </Link>
           </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/history">Historia</Link>
+          <Button variant="ghost" size="icon" aria-label="Historia" asChild>
+            <Link href="/history">
+              <History />
+            </Link>
           </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/body">Ciało</Link>
+          <Button variant="ghost" size="icon" aria-label="Ciało" asChild>
+            <Link href="/body">
+              <Scale />
+            </Link>
           </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/settings" aria-label="Ustawienia">
-              ⚙
+          <Button variant="ghost" size="icon" aria-label="Ustawienia" asChild>
+            <Link href="/settings">
+              <Settings />
             </Link>
           </Button>
           <form action={logout}>
-            <Button variant="ghost" size="sm" type="submit">
-              Wyloguj
+            <Button variant="ghost" size="icon" type="submit" aria-label="Wyloguj">
+              <LogOut />
             </Button>
           </form>
-        </div>
+        </nav>
       </header>
 
       <main className="flex-1 space-y-lg p-md">
