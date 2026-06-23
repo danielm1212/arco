@@ -11,7 +11,7 @@ import { finishSession, deleteSession } from "@/app/actions/session";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { computePlates, formatPlates } from "@/lib/plates";
 import { useSync } from "@/lib/useSync";
-import type { OutboxSetRow } from "@/lib/outbox";
+import { pendingCount, type OutboxSetRow } from "@/lib/outbox";
 import { uuid } from "@/lib/uuid";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
@@ -97,7 +97,7 @@ export function Logger({
   const router = useRouter();
   const [exercises, setExercises] = useState(initialExercises);
   const [rest, setRest] = useState<{ endAt: number } | null>(null);
-  const { online, pending, syncing, queueUpsert, queueDelete } = useSync();
+  const { online, pending, syncing, queueUpsert, queueDelete, flush } = useSync();
 
   const SAVE_ERR = "Nie zapisano — sprawdź połączenie i spróbuj ponownie.";
 
@@ -155,7 +155,7 @@ export function Logger({
     const newSet: SessionSet = {
       id: uuid(),
       session_exercise_id: ex.sessionExerciseId,
-      set_index: ex.sets.length,
+      set_index: ex.sets.reduce((m, s) => Math.max(m, s.set_index), -1) + 1,
       set_type: (seed.set_type as SetType) ?? "working",
       weight: seed.weight ?? null,
       reps: seed.reps ?? null,
@@ -198,6 +198,37 @@ export function Logger({
       ),
     );
     queueDelete(sessionId, setId);
+  }
+
+  async function handleFinish() {
+    if (!online) {
+      toast.error("Jesteś offline. Serie są zapisane lokalnie — zakończ, gdy wróci sieć.");
+      return;
+    }
+    await flush(); // dosynchronizuj zaległe serie, żeby PR-y liczyły się z kompletu
+    if (pendingCount() > 0) {
+      toast.error("Trwa synchronizacja serii — spróbuj za chwilę.");
+      return;
+    }
+    try {
+      await finishSession(sessionId); // redirect do /history/[id]
+    } catch (e) {
+      // NEXT_REDIRECT to nie błąd
+      if (e instanceof Error && e.message.includes("NEXT_REDIRECT")) throw e;
+      toast.error("Nie udało się zakończyć — sprawdź połączenie.");
+    }
+  }
+
+  function handleDeleteSession() {
+    if (!confirm("Usunąć całą sesję? Tej operacji nie cofniesz.")) return;
+    if (!online) {
+      toast.error("Jesteś offline — usuwanie sesji wymaga sieci.");
+      return;
+    }
+    deleteSession(sessionId).catch((e) => {
+      if (e instanceof Error && e.message.includes("NEXT_REDIRECT")) throw e;
+      toast.error("Nie udało się usunąć sesji.");
+    });
   }
 
   async function handleDeleteExercise(seId: string) {
@@ -282,11 +313,9 @@ export function Logger({
             </span>
           )}
           {!isFinished && (
-            <form action={finishSession.bind(null, sessionId)}>
-              <Button size="sm" type="submit">
-                Zakończ
-              </Button>
-            </form>
+            <Button size="sm" onClick={handleFinish}>
+              Zakończ
+            </Button>
           )}
         </div>
       </header>
@@ -421,16 +450,14 @@ export function Logger({
 
         <ExercisePicker sessionId={sessionId} />
 
-        <form
-          action={deleteSession.bind(null, sessionId)}
-          onSubmit={(e) => {
-            if (!confirm("Usunąć całą sesję? Tej operacji nie cofniesz.")) e.preventDefault();
-          }}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDeleteSession}
+          className="w-full text-danger"
         >
-          <Button variant="ghost" size="sm" type="submit" className="w-full text-danger">
-            Usuń sesję
-          </Button>
-        </form>
+          Usuń sesję
+        </Button>
       </main>
 
       {rest && (

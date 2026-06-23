@@ -21,27 +21,38 @@ const EQUIPMENT = [
   "other",
 ];
 
+const COMMON_PLATES = [25, 20, 15, 10, 5, 2.5, 1.25, 1, 0.5];
+
 export function SettingsForm({
   unit,
   rest,
   bar,
   equipment,
+  plates,
 }: {
   unit: UnitSystem;
   rest: number;
   bar: number;
   equipment: string[];
+  plates: number[];
 }) {
   const [u, setU] = useState<UnitSystem>(unit);
   const [r, setR] = useState(rest);
   const [b, setB] = useState(bar);
   const [eq, setEq] = useState<string[]>(equipment);
+  const [pl, setPl] = useState<number[]>(plates);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
 
   function toggle(item: string) {
     setEq((prev) =>
       prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item],
+    );
+  }
+
+  function togglePlate(p: number) {
+    setPl((prev) =>
+      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p].sort((a, b) => b - a),
     );
   }
 
@@ -53,6 +64,7 @@ export function SettingsForm({
         default_rest_seconds: r,
         bar_weight: b,
         available_equipment: eq,
+        available_plates: pl,
       });
       setSaved(true);
     });
@@ -116,6 +128,30 @@ export function SettingsForm({
                 }`}
               >
                 {item}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="space-y-sm">
+        <h2 className="text-sm font-medium text-muted-foreground">
+          Dostępne talerze ({u}, na stronę) — kalkulator obciążenia
+        </h2>
+        <div className="flex flex-wrap gap-2xs">
+          {COMMON_PLATES.map((p) => {
+            const on = pl.includes(p);
+            return (
+              <button
+                key={p}
+                onClick={() => togglePlate(p)}
+                className={`rounded-full border px-3 py-1 text-xs tabular-nums ${
+                  on
+                    ? "border-primary bg-primary/15 text-primary"
+                    : "border-input text-muted-foreground"
+                }`}
+              >
+                {p}
               </button>
             );
           })}
