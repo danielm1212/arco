@@ -14,6 +14,49 @@ function formatSet(type: ExerciseType, s: SessionSet, unit: UnitSystem): string 
   return s.weight != null && s.reps != null ? `${s.weight}${unit} × ${s.reps}` : "—";
 }
 
+/** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
+function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
+  let best: number | null = null;
+  for (const s of sets) {
+    let v: number | null = null;
+    if (type === "weighted" && s.weight != null && s.reps != null)
+      v = Math.round(s.weight * (1 + s.reps / 30) * 10) / 10;
+    else if (type === "bodyweight" && s.reps != null) v = s.reps;
+    else if (type === "timed" && s.duration_seconds != null) v = s.duration_seconds;
+    if (v != null && (best == null || v > best)) best = v;
+  }
+  return best;
+}
+
+function Sparkline({ values }: { values: number[] }) {
+  if (values.length < 2) return null;
+  const w = 320;
+  const h = 64;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  const pts = values
+    .map((v, i) => {
+      const x = (i / (values.length - 1)) * w;
+      const y = h - ((v - min) / span) * (h - 8) - 4;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="h-16 w-full" preserveAspectRatio="none">
+      <polyline
+        points={pts}
+        fill="none"
+        stroke="hsl(var(--primary))"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  );
+}
+
 export default async function ExercisePage({ params }: { params: { id: string } }) {
   const supabase = createClient();
   const exerciseId = decodeURIComponent(params.id);
@@ -52,6 +95,14 @@ export default async function ExercisePage({ params }: { params: { id: string } 
         .sort((a, b) => a.set_index - b.set_index),
     }))
     .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+
+  const metricLabel =
+    type === "weighted" ? "e1RM" : type === "bodyweight" ? "powt." : "czas (s)";
+  const trend = sessions
+    .slice()
+    .reverse()
+    .map((s) => bestMetric(type, s.sets))
+    .filter((v): v is number => v != null);
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
@@ -97,6 +148,19 @@ export default async function ExercisePage({ params }: { params: { id: string } 
                 ))}
               </ol>
             )}
+          </section>
+        )}
+
+        {trend.length >= 2 && (
+          <section className="space-y-xs rounded-lg border bg-card p-md">
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-base font-semibold">Trend · {metricLabel}</h2>
+              <span className="text-sm text-muted-foreground">
+                {trend[trend.length - 1]}
+                {type === "weighted" ? unit : ""}
+              </span>
+            </div>
+            <Sparkline values={trend} />
           </section>
         )}
 

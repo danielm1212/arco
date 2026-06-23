@@ -22,7 +22,7 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, exercise_type), session_sets(set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
+        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, exercise_type), session_sets(id, set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -49,6 +49,41 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     .slice()
     .sort((a, b) => a.position - b.position);
 
+  // Podsumowanie
+  const allSets = exercises.flatMap((e) => e.session_sets);
+  const completed = allSets.filter((s) => s.completed);
+  const volume = completed.reduce(
+    (n, s) => n + (s.weight ?? 0) * (s.reps ?? 0),
+    0,
+  );
+  const durationMin = session.finished_at
+    ? Math.round((+new Date(session.finished_at) - +new Date(session.started_at)) / 60000)
+    : null;
+
+  // PR-y zdobyte w tej sesji (wciąż aktualne rekordy z setów tej sesji)
+  const setIds = allSets.map((s) => s.id);
+  const { data: prsRaw } = setIds.length
+    ? await supabase
+        .from("personal_records")
+        .select("record_type, value, exercises(name)")
+        .in("session_set_id", setIds)
+    : { data: [] };
+  const PR_LABEL: Record<string, string> = {
+    max_weight: "ciężar",
+    max_e1rm: "e1RM",
+    max_reps: "powt.",
+    max_duration: "czas",
+  };
+  const prs = ((prsRaw as unknown as {
+    record_type: string;
+    value: number;
+    exercises: { name: string } | null;
+  }[]) ?? []).map((p) => ({
+    name: p.exercises?.name ?? "",
+    label: PR_LABEL[p.record_type] ?? p.record_type,
+    value: p.value,
+  }));
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
@@ -66,6 +101,42 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
           {new Date(session.started_at).toLocaleString("pl-PL")}
           {session.finished_at ? "" : " · w toku"}
         </p>
+
+        <section className="grid grid-cols-3 gap-sm">
+          <div className="rounded-lg border bg-card p-sm text-center">
+            <p className="text-xl font-bold tabular-nums">{completed.length}</p>
+            <p className="text-xs text-muted-foreground">serie</p>
+          </div>
+          <div className="rounded-lg border bg-card p-sm text-center">
+            <p className="text-xl font-bold tabular-nums">
+              {Math.round(volume).toLocaleString("pl-PL")}
+            </p>
+            <p className="text-xs text-muted-foreground">objętość {unit}</p>
+          </div>
+          <div className="rounded-lg border bg-card p-sm text-center">
+            <p className="text-xl font-bold tabular-nums">
+              {durationMin != null ? `${durationMin}'` : "—"}
+            </p>
+            <p className="text-xs text-muted-foreground">czas</p>
+          </div>
+        </section>
+
+        {prs.length > 0 && (
+          <section className="space-y-2xs rounded-lg border border-primary/40 bg-primary/5 p-md">
+            <p className="text-sm font-semibold text-primary">🏆 Rekordy w tej sesji</p>
+            <ul className="space-y-px text-sm">
+              {prs.map((p, i) => (
+                <li key={i} className="flex items-center justify-between">
+                  <span className="truncate">{p.name}</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {p.label} {p.value}
+                    {p.label === "ciężar" || p.label === "e1RM" ? unit : ""}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {exercises.map((ex) => (
           <section
