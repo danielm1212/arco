@@ -9,10 +9,15 @@ Kolejność jest istotna — `supabase db reset` czyści też usera i seed:
 
 ```bash
 supabase start                 # lokalny stack (Postgres/Auth/Storage/Studio)
-supabase db reset              # aplikuje migracje (schema + RLS) na czysto
+supabase db reset              # aplikuje migracje (schema + RLS + RPC) na czysto
 npm run seed                   # 873 ćwiczenia + 2 programy FBW (service-role)
 npm run bootstrap:user         # tworzy jedyne konto z ADMIN_EMAIL/ADMIN_PASSWORD
 npm run dev                    # http://localhost:3000
+```
+
+Smoke test warstwy danych (logowanie + pełny przepływ przez RLS):
+```bash
+npm run smoke
 ```
 
 > Po każdym `supabase db reset` powtórz `npm run seed` i `npm run bootstrap:user`.
@@ -35,3 +40,13 @@ Werdykt i instrukcja testu: [`spike-rest-timer.md`](./spike-rest-timer.md). Tras
 - Login działa (token wydawany, złe hasło odrzucane, middleware chroni trasy).
 - RLS: zalogowany user czyta seed + własne dane; zapis do `exercises` zablokowany (403).
 - Spike rest-timer ma werdykt: odliczanie w tle iOS = zawodne → wall-clock + fallback in-app.
+
+## Acceptance Phase 1 (zweryfikowane — `npm run smoke`)
+- Przełączanie programu 2×/3× (`user_active_program`).
+- Start sesji tworzy `session_exercises` ze slotów dnia (z `slot_id` — progres slotu).
+- „Poprzedni wynik" — funkcja `previous_working_set` zwraca ostatni working set slotu/ćwiczenia.
+- Rest timer startuje po ✓ (wall-clock, beep+wibracja) — `app/session/[id]/RestTimer.tsx`.
+- Edycja i usuwanie serii oraz całych sesji.
+- Freestyle: sesja bez programu + dodawanie ćwiczeń z katalogu (`ExercisePicker`).
+- Historia: `/history` + szczegóły `/history/[id]`.
+- Build zielony; trasy chronione (niezalogowany → 307 `/login`).

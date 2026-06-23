@@ -1,0 +1,71 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { beep, vibrate } from "@/lib/feedback";
+import { Button } from "@/components/ui/button";
+
+/**
+ * Rest timer — wzorzec ze spike'a: liczony z zegara (endAt), odporny na throttling w tle.
+ * `endAt` = znacznik czasu końca (ms). Zmiana `endAt` (nowy nonce) restartuje odliczanie.
+ */
+export function RestTimer({
+  endAt,
+  onDone,
+  onDismiss,
+  onExtend,
+}: {
+  endAt: number;
+  onDone: () => void;
+  onDismiss: () => void;
+  onExtend: (seconds: number) => void;
+}) {
+  const [remaining, setRemaining] = useState(() =>
+    Math.max(0, Math.ceil((endAt - Date.now()) / 1000)),
+  );
+  const firedRef = useRef(false);
+
+  const tick = useCallback(() => {
+    const rem = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+    setRemaining(rem);
+    if (rem === 0 && !firedRef.current) {
+      firedRef.current = true;
+      beep();
+      vibrate();
+      onDone();
+    }
+  }, [endAt, onDone]);
+
+  useEffect(() => {
+    firedRef.current = false;
+    tick();
+    const id = window.setInterval(tick, 250);
+    const onVis = () => document.visibilityState === "visible" && tick();
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [tick]);
+
+  const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const ss = String(remaining % 60).padStart(2, "0");
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-card/95 backdrop-blur">
+      <div className="mx-auto flex max-w-md items-center gap-sm p-md">
+        <div className="flex-1">
+          <p className="text-xs text-muted-foreground">Przerwa</p>
+          <p className="font-mono text-2xl font-bold tabular-nums">
+            {mm}:{ss}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => onExtend(30)}>
+          +30s
+        </Button>
+        <Button variant="secondary" size="sm" onClick={onDismiss}>
+          Pomiń
+        </Button>
+      </div>
+    </div>
+  );
+}

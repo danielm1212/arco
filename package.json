@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx scripts/seed.ts",
-    "bootstrap:user": "tsx scripts/bootstrap-user.ts"
+    "bootstrap:user": "tsx scripts/bootstrap-user.ts",
+    "smoke": "tsx scripts/smoke-phase1.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.0",
