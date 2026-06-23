@@ -12,6 +12,7 @@ import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types"
 import { computePlates, formatPlates } from "@/lib/plates";
 import { useSync } from "@/lib/useSync";
 import type { OutboxSetRow } from "@/lib/outbox";
+import { uuid } from "@/lib/uuid";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { SwapPanel } from "./SwapPanel";
@@ -152,7 +153,7 @@ export function Logger({
         };
     // UUID po stronie klienta → operacja odtwarzalna offline (idempotentny upsert)
     const newSet: SessionSet = {
-      id: crypto.randomUUID(),
+      id: uuid(),
       session_exercise_id: ex.sessionExerciseId,
       set_index: ex.sets.length,
       set_type: (seed.set_type as SetType) ?? "working",
