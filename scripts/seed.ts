@@ -298,6 +298,39 @@ const PROGRAMS: Program[] = [
       },
     ],
   },
+  {
+    name: "FBW domowy (hantle)",
+    description: "Full Body w domu na hantlach, 2 dni (A/B). Wsparcie pod kickboxing.",
+    days_per_week: 2,
+    days: [
+      {
+        label: "A — siła i stabilność",
+        slots: [
+          { exercise_id: "Goblet_Squat", sets: 4, repsMin: 10, repsMax: 10, rest: 120, notes: "kolana na zewnątrz" },
+          { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 4, repsMin: 10, repsMax: 10, rest: 120, notes: "nacisk na ekscentryk — tylne udo + pośladek" },
+          { exercise_id: "Bent_Over_Two-Dumbbell_Row", sets: 4, repsMin: 10, repsMax: 10, rest: 120, notes: "łokieć ciągnie do góry, nie ręka" },
+          { exercise_id: "Dumbbell_Bench_Press", sets: 4, repsMin: 10, repsMax: 10, rest: 120, notes: "łopatki ściągnięte przez cały ruch" },
+          { exercise_id: "Dumbbell_Shoulder_Press", sets: 3, repsMin: 10, repsMax: 10, rest: 90, notes: "stojąc, rdzeń napięty" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 3, repsMin: 12, repsMax: 12, rest: 60, notes: "bez bujania tułowiem" },
+          { exercise_id: "Lying_Dumbbell_Tricep_Extension", sets: 3, repsMin: 12, repsMax: 12, rest: 60, notes: "skull crushers — łokcie blisko głowy, powoli w dół" },
+          { exercise_id: "Dead_Bug", sets: 3, repsMin: 10, repsMax: 10, rest: 45, notes: "na stronę — kontrola odcinka lędźwiowego" },
+        ],
+      },
+      {
+        label: "B — dynamika i wytrzymałość",
+        slots: [
+          { exercise_id: "Dumbbell_Rear_Lunge", sets: 4, repsMin: 8, repsMax: 8, rest: 90, notes: "na nogę — kontrola kolana" },
+          { exercise_id: "Kettlebell_One-Legged_Deadlift", sets: 3, repsMin: 8, repsMax: 8, rest: 90, notes: "single-leg RDL — równowaga + tylna linia (kopsy)" },
+          { exercise_id: "Alternating_Renegade_Row", sets: 4, repsMin: 8, repsMax: 8, rest: 90, notes: "na stronę — core pracuje cały czas" },
+          { exercise_id: "Pushups", sets: 4, repsMin: 12, repsMax: 12, rest: 75, notes: "progresja przez pozycję (nogi wyżej), nie kg" },
+          { exercise_id: "Side_Lateral_Raise", sets: 3, repsMin: 15, repsMax: 15, rest: 60, notes: "lekko — barki i tak obrywają w kickboxingu" },
+          { exercise_id: "Hammer_Curls", sets: 3, repsMin: 12, repsMax: 12, rest: 60, notes: "brachialis — dobry dla garda" },
+          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 3, repsMin: 12, repsMax: 12, rest: 60, notes: "overhead, oburącz jeden hantel" },
+          { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 45, notes: "hollow body hold — 30 s, plecy przyciśnięte do ziemi" },
+        ],
+      },
+    ],
+  },
 ];
 
 async function seedPrograms() {
