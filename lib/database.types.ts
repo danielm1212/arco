@@ -253,24 +253,30 @@ export type Database = {
         Row: {
           days_per_week: number
           description: string | null
+          goal: string | null
           id: string
           is_default: boolean
+          level: string | null
           name: string
           user_id: string | null
         }
         Insert: {
           days_per_week: number
           description?: string | null
+          goal?: string | null
           id?: string
           is_default?: boolean
+          level?: string | null
           name: string
           user_id?: string | null
         }
         Update: {
           days_per_week?: number
           description?: string | null
+          goal?: string | null
           id?: string
           is_default?: boolean
+          level?: string | null
           name?: string
           user_id?: string | null
         }

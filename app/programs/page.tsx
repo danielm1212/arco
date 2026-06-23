@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { createProgram, duplicateProgram } from "@/app/actions/program";
+import { createProgram } from "@/app/actions/program";
 import { Button } from "@/components/ui/button";
 
 export default async function ProgramsPage() {
@@ -11,7 +11,7 @@ export default async function ProgramsPage() {
 
   const { data: programs } = await supabase
     .from("programs")
-    .select("id, name, days_per_week, user_id, program_days(id)")
+    .select("id, name, days_per_week, user_id, goal, level, program_days(id)")
     .order("user_id", { nullsFirst: true });
 
   const own = (programs ?? []).filter((p) => p.user_id === user?.id);
@@ -53,22 +53,30 @@ export default async function ProgramsPage() {
         )}
 
         <section className="space-y-sm">
-          <h2 className="text-base font-semibold">Gotowe programy</h2>
+          <h2 className="text-base font-semibold">Biblioteka programów</h2>
           {presets.map((p) => (
-            <div
+            <Link
               key={p.id}
-              className="flex items-center justify-between rounded-lg border bg-card p-md text-card-foreground"
+              href={`/programs/${p.id}`}
+              className="block rounded-lg border bg-card p-md text-card-foreground"
             >
-              <div>
+              <div className="flex items-center justify-between">
                 <p className="font-medium">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{p.days_per_week} dni / tydz.</p>
+                <span className="shrink-0 text-xs text-muted-foreground">podgląd →</span>
               </div>
-              <form action={duplicateProgram.bind(null, p.id)}>
-                <Button variant="outline" size="sm" type="submit">
-                  Duplikuj i edytuj
-                </Button>
-              </form>
-            </div>
+              <div className="mt-2xs flex flex-wrap gap-2xs">
+                {[p.goal, p.level, `${p.days_per_week}× / tydz.`]
+                  .filter(Boolean)
+                  .map((tag) => (
+                    <span
+                      key={tag as string}
+                      className="rounded-full bg-secondary px-2 py-0.5 text-xs capitalize text-secondary-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+              </div>
+            </Link>
           ))}
         </section>
       </main>

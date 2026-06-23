@@ -21,6 +21,7 @@ export async function setActiveProgram(programId: string) {
     .upsert({ user_id: user.id, program_id: programId }, { onConflict: "user_id" });
   if (error) throw new Error(error.message);
   revalidatePath("/");
+  redirect("/");
 }
 
 /** Start sesji z dnia programu — tworzy session + session_exercises ze slotów. */

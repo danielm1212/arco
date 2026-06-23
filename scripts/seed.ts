@@ -143,6 +143,8 @@ interface Day {
 interface Program {
   name: string;
   description: string;
+  goal: string;
+  level: string;
   days_per_week: number;
   days: Day[];
 }
@@ -151,6 +153,8 @@ const PROGRAMS: Program[] = [
   {
     name: "FBW 2× / tydzień",
     description: "Full Body Workout, 2 dni/tydzień (warianty A/B). RIR 1-2 na compoundach.",
+    goal: "ogólnorozwojowy",
+    level: "początkujący",
     days_per_week: 2,
     days: [
       {
@@ -178,6 +182,8 @@ const PROGRAMS: Program[] = [
   {
     name: "FBW 3× / tydzień",
     description: "Full Body Workout, 3 dni/tydzień (warianty A/B/C). RIR 1-2 na compoundach.",
+    goal: "ogólnorozwojowy",
+    level: "średni",
     days_per_week: 3,
     days: [
       {
@@ -215,6 +221,8 @@ const PROGRAMS: Program[] = [
   {
     name: "Push / Pull / Legs",
     description: "Klasyczny split PPL, 3 dni/tydzień.",
+    goal: "hipertrofia",
+    level: "średni",
     days_per_week: 3,
     days: [
       {
@@ -252,6 +260,8 @@ const PROGRAMS: Program[] = [
   {
     name: "Upper / Lower",
     description: "Split góra/dół, 4 dni/tydzień (Upper A/B, Lower A/B).",
+    goal: "hipertrofia",
+    level: "zaawansowany",
     days_per_week: 4,
     days: [
       {
@@ -301,6 +311,8 @@ const PROGRAMS: Program[] = [
   {
     name: "FBW domowy (hantle)",
     description: "Full Body w domu na hantlach, 2 dni (A/B). Wsparcie pod kickboxing.",
+    goal: "ogólnorozwojowy",
+    level: "początkujący",
     days_per_week: 2,
     days: [
       {
@@ -331,6 +343,50 @@ const PROGRAMS: Program[] = [
       },
     ],
   },
+  {
+    name: "StrongLifts 5×5",
+    description: "Klasyczny program siłowy dla początkujących. 3 treningi/tydz., naprzemiennie A/B. Dokładaj ciężar co trening.",
+    goal: "siła",
+    level: "początkujący",
+    days_per_week: 3,
+    days: [
+      {
+        label: "Trening A",
+        slots: [
+          { exercise_id: "Barbell_Squat", sets: 5, repsMin: 5, repsMax: 5, rest: 180 },
+          { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 5, repsMin: 5, repsMax: 5, rest: 180 },
+          { exercise_id: "Bent_Over_Barbell_Row", sets: 5, repsMin: 5, repsMax: 5, rest: 180 },
+        ],
+      },
+      {
+        label: "Trening B",
+        slots: [
+          { exercise_id: "Barbell_Squat", sets: 5, repsMin: 5, repsMax: 5, rest: 180 },
+          { exercise_id: "Standing_Military_Press", sets: 5, repsMin: 5, repsMax: 5, rest: 180 },
+          { exercise_id: "Barbell_Deadlift", sets: 1, repsMin: 5, repsMax: 5, rest: 180 },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Full Body dla początkujących",
+    description: "Prosty pełny trening 3×/tydz. na maszynach i hantlach — wejście w siłownię bez stresu.",
+    goal: "ogólnorozwojowy",
+    level: "początkujący",
+    days_per_week: 3,
+    days: [
+      {
+        label: "Full Body",
+        slots: [
+          { exercise_id: "Barbell_Squat", sets: 3, repsMin: 8, repsMax: 10, rest: 120, notes: "lub Goblet Squat" },
+          { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
+          { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
+          { exercise_id: "Dumbbell_Shoulder_Press", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
+          { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "30 s" },
+        ],
+      },
+    ],
+  },
 ];
 
 async function seedPrograms() {
@@ -346,6 +402,8 @@ async function seedPrograms() {
       .insert({
         name: prog.name,
         description: prog.description,
+        goal: prog.goal,
+        level: prog.level,
         days_per_week: prog.days_per_week,
         is_default: true,
         user_id: null,
