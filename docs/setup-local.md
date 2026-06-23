@@ -19,9 +19,17 @@ Smoke testy warstwy danych (logowanie + przepływ przez RLS):
 ```bash
 npm run smoke          # Phase 1: sesja, logger, poprzedni wynik, edycja, freestyle, historia
 npm run smoke:phase2   # Phase 2: podmiana+fallback, PR/e1RM, plate calc
+npm run smoke:offline  # Phase 2.5: idempotentny zapis serii (odtwarzanie outboxa)
 ```
 
 > Po każdym `supabase db reset` powtórz `npm run seed` i `npm run bootstrap:user`.
+
+## Offline (Phase 2.5)
+Logger jest odporny na utratę sieci: dodawanie/edycja/✓/usuwanie serii trafia do
+**outboxa** (localStorage, `lib/outbox.ts`) i synchronizuje się po powrocie online (`lib/useSync.ts`).
+Serie mają UUID po stronie klienta → zapis idempotentny (`upsertSet`, onConflict id).
+Wskaźnik w nagłówku sesji: `● offline` / `↑ N` / `synchronizuję…`.
+**Test na realnym urządzeniu (iOS PWA) nadal zalecany** — tryb „Offline" w DevTools to nie to samo co zanik zasięgu.
 
 ## Konto
 Jedno konto, bez publicznej rejestracji (wyłączone w `supabase/config.toml`).

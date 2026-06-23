@@ -55,6 +55,27 @@ export async function addSet(
   return data.id;
 }
 
+/** Idempotentny zapis całej serii (insert lub update po id) — pod synchronizację offline. */
+export async function upsertSet(
+  _sessionId: string,
+  row: {
+    id: string;
+    session_exercise_id: string;
+    set_index: number;
+    set_type: SetType;
+    weight: number | null;
+    reps: number | null;
+    duration_seconds: number | null;
+    added_weight: number | null;
+    rpe: number | null;
+    completed: boolean;
+  },
+) {
+  const supabase = await db();
+  const { error } = await supabase.from("session_sets").upsert(row, { onConflict: "id" });
+  if (error) throw new Error(error.message);
+}
+
 /** Zaktualizuj wartości serii. */
 export async function updateSet(sessionId: string, setId: string, values: SetValues) {
   const supabase = await db();

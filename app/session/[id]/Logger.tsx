@@ -1,21 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  addSet,
-  updateSet,
-  deleteSet,
-  deleteSessionExercise,
-  setSupersetGroups,
-} from "@/app/actions/sets";
+import { deleteSessionExercise, setSupersetGroups } from "@/app/actions/sets";
 import { finishSession, deleteSession } from "@/app/actions/session";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { computePlates, formatPlates } from "@/lib/plates";
+import { useSync } from "@/lib/useSync";
+import type { OutboxSetRow } from "@/lib/outbox";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { SwapPanel } from "./SwapPanel";
@@ -100,8 +96,28 @@ export function Logger({
   const router = useRouter();
   const [exercises, setExercises] = useState(initialExercises);
   const [rest, setRest] = useState<{ endAt: number } | null>(null);
+  const { online, pending, syncing, queueUpsert, queueDelete } = useSync();
 
   const SAVE_ERR = "Nie zapisano — sprawdź połączenie i spróbuj ponownie.";
+
+  // Najświeższy stan dostępny w handlerach (do złożenia pełnego wiersza przy zapisie)
+  const exercisesRef = useRef(exercises);
+  exercisesRef.current = exercises;
+
+  function toRow(s: SessionSet): OutboxSetRow {
+    return {
+      id: s.id,
+      session_exercise_id: s.session_exercise_id,
+      set_index: s.set_index,
+      set_type: s.set_type,
+      weight: s.weight,
+      reps: s.reps,
+      duration_seconds: s.duration_seconds,
+      added_weight: s.added_weight,
+      rpe: s.rpe,
+      completed: s.completed,
+    };
+  }
 
   function patchSetLocal(seId: string, setId: string, patch: Partial<SessionSet>) {
     setExercises((prev) =>
@@ -134,15 +150,9 @@ export function Logger({
           duration_seconds: ex.previous?.duration_seconds ?? null,
           added_weight: ex.previous?.added_weight ?? null,
         };
-    let id: string;
-    try {
-      id = await addSet(sessionId, ex.sessionExerciseId, seed);
-    } catch {
-      toast.error(SAVE_ERR);
-      return;
-    }
+    // UUID po stronie klienta → operacja odtwarzalna offline (idempotentny upsert)
     const newSet: SessionSet = {
-      id,
+      id: crypto.randomUUID(),
       session_exercise_id: ex.sessionExerciseId,
       set_index: ex.sets.length,
       set_type: (seed.set_type as SetType) ?? "working",
@@ -158,31 +168,27 @@ export function Logger({
         e.sessionExerciseId === ex.sessionExerciseId ? { ...e, sets: [...e.sets, newSet] } : e,
       ),
     );
+    queueUpsert(sessionId, toRow(newSet));
   }
 
-  async function handleToggle(ex: LoggerExercise, set: SessionSet) {
+  function handleToggle(ex: LoggerExercise, set: SessionSet) {
     const next = !set.completed;
     patchSetLocal(ex.sessionExerciseId, set.id, { completed: next });
     if (next) startRest(ex);
-    try {
-      await updateSet(sessionId, set.id, { completed: next });
-    } catch {
-      patchSetLocal(ex.sessionExerciseId, set.id, { completed: !next }); // revert
-      if (next) setRest(null);
-      toast.error(SAVE_ERR);
+    queueUpsert(sessionId, toRow({ ...set, completed: next }));
+  }
+
+  function persistSet(setId: string, patch: Partial<SessionSet>) {
+    for (const ex of exercisesRef.current) {
+      const s = ex.sets.find((x) => x.id === setId);
+      if (s) {
+        queueUpsert(sessionId, toRow({ ...s, ...patch }));
+        return;
+      }
     }
   }
 
-  async function handlePersist(setId: string, patch: Partial<SessionSet>) {
-    try {
-      await updateSet(sessionId, setId, patch);
-    } catch {
-      toast.error(SAVE_ERR);
-    }
-  }
-
-  async function handleDeleteSet(seId: string, setId: string) {
-    const snapshot = exercises;
+  function handleDeleteSet(seId: string, setId: string) {
     setExercises((prev) =>
       prev.map((ex) =>
         ex.sessionExerciseId !== seId
@@ -190,12 +196,7 @@ export function Logger({
           : { ...ex, sets: ex.sets.filter((s) => s.id !== setId) },
       ),
     );
-    try {
-      await deleteSet(sessionId, setId);
-    } catch {
-      setExercises(snapshot); // revert
-      toast.error(SAVE_ERR);
-    }
+    queueDelete(sessionId, setId);
   }
 
   async function handleDeleteExercise(seId: string) {
@@ -264,13 +265,29 @@ export function Logger({
           </button>
           <p className="truncate font-semibold">{title}</p>
         </div>
-        {!isFinished && (
-          <form action={finishSession.bind(null, sessionId)}>
-            <Button size="sm" type="submit">
-              Zakończ
-            </Button>
-          </form>
-        )}
+        <div className="flex shrink-0 items-center gap-sm">
+          {(!online || pending > 0) && (
+            <span
+              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                !online ? "bg-warning/15 text-warning" : "bg-muted text-muted-foreground"
+              }`}
+              title={
+                !online
+                  ? "Offline — zmiany zapiszą się po powrocie sieci"
+                  : `${pending} zmian(y) do synchronizacji`
+              }
+            >
+              {!online ? "● offline" : syncing ? "synchronizuję…" : `↑ ${pending}`}
+            </span>
+          )}
+          {!isFinished && (
+            <form action={finishSession.bind(null, sessionId)}>
+              <Button size="sm" type="submit">
+                Zakończ
+              </Button>
+            </form>
+          )}
+        </div>
       </header>
 
       <main className="flex-1 space-y-md p-md">
@@ -382,7 +399,7 @@ export function Logger({
                     type={ex.type}
                     unit={unit}
                     onPatch={(patch) => patchSetLocal(ex.sessionExerciseId, set.id, patch)}
-                    onPersist={(patch) => handlePersist(set.id, patch)}
+                    onPersist={(patch) => persistSet(set.id, patch)}
                     onToggle={() => handleToggle(ex, set)}
                     onDelete={() => handleDeleteSet(ex.sessionExerciseId, set.id)}
                   />
