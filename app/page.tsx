@@ -16,7 +16,6 @@ export default async function HomePage() {
       supabase
         .from("programs")
         .select("id, name, days_per_week, program_days(id, label, position)")
-        .is("user_id", null)
         .order("days_per_week"),
       supabase.from("user_active_program").select("program_id").maybeSingle(),
       supabase
@@ -40,6 +39,9 @@ export default async function HomePage() {
           </Button>
           <Button variant="ghost" size="sm" asChild>
             <Link href="/history">Historia</Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/body">Ciało</Link>
           </Button>
           <Button variant="ghost" size="sm" asChild>
             <Link href="/settings" aria-label="Ustawienia">
@@ -66,7 +68,12 @@ export default async function HomePage() {
         )}
 
         <section className="space-y-sm">
-          <h2 className="text-base font-semibold">Programy</h2>
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-base font-semibold">Programy</h2>
+            <Link href="/programs" className="text-xs text-primary">
+              Zarządzaj →
+            </Link>
+          </div>
 
           {programs?.map((p) => {
             const isActive = p.id === activeId;

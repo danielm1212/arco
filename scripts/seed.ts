@@ -143,7 +143,7 @@ interface Day {
 interface Program {
   name: string;
   description: string;
-  days_per_week: 2 | 3;
+  days_per_week: number;
   days: Day[];
 }
 
@@ -208,6 +208,92 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Split_Squat_with_Dumbbells", sets: 3, repsMin: 10, repsMax: 10, rest: 120, notes: "na nogę" },
           { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
           { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Push / Pull / Legs",
+    description: "Klasyczny split PPL, 3 dni/tydzień.",
+    days_per_week: 3,
+    days: [
+      {
+        label: "Push",
+        slots: [
+          { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 3, repsMin: 6, repsMax: 8, rest: 180 },
+          { exercise_id: "Dumbbell_Shoulder_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Side_Lateral_Raise", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
+          { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+        ],
+      },
+      {
+        label: "Pull",
+        slots: [
+          { exercise_id: "Barbell_Deadlift", sets: 3, repsMin: 5, repsMax: 5, rest: 180 },
+          { exercise_id: "Pullups", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
+          { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Face_Pull", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
+          { exercise_id: "Barbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+        ],
+      },
+      {
+        label: "Legs",
+        slots: [
+          { exercise_id: "Barbell_Squat", sets: 3, repsMin: 6, repsMax: 8, rest: 180 },
+          { exercise_id: "Romanian_Deadlift", sets: 3, repsMin: 8, repsMax: 10, rest: 150 },
+          { exercise_id: "Leg_Press", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Lying_Leg_Curls", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
+          { exercise_id: "Standing_Calf_Raises", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Upper / Lower",
+    description: "Split góra/dół, 4 dni/tydzień (Upper A/B, Lower A/B).",
+    days_per_week: 4,
+    days: [
+      {
+        label: "Upper A",
+        slots: [
+          { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 3, repsMin: 6, repsMax: 8, rest: 180 },
+          { exercise_id: "Bent_Over_Barbell_Row", sets: 3, repsMin: 8, repsMax: 10, rest: 150 },
+          { exercise_id: "Dumbbell_Shoulder_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
+          { exercise_id: "Barbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+        ],
+      },
+      {
+        label: "Lower A",
+        slots: [
+          { exercise_id: "Barbell_Squat", sets: 3, repsMin: 6, repsMax: 8, rest: 180 },
+          { exercise_id: "Romanian_Deadlift", sets: 3, repsMin: 8, repsMax: 10, rest: 150 },
+          { exercise_id: "Leg_Press", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Seated_Leg_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
+          { exercise_id: "Standing_Calf_Raises", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
+        ],
+      },
+      {
+        label: "Upper B",
+        slots: [
+          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 150 },
+          { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Side_Lateral_Raise", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
+          { exercise_id: "Pullups", sets: 3, repsMin: 6, repsMax: 10, rest: 120 },
+          { exercise_id: "Hammer_Curls", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Dips_-_Triceps_Version", sets: 3, repsMin: 8, repsMax: 12, rest: 60 },
+        ],
+      },
+      {
+        label: "Lower B",
+        slots: [
+          { exercise_id: "Barbell_Deadlift", sets: 3, repsMin: 5, repsMax: 5, rest: 180 },
+          { exercise_id: "Front_Barbell_Squat", sets: 3, repsMin: 8, repsMax: 10, rest: 150 },
+          { exercise_id: "Leg_Extensions", sets: 3, repsMin: 12, repsMax: 15, rest: 90 },
+          { exercise_id: "Lying_Leg_Curls", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
+          { exercise_id: "Calf_Press_On_The_Leg_Press_Machine", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
         ],
       },
     ],

@@ -34,6 +34,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      body_metrics: {
+        Row: {
+          body_fat: number | null
+          created_at: string
+          date: string
+          id: string
+          notes: string | null
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          body_fat?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          body_fat?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
       exercises: {
         Row: {
           category: string | null

@@ -37,10 +37,10 @@ async function main() {
   const { data: prog3 } = await sb
     .from("programs")
     .select("id")
-    .eq("days_per_week", 3)
+    .eq("name", "FBW 3× / tydzień")
     .is("user_id", null)
     .single();
-  if (!prog3) fail("brak programu 3×");
+  if (!prog3) fail("brak programu FBW 3×");
   await sb.from("user_active_program").upsert({ user_id: userId, program_id: prog3!.id });
   ok("ustawiono aktywny program 3×");
 
