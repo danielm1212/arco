@@ -1,10 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { addSet, updateSet, deleteSet, deleteSessionExercise } from "@/app/actions/sets";
+import {
+  addSet,
+  updateSet,
+  deleteSet,
+  deleteSessionExercise,
+  setSupersetGroups,
+} from "@/app/actions/sets";
 import { finishSession, deleteSession } from "@/app/actions/session";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { computePlates, formatPlates } from "@/lib/plates";
@@ -25,6 +32,7 @@ export interface LoggerExercise {
     rest_seconds: number;
     notes: string | null;
   } | null;
+  supersetGroup: number | null;
   sets: SessionSet[];
   previous: {
     weight: number | null;
@@ -91,7 +99,8 @@ export function Logger({
   const router = useRouter();
   const [exercises, setExercises] = useState(initialExercises);
   const [rest, setRest] = useState<{ endAt: number } | null>(null);
-  const [, startTransition] = useTransition();
+
+  const SAVE_ERR = "Nie zapisano — sprawdź połączenie i spróbuj ponownie.";
 
   function patchSetLocal(seId: string, setId: string, patch: Partial<SessionSet>) {
     setExercises((prev) =>
@@ -124,7 +133,13 @@ export function Logger({
           duration_seconds: ex.previous?.duration_seconds ?? null,
           added_weight: ex.previous?.added_weight ?? null,
         };
-    const id = await addSet(sessionId, ex.sessionExerciseId, seed);
+    let id: string;
+    try {
+      id = await addSet(sessionId, ex.sessionExerciseId, seed);
+    } catch {
+      toast.error(SAVE_ERR);
+      return;
+    }
     const newSet: SessionSet = {
       id,
       session_exercise_id: ex.sessionExerciseId,
@@ -144,14 +159,29 @@ export function Logger({
     );
   }
 
-  function handleToggle(ex: LoggerExercise, set: SessionSet) {
+  async function handleToggle(ex: LoggerExercise, set: SessionSet) {
     const next = !set.completed;
     patchSetLocal(ex.sessionExerciseId, set.id, { completed: next });
-    startTransition(() => updateSet(sessionId, set.id, { completed: next }));
     if (next) startRest(ex);
+    try {
+      await updateSet(sessionId, set.id, { completed: next });
+    } catch {
+      patchSetLocal(ex.sessionExerciseId, set.id, { completed: !next }); // revert
+      if (next) setRest(null);
+      toast.error(SAVE_ERR);
+    }
   }
 
-  function handleDeleteSet(seId: string, setId: string) {
+  async function handlePersist(setId: string, patch: Partial<SessionSet>) {
+    try {
+      await updateSet(sessionId, setId, patch);
+    } catch {
+      toast.error(SAVE_ERR);
+    }
+  }
+
+  async function handleDeleteSet(seId: string, setId: string) {
+    const snapshot = exercises;
     setExercises((prev) =>
       prev.map((ex) =>
         ex.sessionExerciseId !== seId
@@ -159,12 +189,69 @@ export function Logger({
           : { ...ex, sets: ex.sets.filter((s) => s.id !== setId) },
       ),
     );
-    startTransition(() => deleteSet(sessionId, setId));
+    try {
+      await deleteSet(sessionId, setId);
+    } catch {
+      setExercises(snapshot); // revert
+      toast.error(SAVE_ERR);
+    }
   }
 
-  function handleDeleteExercise(seId: string) {
+  async function handleDeleteExercise(seId: string) {
+    const snapshot = exercises;
     setExercises((prev) => prev.filter((ex) => ex.sessionExerciseId !== seId));
-    startTransition(() => deleteSessionExercise(sessionId, seId));
+    try {
+      await deleteSessionExercise(sessionId, seId);
+    } catch {
+      setExercises(snapshot); // revert
+      toast.error(SAVE_ERR);
+    }
+  }
+
+  async function setGroups(updates: { id: string; group: number | null }[]) {
+    const snapshot = exercises;
+    setExercises((prev) =>
+      prev.map((ex) => {
+        const u = updates.find((x) => x.id === ex.sessionExerciseId);
+        return u ? { ...ex, supersetGroup: u.group } : ex;
+      }),
+    );
+    try {
+      await setSupersetGroups(sessionId, updates);
+    } catch {
+      setExercises(snapshot);
+      toast.error(SAVE_ERR);
+    }
+  }
+
+  function linkWithPrevious(i: number) {
+    if (i <= 0) return;
+    const prev = exercises[i - 1];
+    const cur = exercises[i];
+    if (prev.supersetGroup != null) {
+      setGroups([{ id: cur.sessionExerciseId, group: prev.supersetGroup }]);
+    } else {
+      const g = Math.max(0, ...exercises.map((e) => e.supersetGroup ?? 0)) + 1;
+      setGroups([
+        { id: prev.sessionExerciseId, group: g },
+        { id: cur.sessionExerciseId, group: g },
+      ]);
+    }
+  }
+
+  function unlink(i: number) {
+    const cur = exercises[i];
+    const g = cur.supersetGroup;
+    const updates: { id: string; group: number | null }[] = [
+      { id: cur.sessionExerciseId, group: null },
+    ];
+    if (g != null) {
+      const others = exercises.filter(
+        (e) => e.supersetGroup === g && e.sessionExerciseId !== cur.sessionExerciseId,
+      );
+      if (others.length === 1) updates.push({ id: others[0].sessionExerciseId, group: null });
+    }
+    setGroups(updates);
   }
 
   return (
@@ -186,16 +273,26 @@ export function Logger({
       </header>
 
       <main className="flex-1 space-y-md p-md">
-        {exercises.map((ex) => {
+        {exercises.map((ex, i) => {
           const prev = formatPrevious(ex, unit);
+          const grouped = ex.supersetGroup != null;
           return (
             <section
               key={ex.sessionExerciseId}
-              className="space-y-sm rounded-lg border bg-card p-md text-card-foreground"
+              className={`space-y-sm rounded-lg border bg-card p-md text-card-foreground ${
+                grouped ? "border-l-4 border-l-primary" : ""
+              }`}
             >
               <div className="flex items-start justify-between gap-sm">
                 <div className="min-w-0">
-                  <p className="font-medium">{ex.name}</p>
+                  <p className="font-medium">
+                    {ex.name}
+                    {grouped && (
+                      <span className="ml-xs rounded-full bg-primary/15 px-2 py-0.5 align-middle text-xs font-medium text-primary">
+                        SS{ex.supersetGroup}
+                      </span>
+                    )}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {ex.slot
                       ? `${ex.slot.target_sets} × ${
@@ -218,6 +315,26 @@ export function Logger({
                 >
                   Usuń
                 </button>
+              </div>
+
+              <div className="flex items-center gap-md text-xs">
+                {grouped ? (
+                  <button
+                    onClick={() => unlink(i)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    ⛓ Rozłącz superset
+                  </button>
+                ) : (
+                  i > 0 && (
+                    <button
+                      onClick={() => linkWithPrevious(i)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      ⛓ Superset z poprzednim
+                    </button>
+                  )
+                )}
               </div>
 
               <SwapPanel sessionId={sessionId} sessionExerciseId={ex.sessionExerciseId} />
@@ -256,9 +373,7 @@ export function Logger({
                     type={ex.type}
                     unit={unit}
                     onPatch={(patch) => patchSetLocal(ex.sessionExerciseId, set.id, patch)}
-                    onPersist={(patch) =>
-                      startTransition(() => updateSet(sessionId, set.id, patch))
-                    }
+                    onPersist={(patch) => handlePersist(set.id, patch)}
                     onToggle={() => handleToggle(ex, set)}
                     onDelete={() => handleDeleteSet(ex.sessionExerciseId, set.id)}
                   />

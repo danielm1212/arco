@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { addSessionExercise } from "@/app/actions/sets";
 import { Button } from "@/components/ui/button";
@@ -42,11 +43,15 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
 
   function pick(id: string) {
     startTransition(async () => {
-      await addSessionExercise(sessionId, id);
-      setOpen(false);
-      setQ("");
-      setHits([]);
-      router.refresh();
+      try {
+        await addSessionExercise(sessionId, id);
+        setOpen(false);
+        setQ("");
+        setHits([]);
+        router.refresh();
+      } catch {
+        toast.error("Nie udało się dodać ćwiczenia.");
+      }
     });
   }
 

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   getSubstitutes,
   swapExercise,
@@ -33,9 +34,13 @@ export function SwapPanel({
 
   function pick(id: string) {
     startTransition(async () => {
-      await swapExercise(sessionId, sessionExerciseId, id);
-      setOpen(false);
-      router.refresh();
+      try {
+        await swapExercise(sessionId, sessionExerciseId, id);
+        setOpen(false);
+        router.refresh();
+      } catch {
+        toast.error("Nie udało się podmienić ćwiczenia.");
+      }
     });
   }
 

@@ -22,7 +22,7 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, exercises(name, exercise_type), session_sets(set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
+        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, exercise_type), session_sets(set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -41,6 +41,7 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     (session.session_exercises as unknown as {
       id: string;
       position: number;
+      superset_group: number | null;
       exercises: { name: string; exercise_type: ExerciseType };
       session_sets: SessionSet[];
     }[]) ?? []
@@ -67,8 +68,20 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
         </p>
 
         {exercises.map((ex) => (
-          <section key={ex.id} className="rounded-lg border bg-card p-md text-card-foreground">
-            <p className="font-medium">{ex.exercises.name}</p>
+          <section
+            key={ex.id}
+            className={`rounded-lg border bg-card p-md text-card-foreground ${
+              ex.superset_group != null ? "border-l-4 border-l-primary" : ""
+            }`}
+          >
+            <p className="font-medium">
+              {ex.exercises.name}
+              {ex.superset_group != null && (
+                <span className="ml-xs rounded-full bg-primary/15 px-2 py-0.5 align-middle text-xs font-medium text-primary">
+                  SS{ex.superset_group}
+                </span>
+              )}
+            </p>
             <ul className="mt-xs space-y-2xs">
               {ex.session_sets
                 .slice()

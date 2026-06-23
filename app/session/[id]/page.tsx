@@ -23,7 +23,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
     supabase
       .from("session_exercises")
       .select(
-        "id, exercise_id, position, slot_id, exercises(name, exercise_type, equipment), slot:program_day_slots(target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
+        "id, exercise_id, position, slot_id, superset_group, exercises(name, exercise_type, equipment), slot:program_day_slots(target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
       )
       .eq("session_id", sessionId)
       .order("position"),
@@ -65,6 +65,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
       type: ex.exercise_type,
       equipment: ex.equipment,
       slot: slot ?? null,
+      supersetGroup: e.superset_group ?? null,
       sets: (sets ?? []).filter((s) => s.session_exercise_id === e.id),
       previous: previous[e.id] ?? null,
     };

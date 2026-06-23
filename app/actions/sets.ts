@@ -89,6 +89,22 @@ export async function addSessionExercise(sessionId: string, exerciseId: string) 
   revalidatePath(`/session/${sessionId}`);
 }
 
+/** Ustaw grupę supersetu dla wielu ćwiczeń naraz (group = null → rozłącz). */
+export async function setSupersetGroups(
+  sessionId: string,
+  updates: { id: string; group: number | null }[],
+) {
+  const supabase = await db();
+  for (const u of updates) {
+    const { error } = await supabase
+      .from("session_exercises")
+      .update({ superset_group: u.group })
+      .eq("id", u.id);
+    if (error) throw new Error(error.message);
+  }
+  revalidatePath(`/session/${sessionId}`);
+}
+
 /** Usuń ćwiczenie z sesji (kaskadowo serie). */
 export async function deleteSessionExercise(sessionId: string, sessionExerciseId: string) {
   const supabase = await db();
