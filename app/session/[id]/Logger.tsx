@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -286,7 +287,13 @@ export function Logger({
               <div className="flex items-start justify-between gap-sm">
                 <div className="min-w-0">
                   <p className="font-medium">
-                    {ex.name}
+                    <Link
+                      href={`/exercise/${encodeURIComponent(ex.exerciseId)}`}
+                      className="underline-offset-2 hover:underline"
+                      title="Jak wykonać + historia"
+                    >
+                      {ex.name} <span className="text-muted-foreground">ⓘ</span>
+                    </Link>
                     {grouped && (
                       <span className="ml-xs rounded-full bg-primary/15 px-2 py-0.5 align-middle text-xs font-medium text-primary">
                         SS{ex.supersetGroup}

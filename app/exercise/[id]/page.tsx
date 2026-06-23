@@ -21,7 +21,9 @@ export default async function ExercisePage({ params }: { params: { id: string } 
   const [{ data: exercise }, { data: settings }] = await Promise.all([
     supabase
       .from("exercises")
-      .select("name, exercise_type, primary_muscles, equipment")
+      .select(
+        "name, exercise_type, primary_muscles, secondary_muscles, equipment, level, instructions, images",
+      )
       .eq("id", exerciseId)
       .maybeSingle(),
     supabase.from("user_settings").select("unit_system").maybeSingle(),
@@ -62,10 +64,43 @@ export default async function ExercisePage({ params }: { params: { id: string } 
       </header>
 
       <main className="flex-1 space-y-md p-md">
-        <p className="text-xs text-muted-foreground">
-          {exercise.equipment ?? "—"} ·{" "}
-          {(exercise.primary_muscles as string[])?.join(", ")}
+        <p className="text-xs capitalize text-muted-foreground">
+          {[exercise.equipment, exercise.level].filter(Boolean).join(" · ")}
+          {(exercise.primary_muscles as string[])?.length
+            ? ` · ${(exercise.primary_muscles as string[]).join(", ")}`
+            : ""}
         </p>
+
+        {/* Jak wykonać — zdjęcia + instrukcje (free-exercise-db) */}
+        {(((exercise.images as string[]) ?? []).length > 0 ||
+          ((exercise.instructions as string[]) ?? []).length > 0) && (
+          <section className="space-y-sm rounded-lg border bg-card p-md text-card-foreground">
+            <h2 className="text-base font-semibold">Jak wykonać</h2>
+            {((exercise.images as string[]) ?? []).length > 0 && (
+              <div className="grid grid-cols-2 gap-xs">
+                {(exercise.images as string[]).slice(0, 2).map((src) => (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    key={src}
+                    src={src}
+                    alt={exercise.name}
+                    loading="lazy"
+                    className="w-full rounded-md border bg-muted"
+                  />
+                ))}
+              </div>
+            )}
+            {((exercise.instructions as string[]) ?? []).length > 0 && (
+              <ol className="list-decimal space-y-xs pl-5 text-sm">
+                {(exercise.instructions as string[]).map((step, i) => (
+                  <li key={i}>{step}</li>
+                ))}
+              </ol>
+            )}
+          </section>
+        )}
+
+        <h2 className="text-base font-semibold">Historia</h2>
 
         {sessions.length === 0 ? (
           <p className="pt-xl text-center text-sm text-muted-foreground">
