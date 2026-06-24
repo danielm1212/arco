@@ -19,7 +19,13 @@ function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
   return best;
 }
 
-export default async function ExercisePage({ params }: { params: { id: string } }) {
+export default async function ExercisePage({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { m?: string };
+}) {
   const supabase = createClient();
   const exerciseId = decodeURIComponent(params.id);
 
@@ -58,12 +64,50 @@ export default async function ExercisePage({ params }: { params: { id: string } 
     }))
     .sort((a, b) => +new Date(b.date) - +new Date(a.date));
 
-  const metricLabel =
-    type === "weighted" ? "e1RM" : type === "bodyweight" ? "powt." : "czas (s)";
+  // Wybór metryki (tylko ćwiczenia ciężarowe mają zakładki)
+  const isWeighted = type === "weighted";
+  const WEIGHTED_TABS = [
+    { key: "e1rm", label: "e1RM" },
+    { key: "weight", label: "Najcięższa" },
+    { key: "vol", label: "Objętość" },
+  ];
+  const sel =
+    isWeighted && WEIGHTED_TABS.some((t) => t.key === searchParams.m)
+      ? (searchParams.m as string)
+      : "e1rm";
+
+  function seriesValue(sets: SessionSet[]): number | null {
+    if (isWeighted) {
+      if (sel === "weight") {
+        let b: number | null = null;
+        for (const s of sets) if (s.weight != null && (b == null || s.weight > b)) b = s.weight;
+        return b;
+      }
+      if (sel === "vol") {
+        const v = sets.reduce((m, s) => m + (s.weight ?? 0) * (s.reps ?? 0), 0);
+        return v > 0 ? Math.round(v) : null;
+      }
+      let b: number | null = null;
+      for (const s of sets)
+        if (s.weight != null && s.reps != null) {
+          const v = Math.round(s.weight * (1 + s.reps / 30) * 10) / 10;
+          if (b == null || v > b) b = v;
+        }
+      return b;
+    }
+    return bestMetric(type, sets);
+  }
+
+  const metricLabel = isWeighted
+    ? WEIGHTED_TABS.find((t) => t.key === sel)!.label
+    : type === "bodyweight"
+      ? "powt."
+      : "czas (s)";
+  const trendSuffix = isWeighted ? unit : type === "timed" ? "s" : "";
   const trend = sessions
     .slice()
     .reverse()
-    .map((s) => bestMetric(type, s.sets))
+    .map((s) => seriesValue(s.sets))
     .filter((v): v is number => v != null);
 
   return (
@@ -113,16 +157,47 @@ export default async function ExercisePage({ params }: { params: { id: string } 
           </section>
         )}
 
-        {trend.length >= 2 && (
-          <section className="space-y-xs rounded-lg border bg-card p-md">
+        {(isWeighted || trend.length >= 2) && (
+          <section className="space-y-sm rounded-lg border bg-card p-md">
             <div className="flex items-baseline justify-between">
-              <h2 className="text-base font-semibold">Trend · {metricLabel}</h2>
-              <span className="text-sm text-muted-foreground">
-                {trend[trend.length - 1]}
-                {type === "weighted" ? unit : ""}
-              </span>
+              <h2 className="text-base font-semibold">
+                Trend{!isWeighted ? ` · ${metricLabel}` : ""}
+              </h2>
+              {trend.length >= 1 && (
+                <span className="text-sm text-muted-foreground">
+                  {trend[trend.length - 1]}
+                  {trendSuffix}
+                </span>
+              )}
             </div>
-            <Sparkline values={trend} />
+            {isWeighted && (
+              <div className="flex gap-2xs">
+                {WEIGHTED_TABS.map((t) => (
+                  <Link
+                    key={t.key}
+                    href={
+                      t.key === "e1rm"
+                        ? `/exercise/${encodeURIComponent(exerciseId)}`
+                        : `/exercise/${encodeURIComponent(exerciseId)}?m=${t.key}`
+                    }
+                    className={`flex-1 rounded-md border px-2 py-1 text-center text-xs ${
+                      t.key === sel
+                        ? "border-primary bg-primary/10 font-medium text-primary"
+                        : "border-input text-muted-foreground"
+                    }`}
+                  >
+                    {t.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+            {trend.length >= 2 ? (
+              <Sparkline values={trend} />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Za mało danych — potrzeba 2+ sesji.
+              </p>
+            )}
           </section>
         )}
 
