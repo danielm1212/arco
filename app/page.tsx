@@ -8,30 +8,39 @@ import {
 } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut } from "lucide-react";
+import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 
 export default async function HomePage() {
   const supabase = createClient();
 
-  const [{ data: programs }, { data: active }, { data: openSession }, { data: finished }] =
-    await Promise.all([
-      supabase
-        .from("programs")
-        .select("id, name, days_per_week, program_days(id, label, position)")
-        .order("days_per_week"),
-      supabase.from("user_active_program").select("program_id").maybeSingle(),
-      supabase
-        .from("sessions")
-        .select("id, started_at")
-        .is("finished_at", null)
-        .order("started_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      supabase
-        .from("sessions")
-        .select("started_at")
-        .not("finished_at", "is", null)
-        .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString()),
-    ]);
+  const [
+    { data: programs },
+    { data: active },
+    { data: openSession },
+    { data: finished },
+    { data: settings },
+    { count: sessionCount },
+  ] = await Promise.all([
+    supabase
+      .from("programs")
+      .select("id, name, days_per_week, program_days(id, label, position)")
+      .order("days_per_week"),
+    supabase.from("user_active_program").select("program_id").maybeSingle(),
+    supabase
+      .from("sessions")
+      .select("id, started_at")
+      .is("finished_at", null)
+      .order("started_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("sessions")
+      .select("started_at")
+      .not("finished_at", "is", null)
+      .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString()),
+    supabase.from("user_settings").select("unit_system").maybeSingle(),
+    supabase.from("sessions").select("id", { count: "exact", head: true }),
+  ]);
 
   const activeId = active?.program_id ?? null;
 
@@ -117,6 +126,10 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
+      <WelcomeOverlay
+        eligible={(sessionCount ?? 0) === 0}
+        unit={settings?.unit_system ?? "kg"}
+      />
       <header className="flex items-center justify-between border-b px-sm py-sm">
         <span className="pl-2xs text-lg font-bold tracking-tight">Arco</span>
         <nav className="flex items-center">
