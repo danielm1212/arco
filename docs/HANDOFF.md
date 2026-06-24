@@ -12,15 +12,16 @@ Zrobione fazy: 0 (fundament) · 1 (logger) · 2 (głębia) · 2.5 (offline) · 3
 · 4 (insighty) · biblioteka programów · zdjęcia ciała · polish P1–P5 (logger/home/postępy/ćwiczenie/onboarding).
 Audyty: `docs/product-audit.md`, `docs/ux-audit-mobbin.md`, `docs/usability-audit.md`.
 
-## DO ZROBIENIA przed pierwszym deployem (uzgodnione)
-1. **Wyczyścić dane testowe** — w bazie jest dużo sesji z testów/smoke (Postępy pokazują „16 sesji/7 dni”).
-   Świeży start: usuń sesje usera (np. `delete from sessions where user_id = <uid>`), potem `recompute_personal_records`.
-2. **5 punktów P0/P1 z `usability-audit.md`:**
-   - usuń `maximumScale`/`userScalable` z `viewport` w `app/layout.tsx` (WCAG zoom),
-   - dark mode: wepnij `prefers-color-scheme` → klasa `.dark` (lub usuń warstwę dark z `globals.css`),
-   - `focus-visible` na ikonowych przyciskach (`SetRow` ✓/✕, builder ↑/↓, rest ±, typ serii),
-   - confirm „Zakończyć trening?” przy niezaliczonych seriach (`Logger.handleFinish`),
-   - undo-toast po usunięciu serii/ćwiczenia (`Logger.handleDeleteSet/Exercise` + sonner).
+## Pre-deploy P0/P1 — ZROBIONE (commity `8e674eb` + `7a5b767`)
+Wszystkie uzgodnione punkty domknięte (ta lista była wcześniej nieaktualna):
+1. ✅ **Dane testowe wyczyszczone** (16 sesji/24 PR/1 pomiar/1 zdjęcie) — świeży start.
+2. ✅ **5 punktów P0/P1 z `usability-audit.md`:**
+   - ✅ `maximumScale`/`userScalable` usunięte z `viewport` w `app/layout.tsx` (WCAG zoom),
+   - ✅ dark mode przez `prefers-color-scheme` → `app/globals.css:107`,
+   - ✅ `focus-visible` na ikonowych przyciskach — globalna reguła `button/a/[role=button]:focus-visible`
+     w `app/globals.css:131-136` (pokrywa SetRow ✓/✕, builder ↑/↓, rest ±; brak klikalnych nie-buttonów),
+   - ✅ confirm „Zakończyć trening?” przy niezaliczonych seriach (`Logger.handleFinish`, `Logger.tsx:271`),
+   - ✅ undo-toast „Cofnij” po usunięciu serii/ćwiczenia (`Logger.tsx:250`, sonner).
 
 ## Potem: Phase 10 — deploy (wymaga kont użytkownika)
 - Supabase cloud: nowy projekt → `supabase link` → `supabase db push` (migracje) → seed + bootstrap usera (service-role z env produkcyjnego).
