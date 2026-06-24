@@ -25,9 +25,12 @@
     --arco-neutral-900: 222 22% 10%;
     --arco-neutral-950: 224 28% 6%;
 
-    --arco-accent-400: 28 96% 62%;
-    --arco-accent-500: 24 95% 53%;   /* główny akcent — energia */
-    --arco-accent-600: 20 90% 48%;
+    /* akcent — volt / lime-green (athletic). Używać jako WYPEŁNIENIA z ciemnym
+       tekstem; volt-600 to jedyny stop bezpieczny jako tekst na jasnym tle (AA). */
+    --arco-volt-300: 74 88% 72%;
+    --arco-volt-400: 76 80% 56%;   /* bright fill — ciemny tekst na wierzchu */
+    --arco-volt-500: 78 78% 46%;   /* mid stop (hover/active fill) */
+    --arco-volt-600: 80 70% 28%;   /* akcent-jako-tekst / primary na jasnym tle — 5.05:1 AA */
 
     --arco-green-500: 142 71% 45%;
     --arco-amber-500: 38 92% 50%;
@@ -46,21 +49,28 @@
     --radius-sm: 0.375rem;
     --radius-md: 0.625rem;
     --radius-lg: 1rem;
+    --radius-xl: 1.25rem;   /* karty bento */
     --radius-full: 9999px;
 
+    /* elewacja — miękki cień zamiast 1px ramki (kierunek "Athletic") */
+    --shadow-sm: 0 1px 2px 0 hsl(220 25% 12% / 0.05);
+    --shadow-md: 0 6px 20px -6px hsl(220 25% 12% / 0.10);
+
     /* ── L2 · SEMANTIC (light) — referencje do primitive, nigdy surowe HSL ─── */
-    --color-bg:              var(--arco-neutral-50);
+    --color-bg:              var(--arco-neutral-100);   /* tinted canvas pod bento */
     --color-surface:         var(--arco-neutral-0);
     --color-surface-muted:   var(--arco-neutral-100);
     --color-text:            var(--arco-neutral-900);
     --color-text-muted:      var(--arco-neutral-500);
     --color-border:          var(--arco-neutral-200);
-    --color-accent:          var(--arco-accent-500);
-    --color-accent-contrast: var(--arco-neutral-0);
+    --color-accent:          var(--arco-volt-600);       /* primary/akcent-tekst — AA na jasnym */
+    --color-accent-contrast: var(--arco-neutral-0);      /* biały tekst na ciemnym volcie */
+    --color-volt:            var(--arco-volt-400);       /* jasny fill: dziś/streak/ringi/aktywne */
+    --color-volt-contrast:   var(--arco-neutral-950);    /* ciemny tekst na jasnym volcie */
     --color-success:         var(--arco-green-500);
     --color-warning:         var(--arco-amber-500);
     --color-danger:          var(--arco-red-500);
-    --color-ring:            var(--arco-accent-500);
+    --color-ring:            var(--arco-volt-600);   /* ciemny ring — widoczny na białym (1.4.11) */
 
     /* ── L3-bridge · zmienne shadcn (czytają z warstwy semantycznej) ──────── */
     --background:            var(--color-bg);
@@ -82,6 +92,8 @@
     --border:                var(--color-border);
     --input:                 var(--color-border);
     --ring:                  var(--color-ring);
+    --volt:                  var(--color-volt);
+    --volt-foreground:       var(--color-volt-contrast);
     --radius:                var(--radius-md);
   }
 
@@ -93,12 +105,14 @@
     --color-text:            var(--arco-neutral-50);
     --color-text-muted:      var(--arco-neutral-400);
     --color-border:          var(--arco-neutral-800);
-    --color-accent:          var(--arco-accent-500);
+    --color-accent:          var(--arco-volt-400);       /* bright na ciemnym tle — AA z ciemnym tekstem */
     --color-accent-contrast: var(--arco-neutral-950);
+    --color-volt:            var(--arco-volt-400);
+    --color-volt-contrast:   var(--arco-neutral-950);
     --color-success:         var(--arco-green-500);
     --color-warning:         var(--arco-amber-500);
     --color-danger:          var(--arco-red-500);
-    --color-ring:            var(--arco-accent-400);
+    --color-ring:            var(--arco-volt-400);
 
     --destructive-foreground: var(--arco-neutral-50);
   }
@@ -112,8 +126,11 @@
       --color-text: var(--arco-neutral-50);
       --color-text-muted: var(--arco-neutral-400);
       --color-border: var(--arco-neutral-800);
+      --color-accent: var(--arco-volt-400);
       --color-accent-contrast: var(--arco-neutral-950);
-      --color-ring: var(--arco-accent-400);
+      --color-volt: var(--arco-volt-400);
+      --color-volt-contrast: var(--arco-neutral-950);
+      --color-ring: var(--arco-volt-400);
       --destructive-foreground: var(--arco-neutral-50);
     }
   }

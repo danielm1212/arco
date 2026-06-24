@@ -48,15 +48,25 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Jasny akcent volt (fill z ciemnym tekstem): dziś/streak/ringi/aktywne
+        volt: {
+          DEFAULT: "hsl(var(--volt))",
+          foreground: "hsl(var(--volt-foreground))",
+        },
         // Semantyczne kolory feedbacku (poza zestawem shadcn)
         success: "hsl(var(--color-success))",
         warning: "hsl(var(--color-warning))",
         danger: "hsl(var(--color-danger))",
       },
       borderRadius: {
+        xl: "var(--radius-xl)",
         lg: "var(--radius-lg)",
         md: "var(--radius-md)",
         sm: "var(--radius-sm)",
+      },
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
       },
       spacing: {
         "2xs": "var(--space-2xs)",
