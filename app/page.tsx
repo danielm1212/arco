@@ -12,7 +12,7 @@ import { Settings, LogOut } from "lucide-react";
 export default async function HomePage() {
   const supabase = createClient();
 
-  const [{ data: programs }, { data: active }, { data: openSession }] =
+  const [{ data: programs }, { data: active }, { data: openSession }, { data: finished }] =
     await Promise.all([
       supabase
         .from("programs")
@@ -26,9 +26,44 @@ export default async function HomePage() {
         .order("started_at", { ascending: false })
         .limit(1)
         .maybeSingle(),
+      supabase
+        .from("sessions")
+        .select("started_at")
+        .not("finished_at", "is", null)
+        .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString()),
     ]);
 
   const activeId = active?.program_id ?? null;
+
+  // Pasek tygodnia + streak
+  const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+  const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
+  const monday = new Date();
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  monday.setHours(0, 0, 0, 0);
+  const todayKey = dayKey(new Date());
+  const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
+  const week = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const key = dayKey(d);
+    return { key, on: doneDays.has(key), today: key === todayKey, dow: DOW[i] };
+  });
+  const wkStart = (d: Date) => {
+    const x = new Date(d);
+    x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+    x.setHours(0, 0, 0, 0);
+    return x.getTime();
+  };
+  const weeks = new Set((finished ?? []).map((s) => wkStart(new Date(s.started_at))));
+  const WEEK = 7 * 86_400_000;
+  let streak = 0;
+  let w = wkStart(new Date());
+  if (!weeks.has(w)) w -= WEEK;
+  while (weeks.has(w)) {
+    streak++;
+    w -= WEEK;
+  }
 
   // Sugestia kolejnego dnia (rotacja wg ostatniej zakończonej sesji aktywnego programu)
   let suggested: { dayId: string; label: string } | null = null;
@@ -60,6 +95,26 @@ export default async function HomePage() {
     }
   }
 
+  // Metadane sugerowanego dnia (liczba ćwiczeń, szac. czas, podgląd)
+  let suggestedMeta: { count: number; minutes: number; preview: string[] } | null = null;
+  if (suggested) {
+    const { data: slots } = await supabase
+      .from("program_day_slots")
+      .select("target_sets, rest_seconds, exercises(name)")
+      .eq("program_day_id", suggested.dayId)
+      .order("position");
+    if (slots?.length) {
+      const minutes = Math.round(
+        slots.reduce((m, s) => m + s.target_sets * (40 + (s.rest_seconds ?? 90)), 0) / 60,
+      );
+      const preview = slots
+        .slice(0, 3)
+        .map((s) => (s.exercises as unknown as { name: string } | null)?.name ?? "")
+        .filter(Boolean);
+      suggestedMeta = { count: slots.length, minutes, preview };
+    }
+  }
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-sm py-sm">
@@ -79,6 +134,35 @@ export default async function HomePage() {
       </header>
 
       <main className="flex-1 space-y-lg p-md">
+        <section className="rounded-lg border bg-card p-md text-card-foreground">
+          <div className="mb-sm flex items-center justify-between">
+            <span className="text-sm font-medium">Ten tydzień</span>
+            <span className="text-sm font-medium text-primary">
+              🔥 {streak} {streak === 1 ? "tydz." : "tyg."}
+            </span>
+          </div>
+          <div className="flex gap-px">
+            {week.map((d) => (
+              <div key={d.key} className="flex flex-1 flex-col items-center gap-0.5">
+                <div
+                  className={`flex h-7 w-full items-center justify-center rounded-sm text-[10px] ${
+                    d.on ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  } ${d.today ? "ring-2 ring-primary ring-offset-1 ring-offset-card" : ""}`}
+                >
+                  {d.on ? "✓" : ""}
+                </div>
+                <span
+                  className={`text-[9px] ${
+                    d.today ? "font-bold text-foreground" : "text-muted-foreground"
+                  }`}
+                >
+                  {d.dow}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {openSession ? (
           <Link
             href={`/session/${openSession.id}`}
@@ -92,13 +176,26 @@ export default async function HomePage() {
             <form action={startSession.bind(null, suggested.dayId)}>
               <button
                 type="submit"
-                className="flex w-full items-center justify-between rounded-lg border border-primary bg-primary/10 p-md text-left"
+                className="block w-full rounded-lg border border-primary bg-primary/10 p-md text-left"
               >
-                <span>
-                  <span className="block text-xs text-muted-foreground">Sugerowane dziś</span>
-                  <span className="font-medium text-primary">{suggested.label}</span>
-                </span>
-                <span className="font-medium text-primary">Start →</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Sugerowane dziś</span>
+                  <span className="text-sm font-medium text-primary">Start →</span>
+                </div>
+                <p className="mt-2xs font-semibold text-primary">{suggested.label}</p>
+                {suggestedMeta && (
+                  <>
+                    <p className="text-xs text-muted-foreground">
+                      {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
+                    </p>
+                    {suggestedMeta.preview.length > 0 && (
+                      <p className="mt-2xs truncate text-xs text-muted-foreground">
+                        {suggestedMeta.preview.join(" · ")}
+                        {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
+                      </p>
+                    )}
+                  </>
+                )}
               </button>
             </form>
           )
