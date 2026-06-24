@@ -23,7 +23,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
     supabase
       .from("session_exercises")
       .select(
-        "id, exercise_id, position, slot_id, superset_group, exercises(name, exercise_type, equipment), slot:program_day_slots(target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
+        "id, exercise_id, position, slot_id, superset_group, notes, exercises(name, exercise_type, equipment), slot:program_day_slots(target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
       )
       .eq("session_id", sessionId)
       .order("position"),
@@ -67,6 +67,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
       equipment: ex.equipment,
       slot: slot ?? null,
       supersetGroup: e.superset_group ?? null,
+      notes: e.notes ?? null,
       sets: (sets ?? []).filter((s) => s.session_exercise_id === e.id),
       previousSets: ps,
       previous: ps.length ? ps[ps.length - 1] : null, // ostatnia seria — do hintu progresji
@@ -82,6 +83,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
       sessionId={session.id}
       title={dayMeta ? `${dayMeta.programs?.name ?? ""} · ${dayMeta.label}` : "Freestyle"}
       isFinished={!!session.finished_at}
+      startedAt={session.started_at}
       unit={settings?.unit_system ?? "kg"}
       defaultRest={settings?.default_rest_seconds ?? 120}
       barWeight={Number(settings?.bar_weight ?? 20)}

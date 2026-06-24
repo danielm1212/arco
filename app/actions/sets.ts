@@ -110,6 +110,21 @@ export async function addSessionExercise(sessionId: string, exerciseId: string) 
   revalidatePath(`/session/${sessionId}`);
 }
 
+/** Zapis notatki przy ćwiczeniu w sesji. */
+export async function updateSessionExerciseNotes(
+  sessionId: string,
+  sessionExerciseId: string,
+  notes: string,
+) {
+  const supabase = await db();
+  const { error } = await supabase
+    .from("session_exercises")
+    .update({ notes: notes || null })
+    .eq("id", sessionExerciseId);
+  if (error) throw new Error(error.message);
+  revalidatePath(`/session/${sessionId}`);
+}
+
 /** Ustaw grupę supersetu dla wielu ćwiczeń naraz (group = null → rozłącz). */
 export async function setSupersetGroups(
   sessionId: string,

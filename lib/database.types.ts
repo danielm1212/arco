@@ -289,6 +289,7 @@ export type Database = {
         Row: {
           exercise_id: string
           id: string
+          notes: string | null
           position: number
           session_id: string
           slot_id: string | null
@@ -297,6 +298,7 @@ export type Database = {
         Insert: {
           exercise_id: string
           id?: string
+          notes?: string | null
           position: number
           session_id: string
           slot_id?: string | null
@@ -305,6 +307,7 @@ export type Database = {
         Update: {
           exercise_id?: string
           id?: string
+          notes?: string | null
           position?: number
           session_id?: string
           slot_id?: string | null

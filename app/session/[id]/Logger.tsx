@@ -1,11 +1,15 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { Button } from "@/components/ui/button";
-import { deleteSessionExercise, setSupersetGroups } from "@/app/actions/sets";
+import {
+  deleteSessionExercise,
+  setSupersetGroups,
+  updateSessionExerciseNotes,
+} from "@/app/actions/sets";
 import { finishSession, deleteSession } from "@/app/actions/session";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { computePlates, formatPlates } from "@/lib/plates";
@@ -31,6 +35,7 @@ export interface LoggerExercise {
     notes: string | null;
   } | null;
   supersetGroup: number | null;
+  notes: string | null;
   sets: SessionSet[];
   previous: {
     weight: number | null;
@@ -40,6 +45,8 @@ export interface LoggerExercise {
   } | null;
   previousSets: PrevSet[];
 }
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
 function formatPrevious(ex: LoggerExercise, unit: UnitSystem): string | null {
   const p = ex.previous;
@@ -74,6 +81,7 @@ export function Logger({
   sessionId,
   title,
   isFinished,
+  startedAt,
   unit,
   defaultRest,
   barWeight,
@@ -83,6 +91,7 @@ export function Logger({
   sessionId: string;
   title: string;
   isFinished: boolean;
+  startedAt: string;
   unit: UnitSystem;
   defaultRest: number;
   barWeight: number;
@@ -92,7 +101,39 @@ export function Logger({
   const router = useRouter();
   const [exercises, setExercises] = useState(initialExercises);
   const [rest, setRest] = useState<{ endAt: number; label: string | null } | null>(null);
+  // Override restu per ćwiczenie (na czas sesji)
+  const [restOverride, setRestOverride] = useState<Record<string, number>>({});
   const { online, pending, syncing, queueUpsert, queueDelete, flush } = useSync();
+
+  // Licznik czasu trwania sesji (na żywo)
+  const [elapsed, setElapsed] = useState(() =>
+    Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)),
+  );
+  useEffect(() => {
+    if (isFinished) return;
+    const id = window.setInterval(
+      () => setElapsed(Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000))),
+      1000,
+    );
+    return () => window.clearInterval(id);
+  }, [startedAt, isFinished]);
+
+  // Live podsumowanie z lokalnego stanu
+  const doneSets = exercises.reduce((n, ex) => n + ex.sets.filter((s) => s.completed).length, 0);
+  const volume = exercises.reduce(
+    (n, ex) =>
+      n +
+      ex.sets.reduce(
+        (m, s) => m + (s.completed && s.weight != null && s.reps != null ? s.weight * s.reps : 0),
+        0,
+      ),
+    0,
+  );
+  const hh = Math.floor(elapsed / 3600);
+  const mm = Math.floor((elapsed % 3600) / 60);
+  const ss = elapsed % 60;
+  const elapsedStr =
+    (hh > 0 ? `${hh}:${String(mm).padStart(2, "0")}` : `${mm}`) + `:${String(ss).padStart(2, "0")}`;
 
   const SAVE_ERR = "Nie zapisano — sprawdź połączenie i spróbuj ponownie.";
 
@@ -125,9 +166,18 @@ export function Logger({
     );
   }
 
+  const restFor = (ex: LoggerExercise) =>
+    restOverride[ex.sessionExerciseId] ?? ex.slot?.rest_seconds ?? defaultRest;
+
   function startRest(ex: LoggerExercise) {
-    const seconds = ex.slot?.rest_seconds ?? defaultRest;
-    setRest({ endAt: Date.now() + seconds * 1000, label: ex.name });
+    setRest({ endAt: Date.now() + restFor(ex) * 1000, label: ex.name });
+  }
+
+  function persistNotes(seId: string, notes: string) {
+    setExercises((prev) =>
+      prev.map((ex) => (ex.sessionExerciseId === seId ? { ...ex, notes } : ex)),
+    );
+    updateSessionExerciseNotes(sessionId, seId, notes).catch(() => toast.error(SAVE_ERR));
   }
 
   async function handleAddSet(ex: LoggerExercise) {
@@ -285,7 +335,8 @@ export function Logger({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/95 px-md py-sm backdrop-blur">
+      <header className="sticky top-0 z-10 border-b bg-background/95 px-md py-sm backdrop-blur">
+        <div className="flex items-center justify-between">
         <div className="min-w-0">
           <button onClick={() => router.push("/")} className="text-xs text-muted-foreground">
             ← Trening
@@ -312,6 +363,22 @@ export function Logger({
               Zakończ
             </Button>
           )}
+        </div>
+        </div>
+        <div className="mt-xs flex items-center gap-lg text-xs text-muted-foreground">
+          <span>
+            ⏱ <span className="font-mono tabular-nums text-foreground">{elapsedStr}</span>
+          </span>
+          <span>
+            🏋{" "}
+            <span className="font-medium text-foreground">
+              {Math.round(volume).toLocaleString("pl-PL")}
+              {unit}
+            </span>
+          </span>
+          <span>
+            ✓ <span className="font-medium text-foreground">{doneSets}</span> serii
+          </span>
         </div>
       </header>
 
@@ -388,6 +455,44 @@ export function Logger({
                 )}
               </div>
 
+              <div className="flex items-center gap-xs text-xs text-muted-foreground">
+                <span>⏱ Przerwa</span>
+                <button
+                  aria-label="krótsza przerwa"
+                  onClick={() =>
+                    setRestOverride((o) => ({
+                      ...o,
+                      [ex.sessionExerciseId]: Math.max(0, restFor(ex) - 15),
+                    }))
+                  }
+                  className="h-6 w-6 rounded border border-input active:bg-muted"
+                >
+                  −
+                </button>
+                <span className="w-10 text-center font-mono tabular-nums text-foreground">
+                  {mmss(restFor(ex))}
+                </span>
+                <button
+                  aria-label="dłuższa przerwa"
+                  onClick={() =>
+                    setRestOverride((o) => ({
+                      ...o,
+                      [ex.sessionExerciseId]: restFor(ex) + 15,
+                    }))
+                  }
+                  className="h-6 w-6 rounded border border-input active:bg-muted"
+                >
+                  +
+                </button>
+              </div>
+
+              <input
+                defaultValue={ex.notes ?? ""}
+                placeholder="Notatka do ćwiczenia…"
+                onBlur={(e) => persistNotes(ex.sessionExerciseId, e.target.value)}
+                className="w-full rounded-md border border-input bg-background px-sm py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+
               <SwapPanel sessionId={sessionId} sessionExerciseId={ex.sessionExerciseId} />
 
               {(() => {
@@ -414,6 +519,28 @@ export function Logger({
                     </p>
                   );
                 })()}
+
+              {ex.sets.length > 0 && (
+                <div className="flex items-center gap-xs px-px text-[10px] uppercase tracking-wide text-muted-foreground">
+                  <span className="w-7 shrink-0 text-center">#</span>
+                  {ex.type === "timed" ? (
+                    <span className="flex-1 text-center">czas</span>
+                  ) : ex.type === "bodyweight" ? (
+                    <>
+                      <span className="flex-1 text-center">powt.</span>
+                      <span className="flex-1 text-center">+{unit}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="flex-1 text-center">{unit}</span>
+                      <span className="flex-1 text-center">powt.</span>
+                    </>
+                  )}
+                  {ex.type !== "timed" && <span className="w-16 text-center">RPE</span>}
+                  <span className="w-9 text-center">✓</span>
+                  <span className="w-4 shrink-0" />
+                </div>
+              )}
 
               <ul className="space-y-2xs">
                 {ex.sets.map((set, i) => (
