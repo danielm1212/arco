@@ -2,17 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
-
-function formatSet(type: ExerciseType, s: SessionSet, unit: UnitSystem): string {
-  if (type === "timed") return s.duration_seconds != null ? `${s.duration_seconds}s` : "—";
-  if (type === "bodyweight")
-    return (
-      [s.reps != null ? `${s.reps}` : null, s.added_weight ? `+${s.added_weight}${unit}` : null]
-        .filter(Boolean)
-        .join(" ") || "—"
-    );
-  return s.weight != null && s.reps != null ? `${s.weight}${unit} × ${s.reps}` : "—";
-}
+import { formatSet } from "@/lib/format";
+import { Sparkline } from "@/components/Sparkline";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
@@ -26,35 +17,6 @@ function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
     if (v != null && (best == null || v > best)) best = v;
   }
   return best;
-}
-
-function Sparkline({ values }: { values: number[] }) {
-  if (values.length < 2) return null;
-  const w = 320;
-  const h = 64;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const span = max - min || 1;
-  const pts = values
-    .map((v, i) => {
-      const x = (i / (values.length - 1)) * w;
-      const y = h - ((v - min) / span) * (h - 8) - 4;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-16 w-full" preserveAspectRatio="none">
-      <polyline
-        points={pts}
-        fill="none"
-        stroke="hsl(var(--primary))"
-        strokeWidth="2"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
-  );
 }
 
 export default async function ExercisePage({ params }: { params: { id: string } }) {

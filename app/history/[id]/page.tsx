@@ -3,17 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
-
-function formatSet(type: ExerciseType, s: SessionSet, unit: UnitSystem): string {
-  if (type === "timed") return s.duration_seconds != null ? `${s.duration_seconds}s` : "—";
-  if (type === "bodyweight")
-    return (
-      [s.reps != null ? `${s.reps} powt.` : null, s.added_weight ? `+${s.added_weight}${unit}` : null]
-        .filter(Boolean)
-        .join(" ") || "—"
-    );
-  return s.weight != null && s.reps != null ? `${s.weight}${unit} × ${s.reps}` : "—";
-}
+import { formatSet } from "@/lib/format";
 
 export default async function SessionDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
