@@ -1,5 +1,11 @@
 /** Prosty wykres liniowy (SVG) — trend wartości w czasie. Zwraca null dla < 2 punktów. */
-export function Sparkline({ values }: { values: number[] }) {
+export function Sparkline({
+  values,
+  className = "h-16 w-full",
+}: {
+  values: number[];
+  className?: string;
+}) {
   if (values.length < 2) return null;
   const w = 320;
   const h = 64;
@@ -14,7 +20,7 @@ export function Sparkline({ values }: { values: number[] }) {
     })
     .join(" ");
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-16 w-full" preserveAspectRatio="none">
+    <svg viewBox={`0 0 ${w} ${h}`} className={className} preserveAspectRatio="none">
       <polyline
         points={pts}
         fill="none"
