@@ -127,6 +127,46 @@ export async function deleteDay(programId: string, dayId: string) {
   revalidatePath(`/programs/${programId}`);
 }
 
+/** Przesuń dzień w górę/dół (zamiana position z sąsiadem). */
+export async function moveDay(programId: string, dayId: string, dir: "up" | "down") {
+  const { supabase } = await ctx();
+  const { data: days } = await supabase
+    .from("program_days")
+    .select("id, position")
+    .eq("program_id", programId)
+    .order("position");
+  if (!days) return;
+  const i = days.findIndex((d) => d.id === dayId);
+  const j = dir === "up" ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= days.length) return;
+  await supabase.from("program_days").update({ position: days[j].position }).eq("id", days[i].id);
+  await supabase.from("program_days").update({ position: days[i].position }).eq("id", days[j].id);
+  revalidatePath(`/programs/${programId}`);
+}
+
+/** Przesuń slot w górę/dół w obrębie dnia. */
+export async function moveSlot(programId: string, slotId: string, dir: "up" | "down") {
+  const { supabase } = await ctx();
+  const { data: slot } = await supabase
+    .from("program_day_slots")
+    .select("program_day_id")
+    .eq("id", slotId)
+    .single();
+  if (!slot) return;
+  const { data: slots } = await supabase
+    .from("program_day_slots")
+    .select("id, position")
+    .eq("program_day_id", slot.program_day_id)
+    .order("position");
+  if (!slots) return;
+  const i = slots.findIndex((s) => s.id === slotId);
+  const j = dir === "up" ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= slots.length) return;
+  await supabase.from("program_day_slots").update({ position: slots[j].position }).eq("id", slots[i].id);
+  await supabase.from("program_day_slots").update({ position: slots[i].position }).eq("id", slots[j].id);
+  revalidatePath(`/programs/${programId}`);
+}
+
 export async function addSlot(programId: string, dayId: string, exerciseId: string) {
   const { supabase } = await ctx();
   const { count } = await supabase

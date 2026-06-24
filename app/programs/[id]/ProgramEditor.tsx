@@ -14,6 +14,8 @@ import {
   updateSlot,
   deleteSlot,
   deleteProgram,
+  moveDay,
+  moveSlot,
 } from "@/app/actions/program";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,10 +91,24 @@ export function ProgramEditor({
                 className="h-9 font-medium"
               />
               <button
+                onClick={() => run(() => moveDay(programId, day.id, "up"), true)}
+                className="shrink-0 px-1 text-muted-foreground hover:text-foreground"
+                aria-label="Dzień wyżej"
+              >
+                ↑
+              </button>
+              <button
+                onClick={() => run(() => moveDay(programId, day.id, "down"), true)}
+                className="shrink-0 px-1 text-muted-foreground hover:text-foreground"
+                aria-label="Dzień niżej"
+              >
+                ↓
+              </button>
+              <button
                 onClick={() => run(() => deleteDay(programId, day.id), true)}
                 className="shrink-0 text-xs text-muted-foreground hover:text-danger"
               >
-                Usuń dzień
+                Usuń
               </button>
             </div>
 
@@ -103,6 +119,8 @@ export function ProgramEditor({
                   slot={slot}
                   onUpdate={(v) => run(() => updateSlot(programId, slot.id, v))}
                   onDelete={() => run(() => deleteSlot(programId, slot.id), true)}
+                  onMoveUp={() => run(() => moveSlot(programId, slot.id, "up"), true)}
+                  onMoveDown={() => run(() => moveSlot(programId, slot.id, "down"), true)}
                 />
               ))}
             </ul>
@@ -138,6 +156,8 @@ function SlotRow({
   slot,
   onUpdate,
   onDelete,
+  onMoveUp,
+  onMoveDown,
 }: {
   slot: EditorSlot;
   onUpdate: (v: {
@@ -147,12 +167,20 @@ function SlotRow({
     rest_seconds?: number;
   }) => void;
   onDelete: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
 }) {
   return (
     <li className="space-y-2xs rounded-md border p-sm">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{slot.exerciseName}</span>
-        <button onClick={onDelete} className="text-xs text-muted-foreground hover:text-danger">
+      <div className="flex items-center justify-between gap-xs">
+        <span className="min-w-0 flex-1 truncate text-sm font-medium">{slot.exerciseName}</span>
+        <button onClick={onMoveUp} className="shrink-0 px-1 text-muted-foreground hover:text-foreground" aria-label="Wyżej">
+          ↑
+        </button>
+        <button onClick={onMoveDown} className="shrink-0 px-1 text-muted-foreground hover:text-foreground" aria-label="Niżej">
+          ↓
+        </button>
+        <button onClick={onDelete} className="shrink-0 text-xs text-muted-foreground hover:text-danger" aria-label="Usuń">
           ✕
         </button>
       </div>

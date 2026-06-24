@@ -144,19 +144,31 @@ export default async function ProgressPage() {
         </section>
 
         <section className="space-y-sm">
-          <h2 className="text-base font-semibold">Serie na partię (7 dni)</h2>
+          <h2 className="text-base font-semibold">Bilans partii (7 dni)</h2>
           {muscleRows.length === 0 ? (
             <p className="text-sm text-muted-foreground">Brak danych z ostatnich 7 dni.</p>
           ) : (
-            <ul className="space-y-2xs">
-              {muscleRows.map(([m, n]) => (
-                <li key={m} className="flex items-center justify-between text-sm">
-                  <span className="capitalize">{m}</span>
-                  <span className="font-medium tabular-nums">{n}</span>
-                </li>
-              ))}
+            <ul className="space-y-xs">
+              {muscleRows.map(([m, n]) => {
+                const max = muscleRows[0][1] || 1;
+                return (
+                  <li key={m} className="flex items-center gap-sm text-sm">
+                    <span className="w-24 shrink-0 truncate capitalize">{m}</span>
+                    <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary"
+                        style={{ width: `${Math.max(8, (n / max) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="w-5 shrink-0 text-right font-medium tabular-nums">{n}</span>
+                  </li>
+                );
+              })}
             </ul>
           )}
+          <p className="text-[10px] text-muted-foreground">
+            Liczba serii roboczych na partię — pilnuj równowagi (np. push vs pull).
+          </p>
         </section>
 
         <section className="space-y-sm">
