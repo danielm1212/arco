@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function SessionDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
 

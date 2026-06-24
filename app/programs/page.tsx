@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProgramsPage() {
   const supabase = createClient();
   const {

@@ -235,17 +235,40 @@ export function Logger({
   }
 
   function handleDeleteSet(seId: string, setId: string) {
+    const ex = exercisesRef.current.find((e) => e.sessionExerciseId === seId);
+    const idx = ex ? ex.sets.findIndex((s) => s.id === setId) : -1;
+    const removed = idx >= 0 ? ex!.sets[idx] : null;
     setExercises((prev) =>
-      prev.map((ex) =>
-        ex.sessionExerciseId !== seId
-          ? ex
-          : { ...ex, sets: ex.sets.filter((s) => s.id !== setId) },
+      prev.map((e) =>
+        e.sessionExerciseId !== seId
+          ? e
+          : { ...e, sets: e.sets.filter((s) => s.id !== setId) },
       ),
     );
     queueDelete(sessionId, setId);
+    if (removed) {
+      toast("Seria usunięta", {
+        action: {
+          label: "Cofnij",
+          onClick: () => {
+            setExercises((prev) =>
+              prev.map((e) => {
+                if (e.sessionExerciseId !== seId) return e;
+                const sets = [...e.sets];
+                sets.splice(Math.min(idx, sets.length), 0, removed);
+                return { ...e, sets };
+              }),
+            );
+            queueUpsert(sessionId, toRow(removed));
+          },
+        },
+      });
+    }
   }
 
   async function handleFinish() {
+    const incomplete = exercises.some((ex) => ex.sets.some((s) => !s.completed));
+    if (incomplete && !confirm("Masz niezaznaczone serie. Zakończyć trening mimo to?")) return;
     if (!online) {
       toast.error("Jesteś offline. Serie są zapisane lokalnie — zakończ, gdy wróci sieć.");
       return;

@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Logger, type LoggerExercise } from "./Logger";
 
+export const dynamic = "force-dynamic";
+
 export default async function SessionPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
   const sessionId = params.id;

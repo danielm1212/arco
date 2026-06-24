@@ -6,6 +6,8 @@ import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { ProgramEditor, type EditorDay } from "./ProgramEditor";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProgramEditorPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
   const {

@@ -102,6 +102,21 @@
 
     --destructive-foreground: var(--arco-neutral-50);
   }
+
+  /* Auto dark wg ustawień systemu (bez potrzeby klasy .dark) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: var(--arco-neutral-950);
+      --color-surface: var(--arco-neutral-900);
+      --color-surface-muted: var(--arco-neutral-800);
+      --color-text: var(--arco-neutral-50);
+      --color-text-muted: var(--arco-neutral-400);
+      --color-border: var(--arco-neutral-800);
+      --color-accent-contrast: var(--arco-neutral-950);
+      --color-ring: var(--arco-accent-400);
+      --destructive-foreground: var(--arco-neutral-50);
+    }
+  }
 }
 
 @layer base {
@@ -112,5 +127,11 @@
     @apply bg-background text-foreground;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
+  }
+  /* Spójny focus dla wszystkich interaktywnych elementów (a11y) */
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }

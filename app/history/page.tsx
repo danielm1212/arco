@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { DeleteSessionButton } from "./DeleteSessionButton";
+
+export const dynamic = "force-dynamic";
 
 export default async function HistoryPage() {
   const supabase = createClient();
@@ -41,28 +44,32 @@ export default async function HistoryPage() {
             0,
           );
           return (
-            <Link
+            <div
               key={s.id}
-              href={`/history/${s.id}`}
-              className="block rounded-lg border bg-card p-md text-card-foreground"
+              className="flex items-stretch rounded-lg border bg-card text-card-foreground"
             >
-              <div className="flex items-center justify-between">
-                <span className="font-medium">{title}</span>
-                {!s.finished_at && (
-                  <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs text-primary">
-                    w toku
-                  </span>
-                )}
+              <Link href={`/history/${s.id}`} className="block min-w-0 flex-1 p-md">
+                <div className="flex items-center justify-between gap-sm">
+                  <span className="truncate font-medium">{title}</span>
+                  {!s.finished_at && (
+                    <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-xs text-primary">
+                      w toku
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2xs text-sm text-muted-foreground">
+                  {new Date(s.started_at).toLocaleDateString("pl-PL", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                  })}{" "}
+                  · {exs.length} ćwiczeń · {doneSets} zaliczonych serii
+                </p>
+              </Link>
+              <div className="flex items-center pr-sm">
+                <DeleteSessionButton id={s.id} />
               </div>
-              <p className="mt-2xs text-sm text-muted-foreground">
-                {new Date(s.started_at).toLocaleDateString("pl-PL", {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                })}{" "}
-                · {exs.length} ćwiczeń · {doneSets} zaliczonych serii
-              </p>
-            </Link>
+            </div>
           );
         })}
       </main>

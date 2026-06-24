@@ -9,6 +9,8 @@ const PERIODS = [
   { key: "all", label: "Wszystko", days: null as number | null },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default async function ProgressPage({
   searchParams,
 }: {
