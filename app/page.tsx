@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/login/actions";
-import {
-  setActiveProgram,
-  startSession,
-  startFreestyle,
-} from "@/app/actions/session";
+import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut } from "lucide-react";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
@@ -45,6 +41,12 @@ export default async function HomePage() {
   ]);
 
   const activeId = active?.program_id ?? null;
+  const activeProgram = (programs ?? []).find((p) => p.id === activeId) ?? null;
+  const activeDays = activeProgram
+    ? ((activeProgram.program_days as { id: string; label: string; position: number }[]) ?? [])
+        .slice()
+        .sort((a, b) => a.position - b.position)
+    : [];
 
   // Pasek tygodnia + streak
   const dayKey = (d: Date) => d.toISOString().slice(0, 10);
@@ -218,63 +220,45 @@ export default async function HomePage() {
 
         <section className="space-y-sm">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-base font-semibold">Programy</h2>
+            <h2 className="text-base font-semibold">Program</h2>
             <Link href="/programs" className="text-xs text-primary">
-              Zarządzaj →
+              {activeId ? "Zmień →" : "Biblioteka →"}
             </Link>
           </div>
 
-          {programs?.map((p) => {
-            const isActive = p.id === activeId;
-            const days = (p.program_days as { id: string; label: string; position: number }[])
-              .slice()
-              .sort((a, b) => a.position - b.position);
-            return (
-              <div
-                key={p.id}
-                className="space-y-sm rounded-lg border bg-card p-md text-card-foreground"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {p.days_per_week}× / tydzień
-                    </p>
-                  </div>
-                  {isActive ? (
-                    <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
-                      Aktywny
-                    </span>
-                  ) : (
-                    <form action={setActiveProgram.bind(null, p.id)}>
-                      <Button variant="outline" size="sm" type="submit">
-                        Ustaw aktywny
+          {activeProgram ? (
+            <div className="space-y-sm rounded-lg border bg-card p-md text-card-foreground">
+              <div className="flex items-center justify-between">
+                <p className="font-medium">{activeProgram.name}</p>
+                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+                  Aktywny
+                </span>
+              </div>
+              <ul className="space-y-2xs">
+                {activeDays.map((d) => (
+                  <li key={d.id}>
+                    <form action={startSession.bind(null, d.id)}>
+                      <Button
+                        variant="secondary"
+                        type="submit"
+                        className="w-full justify-between"
+                      >
+                        <span>{d.label}</span>
+                        <span className="text-xs text-muted-foreground">Start →</span>
                       </Button>
                     </form>
-                  )}
-                </div>
-
-                {isActive && (
-                  <ul className="space-y-2xs">
-                    {days.map((d) => (
-                      <li key={d.id}>
-                        <form action={startSession.bind(null, d.id)}>
-                          <Button
-                            variant="secondary"
-                            type="submit"
-                            className="w-full justify-between"
-                          >
-                            <span>{d.label}</span>
-                            <span className="text-xs text-muted-foreground">Start →</span>
-                          </Button>
-                        </form>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <Link
+              href="/programs"
+              className="block rounded-lg border border-dashed p-md text-center text-sm text-muted-foreground"
+            >
+              Nie masz aktywnego programu — wybierz z biblioteki →
+            </Link>
+          )}
         </section>
 
         <section className="space-y-sm">
