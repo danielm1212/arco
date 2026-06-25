@@ -14,9 +14,8 @@ Po researchu Mobbin + audycie: stary UI był „default shadcn". Kierunek (decyz
 **Zrobione (cd.):**
 - `95a44ed` **Dark logger (focus mode)** — ekran sesji wymuszony `.dark`, bright volt na zaliczonej serii + „Zakończ", karty rounded-xl. **Kluczowy fix tokenów:** L3-bridge shadcn re-deklarowany w `.dark` (bez tego `var()` w moście z `:root` nie re-resolvuje się w poddrzewie `.dark` → jasne tła mimo ciemnej semantyki). Zweryfikowane Preview.
 
-**Następne fazy (wizualne/UX):**
-1. **Odchudzenie gęstości loggera** (progressive disclosure) + UX pól serii: widoczność wpisywanych kg + jednostki, mniejszy footprint stepperów ±, RPE domyślnie ukryte (pamięć `arco-logger-next-steps` #2/#3).
-2. (opc.) Onboarding/login w nowym języku.
+**Następne fazy (wizualne/UX):** → szczegóły w `docs/plan-theme-i-naprawy.md` (zatwierdzony, NIEwykonany).
+Skrót: **A** theme toggle 3-stan (jasny/ciemny/system, default dark, `next-themes`+localStorage, usunąć `@media prefers-color-scheme`; logger zostaje zawsze ciemny) → **B** walidacja inputów (bug 2222 kg) → **C** odchudzenie stepperów → **D** osobno: last-set per wiersz, kalendarz/streak, heatmapa-sylwetka.
 
 ## Kierunki produktowe — brief v0.3 (`docs/build-brief-v0.3-addendum.md`)
 Analiza jasności briefu vs audyty + konkurencja. Brief v0.2 zostaje źródłem prawdy; addendum nadpisuje punktowo. Najważniejsze:
