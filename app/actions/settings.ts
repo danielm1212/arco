@@ -7,9 +7,7 @@ import type { UnitSystem } from "@/lib/types";
 export async function updateSettings(values: {
   unit_system?: UnitSystem;
   default_rest_seconds?: number;
-  bar_weight?: number;
   available_equipment?: string[];
-  available_plates?: number[];
 }) {
   const supabase = createClient();
   const {

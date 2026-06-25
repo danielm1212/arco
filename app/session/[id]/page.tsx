@@ -20,7 +20,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
   const [{ data: settings }, { data: exercises }] = await Promise.all([
     supabase
       .from("user_settings")
-      .select("unit_system, default_rest_seconds, bar_weight, available_plates")
+      .select("unit_system, default_rest_seconds")
       .maybeSingle(),
     supabase
       .from("session_exercises")
@@ -88,8 +88,6 @@ export default async function SessionPage({ params }: { params: { id: string } }
       startedAt={session.started_at}
       unit={settings?.unit_system ?? "kg"}
       defaultRest={settings?.default_rest_seconds ?? 120}
-      barWeight={Number(settings?.bar_weight ?? 20)}
-      plates={(settings?.available_plates ?? []).map(Number)}
       initialExercises={model}
     />
   );

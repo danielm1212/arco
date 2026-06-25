@@ -21,26 +21,18 @@ const EQUIPMENT = [
   "other",
 ];
 
-const COMMON_PLATES = [25, 20, 15, 10, 5, 2.5, 1.25, 1, 0.5];
-
 export function SettingsForm({
   unit,
   rest,
-  bar,
   equipment,
-  plates,
 }: {
   unit: UnitSystem;
   rest: number;
-  bar: number;
   equipment: string[];
-  plates: number[];
 }) {
   const [u, setU] = useState<UnitSystem>(unit);
   const [r, setR] = useState(rest);
-  const [b, setB] = useState(bar);
   const [eq, setEq] = useState<string[]>(equipment);
-  const [pl, setPl] = useState<number[]>(plates);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -50,21 +42,13 @@ export function SettingsForm({
     );
   }
 
-  function togglePlate(p: number) {
-    setPl((prev) =>
-      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p].sort((a, b) => b - a),
-    );
-  }
-
   function save() {
     setSaved(false);
     startTransition(async () => {
       await updateSettings({
         unit_system: u,
         default_rest_seconds: r,
-        bar_weight: b,
         available_equipment: eq,
-        available_plates: pl,
       });
       setSaved(true);
     });
@@ -88,26 +72,14 @@ export function SettingsForm({
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-sm">
-        <div className="space-y-xs">
-          <h2 className="text-sm font-medium text-muted-foreground">Domyślny rest (s)</h2>
-          <Input
-            type="number"
-            inputMode="numeric"
-            value={r}
-            onChange={(e) => setR(Number(e.target.value))}
-          />
-        </div>
-        <div className="space-y-xs">
-          <h2 className="text-sm font-medium text-muted-foreground">Gryf ({u})</h2>
-          <Input
-            type="number"
-            inputMode="decimal"
-            step="0.5"
-            value={b}
-            onChange={(e) => setB(Number(e.target.value))}
-          />
-        </div>
+      <section className="space-y-xs">
+        <h2 className="text-sm font-medium text-muted-foreground">Domyślny rest (s)</h2>
+        <Input
+          type="number"
+          inputMode="numeric"
+          value={r}
+          onChange={(e) => setR(Number(e.target.value))}
+        />
       </section>
 
       <section className="space-y-sm">
@@ -128,30 +100,6 @@ export function SettingsForm({
                 }`}
               >
                 {item}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="space-y-sm">
-        <h2 className="text-sm font-medium text-muted-foreground">
-          Dostępne talerze ({u}, na stronę) — kalkulator obciążenia
-        </h2>
-        <div className="flex flex-wrap gap-2xs">
-          {COMMON_PLATES.map((p) => {
-            const on = pl.includes(p);
-            return (
-              <button
-                key={p}
-                onClick={() => togglePlate(p)}
-                className={`rounded-full border px-3 py-1 text-xs tabular-nums ${
-                  on
-                    ? "border-primary bg-primary/15 text-primary"
-                    : "border-input text-muted-foreground"
-                }`}
-              >
-                {p}
               </button>
             );
           })}

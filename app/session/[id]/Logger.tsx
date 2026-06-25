@@ -12,7 +12,6 @@ import {
 } from "@/app/actions/sets";
 import { finishSession, deleteSession } from "@/app/actions/session";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
-import { computePlates, formatPlates } from "@/lib/plates";
 import { useSync } from "@/lib/useSync";
 import { pendingCount, type OutboxSetRow } from "@/lib/outbox";
 import { uuid } from "@/lib/uuid";
@@ -84,8 +83,6 @@ export function Logger({
   startedAt,
   unit,
   defaultRest,
-  barWeight,
-  plates,
   initialExercises,
 }: {
   sessionId: string;
@@ -94,8 +91,6 @@ export function Logger({
   startedAt: string;
   unit: UnitSystem;
   defaultRest: number;
-  barWeight: number;
-  plates: number[];
   initialExercises: LoggerExercise[];
 }) {
   const router = useRouter();
@@ -526,22 +521,6 @@ export function Logger({
                   </p>
                 ) : null;
               })()}
-
-              {ex.type === "weighted" &&
-                barWeight > 0 &&
-                (() => {
-                  const ref =
-                    ex.sets[ex.sets.length - 1]?.weight ?? ex.previous?.weight ?? null;
-                  if (ref == null) return null;
-                  const load = computePlates(ref, barWeight, plates);
-                  if (!load.loadable) return null;
-                  return (
-                    <p className="text-xs text-muted-foreground">
-                      🏋 {ref}
-                      {unit} → talerze/str.: {formatPlates(load)}
-                    </p>
-                  );
-                })()}
 
               {ex.sets.length > 0 && (
                 <div className="flex items-center gap-xs px-px text-[10px] uppercase tracking-wide text-muted-foreground">

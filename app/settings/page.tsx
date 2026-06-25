@@ -8,7 +8,7 @@ export default async function SettingsPage() {
   const supabase = createClient();
   const { data: s } = await supabase
     .from("user_settings")
-    .select("unit_system, default_rest_seconds, bar_weight, available_equipment, available_plates")
+    .select("unit_system, default_rest_seconds, available_equipment")
     .maybeSingle();
 
   return (
@@ -24,9 +24,7 @@ export default async function SettingsPage() {
         <SettingsForm
           unit={s?.unit_system ?? "kg"}
           rest={s?.default_rest_seconds ?? 120}
-          bar={Number(s?.bar_weight ?? 20)}
           equipment={s?.available_equipment ?? []}
-          plates={(s?.available_plates ?? []).map(Number)}
         />
       </main>
     </div>
