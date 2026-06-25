@@ -151,25 +151,29 @@ export default async function HomePage() {
       </header>
 
       <main className="flex-1 space-y-lg p-md">
-        <section className="rounded-lg border bg-card p-md text-card-foreground">
+        <section className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
           <div className="mb-sm flex items-center justify-between">
-            <span className="text-sm font-medium">Ten tydzień</span>
-            <span className="text-sm font-medium text-primary">
-              🔥 {streak} {streak === 1 ? "tydz." : "tyg."}
+            <span className="text-sm font-medium text-muted-foreground">Ten tydzień</span>
+            <span className="flex items-center gap-1 rounded-full bg-volt/15 px-2.5 py-1">
+              <span aria-hidden>🔥</span>
+              <span className="text-base font-semibold tabular-nums text-foreground">{streak}</span>
+              <span className="text-xs text-muted-foreground">
+                {streak === 1 ? "tydz." : "tyg."}
+              </span>
             </span>
           </div>
-          <div className="flex gap-px">
+          <div className="flex gap-1.5">
             {week.map((d) => (
-              <div key={d.key} className="flex flex-1 flex-col items-center gap-0.5">
+              <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
                 <div
-                  className={`flex h-7 w-full items-center justify-center rounded-sm text-[10px] ${
-                    d.on ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  } ${d.today ? "ring-2 ring-primary ring-offset-1 ring-offset-card" : ""}`}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium ${
+                    d.on ? "bg-volt text-volt-foreground" : "bg-muted text-muted-foreground"
+                  } ${d.today ? "ring-2 ring-volt ring-offset-2 ring-offset-card" : ""}`}
                 >
                   {d.on ? "✓" : ""}
                 </div>
                 <span
-                  className={`text-[9px] ${
+                  className={`text-[11px] ${
                     d.today ? "font-bold text-foreground" : "text-muted-foreground"
                   }`}
                 >
@@ -183,9 +187,9 @@ export default async function HomePage() {
         {openSession ? (
           <Link
             href={`/session/${openSession.id}`}
-            className="block rounded-lg border border-primary bg-primary/10 p-md"
+            className="block rounded-xl bg-card p-md shadow-sm ring-1 ring-inset ring-volt/40"
           >
-            <p className="font-medium text-primary">Wznów trening →</p>
+            <p className="font-semibold text-primary">Wznów trening →</p>
             <p className="text-sm text-muted-foreground">Masz niezakończoną sesję.</p>
           </Link>
         ) : (
@@ -193,20 +197,22 @@ export default async function HomePage() {
             <form action={startSession.bind(null, suggested.dayId)}>
               <button
                 type="submit"
-                className="block w-full rounded-lg border border-primary bg-primary/10 p-md text-left"
+                className="block w-full rounded-xl bg-volt p-md text-left text-volt-foreground shadow-md"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Sugerowane dziś</span>
-                  <span className="text-sm font-medium text-primary">Start →</span>
+                  <span className="text-xs font-medium text-volt-foreground/70">Sugerowane dziś</span>
+                  <span className="flex items-center gap-1 rounded-full bg-volt-foreground px-3 py-1 text-xs font-semibold text-volt">
+                    Start →
+                  </span>
                 </div>
-                <p className="mt-2xs font-semibold text-primary">{suggested.label}</p>
+                <p className="mt-sm text-2xl font-bold leading-tight">{suggested.label}</p>
                 {suggestedMeta && (
                   <>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="mt-2xs text-sm font-medium text-volt-foreground/80">
                       {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
                     </p>
                     {suggestedMeta.preview.length > 0 && (
-                      <p className="mt-2xs truncate text-xs text-muted-foreground">
+                      <p className="mt-2xs truncate text-xs text-volt-foreground/70">
                         {suggestedMeta.preview.join(" · ")}
                         {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
                       </p>
@@ -227,7 +233,7 @@ export default async function HomePage() {
           </div>
 
           {activeProgram ? (
-            <div className="space-y-sm rounded-lg border bg-card p-md text-card-foreground">
+            <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
               <div className="flex items-center justify-between">
                 <p className="font-medium">{activeProgram.name}</p>
                 <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
@@ -254,7 +260,7 @@ export default async function HomePage() {
           ) : (
             <Link
               href="/programs"
-              className="block rounded-lg border border-dashed p-md text-center text-sm text-muted-foreground"
+              className="block rounded-xl border border-dashed p-md text-center text-sm text-muted-foreground"
             >
               Nie masz aktywnego programu — wybierz z biblioteki →
             </Link>
