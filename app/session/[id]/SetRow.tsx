@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { clampNum, LIMITS } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 
 export interface PrevSet {
@@ -68,6 +69,7 @@ export function SetRow({
           value={set.duration_seconds}
           suffix="s"
           inc={5}
+          max={LIMITS.duration}
           placeholder={ph(prev?.duration_seconds)}
           onPatch={(n) => onPatch({ duration_seconds: n })}
           onPersist={(n) => onPersist({ duration_seconds: n })}
@@ -78,6 +80,7 @@ export function SetRow({
             value={set.reps}
             suffix="powt."
             inc={1}
+            max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
@@ -85,6 +88,7 @@ export function SetRow({
           <Field
             value={set.added_weight}
             suffix={`+${unit}`}
+            max={LIMITS.weight}
             placeholder={ph(prev?.added_weight)}
             onPatch={(n) => onPatch({ added_weight: n })}
             onPersist={(n) => onPersist({ added_weight: n })}
@@ -97,6 +101,7 @@ export function SetRow({
             suffix={unit}
             step="0.5"
             inc={weightInc}
+            max={LIMITS.weight}
             placeholder={ph(prev?.weight)}
             onPatch={(n) => onPatch({ weight: n })}
             onPersist={(n) => onPersist({ weight: n })}
@@ -104,6 +109,7 @@ export function SetRow({
           <Field
             value={set.reps}
             suffix="powt."
+            max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
@@ -117,6 +123,7 @@ export function SetRow({
           suffix="RPE"
           step="0.5"
           grow={false}
+          max={LIMITS.rpe}
           onPatch={(n) => onPatch({ rpe: n })}
           onPersist={(n) => onPersist({ rpe: n })}
         />
@@ -151,6 +158,8 @@ function Field({
   grow = true,
   placeholder,
   inc,
+  max,
+  min = 0,
   onPatch,
   onPersist,
 }: {
@@ -160,11 +169,14 @@ function Field({
   grow?: boolean;
   placeholder?: string;
   inc?: number;
+  max: number;
+  min?: number;
   onPatch: (n: number | null) => void;
   onPersist: (n: number | null) => void;
 }) {
+  const clamp = (v: string) => clampNum(parseNum(v), { min, max });
   const bump = (d: number) => {
-    const next = Math.max(0, Math.round(((value ?? 0) + d) * 100) / 100);
+    const next = clampNum(Math.round(((value ?? 0) + d) * 100) / 100, { min, max });
     onPatch(next);
     onPersist(next);
   };
@@ -186,10 +198,12 @@ function Field({
           type="number"
           inputMode="decimal"
           step={step}
+          min={min}
+          max={max}
           placeholder={placeholder}
           value={value ?? ""}
-          onChange={(e) => onPatch(parseNum(e.target.value))}
-          onBlur={(e) => onPersist(parseNum(e.target.value))}
+          onChange={(e) => onPatch(clamp(e.target.value))}
+          onBlur={(e) => onPersist(clamp(e.target.value))}
           className={`h-9 text-center font-medium tabular-nums ${inc != null ? "px-1" : "pr-9"}`}
         />
         {inc == null && (

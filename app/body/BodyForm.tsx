@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { uuid } from "@/lib/uuid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { clampNum, LIMITS } from "@/lib/format";
 
 const num = (v: string) => (v.trim() === "" ? null : Number(v.replace(",", ".")));
 
@@ -70,8 +71,8 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
           photo_path = path;
         }
         await logBodyMetric({
-          weight: num(weight),
-          body_fat: num(fat),
+          weight: clampNum(num(weight), { max: LIMITS.bodyWeight }),
+          body_fat: clampNum(num(fat), { max: LIMITS.bodyFat }),
           notes: notes || null,
           photo_path,
         });
@@ -93,6 +94,8 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
             type="number"
             inputMode="decimal"
             step="0.1"
+            min={0}
+            max={LIMITS.bodyWeight}
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
           />
@@ -103,6 +106,8 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
             type="number"
             inputMode="decimal"
             step="0.1"
+            min={0}
+            max={LIMITS.bodyFat}
             value={fat}
             onChange={(e) => setFat(e.target.value)}
           />

@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { updateSettings } from "@/app/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { clampNum, LIMITS } from "@/lib/format";
 import type { UnitSystem } from "@/lib/types";
 
 const THEMES = [
@@ -107,8 +108,10 @@ export function SettingsForm({
         <Input
           type="number"
           inputMode="numeric"
+          min={0}
+          max={LIMITS.rest}
           value={r}
-          onChange={(e) => setR(Number(e.target.value))}
+          onChange={(e) => setR(clampNum(Number(e.target.value), { max: LIMITS.rest }) ?? 0)}
         />
       </section>
 
