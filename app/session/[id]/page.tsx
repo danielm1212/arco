@@ -80,15 +80,19 @@ export default async function SessionPage({ params }: { params: { id: string } }
     | { label: string; programs: { name: string } | null }
     | null;
 
+  // Logger = dark focus mode: wymuszamy ciemny motyw na całym ekranie sesji
+  // (niezależnie od motywu reszty apki) — mniej glare na siłowni, większy kontrast.
   return (
-    <Logger
-      sessionId={session.id}
-      title={dayMeta ? `${dayMeta.programs?.name ?? ""} · ${dayMeta.label}` : "Freestyle"}
-      isFinished={!!session.finished_at}
-      startedAt={session.started_at}
-      unit={settings?.unit_system ?? "kg"}
-      defaultRest={settings?.default_rest_seconds ?? 120}
-      initialExercises={model}
-    />
+    <div className="dark min-h-dvh bg-background text-foreground">
+      <Logger
+        sessionId={session.id}
+        title={dayMeta ? `${dayMeta.programs?.name ?? ""} · ${dayMeta.label}` : "Freestyle"}
+        isFinished={!!session.finished_at}
+        startedAt={session.started_at}
+        unit={settings?.unit_system ?? "kg"}
+        defaultRest={settings?.default_rest_seconds ?? 120}
+        initialExercises={model}
+      />
+    </div>
   );
 }

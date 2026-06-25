@@ -115,6 +115,30 @@
     --color-ring:            var(--arco-volt-400);
 
     --destructive-foreground: var(--arco-neutral-50);
+
+    /* L3-bridge musi być re-deklarowany w .dark — inaczej var() w moście
+       (zadeklarowanym w :root) nie re-resolvuje się w poddrzewie z klasą .dark
+       (np. wymuszony dark logger). Most czyta z ciemnej semantyki powyżej. */
+    --background:            var(--color-bg);
+    --foreground:            var(--color-text);
+    --card:                  var(--color-surface);
+    --card-foreground:       var(--color-text);
+    --popover:               var(--color-surface);
+    --popover-foreground:    var(--color-text);
+    --primary:               var(--color-accent);
+    --primary-foreground:    var(--color-accent-contrast);
+    --secondary:             var(--color-surface-muted);
+    --secondary-foreground:  var(--color-text);
+    --muted:                 var(--color-surface-muted);
+    --muted-foreground:      var(--color-text-muted);
+    --accent:                var(--color-surface-muted);
+    --accent-foreground:     var(--color-text);
+    --destructive:           var(--color-danger);
+    --border:                var(--color-border);
+    --input:                 var(--color-border);
+    --ring:                  var(--color-ring);
+    --volt:                  var(--color-volt);
+    --volt-foreground:       var(--color-volt-contrast);
   }
 
   /* Auto dark wg ustawień systemu (bez potrzeby klasy .dark) */

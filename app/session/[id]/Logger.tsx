@@ -407,7 +407,7 @@ export function Logger({
           return (
             <section
               key={ex.sessionExerciseId}
-              className={`space-y-sm rounded-lg border bg-card p-md text-card-foreground ${
+              className={`space-y-sm rounded-xl bg-card p-md text-card-foreground ${
                 grouped ? "border-l-4 border-l-primary" : ""
               }`}
             >
