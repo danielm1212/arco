@@ -543,7 +543,7 @@ export function Logger({
                   {ex.type !== "timed" && rpeOn[ex.sessionExerciseId] && (
                     <span className="w-16 text-center">RPE</span>
                   )}
-                  <span className="w-9 text-center">✓</span>
+                  <span className="w-10 shrink-0" />
                   <span className="w-4 shrink-0" />
                 </div>
               )}

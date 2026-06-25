@@ -120,7 +120,8 @@ export function SetRow({
         />
       )}
 
-      {/* Akcept serii: pusty checkbox → wypełniony volt po zaliczeniu (jak Hevy) */}
+      {/* Akcept serii: ✓ zawsze widoczny (muted) → wypełniony volt po zaliczeniu
+          (wzorzec Hevy/Gymshark — czytelne, że to przycisk zatwierdzenia) */}
       <button
         onClick={onToggle}
         aria-label={set.completed ? "Cofnij zaliczenie" : "Zalicz serię"}
@@ -128,7 +129,7 @@ export function SetRow({
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md border text-base ${
           set.completed
             ? "border-primary bg-primary text-primary-foreground"
-            : "border-input text-transparent"
+            : "border-input text-muted-foreground"
         }`}
       >
         ✓
