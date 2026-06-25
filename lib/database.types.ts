@@ -292,6 +292,7 @@ export type Database = {
           notes: string | null
           position: number
           session_id: string
+          skipped: boolean
           slot_id: string | null
           superset_group: number | null
         }
@@ -301,6 +302,7 @@ export type Database = {
           notes?: string | null
           position: number
           session_id: string
+          skipped?: boolean
           slot_id?: string | null
           superset_group?: number | null
         }
@@ -310,6 +312,7 @@ export type Database = {
           notes?: string | null
           position?: number
           session_id?: string
+          skipped?: boolean
           slot_id?: string | null
           superset_group?: number | null
         }

@@ -141,6 +141,21 @@ export async function setSupersetGroups(
   revalidatePath(`/session/${sessionId}`);
 }
 
+/** „Pomiń" / „Przywróć" ćwiczenie z programu — zostaje slot, nie usuwamy wiersza. */
+export async function setSessionExerciseSkipped(
+  sessionId: string,
+  sessionExerciseId: string,
+  skipped: boolean,
+) {
+  const supabase = await db();
+  const { error } = await supabase
+    .from("session_exercises")
+    .update({ skipped })
+    .eq("id", sessionExerciseId);
+  if (error) throw new Error(error.message);
+  revalidatePath(`/session/${sessionId}`);
+}
+
 /** Usuń ćwiczenie z sesji (kaskadowo serie). */
 export async function deleteSessionExercise(sessionId: string, sessionExerciseId: string) {
   const supabase = await db();

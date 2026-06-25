@@ -7,6 +7,7 @@ import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { Button } from "@/components/ui/button";
 import {
   deleteSessionExercise,
+  setSessionExerciseSkipped,
   setSupersetGroups,
   updateSessionExerciseNotes,
 } from "@/app/actions/sets";
@@ -35,6 +36,7 @@ export interface LoggerExercise {
   } | null;
   supersetGroup: number | null;
   notes: string | null;
+  skipped: boolean;
   sets: SessionSet[];
   previous: {
     weight: number | null;
@@ -313,6 +315,20 @@ export function Logger({
     }
   }
 
+  // „Pomiń"/„Przywróć" ćwiczenie z programu — zostaje slot, nie usuwamy wiersza
+  async function handleSkip(seId: string, skipped: boolean) {
+    const snapshot = exercises;
+    setExercises((prev) =>
+      prev.map((ex) => (ex.sessionExerciseId === seId ? { ...ex, skipped } : ex)),
+    );
+    try {
+      await setSessionExerciseSkipped(sessionId, seId, skipped);
+    } catch {
+      setExercises(snapshot);
+      toast.error(SAVE_ERR);
+    }
+  }
+
   async function setGroups(updates: { id: string; group: number | null }[]) {
     const snapshot = exercises;
     setExercises((prev) =>
@@ -417,7 +433,7 @@ export function Logger({
               key={ex.sessionExerciseId}
               className={`space-y-sm rounded-xl bg-card p-md text-card-foreground ${
                 grouped ? "border-l-4 border-l-primary" : ""
-              }`}
+              } ${ex.skipped ? "opacity-60" : ""}`}
             >
               <div className="flex items-start justify-between gap-sm">
                 <div className="min-w-0">
@@ -452,15 +468,33 @@ export function Logger({
                     </p>
                   )}
                 </div>
-                <button
-                  onClick={() => handleDeleteExercise(ex.sessionExerciseId)}
-                  className="shrink-0 text-xs text-muted-foreground hover:text-danger"
-                  aria-label="Usuń ćwiczenie"
-                >
-                  Usuń
-                </button>
+                {ex.slot ? (
+                  // Ćwiczenie z programu: „Pomiń" zamiast „Usuń" — zostaje slot/progres
+                  <button
+                    onClick={() => handleSkip(ex.sessionExerciseId, !ex.skipped)}
+                    className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
+                    aria-label={ex.skipped ? "Przywróć ćwiczenie" : "Pomiń ćwiczenie"}
+                  >
+                    {ex.skipped ? "Przywróć" : "Pomiń"}
+                  </button>
+                ) : (
+                  // Ćwiczenie dodane ad hoc (freestyle): twarde usunięcie OK
+                  <button
+                    onClick={() => handleDeleteExercise(ex.sessionExerciseId)}
+                    className="shrink-0 text-xs text-muted-foreground hover:text-danger"
+                    aria-label="Usuń ćwiczenie"
+                  >
+                    Usuń
+                  </button>
+                )}
               </div>
 
+              {ex.skipped ? (
+                <p className="text-xs italic text-muted-foreground">
+                  Pominięte w tej sesji — tap „Przywróć”, żeby wrócić.
+                </p>
+              ) : (
+              <>
               <div className="flex items-center gap-md text-xs">
                 {grouped ? (
                   <button
@@ -601,6 +635,8 @@ export function Logger({
                   </button>
                 )}
               </div>
+              </>
+              )}
             </section>
           );
         })}

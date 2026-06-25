@@ -25,7 +25,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
     supabase
       .from("session_exercises")
       .select(
-        "id, exercise_id, position, slot_id, superset_group, notes, exercises(name, exercise_type, equipment), slot:program_day_slots(target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
+        "id, exercise_id, position, slot_id, superset_group, notes, skipped, exercises(name, exercise_type, equipment), slot:program_day_slots(target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
       )
       .eq("session_id", sessionId)
       .order("position"),
@@ -70,6 +70,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
       slot: slot ?? null,
       supersetGroup: e.superset_group ?? null,
       notes: e.notes ?? null,
+      skipped: e.skipped ?? false,
       sets: (sets ?? []).filter((s) => s.session_exercise_id === e.id),
       previousSets: ps,
       previous: ps.length ? ps[ps.length - 1] : null, // ostatnia seria — do hintu progresji
