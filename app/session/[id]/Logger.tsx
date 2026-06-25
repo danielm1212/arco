@@ -98,6 +98,8 @@ export function Logger({
   const [rest, setRest] = useState<{ endAt: number; label: string | null } | null>(null);
   // Override restu per ćwiczenie (na czas sesji)
   const [restOverride, setRestOverride] = useState<Record<string, number>>({});
+  // RPE domyślnie ukryte (opcjonalne) — odsłaniane per ćwiczenie na czas sesji
+  const [rpeOn, setRpeOn] = useState<Record<string, boolean>>({});
   const { online, pending, syncing, queueUpsert, queueDelete, flush } = useSync();
 
   // Licznik czasu trwania sesji (na żywo)
@@ -538,7 +540,9 @@ export function Logger({
                       <span className="flex-1 text-center">powt.</span>
                     </>
                   )}
-                  {ex.type !== "timed" && <span className="w-16 text-center">RPE</span>}
+                  {ex.type !== "timed" && rpeOn[ex.sessionExerciseId] && (
+                    <span className="w-16 text-center">RPE</span>
+                  )}
                   <span className="w-9 text-center">✓</span>
                   <span className="w-4 shrink-0" />
                 </div>
@@ -553,6 +557,7 @@ export function Logger({
                     prev={ex.previousSets[i] ?? null}
                     type={ex.type}
                     unit={unit}
+                    showRpe={!!rpeOn[ex.sessionExerciseId]}
                     onPatch={(patch) => patchSetLocal(ex.sessionExerciseId, set.id, patch)}
                     onPersist={(patch) => persistSet(set.id, patch)}
                     onToggle={() => handleToggle(ex, set)}
@@ -561,14 +566,35 @@ export function Logger({
                 ))}
               </ul>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full"
-                onClick={() => handleAddSet(ex)}
-              >
-                + seria
-              </Button>
+              <div className="flex items-center gap-sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => handleAddSet(ex)}
+                >
+                  + seria
+                </Button>
+                {ex.type !== "timed" && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRpeOn((o) => ({
+                        ...o,
+                        [ex.sessionExerciseId]: !o[ex.sessionExerciseId],
+                      }))
+                    }
+                    title="RPE — ocena wysiłku 1–10 (ile powtórzeń zostało w zapasie). Opcjonalne."
+                    className={`shrink-0 rounded-md px-2 py-1 text-xs ${
+                      rpeOn[ex.sessionExerciseId]
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {rpeOn[ex.sessionExerciseId] ? "RPE ✓" : "+ RPE"}
+                  </button>
+                )}
+              </div>
             </section>
           );
         })}

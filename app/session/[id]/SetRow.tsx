@@ -23,6 +23,7 @@ export function SetRow({
   prev,
   type,
   unit,
+  showRpe = false,
   onPatch,
   onPersist,
   onToggle,
@@ -33,6 +34,7 @@ export function SetRow({
   prev: PrevSet | null;
   type: ExerciseType;
   unit: UnitSystem;
+  showRpe?: boolean;
   onPatch: (patch: Partial<SessionSet>) => void;
   onPersist: (patch: Partial<SessionSet>) => void;
   onToggle: () => void;
@@ -109,7 +111,7 @@ export function SetRow({
         </>
       )}
 
-      {type !== "timed" && (
+      {type !== "timed" && showRpe && (
         <Field
           value={set.rpe}
           suffix="RPE"
@@ -188,7 +190,7 @@ function Field({
           value={value ?? ""}
           onChange={(e) => onPatch(parseNum(e.target.value))}
           onBlur={(e) => onPersist(parseNum(e.target.value))}
-          className={`h-9 text-center ${inc != null ? "px-1" : "pr-9"}`}
+          className={`h-9 text-center font-medium tabular-nums ${inc != null ? "px-1" : "pr-9"}`}
         />
         {inc == null && (
           <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
