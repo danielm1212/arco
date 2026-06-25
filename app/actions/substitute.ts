@@ -10,6 +10,7 @@ export interface Candidate {
   equipment: string | null;
   mechanic: string | null;
   level: string | null;
+  image: string | null;
 }
 
 export interface SubstituteResult {
@@ -57,7 +58,7 @@ export async function getSubstitutes(
   async function query(opts: { pattern: boolean; muscles: boolean }) {
     let q = supabase
       .from("exercises")
-      .select("id, name, equipment, mechanic, level, primary_muscles, secondary_muscles, movement_pattern")
+      .select("id, name, equipment, mechanic, level, images, primary_muscles, secondary_muscles, movement_pattern")
       .neq("id", cur.id)
       .limit(60);
     if (equipment.length) q = q.in("equipment", equipment);
@@ -95,13 +96,14 @@ export async function getSubstitutes(
         (r.level === cur.level ? 1 : 0),
     }))
     .sort((a, b) => b.score - a.score || a.row.name.localeCompare(b.row.name))
-    .slice(0, 15)
+    .slice(0, 5)
     .map(({ row }) => ({
       id: row.id,
       name: row.name,
       equipment: row.equipment,
       mechanic: row.mechanic,
       level: row.level,
+      image: (row.images as string[] | null)?.[0] ?? null,
     }));
 
   return { loose, items: ranked };

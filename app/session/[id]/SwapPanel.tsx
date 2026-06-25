@@ -8,6 +8,7 @@ import {
   swapExercise,
   type Candidate,
 } from "@/app/actions/substitute";
+import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 
 export function SwapPanel({
   sessionId,
@@ -66,18 +67,38 @@ export function SwapPanel({
           {!loading && items.length === 0 && (
             <p className="text-sm text-muted-foreground">Brak kandydatów.</p>
           )}
-          <ul className="max-h-60 space-y-2xs overflow-y-auto">
+          <ul className="max-h-72 space-y-2xs overflow-y-auto">
             {items.map((c) => (
-              <li key={c.id}>
+              <li key={c.id} className="flex items-center gap-sm rounded-md py-xs pl-xs pr-sm hover:bg-accent">
+                {c.image ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={c.image}
+                    alt=""
+                    loading="lazy"
+                    className="size-11 shrink-0 rounded-md border bg-muted object-cover"
+                  />
+                ) : (
+                  <div className="size-11 shrink-0 rounded-md border bg-muted" />
+                )}
                 <button
                   type="button"
                   disabled={pending}
                   onClick={() => pick(c.id)}
-                  className="flex w-full items-center justify-between rounded-md px-sm py-xs text-left hover:bg-accent disabled:opacity-50"
+                  className="min-w-0 flex-1 text-left disabled:opacity-50"
                 >
-                  <span className="text-sm">{c.name}</span>
-                  <span className="text-xs text-muted-foreground">{c.equipment ?? "—"}</span>
+                  <p className="truncate text-sm">{c.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{c.equipment ?? "—"}</p>
                 </button>
+                <ExerciseInfoSheet exerciseId={c.id}>
+                  <button
+                    type="button"
+                    aria-label="Podgląd ćwiczenia"
+                    className="shrink-0 rounded-full border border-input px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    ⓘ
+                  </button>
+                </ExerciseInfoSheet>
               </li>
             ))}
           </ul>
