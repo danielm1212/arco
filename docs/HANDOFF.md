@@ -1,7 +1,19 @@
 # Arco — stan projektu i handoff (do kontynuacji w nowej sesji)
 
 > Czytaj razem z `CLAUDE.md` (źródło prawdy) i resztą `docs/`. Ten plik mówi: gdzie jesteśmy i co dalej.
-> Aktualizacja: 2026-06-24.
+> Aktualizacja: 2026-06-25.
+
+## Redesign wizualny „Arco Athletic" (w toku)
+Po researchu Mobbin + audycie: stary UI był „default shadcn". Kierunek (decyzje właściciela): **akcent volt/lime-green**, **dark logger jako focus mode**, bento + elewacja zamiast 1px ramek, liczby jako bohater. Architektura tokenów bez zmian (primitive→semantic), tylko wartości/kompozycja. Pamięć: `arco-visual-redesign`.
+
+**Zrobione (na `main`):**
+- `a6d0a8b` Foundation — tokeny volt (`--arco-volt-*`), tinted canvas, `--radius-xl`, `--shadow-sm/md`, `--volt`/`--volt-foreground`. Reguła WCAG: **volt jako tekst tylko w wersji -600** (5.05:1); jasny volt-400 wyłącznie jako fill z ciemnym tekstem. Light=volt-600, dark=bright volt-400.
+- `e36c9d7` Home — bento (rounded-xl + shadow), day-pills z ringiem „dziś", bright-volt hero „Sugerowane dziś", streak-pill. Zweryfikowane Preview light+dark.
+- `d3df526` Spójność hubów — Postępy/Historia/Ciało/detale: karty top-level `rounded-xl shadow-sm`, wiersze zagnieżdżone `bg-muted`, staty jako bento.
+
+**Następne fazy:**
+1. **Dark logger (focus mode)** — największy ekran (`app/session/[id]/Logger.tsx` + `SetRow`/`RestTimer`): ciemne tło zawsze, bright volt na zaliczonej serii, duże touch-targety, „live" pasek. Tu też domknie się pre-existing problem: `Button` variant=secondary renderuje się jasno w dark.
+2. (opc.) Onboarding/login w nowym języku, ewentualnie heatmapa-sylwetka.
 
 ## Gdzie jesteśmy
 MVP + rozszerzenia gotowe i działające lokalnie. Zweryfikowane realnym E2E (Claude Preview):
