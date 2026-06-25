@@ -95,6 +95,12 @@ export function Logger({
 }) {
   const router = useRouter();
   const [exercises, setExercises] = useState(initialExercises);
+  // Re-sync z serwera po router.refresh() (podmiana / dodanie / usunięcie ćwiczenia).
+  // Prop zmienia referencję tylko przy odświeżeniu server-componentu, więc nie
+  // kasuje optymistycznych edycji serii między odświeżeniami.
+  useEffect(() => {
+    setExercises(initialExercises);
+  }, [initialExercises]);
   const [rest, setRest] = useState<{ endAt: number; label: string | null } | null>(null);
   // Override restu per ćwiczenie (na czas sesji)
   const [restOverride, setRestOverride] = useState<Record<string, number>>({});
