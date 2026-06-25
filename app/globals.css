@@ -141,23 +141,9 @@
     --volt-foreground:       var(--color-volt-contrast);
   }
 
-  /* Auto dark wg ustawień systemu (bez potrzeby klasy .dark) */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-bg: var(--arco-neutral-950);
-      --color-surface: var(--arco-neutral-900);
-      --color-surface-muted: var(--arco-neutral-800);
-      --color-text: var(--arco-neutral-50);
-      --color-text-muted: var(--arco-neutral-400);
-      --color-border: var(--arco-neutral-800);
-      --color-accent: var(--arco-volt-400);
-      --color-accent-contrast: var(--arco-neutral-950);
-      --color-volt: var(--arco-volt-400);
-      --color-volt-contrast: var(--arco-neutral-950);
-      --color-ring: var(--arco-volt-400);
-      --destructive-foreground: var(--arco-neutral-50);
-    }
-  }
+  /* Motyw steruje wyłącznie klasą `.dark` (next-themes; opcja „system" sama
+     dokłada klasę gdy OS jest ciemny). Brak `@media prefers-color-scheme`,
+     żeby system nie nadpisywał jawnego wyboru usera. */
 }
 
 @layer base {

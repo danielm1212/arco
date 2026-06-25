@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import { AppChrome } from "@/components/AppChrome";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const geist = localFont({
@@ -37,10 +38,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pl" className={cn(geist.variable)} suppressHydrationWarning>
-      <body className="min-h-dvh font-sans antialiased">
-        <AppChrome>{children}</AppChrome>
-        <Toaster position="top-center" richColors closeButton />
+    <html lang="pl" suppressHydrationWarning>
+      <body className={cn(geist.variable, "min-h-dvh font-sans antialiased")}>
+        <ThemeProvider>
+          <AppChrome>{children}</AppChrome>
+          <Toaster position="top-center" richColors closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

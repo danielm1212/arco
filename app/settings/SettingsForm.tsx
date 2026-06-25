@@ -1,10 +1,17 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useTheme } from "next-themes";
 import { updateSettings } from "@/app/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { UnitSystem } from "@/lib/types";
+
+const THEMES = [
+  { value: "light", label: "Jasny" },
+  { value: "dark", label: "Ciemny" },
+  { value: "system", label: "System" },
+] as const;
 
 const EQUIPMENT = [
   "barbell",
@@ -35,6 +42,9 @@ export function SettingsForm({
   const [eq, setEq] = useState<string[]>(equipment);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   function toggle(item: string) {
     setEq((prev) =>
@@ -56,6 +66,26 @@ export function SettingsForm({
 
   return (
     <div className="space-y-lg">
+      <section className="space-y-sm">
+        <h2 className="text-sm font-medium text-muted-foreground">Motyw</h2>
+        <div className="flex gap-xs">
+          {THEMES.map((opt) => (
+            <Button
+              key={opt.value}
+              variant={mounted && theme === opt.value ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTheme(opt.value)}
+              suppressHydrationWarning
+            >
+              {opt.label}
+            </Button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Logger zostaje ciemny niezależnie od wyboru (tryb skupienia).
+        </p>
+      </section>
+
       <section className="space-y-sm">
         <h2 className="text-sm font-medium text-muted-foreground">Jednostki</h2>
         <div className="flex gap-xs">
