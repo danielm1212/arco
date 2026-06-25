@@ -23,7 +23,6 @@ export function SetRow({
   set,
   prev,
   type,
-  unit,
   showRpe = false,
   onPatch,
   onPersist,
@@ -42,8 +41,8 @@ export function SetRow({
   onDelete: () => void;
 }) {
   const isWarmup = set.set_type === "warmup";
+  // Placeholder = poprzedni wynik (szary podpowiadacz). Jednostki opisują nagłówki kolumn.
   const ph = (n: number | null | undefined) => (n != null ? String(n) : undefined);
-  const weightInc = unit === "kg" ? 2.5 : 5;
 
   return (
     <li className="flex flex-wrap items-center gap-xs">
@@ -67,8 +66,6 @@ export function SetRow({
       {type === "timed" ? (
         <Field
           value={set.duration_seconds}
-          suffix="s"
-          inc={5}
           max={LIMITS.duration}
           placeholder={ph(prev?.duration_seconds)}
           onPatch={(n) => onPatch({ duration_seconds: n })}
@@ -78,8 +75,6 @@ export function SetRow({
         <>
           <Field
             value={set.reps}
-            suffix="powt."
-            inc={1}
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
             onPatch={(n) => onPatch({ reps: n })}
@@ -87,7 +82,6 @@ export function SetRow({
           />
           <Field
             value={set.added_weight}
-            suffix={`+${unit}`}
             max={LIMITS.weight}
             placeholder={ph(prev?.added_weight)}
             onPatch={(n) => onPatch({ added_weight: n })}
@@ -98,9 +92,7 @@ export function SetRow({
         <>
           <Field
             value={set.weight}
-            suffix={unit}
             step="0.5"
-            inc={weightInc}
             max={LIMITS.weight}
             placeholder={ph(prev?.weight)}
             onPatch={(n) => onPatch({ weight: n })}
@@ -108,7 +100,6 @@ export function SetRow({
           />
           <Field
             value={set.reps}
-            suffix="powt."
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
             onPatch={(n) => onPatch({ reps: n })}
@@ -120,22 +111,24 @@ export function SetRow({
       {type !== "timed" && showRpe && (
         <Field
           value={set.rpe}
-          suffix="RPE"
           step="0.5"
           grow={false}
           max={LIMITS.rpe}
+          placeholder="—"
           onPatch={(n) => onPatch({ rpe: n })}
           onPersist={(n) => onPersist({ rpe: n })}
         />
       )}
 
+      {/* Akcept serii: pusty checkbox → wypełniony volt po zaliczeniu (jak Hevy) */}
       <button
         onClick={onToggle}
-        aria-label="Zalicz serię"
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md border text-sm ${
+        aria-label={set.completed ? "Cofnij zaliczenie" : "Zalicz serię"}
+        aria-pressed={set.completed}
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md border text-base ${
           set.completed
             ? "border-primary bg-primary text-primary-foreground"
-            : "border-input bg-background"
+            : "border-input text-transparent"
         }`}
       >
         ✓
@@ -153,75 +146,36 @@ export function SetRow({
 
 function Field({
   value,
-  suffix,
   step,
   grow = true,
   placeholder,
-  inc,
   max,
   min = 0,
   onPatch,
   onPersist,
 }: {
   value: number | null;
-  suffix: string;
   step?: string;
   grow?: boolean;
   placeholder?: string;
-  inc?: number;
   max: number;
   min?: number;
   onPatch: (n: number | null) => void;
   onPersist: (n: number | null) => void;
 }) {
   const clamp = (v: string) => clampNum(parseNum(v), { min, max });
-  const bump = (d: number) => {
-    const next = clampNum(Math.round(((value ?? 0) + d) * 100) / 100, { min, max });
-    onPatch(next);
-    onPersist(next);
-  };
-
   return (
-    <div className={`flex items-center gap-px ${grow ? "flex-1" : "w-16"}`}>
-      {inc != null && (
-        <button
-          type="button"
-          aria-label="mniej"
-          onClick={() => bump(-inc)}
-          className="h-9 w-7 shrink-0 rounded-md bg-muted/50 text-lg leading-none text-muted-foreground active:bg-muted"
-        >
-          −
-        </button>
-      )}
-      <div className="relative min-w-0 flex-1">
-        <Input
-          type="number"
-          inputMode="decimal"
-          step={step}
-          min={min}
-          max={max}
-          placeholder={placeholder}
-          value={value ?? ""}
-          onChange={(e) => onPatch(clamp(e.target.value))}
-          onBlur={(e) => onPersist(clamp(e.target.value))}
-          className={`h-9 text-center font-medium tabular-nums ${inc != null ? "px-1" : "pr-9"}`}
-        />
-        {inc == null && (
-          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-            {suffix}
-          </span>
-        )}
-      </div>
-      {inc != null && (
-        <button
-          type="button"
-          aria-label="więcej"
-          onClick={() => bump(inc)}
-          className="h-9 w-7 shrink-0 rounded-md bg-muted/50 text-lg leading-none text-muted-foreground active:bg-muted"
-        >
-          +
-        </button>
-      )}
-    </div>
+    <Input
+      type="number"
+      inputMode="decimal"
+      step={step}
+      min={min}
+      max={max}
+      placeholder={placeholder}
+      value={value ?? ""}
+      onChange={(e) => onPatch(clamp(e.target.value))}
+      onBlur={(e) => onPersist(clamp(e.target.value))}
+      className={`h-9 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"}`}
+    />
   );
 }
