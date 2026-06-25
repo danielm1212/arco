@@ -11,8 +11,11 @@ Po researchu Mobbin + audycie: stary UI był „default shadcn". Kierunek (decyz
 - `e36c9d7` Home — bento (rounded-xl + shadow), day-pills z ringiem „dziś", bright-volt hero „Sugerowane dziś", streak-pill. Zweryfikowane Preview light+dark.
 - `d3df526` Spójność hubów — Postępy/Historia/Ciało/detale: karty top-level `rounded-xl shadow-sm`, wiersze zagnieżdżone `bg-muted`, staty jako bento.
 
-**Następne fazy (wizualne):**
-1. **Dark logger (focus mode)** — największy ekran (`app/session/[id]/Logger.tsx` + `SetRow`/`RestTimer`): ciemne tło zawsze, bright volt na zaliczonej serii, duże touch-targety, „live" pasek. Tu też domknie się pre-existing problem: `Button` variant=secondary renderuje się jasno w dark. + odchudzenie gęstości karty (progressive disclosure).
+**Zrobione (cd.):**
+- `95a44ed` **Dark logger (focus mode)** — ekran sesji wymuszony `.dark`, bright volt na zaliczonej serii + „Zakończ", karty rounded-xl. **Kluczowy fix tokenów:** L3-bridge shadcn re-deklarowany w `.dark` (bez tego `var()` w moście z `:root` nie re-resolvuje się w poddrzewie `.dark` → jasne tła mimo ciemnej semantyki). Zweryfikowane Preview.
+
+**Następne fazy (wizualne/UX):**
+1. **Odchudzenie gęstości loggera** (progressive disclosure) + UX pól serii: widoczność wpisywanych kg + jednostki, mniejszy footprint stepperów ±, RPE domyślnie ukryte (pamięć `arco-logger-next-steps` #2/#3).
 2. (opc.) Onboarding/login w nowym języku.
 
 ## Kierunki produktowe — brief v0.3 (`docs/build-brief-v0.3-addendum.md`)
