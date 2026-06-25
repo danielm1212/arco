@@ -188,7 +188,7 @@ function Field({
           type="button"
           aria-label="mniej"
           onClick={() => bump(-inc)}
-          className="h-9 w-6 shrink-0 rounded-md border border-input text-muted-foreground active:bg-muted"
+          className="h-9 w-7 shrink-0 rounded-md bg-muted/50 text-lg leading-none text-muted-foreground active:bg-muted"
         >
           −
         </button>
@@ -217,7 +217,7 @@ function Field({
           type="button"
           aria-label="więcej"
           onClick={() => bump(inc)}
-          className="h-9 w-6 shrink-0 rounded-md border border-input text-muted-foreground active:bg-muted"
+          className="h-9 w-7 shrink-0 rounded-md bg-muted/50 text-lg leading-none text-muted-foreground active:bg-muted"
         >
           +
         </button>
