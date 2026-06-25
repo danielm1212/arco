@@ -1,6 +1,6 @@
 # Plan: theme toggle + naprawy + funkcje
 
-> Status: zatwierdzony, **niewykonany** (czeka na „go"). Decyzje właściciela poniżej zamknięte.
+> Status: **A/B/C ZROBIONE** (`a84e37e` theme · `6dc6925` walidacja · `f1b2c4e` steppery). Zostaje **Faza D** (funkcje).
 > Data: 2026-06-25. Kontekst: po redesignie „Athletic" (foundation · Home · huby · dark logger) i descope kalkulatora talerzy. Patrz `build-brief-v0.3-addendum.md`, `HANDOFF.md`, pamięć `arco-logger-next-steps`.
 
 ## Decyzje (zamknięte)
