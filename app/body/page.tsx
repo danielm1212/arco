@@ -56,7 +56,7 @@ export default async function BodyPage() {
         <BodyForm unit={unit} userId={user?.id ?? ""} />
 
         {latest != null && (
-          <section className="space-y-sm rounded-lg border bg-card p-md">
+          <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold tabular-nums">
                 {latest}
@@ -82,7 +82,7 @@ export default async function BodyPage() {
             {metrics?.map((m) => (
               <li
                 key={m.id}
-                className="flex items-center justify-between gap-sm rounded-md border bg-card p-sm text-sm"
+                className="flex items-center justify-between gap-sm rounded-lg bg-muted p-sm text-sm"
               >
                 <span className="flex min-w-0 items-center gap-sm">
                   {m.photo_path && photoUrls[m.photo_path] && (

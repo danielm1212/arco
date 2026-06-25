@@ -85,7 +85,7 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
   }
 
   return (
-    <div className="space-y-sm rounded-lg border bg-card p-md">
+    <div className="space-y-sm rounded-xl bg-card p-md shadow-sm">
       <div className="grid grid-cols-2 gap-sm">
         <div className="space-y-xs">
           <label className="text-xs text-muted-foreground">Waga ({unit})</label>

@@ -95,17 +95,17 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
         </p>
 
         <section className="grid grid-cols-3 gap-sm">
-          <div className="rounded-lg border bg-card p-sm text-center">
+          <div className="rounded-xl bg-card p-sm text-center shadow-sm">
             <p className="text-xl font-bold tabular-nums">{completed.length}</p>
             <p className="text-xs text-muted-foreground">serie</p>
           </div>
-          <div className="rounded-lg border bg-card p-sm text-center">
+          <div className="rounded-xl bg-card p-sm text-center shadow-sm">
             <p className="text-xl font-bold tabular-nums">
               {Math.round(volume).toLocaleString("pl-PL")}
             </p>
             <p className="text-xs text-muted-foreground">objętość {unit}</p>
           </div>
-          <div className="rounded-lg border bg-card p-sm text-center">
+          <div className="rounded-xl bg-card p-sm text-center shadow-sm">
             <p className="text-xl font-bold tabular-nums">
               {durationMin != null ? `${durationMin}'` : "—"}
             </p>
@@ -114,7 +114,7 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
         </section>
 
         {prs.length > 0 && (
-          <section className="space-y-2xs rounded-lg border border-primary/40 bg-primary/5 p-md">
+          <section className="space-y-2xs rounded-xl border border-primary/40 bg-primary/5 p-md">
             <p className="text-sm font-semibold text-primary">🏆 Rekordy w tej sesji</p>
             <ul className="space-y-px text-sm">
               {prs.map((p, i) => (
@@ -133,7 +133,7 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
         {exercises.map((ex) => (
           <section
             key={ex.id}
-            className={`rounded-lg border bg-card p-md text-card-foreground ${
+            className={`rounded-xl bg-card p-md text-card-foreground shadow-sm ${
               ex.superset_group != null ? "border-l-4 border-l-primary" : ""
             }`}
           >

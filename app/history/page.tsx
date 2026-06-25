@@ -46,7 +46,7 @@ export default async function HistoryPage() {
           return (
             <div
               key={s.id}
-              className="flex items-stretch rounded-lg border bg-card text-card-foreground"
+              className="flex items-stretch rounded-xl bg-card text-card-foreground shadow-sm"
             >
               <Link href={`/history/${s.id}`} className="block min-w-0 flex-1 p-md">
                 <div className="flex items-center justify-between gap-sm">

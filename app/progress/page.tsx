@@ -212,7 +212,7 @@ export default async function ProgressPage({
       </header>
 
       <main className="flex-1 space-y-lg p-md">
-        <section className="space-y-sm rounded-lg border bg-card p-md">
+        <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold">Aktywność</h2>
             <span className="text-sm font-medium text-primary">
@@ -287,7 +287,7 @@ export default async function ProgressPage({
               {strength.map((s) => (
                 <li
                   key={s.id}
-                  className="flex items-center gap-sm rounded-md border bg-card p-sm text-card-foreground"
+                  className="flex items-center gap-sm rounded-lg bg-muted p-sm text-card-foreground"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{s.name}</p>
@@ -333,7 +333,7 @@ export default async function ProgressPage({
                 <li key={id}>
                   <Link
                     href={`/exercise/${encodeURIComponent(id)}`}
-                    className="flex items-center justify-between rounded-md border bg-card p-sm text-sm"
+                    className="flex items-center justify-between rounded-lg bg-muted p-sm text-sm"
                   >
                     <span className="truncate">{r.name}</span>
                     <span className="shrink-0 text-muted-foreground">
@@ -353,7 +353,7 @@ export default async function ProgressPage({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border bg-card p-sm text-center">
+    <div className="rounded-xl bg-card p-sm text-center shadow-sm">
       <p className="text-xl font-bold tabular-nums">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>

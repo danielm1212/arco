@@ -133,7 +133,7 @@ export default async function ExercisePage({
         {/* Jak wykonać — zdjęcia + instrukcje (free-exercise-db) */}
         {(((exercise.images as string[]) ?? []).length > 0 ||
           ((exercise.instructions as string[]) ?? []).length > 0) && (
-          <section className="space-y-sm rounded-lg border bg-card p-md text-card-foreground">
+          <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
             <h2 className="text-base font-semibold">Jak wykonać</h2>
             {((exercise.images as string[]) ?? []).length > 0 && (
               <div className="grid grid-cols-2 gap-xs">
@@ -160,7 +160,7 @@ export default async function ExercisePage({
         )}
 
         {(isWeighted || trend.length >= 2) && (
-          <section className="space-y-sm rounded-lg border bg-card p-md">
+          <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
             <div className="flex items-baseline justify-between">
               <h2 className="text-base font-semibold">
                 Trend{!isWeighted ? ` · ${metricLabel}` : ""}
@@ -211,7 +211,7 @@ export default async function ExercisePage({
           </p>
         ) : (
           sessions.map((s, i) => (
-            <section key={i} className="rounded-lg border bg-card p-md text-card-foreground">
+            <section key={i} className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
               <p className="text-sm text-muted-foreground">
                 {new Date(s.date).toLocaleDateString("pl-PL", {
                   weekday: "short",
