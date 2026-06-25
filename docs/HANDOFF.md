@@ -11,9 +11,17 @@ Po researchu Mobbin + audycie: stary UI był „default shadcn". Kierunek (decyz
 - `e36c9d7` Home — bento (rounded-xl + shadow), day-pills z ringiem „dziś", bright-volt hero „Sugerowane dziś", streak-pill. Zweryfikowane Preview light+dark.
 - `d3df526` Spójność hubów — Postępy/Historia/Ciało/detale: karty top-level `rounded-xl shadow-sm`, wiersze zagnieżdżone `bg-muted`, staty jako bento.
 
-**Następne fazy:**
-1. **Dark logger (focus mode)** — największy ekran (`app/session/[id]/Logger.tsx` + `SetRow`/`RestTimer`): ciemne tło zawsze, bright volt na zaliczonej serii, duże touch-targety, „live" pasek. Tu też domknie się pre-existing problem: `Button` variant=secondary renderuje się jasno w dark.
-2. (opc.) Onboarding/login w nowym języku, ewentualnie heatmapa-sylwetka.
+**Następne fazy (wizualne):**
+1. **Dark logger (focus mode)** — największy ekran (`app/session/[id]/Logger.tsx` + `SetRow`/`RestTimer`): ciemne tło zawsze, bright volt na zaliczonej serii, duże touch-targety, „live" pasek. Tu też domknie się pre-existing problem: `Button` variant=secondary renderuje się jasno w dark. + odchudzenie gęstości karty (progressive disclosure).
+2. (opc.) Onboarding/login w nowym języku.
+
+## Kierunki produktowe — brief v0.3 (`docs/build-brief-v0.3-addendum.md`)
+Analiza jasności briefu vs audyty + konkurencja. Brief v0.2 zostaje źródłem prawdy; addendum nadpisuje punktowo. Najważniejsze:
+- **Descope talerzy** (`02fa08e`) zapisany; gdyby wróciła sztanga → tylko warunkowo `equipment==="barbell"`.
+- **Reguła:** funkcje przez „kto/kiedy", nie tylko „co". RPE domyślnie ukryte + tooltip.
+- **Reguła przekrojowa:** walidacja/limity inputów liczbowych (koniec 2222 kg).
+- **Repriorytet → pierwsza klasa:** heatmapa-sylwetka (mamy `sets-per-muscle`), kalendarz/streak, „last set" inline per wiersz.
+- Audyty `product-audit`/`ux-audit-mobbin` są częściowo nieaktualne (sporo P1–P5 już zrobione) — patrz addendum §6.
 
 ## Gdzie jesteśmy
 MVP + rozszerzenia gotowe i działające lokalnie. Zweryfikowane realnym E2E (Claude Preview):
