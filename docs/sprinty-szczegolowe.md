@@ -45,8 +45,8 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 ## Sprint 3 — Retencja widoczna
 **Cel:** „wracasz codziennie" + wizualny wyróżnik.
 **[Claude]:**
-- Kalendarz miesięczny + passa (streak) — dni treningowe zaznaczone (dane w `sessions`).
-- Heatmapa-sylwetka: SVG ciała kolorowane wg serii-na-partię (mamy `sets-per-muscle`).
+- ✅ Kalendarz miesięczny + passa (streak) na /history — `218f578` (`components/MonthCalendar`).
+- ⏳ Heatmapa-sylwetka: SVG ciała kolorowane wg serii-na-partię (mamy `sets-per-muscle`).
 **[Ty]:** akceptacja mapy mięśni → regiony sylwetki (które `primary_muscles` → która część SVG); mogę zaproponować, Ty korygujesz.
 **Done:** kalendarz/streak na home lub /progress; heatmapa na /progress.
 
