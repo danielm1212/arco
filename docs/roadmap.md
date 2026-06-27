@@ -8,7 +8,7 @@
 ---
 
 ## HORYZONT 1 — Dopracowanie rdzenia (sprinty)
-Cel: produkt, który „hula jak trzeba". Pełna lista i „czy warto" — patrz historia decyzji / pamięć `arco-logger-next-steps`.
+Cel: produkt, który „hula jak trzeba". **Szczegółowe rozpisanie (podział Claude/Ty + prompty AI do assetów): `docs/sprinty-szczegolowe.md`.**
 
 - **Sprint 1 — Bug + szybki polish loggera:** fix tooltipa ⓘ po swapie · podpis po swapie · koniec przerwy (3-2-1 + sygnał) · wyłączanie przerw · zwijana notatka · wake lock.
 - **Sprint 2 — Celebracja + cel (warstwa „wow" na volcie):** ekran po treningu (gratulacje 💪 + wielkie dane + podsumowanie) · nawigacja po podsumowaniu · ustawienie celu (np. 2 treningi/tydz.) · „last set" per wiersz · slide-to-confirm „Zakończ".
