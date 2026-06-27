@@ -13,8 +13,9 @@
 
 ---
 
-## Sprint 1 — Bug + szybki polish loggera + 2× krytyczna poprawność
+## Sprint 1 — ✅ ZROBIONE (`2c61bd6`)
 **Cel:** logger bez ostrych kantów; zero ryzyka utraty danych przy kończeniu.
+Wynik: fix tooltipa po swapie · podpis pokazuje sprzęt nowego ćwiczenia · koniec przerwy = pasek „Przerwa skończona 💪" przez 4s · wake lock + toggle · zwijana notatka · wyłączanie auto-przerwy. Poprawność (flush przed finish, max+1 set_index) już istniała (audyt nieaktualny).
 **[Claude]:**
 - Fix bug: tooltip ⓘ nie odświeża się po swapie (`useEffect([exerciseId])` czyści cache w `ExerciseInfoSheet`).
 - Podpis ćwiczenia po swapie: pokazuj dane nowego ćwiczenia, nie stary slot-note.
