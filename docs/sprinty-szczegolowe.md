@@ -27,7 +27,8 @@ Wynik: fix tooltipa po swapie · podpis pokazuje sprzęt nowego ćwiczenia · ko
 **[Ty]:** decyzja — czy „Przerwa skończona" ma też krótki dźwięk domyślnie (czy tylko wibracja)?
 **Done:** każdy punkt zweryfikowany w Preview; finish nie gubi wiszących serii.
 
-## Sprint 2 — Celebracja + cel (warstwa „wow" na volcie)
+## Sprint 2 — Celebracja + cel — ✅ w większości (`2bcee59`)
+Zrobione: ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per stan + pasek statów + CTA), `finishSession`→/done, cel tygodniowy (migracja `weekly_goal`, wybór w Settings, postęp „X/Y 🎯" na home). **Zostaje:** „last set" inline per wiersz + (opc.) slide-to-confirm.
 **Cel:** moment nagrody po treningu + powód, by wracać. To prototyp kierunku wizualnego.
 **[Claude]:**
 - **Ekran po treningu** (`/session/[id]/done` lub modal): gratulacje + 💪, wielkie dane (czas / serie / objętość / nowe PR), 1-zdaniowe podsumowanie. Wielka display-typografia (wzorzec Nike/Ladder), volt.
