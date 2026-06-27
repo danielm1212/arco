@@ -22,11 +22,17 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
 - **Trwale poza zakresem:** AI auto-programming (manualny silnik podmiany to świadomy wyróżnik), makro/dieta, wearables/HRV.
 - **Descoped (usunięte):** kalkulator talerzy + ustawienia gryf/talerze — apka jest dumbbell-first.
 
-## Kierunek wizualny — „Arco Athletic" (zatwierdzony; nie nadpisuj bez decyzji właściciela)
+## Kierunek wizualny — „Arco Athletic" (OBECNY kierunek; identyfikacja może jeszcze ewoluować)
+> ⚠️ To spójny, wdrożony kierunek — ale **identyfikacja wizualna nie jest ostateczna** i może się zmienić (np. metalik/„żelazny" look z Horyzontu 3, inny akcent, rebranding). Nie traktuj poniższego jak betonu; przy zmianie aktualizuj tę sekcję. Architektura tokenów (primitive→semantic) ma to umożliwiać tanim kosztem.
 - Akcent: **volt / lime-green** (nie pomarańcz). Light = volt-600 (AA), dark = bright volt-400. Reguła: volt jako tekst tylko w wersji -600; jasny volt-400 wyłącznie jako fill z ciemnym tekstem.
 - **Theme toggle** jasny/ciemny/system, default ciemny, przez `next-themes` (klasa `.dark` na `<html>`, zapis localStorage; **bez** `@media prefers-color-scheme`). **Logger zawsze ciemny** (focus mode).
 - Tinted canvas + bento (radius-xl + miękka elewacja zamiast 1px ramek). Liczba-bohater. Celebracja w „momentach" (ekran po treningu).
 - Warstwy tokenów: primitive → semantic → most shadcn (HSL; **re-deklarowany też w `.dark`**, inaczej `var()` nie re-resolvuje się w poddrzewie) → Tailwind. **Zero magic numbers** — komponenty czytają tylko semantykę. **WCAG 2.1 AA.**
+
+## Design system & Figma (przyszły workstream)
+- Na pewnym etapie: **eksport design systemu + komponentów do Figmy** (tokeny, kolory, typografia, komponenty UI).
+- Potem przepływ **dwukierunkowy: także Figma → code**, nie tylko code-first. Projekt w Figmie staje się równoprawnym źródłem dla UI.
+- Narzędzie: **Figma MCP** (dostępny). Trzymać tokeny jako jedno źródło prawdy (semantic), żeby sync code↔Figma był tani.
 
 ## Techniczne
 - Migracje DB tylko przez Supabase migrations (nie ad-hoc SQL). Auth przez `@supabase/ssr` (nie `auth-helpers`). PWA: Serwist pod App Router (nie `next-pwa`).
