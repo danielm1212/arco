@@ -25,6 +25,9 @@ export function RestTimer({
   const [remaining, setRemaining] = useState(() =>
     Math.max(0, Math.ceil((endAt - Date.now()) / 1000)),
   );
+  // Po dojściu do zera pasek zostaje chwilę w stanie „skończona" (jasny sygnał),
+  // potem sam znika — żeby nie zniknął bez śladu.
+  const [done, setDone] = useState(false);
   const firedRef = useRef(false);
   const lastBeepRef = useRef<number | null>(null);
 
@@ -42,13 +45,14 @@ export function RestTimer({
       firedRef.current = true;
       beep(880);
       vibrate();
-      onDone();
+      setDone(true);
     }
-  }, [endAt, onDone]);
+  }, [endAt]);
 
   useEffect(() => {
     firedRef.current = false;
     lastBeepRef.current = null;
+    setDone(false);
     tick();
     const id = window.setInterval(tick, 250);
     const onVis = () => document.visibilityState === "visible" && tick();
@@ -59,9 +63,31 @@ export function RestTimer({
     };
   }, [tick]);
 
+  // Auto-zamknięcie paska „skończona" po 4 s
+  useEffect(() => {
+    if (!done) return;
+    const t = window.setTimeout(onDone, 4000);
+    return () => window.clearTimeout(t);
+  }, [done, onDone]);
+
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
   const finishing = remaining <= 3;
+
+  if (done) {
+    return (
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-volt text-volt-foreground">
+        <div className="mx-auto flex max-w-md items-center gap-sm p-md">
+          <p className="flex-1 text-base font-semibold">
+            Przerwa skończona — czas na serię! 💪
+          </p>
+          <Button variant="secondary" size="sm" onClick={onDone}>
+            OK
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

@@ -6,6 +6,7 @@ import { updateSettings } from "@/app/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
+import { getAutoRest, setAutoRest, getKeepAwake, setKeepAwake } from "@/lib/prefs";
 import type { UnitSystem } from "@/lib/types";
 
 const THEMES = [
@@ -45,7 +46,14 @@ export function SettingsForm({
   const [saved, setSaved] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // Preferencje urządzenia (localStorage) — wczytywane po stronie klienta
+  const [autoRest, setAutoRestState] = useState(true);
+  const [keepAwake, setKeepAwakeState] = useState(true);
+  useEffect(() => {
+    setMounted(true);
+    setAutoRestState(getAutoRest());
+    setKeepAwakeState(getKeepAwake());
+  }, []);
 
   function toggle(item: string) {
     setEq((prev) =>
@@ -113,6 +121,40 @@ export function SettingsForm({
           value={r}
           onChange={(e) => setR(clampNum(Number(e.target.value), { max: LIMITS.rest }) ?? 0)}
         />
+      </section>
+
+      <section className="space-y-sm">
+        <h2 className="text-sm font-medium text-muted-foreground">Trening</h2>
+        <div className="flex items-center justify-between">
+          <span className="text-sm">Auto-przerwa po zaliczeniu serii</span>
+          <Button
+            variant={autoRest ? "default" : "outline"}
+            size="sm"
+            onClick={() => {
+              const v = !autoRest;
+              setAutoRest(v);
+              setAutoRestState(v);
+            }}
+            suppressHydrationWarning
+          >
+            {mounted ? (autoRest ? "Wł" : "Wył") : "—"}
+          </Button>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm">Nie wygaszaj ekranu w treningu</span>
+          <Button
+            variant={keepAwake ? "default" : "outline"}
+            size="sm"
+            onClick={() => {
+              const v = !keepAwake;
+              setKeepAwake(v);
+              setKeepAwakeState(v);
+            }}
+            suppressHydrationWarning
+          >
+            {mounted ? (keepAwake ? "Wł" : "Wył") : "—"}
+          </Button>
+        </div>
       </section>
 
       <section className="space-y-sm">

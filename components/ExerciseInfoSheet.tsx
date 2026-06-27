@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Drawer } from "vaul";
 import { createClient } from "@/lib/supabase/client";
 
@@ -24,6 +24,12 @@ export function ExerciseInfoSheet({
 }) {
   const [detail, setDetail] = useState<Detail | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Po podmianie ćwiczenia (exerciseId się zmienia) unieważnij cache — inaczej
+  // arkusz pokazuje opis poprzedniego ćwiczenia (bug ze swapem).
+  useEffect(() => {
+    setDetail(null);
+  }, [exerciseId]);
 
   async function load() {
     if (detail || loading) return;

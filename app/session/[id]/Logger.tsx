@@ -14,6 +14,8 @@ import {
 import { finishSession, deleteSession } from "@/app/actions/session";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { useSync } from "@/lib/useSync";
+import { useWakeLock } from "@/lib/useWakeLock";
+import { getAutoRest, getKeepAwake } from "@/lib/prefs";
 import { pendingCount, type OutboxSetRow } from "@/lib/outbox";
 import { uuid } from "@/lib/uuid";
 import { RestTimer } from "./RestTimer";
@@ -28,6 +30,7 @@ export interface LoggerExercise {
   type: ExerciseType;
   equipment: string | null;
   slot: {
+    default_exercise_id: string;
     target_sets: number;
     target_reps_min: number | null;
     target_reps_max: number | null;
@@ -108,6 +111,10 @@ export function Logger({
   const [restOverride, setRestOverride] = useState<Record<string, number>>({});
   // RPE domyślnie ukryte (opcjonalne) — odsłaniane per ćwiczenie na czas sesji
   const [rpeOn, setRpeOn] = useState<Record<string, boolean>>({});
+  // Notatka zwinięta domyślnie (odgracenie karty) — otwarta gdy już jest treść
+  const [noteOpen, setNoteOpen] = useState<Record<string, boolean>>({});
+  // Blokada wygaszania ekranu na czas aktywnego treningu (jeśli włączona w ustawieniach)
+  useWakeLock(!isFinished && getKeepAwake());
   const { online, pending, syncing, queueUpsert, queueDelete, flush } = useSync();
 
   // Licznik czasu trwania sesji (na żywo)
@@ -225,7 +232,7 @@ export function Logger({
   function handleToggle(ex: LoggerExercise, set: SessionSet) {
     const next = !set.completed;
     patchSetLocal(ex.sessionExerciseId, set.id, { completed: next });
-    if (next) startRest(ex);
+    if (next && getAutoRest()) startRest(ex);
     queueUpsert(sessionId, toRow({ ...set, completed: next }));
   }
 
@@ -428,6 +435,8 @@ export function Logger({
         {exercises.map((ex, i) => {
           const prev = formatPrevious(ex, unit);
           const grouped = ex.supersetGroup != null;
+          // Po podmianie slot-note opisuje stare ćwiczenie — wtedy pokaż sprzęt nowego
+          const swapped = ex.slot != null && ex.exerciseId !== ex.slot.default_exercise_id;
           return (
             <section
               key={ex.sessionExerciseId}
@@ -458,7 +467,13 @@ export function Logger({
                       ? `${ex.slot.target_sets} × ${
                           ex.slot.target_reps_min ?? ""
                         }${ex.slot.target_reps_max ? `-${ex.slot.target_reps_max}` : ""}${
-                          ex.slot.notes ? ` · ${ex.slot.notes}` : ""
+                          swapped
+                            ? ex.equipment
+                              ? ` · ${ex.equipment}`
+                              : ""
+                            : ex.slot.notes
+                              ? ` · ${ex.slot.notes}`
+                              : ""
                         }`
                       : ex.equipment ?? "freestyle"}
                   </p>
@@ -546,12 +561,27 @@ export function Logger({
                 </button>
               </div>
 
-              <input
-                defaultValue={ex.notes ?? ""}
-                placeholder="Notatka do ćwiczenia…"
-                onBlur={(e) => persistNotes(ex.sessionExerciseId, e.target.value)}
-                className="w-full rounded-md border border-input bg-background px-sm py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              />
+              {noteOpen[ex.sessionExerciseId] ?? !!ex.notes ? (
+                <input
+                  defaultValue={ex.notes ?? ""}
+                  autoFocus={!!noteOpen[ex.sessionExerciseId]}
+                  placeholder="Notatka do ćwiczenia…"
+                  onBlur={(e) => persistNotes(ex.sessionExerciseId, e.target.value)}
+                  className="w-full rounded-md border border-input bg-background px-sm py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              ) : (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setNoteOpen((o) => ({ ...o, [ex.sessionExerciseId]: true }))
+                    }
+                    className="text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    + notatka
+                  </button>
+                </div>
+              )}
 
               <SwapPanel sessionId={sessionId} sessionExerciseId={ex.sessionExerciseId} />
 
