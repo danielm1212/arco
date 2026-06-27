@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { MonthCalendar } from "@/components/MonthCalendar";
+import { weekStart, computeStreak } from "@/lib/week";
 import { DeleteSessionButton } from "./DeleteSessionButton";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +16,15 @@ export default async function HistoryPage() {
     )
     .order("started_at", { ascending: false });
 
+  // Kalendarz + passa (z ukończonych sesji; klucze UTC jak w home/progress)
+  const done = (sessions ?? []).filter((s) => s.finished_at);
+  const trainingDays = [
+    ...new Set(done.map((s) => new Date(s.started_at).toISOString().slice(0, 10))),
+  ];
+  const streak = computeStreak(
+    new Set(done.map((s) => weekStart(new Date(s.started_at)))),
+  );
+
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
@@ -24,9 +35,11 @@ export default async function HistoryPage() {
         <span className="w-12" />
       </header>
 
-      <main className="flex-1 space-y-sm p-md">
+      <main className="flex-1 space-y-md p-md">
+        <MonthCalendar trainingDays={trainingDays} streak={streak} />
+
         {(!sessions || sessions.length === 0) && (
-          <p className="pt-xl text-center text-sm text-muted-foreground">
+          <p className="pt-lg text-center text-sm text-muted-foreground">
             Brak sesji. Zacznij trening na ekranie głównym.
           </p>
         )}
