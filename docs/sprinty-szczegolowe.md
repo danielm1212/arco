@@ -72,12 +72,14 @@ Zrobione: ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłów
 
 ## Sprint 6 — Launch (Phase 10)
 **[Claude]:** kod gotowy do deploya; instrukcja krok-po-kroku; PL tłumaczenia top-instrukcji; skeletony tras.
+- **Uniezależnienie zdjęć od hotlinku:** wrzucić obrazki na **Supabase Storage / CDN** i przepiąć `IMG_PREFIX` w `scripts/seed.ts` z `raw.githubusercontent.com/yuhonas/...` na własną kopię (backup lokalny: `../free-exercise-db`). Tu też lądują wersje po AI-„podratowaniu". Eliminuje ryzyko link-rotu.
 **[Ty]:**
 - Konto **Supabase cloud** (nowy projekt) + **Vercel** + (opc.) domena.
 - Realne klucze do env produkcyjnego (service-role tylko serwer).
 - **App icon / splash / meta** (patrz „Tor assetów").
+- (opc.) fork `yuhonas/free-exercise-db` na własny GH jako backup online.
 - Akceptacja PL tłumaczeń.
-**Done:** apka na HTTPS, pełne PWA (instalacja, wibracje, wake lock), świeży start danych.
+**Done:** apka na HTTPS, pełne PWA (instalacja, wibracje, wake lock), świeży start danych, **zdjęcia z własnego hostingu (nie hotlink)**.
 
 ---
 

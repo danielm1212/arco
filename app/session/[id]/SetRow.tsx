@@ -23,6 +23,7 @@ export function SetRow({
   set,
   prev,
   type,
+  unit,
   showRpe = false,
   onPatch,
   onPersist,
@@ -44,8 +45,44 @@ export function SetRow({
   // Placeholder = poprzedni wynik (szary podpowiadacz). Jednostki opisują nagłówki kolumn.
   const ph = (n: number | null | undefined) => (n != null ? String(n) : undefined);
 
+  // „Last set" — wynik z poprzedniej sesji; tap = skopiuj do pól (Strong/Hevy)
+  const prevText =
+    type === "timed"
+      ? prev?.duration_seconds != null
+        ? `${prev.duration_seconds} s`
+        : null
+      : type === "bodyweight"
+        ? prev?.reps != null
+          ? `${prev.reps} powt.${prev.added_weight ? ` +${prev.added_weight}${unit}` : ""}`
+          : null
+        : prev?.weight != null && prev?.reps != null
+          ? `${prev.weight}${unit} × ${prev.reps}`
+          : null;
+
+  function fillPrev() {
+    if (!prev) return;
+    const patch: Partial<SessionSet> =
+      type === "timed"
+        ? { duration_seconds: prev.duration_seconds }
+        : type === "bodyweight"
+          ? { reps: prev.reps, added_weight: prev.added_weight }
+          : { weight: prev.weight, reps: prev.reps };
+    onPatch(patch);
+    onPersist(patch);
+  }
+
   return (
     <li className="flex flex-wrap items-center gap-xs">
+      {prevText && !set.completed && (
+        <button
+          type="button"
+          onClick={fillPrev}
+          title="Tap — skopiuj poprzedni wynik"
+          className="w-full text-left text-[11px] text-muted-foreground hover:text-foreground"
+        >
+          ↺ {prevText}
+        </button>
+      )}
       {/* Jawny przełącznik typu serii — obramowany, więc widać że klikalny */}
       <button
         onClick={() => {
