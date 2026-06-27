@@ -43,7 +43,9 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
 - Next.js 14.2 (App Router) + React 18 + TypeScript + Tailwind v3 + shadcn/ui. Hosting: Vercel (docelowo).
 - Supabase: lokalny stack (CLI + Docker), migracje + seed lokalnie → `db push` na remote.
 - Auth: jedno konto, email + hasło, bez publicznego signup; bootstrap skryptem (service-role) z `ADMIN_EMAIL`/`ADMIN_PASSWORD`.
-- Seed ćwiczeń: `free-exercise-db` (vendor JSON), obrazki hotlinkowane do `raw.githubusercontent…` (premium „podratowanie" zdjęć = Horyzont 3).
+- Seed ćwiczeń: `free-exercise-db` (vendor JSON: `scripts/data/exercises.json`). Obrazki dziś **hotlinkowane** (`IMG_PREFIX` w `scripts/seed.ts` → `raw.githubusercontent.com/yuhonas/free-exercise-db`) — **ryzyko link-rotu**.
+  - **Backup lokalny** (poza repo, ~200 MB, 1746 jpg): `../free-exercise-db` (sibling folderu `arco`). Licencja Unlicense = public domain.
+  - **Plan uniezależnienia (Horyzont 3 / launch):** fork na własny GH **albo** hostowanie obrazków (Supabase Storage/CDN) + przepięcie `IMG_PREFIX` na własną kopię. Tu też wejdą wersje po AI-„podratowaniu".
 - `user_settings` defaults: `unit_system = kg`, `default_rest_seconds = 120`, `weekly_goal = 2`.
 
 ## Definicja done
