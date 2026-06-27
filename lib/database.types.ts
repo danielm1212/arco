@@ -458,6 +458,7 @@ export type Database = {
           unit_system: Database["public"]["Enums"]["unit_system"]
           updated_at: string
           user_id: string
+          weekly_goal: number
         }
         Insert: {
           available_equipment?: string[]
@@ -468,6 +469,7 @@ export type Database = {
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id: string
+          weekly_goal?: number
         }
         Update: {
           available_equipment?: string[]
@@ -478,6 +480,7 @@ export type Database = {
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id?: string
+          weekly_goal?: number
         }
         Relationships: []
       }

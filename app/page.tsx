@@ -36,7 +36,7 @@ export default async function HomePage() {
       .select("started_at")
       .not("finished_at", "is", null)
       .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString()),
-    supabase.from("user_settings").select("unit_system").maybeSingle(),
+    supabase.from("user_settings").select("unit_system, weekly_goal").maybeSingle(),
     supabase.from("sessions").select("id", { count: "exact", head: true }),
   ]);
 
@@ -77,6 +77,12 @@ export default async function HomePage() {
     streak++;
     w -= WEEK;
   }
+  // Cel tygodniowy + postęp
+  const weeklyGoal = settings?.weekly_goal ?? 2;
+  const thisWeek = wkStart(new Date());
+  const weeklyDone = (finished ?? []).filter(
+    (s) => wkStart(new Date(s.started_at)) === thisWeek,
+  ).length;
 
   // Sugestia kolejnego dnia (rotacja wg ostatniej zakończonej sesji aktywnego programu)
   let suggested: { dayId: string; label: string } | null = null;
@@ -153,7 +159,17 @@ export default async function HomePage() {
       <main className="flex-1 space-y-lg p-md">
         <section className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
           <div className="mb-sm flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">Ten tydzień</span>
+            <span className="flex items-baseline gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Ten tydzień</span>
+              <span className="text-sm font-semibold tabular-nums">
+                {weeklyDone}/{weeklyGoal}
+                {weeklyDone >= weeklyGoal && (
+                  <span className="ml-1 text-primary" aria-label="cel osiągnięty">
+                    🎯
+                  </span>
+                )}
+              </span>
+            </span>
             <span className="flex items-center gap-1 rounded-full bg-volt/15 px-2.5 py-1">
               <span aria-hidden>🔥</span>
               <span className="text-base font-semibold tabular-nums text-foreground">{streak}</span>

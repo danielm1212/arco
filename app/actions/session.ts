@@ -82,7 +82,7 @@ export async function finishSession(sessionId: string) {
   await supabase.rpc("recompute_personal_records");
   revalidatePath("/history");
   revalidatePath("/progress");
-  redirect(`/history/${sessionId}`);
+  redirect(`/session/${sessionId}/done`); // ekran celebracji
 }
 
 /** Usuń całą sesję. */

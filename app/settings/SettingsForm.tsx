@@ -34,14 +34,17 @@ export function SettingsForm({
   unit,
   rest,
   equipment,
+  weeklyGoal,
 }: {
   unit: UnitSystem;
   rest: number;
   equipment: string[];
+  weeklyGoal: number;
 }) {
   const [u, setU] = useState<UnitSystem>(unit);
   const [r, setR] = useState(rest);
   const [eq, setEq] = useState<string[]>(equipment);
+  const [goal, setGoal] = useState(weeklyGoal);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -68,6 +71,7 @@ export function SettingsForm({
         unit_system: u,
         default_rest_seconds: r,
         available_equipment: eq,
+        weekly_goal: goal,
       });
       setSaved(true);
     });
@@ -154,6 +158,24 @@ export function SettingsForm({
           >
             {mounted ? (keepAwake ? "Wł" : "Wył") : "—"}
           </Button>
+        </div>
+      </section>
+
+      <section className="space-y-sm">
+        <h2 className="text-sm font-medium text-muted-foreground">
+          Cel — treningi w tygodniu
+        </h2>
+        <div className="flex gap-xs">
+          {[2, 3, 4, 5].map((n) => (
+            <Button
+              key={n}
+              variant={goal === n ? "default" : "outline"}
+              size="sm"
+              onClick={() => setGoal(n)}
+            >
+              {n}
+            </Button>
+          ))}
         </div>
       </section>
 

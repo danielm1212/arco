@@ -8,6 +8,7 @@ export async function updateSettings(values: {
   unit_system?: UnitSystem;
   default_rest_seconds?: number;
   available_equipment?: string[];
+  weekly_goal?: number;
 }) {
   const supabase = createClient();
   const {
