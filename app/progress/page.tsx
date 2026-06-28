@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Sparkline } from "@/components/Sparkline";
+import { MuscleHeatmap } from "@/components/MuscleHeatmap";
+import { regionsFromMuscles } from "@/lib/muscleMap";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 
 const PERIODS = [
@@ -69,6 +71,7 @@ export default async function ProgressPage({
     }
   });
   const muscleRows = [...setsPerMuscle.entries()].sort((a, b) => b[1] - a[1]);
+  const setsPerRegion = regionsFromMuscles(setsPerMuscle.entries());
 
   // Rekordy: najlepszy e1RM i max ciężaru per ćwiczenie
   const { data: prs } = await supabase
@@ -257,6 +260,10 @@ export default async function ProgressPage({
           {muscleRows.length === 0 ? (
             <p className="text-sm text-muted-foreground">Brak danych w tym okresie.</p>
           ) : (
+            <>
+              <div className="rounded-xl bg-card p-md shadow-sm">
+                <MuscleHeatmap setsPerRegion={setsPerRegion} />
+              </div>
             <ul className="space-y-xs">
               {muscleRows.map(([m, n]) => {
                 const max = muscleRows[0][1] || 1;
@@ -274,6 +281,7 @@ export default async function ProgressPage({
                 );
               })}
             </ul>
+            </>
           )}
           <p className="text-[10px] text-muted-foreground">
             Liczba serii roboczych na partię — pilnuj równowagi (np. push vs pull).
