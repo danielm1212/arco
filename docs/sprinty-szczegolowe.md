@@ -42,13 +42,11 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 - (opc.) assety do celebracji — patrz „Tor assetów" (3D hero / 💪).
 **Done:** zakończenie treningu pokazuje ekran z danymi; cel widoczny na home.
 
-## Sprint 3 — Retencja widoczna
+## Sprint 3 — Retencja widoczna — ✅ ZROBIONE
 **Cel:** „wracasz codziennie" + wizualny wyróżnik.
-**[Claude]:**
 - ✅ Kalendarz miesięczny + passa (streak) na /history — `218f578` (`components/MonthCalendar`).
-- ⏳ Heatmapa-sylwetka: SVG ciała kolorowane wg serii-na-partię (mamy `sets-per-muscle`).
-**[Ty]:** akceptacja mapy mięśni → regiony sylwetki (które `primary_muscles` → która część SVG); mogę zaproponować, Ty korygujesz.
-**Done:** kalendarz/streak na home lub /progress; heatmapa na /progress.
+- ✅ Heatmapa-sylwetka na /progress — `4b9c74a` (`components/MuscleHeatmap` + `lib/muscleMap`).
+**[Ty] — do potwierdzenia:** mapa `primary_muscles` → regiony (`lib/muscleMap.ts` `MUSCLE_TO_REGION`). Domyślna jest sensowna; skoryguj jeśli coś nie pasuje. (opc.) dopieszczenie kształtu sylwetki na bardziej anatomiczny.
 
 ## Sprint 4 — Głębia doboru ćwiczeń
 **[Claude]:**
