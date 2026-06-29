@@ -1,63 +1,49 @@
-/** Mapowanie `primary_muscles` (free-exercise-db) → regiony sylwetki na heatmapie.
- *  Do akceptacji/korekty przez właściciela. */
+import type { IExerciseData, Muscle } from "react-body-highlighter";
 
-export type Region =
-  | "shoulders"
-  | "chest"
-  | "biceps"
-  | "triceps"
-  | "forearms"
-  | "core"
-  | "upperBack"
-  | "lowerBack"
-  | "quads"
-  | "hamstrings"
-  | "glutes"
-  | "calves";
-
-export const MUSCLE_TO_REGION: Record<string, Region> = {
-  shoulders: "shoulders",
-  chest: "chest",
-  biceps: "biceps",
-  triceps: "triceps",
-  forearms: "forearms",
-  abdominals: "core",
-  quadriceps: "quads",
-  adductors: "quads",
-  hamstrings: "hamstrings",
-  glutes: "glutes",
-  abductors: "glutes",
-  calves: "calves",
-  lats: "upperBack",
-  "middle back": "upperBack",
-  traps: "upperBack",
-  neck: "upperBack",
-  "lower back": "lowerBack",
+/** Mapowanie `primary_muscles` (free-exercise-db) → mięśnie biblioteki react-body-highlighter.
+ *  Do korekty przez właściciela. */
+export const DB_MUSCLE_TO_SLUGS: Record<string, Muscle[]> = {
+  chest: ["chest"],
+  shoulders: ["front-deltoids", "back-deltoids"],
+  biceps: ["biceps"],
+  triceps: ["triceps"],
+  forearms: ["forearm"],
+  abdominals: ["abs"],
+  quadriceps: ["quadriceps"],
+  adductors: ["adductor"],
+  hamstrings: ["hamstring"],
+  glutes: ["gluteal"],
+  abductors: ["abductors"],
+  calves: ["calves"],
+  lats: ["upper-back"],
+  "middle back": ["upper-back"],
+  traps: ["trapezius"],
+  neck: ["neck"],
+  "lower back": ["lower-back"],
 };
 
-export const REGION_LABEL: Record<Region, string> = {
-  shoulders: "Barki",
-  chest: "Klatka",
-  biceps: "Biceps",
-  triceps: "Triceps",
-  forearms: "Przedramiona",
-  core: "Brzuch",
-  upperBack: "Plecy (górne)",
-  lowerBack: "Dół pleców",
-  quads: "Czworogłowe",
-  hamstrings: "Dwugłowe ud",
-  glutes: "Pośladki",
-  calves: "Łydki",
-};
-
-/** Σ serii per region z mapy serii-na-mięsień. */
-export function regionsFromMuscles(
+/** Σ serii per slug z `primary_muscles` → count. */
+export function musclesToSlugCounts(
   setsPerMuscle: Iterable<[string, number]>,
-): Record<Region, number> {
-  const out = {} as Record<Region, number>;
+): Partial<Record<Muscle, number>> {
+  const out: Partial<Record<Muscle, number>> = {};
   for (const [muscle, n] of setsPerMuscle) {
-    const r = MUSCLE_TO_REGION[muscle];
-    if (r) out[r] = (out[r] ?? 0) + n;
+    for (const slug of DB_MUSCLE_TO_SLUGS[muscle] ?? []) {
+      out[slug] = (out[slug] ?? 0) + n;
+    }
   }
   return out;
+}
+
+/** Buduje `data` dla <Model> — frequency = poziom intensywności 1–3 (kubełki wg max). */
+export function heatmapData(
+  slugCounts: Partial<Record<Muscle, number>>,
+): IExerciseData[] {
+  const vals = Object.values(slugCounts) as number[];
+  const max = Math.max(1, ...vals);
+  return (Object.entries(slugCounts) as [Muscle, number][]).map(([slug, n]) => ({
+    name: slug,
+    muscles: [slug],
+    frequency: Math.min(3, Math.max(1, Math.ceil((3 * n) / max))),
+  }));
 }
