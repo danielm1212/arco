@@ -45,8 +45,8 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 ## Sprint 3 — Retencja widoczna — ✅ ZROBIONE
 **Cel:** „wracasz codziennie" + wizualny wyróżnik.
 - ✅ Kalendarz miesięczny + passa (streak) na /history — `218f578` (`components/MonthCalendar`).
-- ✅ Heatmapa-sylwetka na /progress — `4b9c74a` (`components/MuscleHeatmap` + `lib/muscleMap`).
-**[Ty] — do potwierdzenia:** mapa `primary_muscles` → regiony (`lib/muscleMap.ts` `MUSCLE_TO_REGION`). Domyślna jest sensowna; skoryguj jeśli coś nie pasuje. (opc.) dopieszczenie kształtu sylwetki na bardziej anatomiczny.
+- ✅ Heatmapa-sylwetka na /progress — `698ea2e` (anatomiczna, `react-body-highlighter` MIT, front/tył, ostylowana na volt/dark; `lib/muscleMap` mapuje `primary_muscles`→slugi).
+**[Ty] — do potwierdzenia:** mapa `primary_muscles` → mięśnie biblioteki (`lib/muscleMap.ts` `DB_MUSCLE_TO_SLUGS`). Domyślna jest sensowna; skoryguj jeśli coś nie pasuje (np. lats→upper-back).
 
 ## Sprint 4 — Głębia doboru ćwiczeń
 **[Claude]:**
