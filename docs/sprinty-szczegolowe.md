@@ -48,44 +48,72 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 - ✅ Heatmapa-sylwetka na /progress — `698ea2e` (anatomiczna, `react-body-highlighter` MIT, front/tył, ostylowana na volt/dark; `lib/muscleMap` mapuje `primary_muscles`→slugi).
 **[Ty] — do potwierdzenia:** mapa `primary_muscles` → mięśnie biblioteki (`lib/muscleMap.ts` `DB_MUSCLE_TO_SLUGS`). Domyślna jest sensowna; skoryguj jeśli coś nie pasuje (np. lats→upper-back).
 
-## Sprint 4 — Głębia doboru + audyt programów + zalążek wyróżnika
-> Strategia wyróżnika: `docs/konkurencja-hevy.md`. Rdzeń „anti-Hevy" = frictionless logging + rule-based guidance. Część zaczynamy tu.
+> Strategia wyróżnika od S4: `docs/konkurencja-hevy.md`. Rdzeń „anti-Hevy" = frictionless logging + rule-based guidance + kameralny social.
+
+## Sprint 4 — Picker & szybki wpis (frictionless)
 **[Claude]:**
 - Filtry w pickerze: partia / sprzęt / wzorzec (chipy, jak Gymshark/Fitplan). Wspólny komponent dla add + swap.
 - Stoper dla `timed` (plank): „Start" liczy w górę/do celu zamiast wpisywania sekund.
-- Custom ćwiczenie: tabela user-exercises (`user_id`), CRUD w pickerze (jak Bevel „Add custom").
-- **Audyt + dopracowanie programów startowych** (#4 właściciela): FBW 2×/3× nigdy nie audytowane — sprawdzić balans (push/pull/nogi/core), objętość/tydzień, schemat progresji, dobór ćwiczeń; ja zanalizuję balans z danych (sets-per-muscle/heatmapa), Ty zatwierdzasz programowanie. Dopiero potem nowe presety (PPL, Upper/Lower).
-- **Wyróżnik — zalążek guidance (rule-based, NIE AI):** rozszerzyć istniejący hint progresji o flagi braków z heatmapy („mało pull") + „X dni temu trenowane". (Frictionless logging = pre-fill — już częściowo jest.)
-- Onboarding: doświadczenie (początkujący/średni/zaawansowany) → sugestia presetu (po dopracowaniu presetów).
-**[Ty]:**
-- **Audyt/treść programów** (FBW dopracowanie + PPL/Upper-Lower) — jako trener; ja zakoduję seed.
-- Mapowanie doświadczenie → który preset.
-**Done:** picker filtruje; plank ma stoper; programy zaudytowane; ≥4 sensowne presety; pierwsze flagi guidance.
+- Frictionless polish wpisu serii (pre-fill już jest — sprawdzić, czy „same as last" działa jednym tapem).
+**Done:** picker filtruje (partia/sprzęt); plank ma stoper; wpis serii maksymalnie szybki.
 
-## Sprint 5 — Poprawność + higiena kodu + audyt longevity
+## Sprint 5 — Guidance rule-based (RDZEŃ wyróżnika)
+> Jawne, nadpisywalne reguły na TWOIM programie. NIE „AI auto-programming".
 **[Claude]:**
-- Reszta offline-correctness (offline-guard dla swap/add/skip z sygnałem błędu).
-- Dedup `formatSet`/`Sparkline`; rozbicie `Logger.tsx` (~600 linii) na podkomponenty.
-- N+1 „poprzednio", paginacja historii; typowane helpery zapytań (mniej `as unknown as`).
-- **AUDYT BAZY ĆWICZEŃ** (#5 właściciela): `scripts/data/exercises.json` (~800 z free-exercise-db) nie był weryfikowany. Sprawdzić: które realnie potrzebne (kurować podzbiór ~150–250?), duplikaty/śmieci/dziwne, poprawność nazw, **martwe/słabe obrazki** (część może nie istnieć po stronie github), jakość instrukcji (są EN). Wynik: lista do kuracji + ewentualnie flaga „zweryfikowane". Łączy się z self-hostem zdjęć (S6) i AI-„podratowaniem".
-- **AUDYT ARCHITEKTONICZNY / LONGEVITY** (wg pamięci `proactive-architecture-review`) — checklista:
-  - [ ] **Zależności:** krytyczne libki zwendorowane do repo (`vendor/`, `file:`)? aktualny `npm audit`? pin + integrity w lock?
-  - [ ] **Assety:** zdjęcia free-exercise-db — backup lokalny (`../free-exercise-db`) aktualny + plan self-hostu gotowy (Sprint 6)?
-  - [ ] **Utrata danych:** offline-correctness (flush przed finish, guard swap/add/skip), `set_index`, recompute PR — sprawdzone?
-  - [ ] **Migracje:** wszystkie lokalne migracje gotowe do `db push` (skipped, weekly_goal…)?
-  - [ ] **Sekrety:** service-role poza repo/bundlem, env produkcyjny rozdzielony?
-  - [ ] **Przenośność:** tokeny semantic jedno źródło (pod code↔Figma), zero magic numbers?
-  > Audyt powtarzać przed każdym launchem (gate Sprintu 6) i przy większych zmianach zależności/assetów.
-**[Ty]:** —
-**Done:** brak duplikacji; logger rozbity; build/lint czyste; **checklista audytu odhaczona**.
+- Rozszerzyć hint progresji („+2,5 kg, bo pełny zakres").
+- Flagi braków z heatmapy/sets-per-muscle („mało pull w tym tygodniu", „push vs pull").
+- „X dni temu trenowane" / staleness partii.
+- Sugestia deloadu (prosta reguła, np. stagnacja/objętość).
+**[Ty]:** akceptacja progu reguł (które flagi pokazywać, jak agresywnie).
+**Done:** na home/loggerze widać proste, przejrzyste podpowiedzi; każda nadpisywalna.
 
-## Sprint 6 — Launch (Phase 10)
+## Sprint 6 — Programy startowe: audyt + dopracowanie (#4) + custom ćwiczenie
+**[Claude]:**
+- **Analiza balansu obecnych FBW z danych** (sets-per-muscle, push/pull/nogi/core, objętość/tydz., schemat progresji) — jako punkt wyjścia do dyskusji.
+- Custom ćwiczenie: tabela user-exercises (`user_id`), CRUD w pickerze (jak Bevel „Add custom").
+**[Ty]:** dopracowanie programowania FBW (jako trener) na bazie mojej analizy.
+**Done:** FBW zaudytowane i poprawione; można dodać własne ćwiczenie.
+
+## Sprint 7 — Więcej presetów + onboarding
+**[Ty]:** treść presetów **PPL, Upper/Lower** (sloty, sety×powt., wzorce).
+**[Claude]:** seed presetów; onboarding doświadczenie (początkujący/średni/zaawansowany) → sugestia presetu; mapowanie wg Twojej decyzji.
+**Done:** ≥4 sensowne presety; onboarding sugeruje plan.
+
+## Sprint 8 — Audyt bazy ćwiczeń (#5)
+**[Claude]:** skan `scripts/data/exercises.json` (~800 z free-exercise-db): duplikaty/śmieci/dziwne, **martwe obrazki** (sprawdzić HTTP do raw.githubusercontent), poprawność nazw, jakość instrukcji (EN). Propozycja **kuracji** (podzbiór ~150–250 realnie używanych).
+**[Ty]:** akceptacja listy do kuracji.
+**Done:** baza zweryfikowana/skurowana; zero martwych obrazków w użyciu.
+
+## Sprint 9 — Audyt kodu + zależności
+> Stan (2026-06): React 18→**19**, Next 14→**16**, Tailwind 3→**4**, TS 5→**6** (duże majory za nami) + **5 podatności (1 mod, 4 high)**.
+**[Claude]:**
+- **Bezpieczeństwo:** `npm audit fix` (bezpieczne) + ocena reszty (czy realnie eksploatowalne u nas).
+- **Patche minor (bezpieczne):** lucide-react 1.21→1.22, postcss, `@types/*`.
+- **Duże majory (React 19 / Next 16 / Tailwind 4 / TS 6):** ocena + **decyzja**. Rekomendacja: **odłożyć do po-launchu** (stabilność rdzenia; brief specyfikował Next 14/React 18) albo robić deliberately jeden po drugim z weryfikacją. Świadoma decyzja, nie dryf.
+- **Higiena kodu:** dedup `formatSet`/`Sparkline`; rozbicie `Logger.tsx` (~600 linii); N+1 „poprzednio" + paginacja historii; mniej `as unknown as`.
+**[Ty]:** decyzja — wchodzimy w duże majory teraz czy po launchu?
+**Done:** 0 known-exploitable vuln; patche minor zrobione; decyzja ws. majorów; kod odchudzony; build/lint czyste.
+
+## Sprint 10 — Offline correctness + audyt longevity
+**[Claude]:**
+- Offline-guard dla swap/add/skip (z sygnałem błędu); reszta correctness (flush/`set_index` już są).
+- **Checklista audytu longevity** (wg pamięci `proactive-architecture-review`):
+  - [ ] Zależności: krytyczne libki zwendorowane (`vendor/`, `file:`)? `npm audit` czyste?
+  - [ ] Assety: backup zdjęć (`../free-exercise-db`) aktualny + plan self-hostu gotowy?
+  - [ ] Utrata danych: offline-correctness, `set_index`, recompute PR — sprawdzone?
+  - [ ] Migracje: wszystkie gotowe do `db push` (skipped, weekly_goal…)?
+  - [ ] Sekrety: service-role poza repo/bundlem, env prod rozdzielony?
+  - [ ] Przenośność: tokeny semantic jedno źródło, zero magic numbers?
+  > Powtarzać przed launchem (gate S11) i przy większych zmianach zależności/assetów.
+**Done:** brak utraty danych offline; checklista odhaczona.
+
+## Sprint 11 — Launch (Phase 10)
 **[Claude]:** kod gotowy do deploya; instrukcja krok-po-kroku; PL tłumaczenia top-instrukcji; skeletony tras.
-- **Gate:** powtórz checklistę audytu longevity ze Sprintu 5 przed deployem (must-pass).
-- **Uniezależnienie zdjęć od hotlinku:** wrzucić obrazki na **Supabase Storage / CDN** i przepiąć `IMG_PREFIX` w `scripts/seed.ts` z `raw.githubusercontent.com/yuhonas/...` na własną kopię (backup lokalny: `../free-exercise-db`). Tu też lądują wersje po AI-„podratowaniu". Eliminuje ryzyko link-rotu.
+- **Gate:** powtórz checklistę audytu longevity (S10) — must-pass.
+- **Uniezależnienie zdjęć od hotlinku:** obrazki na **Supabase Storage / CDN** + przepięcie `IMG_PREFIX` w `scripts/seed.ts` z `raw.githubusercontent.com/yuhonas/...` na własną kopię. Eliminuje link-rot.
 **[Ty]:**
-- Konto **Supabase cloud** (nowy projekt) + **Vercel** + (opc.) domena.
-- Realne klucze do env produkcyjnego (service-role tylko serwer).
+- Konto **Supabase cloud** + **Vercel** + (opc.) domena.
+- Realne klucze do env prod (service-role tylko serwer).
 - **App icon / splash / meta** (patrz „Tor assetów").
 - (opc.) fork `yuhonas/free-exercise-db` na własny GH jako backup online.
 - Akceptacja PL tłumaczeń.
