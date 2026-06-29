@@ -4,6 +4,8 @@
 > Data: 2026-06-25.
 >
 > ⚠️ **Ważne wobec briefu:** `build-brief-apka-treningowa-v0.2.md` ma social, monetyzację i natyw jako **out of scope**. Horyzonty 4–5 poniżej to **świadoma przyszła re-skopizacja** — wchodzimy w nie dopiero, gdy rdzeń „hula" i przejdzie testy użytkowników. Do tego czasu brief obowiązuje.
+>
+> 🎯 **Wyróżnik vs Hevy (najbliższy konkurent — ~80% naszej wizji):** „anti-Hevy" = **frictionless logging + rule-based guidance** (rdzeń, podciągnąć do Sprintu 4–5, NIE Horyzont 5) + **kameralny social** (prywatne pody 1–3 + reakcje/nudge, zero komentarzy). Pełny audyt i strategia: `docs/konkurencja-hevy.md`.
 
 ---
 

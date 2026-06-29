@@ -48,23 +48,26 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 - ✅ Heatmapa-sylwetka na /progress — `698ea2e` (anatomiczna, `react-body-highlighter` MIT, front/tył, ostylowana na volt/dark; `lib/muscleMap` mapuje `primary_muscles`→slugi).
 **[Ty] — do potwierdzenia:** mapa `primary_muscles` → mięśnie biblioteki (`lib/muscleMap.ts` `DB_MUSCLE_TO_SLUGS`). Domyślna jest sensowna; skoryguj jeśli coś nie pasuje (np. lats→upper-back).
 
-## Sprint 4 — Głębia doboru ćwiczeń
+## Sprint 4 — Głębia doboru + audyt programów + zalążek wyróżnika
+> Strategia wyróżnika: `docs/konkurencja-hevy.md`. Rdzeń „anti-Hevy" = frictionless logging + rule-based guidance. Część zaczynamy tu.
 **[Claude]:**
 - Filtry w pickerze: partia / sprzęt / wzorzec (chipy, jak Gymshark/Fitplan). Wspólny komponent dla add + swap.
 - Stoper dla `timed` (plank): „Start" liczy w górę/do celu zamiast wpisywania sekund.
 - Custom ćwiczenie: tabela user-exercises (`user_id`), CRUD w pickerze (jak Bevel „Add custom").
-- Więcej presetów: PPL, Upper/Lower.
-- Onboarding: doświadczenie (początkujący/średni/zaawansowany) → sugestia presetu.
+- **Audyt + dopracowanie programów startowych** (#4 właściciela): FBW 2×/3× nigdy nie audytowane — sprawdzić balans (push/pull/nogi/core), objętość/tydzień, schemat progresji, dobór ćwiczeń; ja zanalizuję balans z danych (sets-per-muscle/heatmapa), Ty zatwierdzasz programowanie. Dopiero potem nowe presety (PPL, Upper/Lower).
+- **Wyróżnik — zalążek guidance (rule-based, NIE AI):** rozszerzyć istniejący hint progresji o flagi braków z heatmapy („mało pull") + „X dni temu trenowane". (Frictionless logging = pre-fill — już częściowo jest.)
+- Onboarding: doświadczenie (początkujący/średni/zaawansowany) → sugestia presetu (po dopracowaniu presetów).
 **[Ty]:**
-- **Treść presetów PPL/Upper-Lower** (sloty, sety×powt., wzorce) — jako trener wiesz najlepiej; ja zakoduję seed.
+- **Audyt/treść programów** (FBW dopracowanie + PPL/Upper-Lower) — jako trener; ja zakoduję seed.
 - Mapowanie doświadczenie → który preset.
-**Done:** picker filtruje; plank ma stoper; są ≥4 presety; onboarding sugeruje.
+**Done:** picker filtruje; plank ma stoper; programy zaudytowane; ≥4 sensowne presety; pierwsze flagi guidance.
 
 ## Sprint 5 — Poprawność + higiena kodu + audyt longevity
 **[Claude]:**
 - Reszta offline-correctness (offline-guard dla swap/add/skip z sygnałem błędu).
 - Dedup `formatSet`/`Sparkline`; rozbicie `Logger.tsx` (~600 linii) na podkomponenty.
 - N+1 „poprzednio", paginacja historii; typowane helpery zapytań (mniej `as unknown as`).
+- **AUDYT BAZY ĆWICZEŃ** (#5 właściciela): `scripts/data/exercises.json` (~800 z free-exercise-db) nie był weryfikowany. Sprawdzić: które realnie potrzebne (kurować podzbiór ~150–250?), duplikaty/śmieci/dziwne, poprawność nazw, **martwe/słabe obrazki** (część może nie istnieć po stronie github), jakość instrukcji (są EN). Wynik: lista do kuracji + ewentualnie flaga „zweryfikowane". Łączy się z self-hostem zdjęć (S6) i AI-„podratowaniem".
 - **AUDYT ARCHITEKTONICZNY / LONGEVITY** (wg pamięci `proactive-architecture-review`) — checklista:
   - [ ] **Zależności:** krytyczne libki zwendorowane do repo (`vendor/`, `file:`)? aktualny `npm audit`? pin + integrity w lock?
   - [ ] **Assety:** zdjęcia free-exercise-db — backup lokalny (`../free-exercise-db`) aktualny + plan self-hostu gotowy (Sprint 6)?
