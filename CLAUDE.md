@@ -47,6 +47,7 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
   - **Backup lokalny** (poza repo, ~200 MB, 1746 jpg): `../free-exercise-db` (sibling folderu `arco`). Licencja Unlicense = public domain.
   - **Plan uniezależnienia (Horyzont 3 / launch):** fork na własny GH **albo** hostowanie obrazków (Supabase Storage/CDN) + przepięcie `IMG_PREFIX` na własną kopię. Tu też wejdą wersje po AI-„podratowaniu".
 - `user_settings` defaults: `unit_system = kg`, `default_rest_seconds = 120`, `weekly_goal = 2`.
+- **Vendored deps (żeby nie zniknęły z npm):** `react-body-highlighter` (heatmapa mięśni, MIT) jest skopiowany do `vendor/react-body-highlighter/` i podpięty przez `file:` w `package.json`. `npm install` bierze z naszej kopii, nie z rejestru.
 
 ## Definicja done
 Zmiana jest skończona, gdy: `npm run build` przechodzi · zweryfikowana w Claude Preview · dane testowe sprzątnięte · brak hardkodów stylów · WCAG AA. (Acceptance Phase 0–4 z briefu: spełnione.)
