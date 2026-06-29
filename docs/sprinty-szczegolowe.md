@@ -60,16 +60,25 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 - Mapowanie doświadczenie → który preset.
 **Done:** picker filtruje; plank ma stoper; są ≥4 presety; onboarding sugeruje.
 
-## Sprint 5 — Poprawność + higiena kodu
+## Sprint 5 — Poprawność + higiena kodu + audyt longevity
 **[Claude]:**
 - Reszta offline-correctness (offline-guard dla swap/add/skip z sygnałem błędu).
 - Dedup `formatSet`/`Sparkline`; rozbicie `Logger.tsx` (~600 linii) na podkomponenty.
 - N+1 „poprzednio", paginacja historii; typowane helpery zapytań (mniej `as unknown as`).
+- **AUDYT ARCHITEKTONICZNY / LONGEVITY** (wg pamięci `proactive-architecture-review`) — checklista:
+  - [ ] **Zależności:** krytyczne libki zwendorowane do repo (`vendor/`, `file:`)? aktualny `npm audit`? pin + integrity w lock?
+  - [ ] **Assety:** zdjęcia free-exercise-db — backup lokalny (`../free-exercise-db`) aktualny + plan self-hostu gotowy (Sprint 6)?
+  - [ ] **Utrata danych:** offline-correctness (flush przed finish, guard swap/add/skip), `set_index`, recompute PR — sprawdzone?
+  - [ ] **Migracje:** wszystkie lokalne migracje gotowe do `db push` (skipped, weekly_goal…)?
+  - [ ] **Sekrety:** service-role poza repo/bundlem, env produkcyjny rozdzielony?
+  - [ ] **Przenośność:** tokeny semantic jedno źródło (pod code↔Figma), zero magic numbers?
+  > Audyt powtarzać przed każdym launchem (gate Sprintu 6) i przy większych zmianach zależności/assetów.
 **[Ty]:** —
-**Done:** brak duplikacji; logger rozbity; build/lint czyste.
+**Done:** brak duplikacji; logger rozbity; build/lint czyste; **checklista audytu odhaczona**.
 
 ## Sprint 6 — Launch (Phase 10)
 **[Claude]:** kod gotowy do deploya; instrukcja krok-po-kroku; PL tłumaczenia top-instrukcji; skeletony tras.
+- **Gate:** powtórz checklistę audytu longevity ze Sprintu 5 przed deployem (must-pass).
 - **Uniezależnienie zdjęć od hotlinku:** wrzucić obrazki na **Supabase Storage / CDN** i przepiąć `IMG_PREFIX` w `scripts/seed.ts` z `raw.githubusercontent.com/yuhonas/...` na własną kopię (backup lokalny: `../free-exercise-db`). Tu też lądują wersje po AI-„podratowaniu". Eliminuje ryzyko link-rotu.
 **[Ty]:**
 - Konto **Supabase cloud** (nowy projekt) + **Vercel** + (opc.) domena.
