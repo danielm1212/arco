@@ -14,6 +14,7 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
 ## Zasady pracy
 - Phase 0–1 (STOP-y na review) dawno za nami. Teraz: sprinty wg roadmap. Przed większym kawałkiem — plan, potem kod.
 - Flaguj decyzje opiniotwórcze jawnie.
+- **Proaktywnie sygnalizuj ryzyka architektoniczne/długoterminowe** (zależność znikająca z npm → vendor do repo; hotlink/link-rot → backup + plan self-hostu; utrata danych/integralność; przenośność tokenów code↔Figma) — nie czekaj, aż ktoś zapyta. Tanie i bezpieczne (backup, vendor) zrób od razu; większe dopisz do roadmapy. Sygnał krótko + akcja.
 - Po działającej zmianie: commit. Weryfikuj REALNIE (build + Claude Preview), sprzątaj dane testowe po testach.
 - Ops/build (jeden build na raz, zatrzymaj Preview przed buildem, PATH do supabase/docker): patrz `docs/HANDOFF.md`.
 
