@@ -50,12 +50,14 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 
 > Strategia wyróżnika od S4: `docs/konkurencja-hevy.md`. Rdzeń „anti-Hevy" = frictionless logging + rule-based guidance + kameralny social.
 
-## Sprint 4 — Picker & szybki wpis (frictionless)
+## Sprint 4 — Picker & szybki wpis (frictionless) — część [Claude] ✅ ZROBIONE (`f881bb2`)
 **[Claude]:**
-- Filtry w pickerze: partia / sprzęt / wzorzec (chipy, jak Gymshark/Fitplan). Wspólny komponent dla add + swap.
-- Stoper dla `timed` (plank): „Start" liczy w górę/do celu zamiast wpisywania sekund.
-- Frictionless polish wpisu serii (pre-fill już jest — sprawdzić, czy „same as last" działa jednym tapem).
-**Done:** picker filtruje (partia/sprzęt); plank ma stoper; wpis serii maksymalnie szybki.
+- ✅ Filtry w pickerze: partia / sprzęt / wzorzec (chipy). **Wspólny `ExerciseBrowser`** dla add (`ExercisePicker`) i swap (`SwapPanel`). W swapie ranking `getSubstitutes` zostaje domyślny, chipy/search pozwalają wyjść poza 5 kandydatów (upgrade — wcześniej się nie dało). Mapowania w `lib/exerciseFilters.ts` (jedno źródło; biceps/triceps osobno — decyzja właściciela; sprzęt dumbbell-first).
+- ✅ Stoper dla `timed` (plank): **odliczanie do celu** (decyzja właściciela) — cel z poprzedniej sesji lub wpisany, sygnał 3-2-1+koniec, zegar z `endAt` (odporny na throttling), Stop wcześniej = zapis faktycznego czasu (`TimedStopwatch` + atomowy `handleTimedComplete` w Logger).
+- ✅ Frictionless: „same as last" działa jednym tapem (`handleAddSet` seeduje z ostatniej serii + „↺ {prev}" tap-to-copy w `SetRow`) — już było, potwierdzone.
+**Zweryfikowane w Preview:** filtry (Nogi+Hantle=14), swap Dumbbell→Barbell Squat, stoper planku do zera → seria zaliczona + auto-przerwa. Build czysty, 0 błędów konsoli.
+> Uwaga ops: lokalny `NEXT_PUBLIC_SUPABASE_URL` w `.env.local` (gitignore) zaktualizowany na bieżący LAN IP **192.168.100.53** (stary `.16` był down — `EHOSTDOWN`). Sprawdzaj `ipconfig getifaddr en0` przy zmianie sieci.
+**[Ty] — do potwierdzenia:** grupowanie partii i etykiety sprzętu w `lib/exerciseFilters.ts` (np. czy `forearms`/`traps` mają zostać w „Plecy"). Łatwo edytowalne.
 
 ## Sprint 5 — Guidance rule-based (RDZEŃ wyróżnika)
 > Jawne, nadpisywalne reguły na TWOIM programie. NIE „AI auto-programming".
