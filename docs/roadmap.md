@@ -27,8 +27,29 @@ Cel: produkt, który „hula jak trzeba". **Szczegółowe rozpisanie (podział C
 - **AI-podrasowanie zdjęć z bazy** (`free-exercise-db`, public domain → wolno przetwarzać) na spójny premium look. Dziś zdjęcia są amatorskie (czerwona ściana). Duży skok jakości postrzeganej.
 - Więcej programów, custom ćwiczenia, bogatsza biblioteka.
 
+## 🚧 BRAMKA przed otwarciem publicznym — Konta, multi-user i zgodność prawna (RODO)
+> Twarda bramka **przed** Horyzontem 4–5. Dziś Arco jest **single-account** (jedno konto, bootstrap skryptem, **bez publicznego signupu**). Otwarcie na realnych userów (warunek socialu/monetyzacji) wymaga osobno przemyślanej warstwy kont + prawa. Nie zaczynamy przedwcześnie, ale **trzeba mieć to na uwadze już przy decyzjach architektonicznych** (pamięć `proactive-architecture-review`).
+
+**Konta i uwierzytelnianie:**
+- **Publiczna rejestracja** (dziś wyłączona): signup + weryfikacja email + reset hasła + (RODO) usunięcie konta. Dziś flow „jedno konto" — trzeba świadomie włączyć i zabezpieczyć.
+- **Logowanie przez Google (OAuth)** — Supabase Auth ma providerów out-of-the-box; koszt: projekt w Google Cloud + OAuth consent screen + redirect URLs (prod). Tani technicznie, ale wymaga konta Google Cloud i zgód. Rozważyć też Apple Sign-in (wymóg App Store przy natywie + innym social loginie).
+- **Polityka haseł na produkcji** — dziś dev ma słabe hasło i guard min-8 w `scripts/bootstrap-user.ts`; przy publicznym signupie egzekwować realną politykę + rate limiting + ochronę przed enumeracją kont.
+
+**Baza danych / multi-user:**
+- **Dobra wiadomość:** RLS po `user_id` już jest na wszystkich tabelach z danymi usera (architektura z założenia multi-user). Seed (`exercises`/`programs` z `user_id=null`) read-only.
+- **Do zrobienia przy otwarciu:** audyt RLS pod realny multi-user (czy żaden endpoint nie przecieka cudzych danych), backupy/PITR na Supabase cloud, limity/abuse, migracja danych testowych → prod (świeży start).
+- **UGC (Horyzont 5)** dokłada moderację treści/zdjęć + Storage + model udostępniania — patrz H5.
+
+**Zgodność prawna (UE/Polska — RODO/GDPR):**
+- **Polityka prywatności** + **Regulamin (ToS)** — wymagane przy zbieraniu danych userów.
+- **RODO:** podstawa prawna przetwarzania, zgody (granularne, nie pre-checked), **prawo do eksportu danych** i **prawo do bycia zapomnianym** (usunięcie konta + danych), retencja, rejestr czynności.
+- **DPA z Supabase** jako procesorem + **hosting danych w UE** (region Supabase EU) — istotne dla RODO.
+- **Cookies/consent** (jeśli analytics/marketing), informacja o przetwarzaniu, dane kontaktowe administratora.
+- Przy monetyzacji: regulamin płatności, prawo odstąpienia, faktury (osobna analiza w H4).
+> Rekomendacja: gdy zbliżymy się do testów z realnymi userami (Horyzont 2→4), zrobić osobny dokument `docs/legal-i-konta.md` z checklistą wdrożeniową. Część rzeczy (eksport/usuwanie danych) warto zaprojektować w modelu danych **wcześniej**, żeby nie przerabiać później.
+
 ## HORYZONT 4 — Native + monetyzacja
-Wchodzi razem z socialem (push notyfikacje są kluczowe dla nudge'y, a PWA je ogranicza).
+Wchodzi razem z socialem (push notyfikacje są kluczowe dla nudge'y, a PWA je ogranicza). **Wymaga domkniętej BRAMKI powyżej** (konta + prawo).
 - **Native iOS/Android** (push, app store, mniej ograniczeń PWA).
 - **Model:** freemium jak Strava (darmowy rdzeń → premium funkcje) — sieć społeczna potrzebuje darmowego progu wejścia. Alternatywa: sub 9,90 zł/mc + 2 tyg. trial. Decyzja po danych z testów.
 
