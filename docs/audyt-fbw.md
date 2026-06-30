@@ -57,7 +57,7 @@ Kategoryzacja po `primary_muscles` (jedna partia/ćwiczenie) myli się przy:
 - **Ćwiczenia wieloczłonowe** (Renegade Row, Dead Bug, Goblet Squat) — liczone po 1 partii, gubią wtórne (np. Goblet nie zalicza pośladków).
 - `movement_pattern` **nie jest ratunkiem** — też ma błędy w seedzie (Leg Press = „push", Lying Leg Curl = „pull").
 
-**Rekomendacja (tania, duża wartość):** mała tabela **korekt kategorii per ćwiczenie** (override w `lib/guidance.ts`, np. `EXERCISE_CATEGORY_OVERRIDE: Record<exerciseId, MuscleCategory>` dla ~10–15 wyjątków: face pull→pull, deadlift→legs, lateral raise→push itd.). Poprawi jednocześnie audyt, balans i staleness. Mogę to zrobić jako pierwszy krok S6 — daj znać.
+**✅ ZROBIONE (`e3887ee`):** tabela `EXERCISE_CATEGORY_OVERRIDE` w `lib/guidance.ts` (23 wyjątki: 13 rear delt/face pull → pull, 10 deadlift/good morning/rack pull → legs). `categoriesForExercise(id, muscles)` używane przez balans/staleness na home. Zweryfikowane: Face Pull liczony jako pull (flaga odwróciła kierunek w Preview). **Uwaga:** override działa na poziomie kategorii (push/pull/legs/core); heatmapa per-mięsień (`/progress`) zostaje bez zmian (tam „shoulders" jest anatomicznie OK).
 
 ---
 
