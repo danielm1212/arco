@@ -5,6 +5,7 @@ import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { Settings, LogOut } from "lucide-react";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
+import { getHomeGuidance } from "@/lib/getHomeGuidance";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ export default async function HomePage() {
     { data: finished },
     { data: settings },
     { count: sessionCount },
+    guidance,
   ] = await Promise.all([
     supabase
       .from("programs")
@@ -38,6 +40,7 @@ export default async function HomePage() {
       .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString()),
     supabase.from("user_settings").select("unit_system, weekly_goal").maybeSingle(),
     supabase.from("sessions").select("id", { count: "exact", head: true }),
+    getHomeGuidance(),
   ]);
 
   const activeId = active?.program_id ?? null;
@@ -238,6 +241,29 @@ export default async function HomePage() {
               </button>
             </form>
           )
+        )}
+
+        {guidance.length > 0 && (
+          <section className="space-y-xs rounded-xl bg-card p-md shadow-sm">
+            <h2 className="text-sm font-semibold text-muted-foreground">Wskazówki</h2>
+            <ul className="space-y-2xs">
+              {guidance.map((g) => (
+                <li key={g.id} className="flex items-start gap-sm text-sm">
+                  <span aria-hidden className="shrink-0 leading-6">
+                    {g.kind === "balance" ? "⚖️" : g.kind === "staleness" ? "⏳" : "💡"}
+                  </span>
+                  <span className="leading-6">{g.message}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[10px] text-muted-foreground">
+              Podpowiedzi z Twoich danych — sugestia, nie nakaz. Pełny bilans na{" "}
+              <Link href="/progress" className="underline">
+                Postępach
+              </Link>
+              .
+            </p>
+          </section>
         )}
 
         <section className="space-y-sm">

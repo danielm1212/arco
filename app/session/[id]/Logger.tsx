@@ -17,6 +17,7 @@ import { useSync } from "@/lib/useSync";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getAutoRest, getKeepAwake } from "@/lib/prefs";
 import { pendingCount, type OutboxSetRow } from "@/lib/outbox";
+import { progressionHint as guidanceProgressionHint } from "@/lib/guidance";
 import { uuid } from "@/lib/uuid";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
@@ -66,19 +67,15 @@ function formatPrevious(ex: LoggerExercise, unit: UnitSystem): string | null {
   return p.weight != null && p.reps != null ? `${p.weight}${unit} × ${p.reps}` : null;
 }
 
-/** Hint progresji: ostatnio dobity górny zakres powtórzeń → zaproponuj +obciążenie. */
+/** Hint progresji (reguła rule-based z `lib/guidance` — pełny/poniżej zakresu, timed). */
 function progressionHint(ex: LoggerExercise, unit: UnitSystem): string | null {
-  const top = ex.slot?.target_reps_max;
-  const p = ex.previous;
-  if (!top || !p) return null;
-  if (ex.type === "weighted" && p.weight != null && p.reps != null && p.reps >= top) {
-    const inc = unit === "kg" ? 2.5 : 5;
-    return `Ostatnio pełny zakres (${p.reps}) → spróbuj ${p.weight + inc}${unit}`;
-  }
-  if (ex.type === "bodyweight" && p.reps != null && p.reps >= top) {
-    return `Ostatnio ${p.reps} powt. → dołóż powtórzeń lub obciążenie`;
-  }
-  return null;
+  return guidanceProgressionHint({
+    type: ex.type,
+    unit,
+    prev: ex.previous,
+    targetRepsMin: ex.slot?.target_reps_min,
+    targetRepsMax: ex.slot?.target_reps_max,
+  });
 }
 
 export function Logger({

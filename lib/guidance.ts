@@ -1,0 +1,151 @@
+import type { ExerciseType, UnitSystem } from "@/lib/types";
+
+/**
+ * Guidance rule-based (rdzeń wyróżnika „anti-Hevy") — jawne, nadpisywalne reguły.
+ * NIE „AI auto-programming". Każda flaga to podpowiedź (nie blokada), do zignorowania.
+ * Wszystkie progi tutaj jako nazwane stałe (zero magic numbers) — profil „standardowy".
+ * Per-user kalibracja progów = późniejsza warstwa. Deload = osobna faza (patrz roadmap S5).
+ */
+
+export type GuidanceKind = "progression" | "balance" | "staleness" | "deload";
+
+export interface GuidanceItem {
+  id: string;
+  kind: GuidanceKind;
+  severity: "info" | "warn";
+  message: string;
+}
+
+/** Progi profilu „standardowego" (decyzja właściciela 2026-06). */
+export const GUIDANCE = {
+  /** Flaga balansu, gdy słabsza grupa ma < tego ułamka serii silniejszej. */
+  balanceRatio: 0.6,
+  /** Balans liczymy dopiero, gdy silniejsza grupa ma ≥ tyle serii (anti-noise na starcie tygodnia). */
+  balanceMinSets: 4,
+  /** Partia „zwietrzała", gdy nietrenowana ≥ tylu dni (a była trenowana wcześniej). */
+  stalenessDays: 8,
+  /** Ile flag max na home (reszta zostaje na /progress). */
+  maxHomeFlags: 2,
+} as const;
+
+export type MuscleCategory = "push" | "pull" | "legs" | "core";
+
+/** Mięsień `primary_muscles` (free-exercise-db) → kategoria ruchu. Edytowalne (jak `muscleMap`). */
+export const MUSCLE_CATEGORY: Record<string, MuscleCategory> = {
+  chest: "push",
+  shoulders: "push",
+  triceps: "push",
+  lats: "pull",
+  "middle back": "pull",
+  traps: "pull",
+  biceps: "pull",
+  forearms: "pull",
+  quadriceps: "legs",
+  hamstrings: "legs",
+  glutes: "legs",
+  calves: "legs",
+  adductors: "legs",
+  abductors: "legs",
+  abdominals: "core",
+  "lower back": "core",
+  // neck — celowo bez kategorii
+};
+
+const CATEGORY_LABEL: Record<MuscleCategory, string> = {
+  push: "push",
+  pull: "pull",
+  legs: "nogi",
+  core: "core",
+};
+
+/** Kategorie z listy mięśni (dedup). */
+export function categoriesForMuscles(muscles: string[]): MuscleCategory[] {
+  const out = new Set<MuscleCategory>();
+  for (const m of muscles) {
+    const c = MUSCLE_CATEGORY[m];
+    if (c) out.add(c);
+  }
+  return [...out];
+}
+
+/**
+ * Hint progresji w loggerze (per ćwiczenie). Rozszerzony:
+ * - pełny zakres → dołóż obciążenie (z uzasadnieniem),
+ * - poniżej dolnego zakresu → utrzymaj ciężar, dobij powtórzeń,
+ * - timed → spróbuj pobić poprzedni czas.
+ */
+export function progressionHint(input: {
+  type: ExerciseType;
+  unit: UnitSystem;
+  prev: { weight: number | null; reps: number | null; duration_seconds: number | null } | null;
+  targetRepsMin?: number | null;
+  targetRepsMax?: number | null;
+}): string | null {
+  const { type, unit, prev, targetRepsMin, targetRepsMax } = input;
+  if (!prev) return null;
+
+  if (type === "timed") {
+    return prev.duration_seconds != null
+      ? `Ostatnio ${prev.duration_seconds}s → spróbuj pobić`
+      : null;
+  }
+
+  const inc = unit === "kg" ? 2.5 : 5;
+
+  if (type === "weighted" && prev.weight != null && prev.reps != null) {
+    if (targetRepsMax && prev.reps >= targetRepsMax)
+      return `Ostatnio pełny zakres (${prev.reps}) → spróbuj ${prev.weight + inc}${unit}`;
+    if (targetRepsMin && prev.reps < targetRepsMin)
+      return `Ostatnio ${prev.reps} (poniżej zakresu) → utrzymaj ${prev.weight}${unit}, dobij powtórzeń`;
+    return null;
+  }
+
+  if (type === "bodyweight" && prev.reps != null && targetRepsMax && prev.reps >= targetRepsMax)
+    return `Ostatnio ${prev.reps} powt. → dołóż powtórzeń lub obciążenie`;
+
+  return null;
+}
+
+/** Flaga balansu push vs pull w bieżącym tygodniu (serie robocze per kategoria). */
+export function balanceFlags(setsByCategory: Partial<Record<MuscleCategory, number>>): GuidanceItem[] {
+  const push = setsByCategory.push ?? 0;
+  const pull = setsByCategory.pull ?? 0;
+  const strong = Math.max(push, pull);
+  if (strong < GUIDANCE.balanceMinSets) return [];
+  const weak = Math.min(push, pull);
+  if (weak >= strong * GUIDANCE.balanceRatio) return [];
+  const lacking = push < pull ? "push" : "pull";
+  return [
+    {
+      id: `balance-${lacking}`,
+      kind: "balance",
+      severity: "warn",
+      message: `Mało ${CATEGORY_LABEL[lacking as MuscleCategory]} w tym tygodniu (push ${push} / pull ${pull} serii)`,
+    },
+  ];
+}
+
+/** Flagi „zwietrzałych" partii — dni od ostatniego treningu kategorii (tylko trenowane wcześniej). */
+export function stalenessFlags(
+  daysSinceByCategory: Partial<Record<MuscleCategory, number | null>>,
+): GuidanceItem[] {
+  return (Object.entries(daysSinceByCategory) as [MuscleCategory, number | null][])
+    .filter(([, days]) => days != null && days >= GUIDANCE.stalenessDays)
+    .sort((a, b) => (b[1] as number) - (a[1] as number))
+    .map(([cat, days]) => ({
+      id: `stale-${cat}`,
+      kind: "staleness" as const,
+      severity: "info" as const,
+      message: `${cap(CATEGORY_LABEL[cat])}: ${days} dni temu — czas na trening`,
+    }));
+}
+
+/** Łączy flagi na home: staleness (konkretne „trenuj to") przed balansem; cap maxHomeFlags. */
+export function homeGuidance(items: GuidanceItem[]): GuidanceItem[] {
+  const order: GuidanceKind[] = ["staleness", "balance", "deload", "progression"];
+  return [...items]
+    .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind))
+    .slice(0, GUIDANCE.maxHomeFlags);
+}
+
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
