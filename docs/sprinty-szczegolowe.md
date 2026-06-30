@@ -67,11 +67,11 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 - ✅ Staleness partii (`stalenessFlags`, ≥8 dni; „Nogi: 9 dni temu — czas na trening").
 - ✅ Karta „Wskazówki" na home (max 2 flagi, staleness przed balansem; link na /progress). Mapowanie mięsień→kategoria w `lib/guidance.ts` `MUSCLE_CATEGORY`.
 - Progi jako nazwane stałe `GUIDANCE` (zero magic numbers). Każda flaga = podpowiedź, nie blokada.
-**[Claude] — Faza B (później):**
-- Sugestia deloadu (stagnacja metryki e1RM przez N sesji) — najbardziej opiniotwórcza, wymaga kalibracji na realnych danych.
-- (opc.) per-user kalibracja progów (dziś profil standardowy zaszyty w `GUIDANCE`).
-**[Ty]:** obserwuj flagi w realnym użyciu → powiedz czy progi/agresywność OK, zanim wejdzie deload.
-**Zweryfikowane w Preview:** staleness „Nogi 9 dni" + balans „Mało pull (6/0)" na home, hint „poniżej zakresu" w loggerze. Build czysty, 0 błędów konsoli.
+**[Claude] — Faza B ✅ ZROBIONE (`1eb6969`):**
+- ✅ Sugestia deloadu (`deloadFlags`, próg `GUIDANCE.deloadSessions=3`): stagnacja metryki (e1RM/powt./czas) przez ≥3 sesje ćwiczenia → „rozważ lżejszy tydzień". Max 1 flaga (najmocniejsza), priorytet staleness>deload>balans. Ikona 📉.
+- (opc., zostaje) per-user kalibracja progów (dziś profil standardowy zaszyty w `GUIDANCE`).
+**[Ty]:** obserwuj flagi w realnym użyciu → powiedz czy progi/agresywność OK (czy trafne, nie męczące).
+**Zweryfikowane w Preview:** staleness „Nogi 9 dni" + balans „Mało pull (6/0)" + hint „poniżej zakresu" (Faza A) · deload „Dumbbell Bench Press: 3 sesje bez postępu" + guard balansu min 4 serie (Faza B). Build czysty, 0 błędów konsoli.
 
 ## Sprint 6 — Programy startowe: audyt + dopracowanie (#4) + custom ćwiczenie
 **[Claude]:**

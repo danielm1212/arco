@@ -8,9 +8,10 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione:** redesign „Athletic" + theme toggle + **Sprint 1** (polish loggera) + **Sprint 2** (ekran po treningu/celebracja + cel tygodniowy + last-set per wiersz) + **Sprint 3** (kalendarz/passa na /history + **anatomiczna heatmapa** na /progress, `react-body-highlighter` zwendorowana do `vendor/`) + **Sprint 4 [Claude]** (`f881bb2` — wspólny `ExerciseBrowser` z filtrami partia/sprzęt/wzorzec dla add+swap; **stoper `timed` z odliczaniem do celu**; mapowania w `lib/exerciseFilters.ts`).
 
-**Zrobione (cd.): Sprint 5 Faza A** (`e9cb7f1`) — guidance rule-based: rozszerzony hint progresji (pełny/poniżej zakresu, timed) + flagi balansu push/pull + staleness partii + karta „Wskazówki" na home. Progi profilu „standardowego" jako stałe w `lib/guidance.ts`.
+**Zrobione (cd.): Sprint 5 KOMPLETNY** — guidance rule-based (rdzeń wyróżnika): hint progresji rozszerzony (pełny/poniżej zakresu, timed) + balans push/pull + staleness partii (Faza A `e9cb7f1`) + **deload wg stagnacji metryki** (Faza B `1eb6969`). Wszystko w karcie „Wskazówki" na home + loggerze. Progi profilu „standardowego" jako stałe w `lib/guidance.ts` (`GUIDANCE`).
 
-**Następny: Sprint 5 Faza B — deload** (sugestia lżejszego tygodnia wg stagnacji e1RM, kalibracja na realnych danych) → potem S6 (audyt FBW + custom ćwiczenie). Szczegóły: `docs/sprinty-szczegolowe.md`.
+**Następny: Sprint 6 — audyt FBW + custom ćwiczenie.** [Claude]: analiza balansu obecnych FBW z danych (push/pull/nogi/core, objętość, progresja) jako punkt wyjścia + custom ćwiczenie (tabela `user-exercises`, CRUD w pickerze, opis+zdjęcia przez Supabase Storage). [Ty]: dopracowanie FBW jako trener. Szczegóły: `docs/sprinty-szczegolowe.md` S6.
+> Otwarta sprawa (Twoja): po realnym użyciu guidance — czy progi/agresywność OK (kalibracja `GUIDANCE`), zanim ew. per-user.
 > Ops: lokalny LAN IP zmienił się na **192.168.100.53** — `.env.local` (gitignore) zaktualizowany. Stary `.16` był down. Sprawdzaj `ipconfig getifaddr en0` po zmianie sieci.
 
 **Strategia:** wyróżnik vs Hevy = frictionless logging + **rule-based guidance** (jawne reguły, NIE AI) + **kameralny social** (pody + reakcje/nudge, zero komentarzy) — `docs/konkurencja-hevy.md`. Kickboxing porzucony.
