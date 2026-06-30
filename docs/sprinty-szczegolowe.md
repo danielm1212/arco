@@ -59,15 +59,19 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 > Uwaga ops: lokalny `NEXT_PUBLIC_SUPABASE_URL` w `.env.local` (gitignore) zaktualizowany na bieżący LAN IP **192.168.100.53** (stary `.16` był down — `EHOSTDOWN`). Sprawdzaj `ipconfig getifaddr en0` przy zmianie sieci.
 **[Ty] — do potwierdzenia:** grupowanie partii i etykiety sprzętu w `lib/exerciseFilters.ts` (np. czy `forearms`/`traps` mają zostać w „Plecy"). Łatwo edytowalne.
 
-## Sprint 5 — Guidance rule-based (RDZEŃ wyróżnika)
-> Jawne, nadpisywalne reguły na TWOIM programie. NIE „AI auto-programming".
-**[Claude]:**
-- Rozszerzyć hint progresji („+2,5 kg, bo pełny zakres").
-- Flagi braków z heatmapy/sets-per-muscle („mało pull w tym tygodniu", „push vs pull").
-- „X dni temu trenowane" / staleness partii.
-- Sugestia deloadu (prosta reguła, np. stagnacja/objętość).
-**[Ty]:** akceptacja progu reguł (które flagi pokazywać, jak agresywnie).
-**Done:** na home/loggerze widać proste, przejrzyste podpowiedzi; każda nadpisywalna.
+## Sprint 5 — Guidance rule-based (RDZEŃ wyróżnika) — Faza A ✅ ZROBIONE (`e9cb7f1`)
+> Jawne, nadpisywalne reguły na TWOIM programie. NIE „AI auto-programming". Profil progów: **standardowy** (decyzja właściciela).
+**[Claude] — Faza A (zrobione):**
+- ✅ Rozszerzony hint progresji (`lib/guidance.ts` `progressionHint`): pełny zakres → +obciążenie; **poniżej zakresu → utrzymaj ciężar, dobij powt.**; `timed` → pobij czas. Logger czyta z lib (wspólne źródło).
+- ✅ Flagi balansu push/pull (`balanceFlags`, próg <60% w bieżącym tygodniu, min 4 serie anti-noise).
+- ✅ Staleness partii (`stalenessFlags`, ≥8 dni; „Nogi: 9 dni temu — czas na trening").
+- ✅ Karta „Wskazówki" na home (max 2 flagi, staleness przed balansem; link na /progress). Mapowanie mięsień→kategoria w `lib/guidance.ts` `MUSCLE_CATEGORY`.
+- Progi jako nazwane stałe `GUIDANCE` (zero magic numbers). Każda flaga = podpowiedź, nie blokada.
+**[Claude] — Faza B (później):**
+- Sugestia deloadu (stagnacja metryki e1RM przez N sesji) — najbardziej opiniotwórcza, wymaga kalibracji na realnych danych.
+- (opc.) per-user kalibracja progów (dziś profil standardowy zaszyty w `GUIDANCE`).
+**[Ty]:** obserwuj flagi w realnym użyciu → powiedz czy progi/agresywność OK, zanim wejdzie deload.
+**Zweryfikowane w Preview:** staleness „Nogi 9 dni" + balans „Mało pull (6/0)" na home, hint „poniżej zakresu" w loggerze. Build czysty, 0 błędów konsoli.
 
 ## Sprint 6 — Programy startowe: audyt + dopracowanie (#4) + custom ćwiczenie
 **[Claude]:**

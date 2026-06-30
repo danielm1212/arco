@@ -8,7 +8,9 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione:** redesign „Athletic" + theme toggle + **Sprint 1** (polish loggera) + **Sprint 2** (ekran po treningu/celebracja + cel tygodniowy + last-set per wiersz) + **Sprint 3** (kalendarz/passa na /history + **anatomiczna heatmapa** na /progress, `react-body-highlighter` zwendorowana do `vendor/`) + **Sprint 4 [Claude]** (`f881bb2` — wspólny `ExerciseBrowser` z filtrami partia/sprzęt/wzorzec dla add+swap; **stoper `timed` z odliczaniem do celu**; mapowania w `lib/exerciseFilters.ts`).
 
-**Następny: Sprint 5 — Guidance rule-based (RDZEŃ wyróżnika „anti-Hevy").** Jawne, nadpisywalne reguły na TWOIM programie (progresja/braki z heatmapy/staleness/deload), NIE AI auto-programming. Szczegóły: `docs/sprinty-szczegolowe.md` S5 + `docs/konkurencja-hevy.md`.
+**Zrobione (cd.): Sprint 5 Faza A** (`e9cb7f1`) — guidance rule-based: rozszerzony hint progresji (pełny/poniżej zakresu, timed) + flagi balansu push/pull + staleness partii + karta „Wskazówki" na home. Progi profilu „standardowego" jako stałe w `lib/guidance.ts`.
+
+**Następny: Sprint 5 Faza B — deload** (sugestia lżejszego tygodnia wg stagnacji e1RM, kalibracja na realnych danych) → potem S6 (audyt FBW + custom ćwiczenie). Szczegóły: `docs/sprinty-szczegolowe.md`.
 > Ops: lokalny LAN IP zmienił się na **192.168.100.53** — `.env.local` (gitignore) zaktualizowany. Stary `.16` był down. Sprawdzaj `ipconfig getifaddr en0` po zmianie sieci.
 
 **Strategia:** wyróżnik vs Hevy = frictionless logging + **rule-based guidance** (jawne reguły, NIE AI) + **kameralny social** (pody + reakcje/nudge, zero komentarzy) — `docs/konkurencja-hevy.md`. Kickboxing porzucony.
