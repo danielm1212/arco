@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ExerciseType } from "@/lib/types";
 import {
   balanceFlags,
-  categoriesForMuscles,
+  categoriesForExercise,
   deloadFlags,
   homeGuidance,
   stalenessFlags,
@@ -75,7 +75,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
       exerciseId: se.exercise_id,
       name: ex?.name ?? se.exercise_id,
       type: ex?.exercise_type ?? "weighted",
-      categories: categoriesForMuscles(ex?.primary_muscles ?? []),
+      categories: categoriesForExercise(se.exercise_id, ex?.primary_muscles ?? []),
     });
   });
 

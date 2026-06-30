@@ -60,6 +60,41 @@ const CATEGORY_LABEL: Record<MuscleCategory, string> = {
   core: "core",
 };
 
+/**
+ * Korekty kategorii per ćwiczenie — gdy `primary_muscles` daje złą kategorię balansu.
+ * (Patrz `docs/audyt-fbw.md` §4.) Override ZASTĘPUJE kategorię z mięśni.
+ * Dwie rodziny błędów w free-exercise-db:
+ *  - rear delt / face pull: `primary = shoulders` (→push), a to realnie PULL,
+ *  - deadlift / good morning / rack pull: `primary = "lower back"` (→core), a to LEGS/hinge.
+ */
+export const EXERCISE_CATEGORY_OVERRIDE: Record<string, MuscleCategory> = {
+  // rear delt / face pull → pull
+  Barbell_Rear_Delt_Row: "pull",
+  Bent_Over_Dumbbell_Rear_Delt_Raise_With_Head_On_Bench: "pull",
+  Cable_Rear_Delt_Fly: "pull",
+  "Cable_Rope_Rear-Delt_Rows": "pull",
+  "Dumbbell_Lying_One-Arm_Rear_Lateral_Raise": "pull",
+  Dumbbell_Lying_Rear_Lateral_Raise: "pull",
+  Face_Pull: "pull",
+  Lying_Rear_Delt_Raise: "pull",
+  Reverse_Flyes: "pull",
+  Reverse_Flyes_With_External_Rotation: "pull",
+  Reverse_Machine_Flyes: "pull",
+  "Seated_Bent-Over_Rear_Delt_Raise": "pull",
+  Sled_Reverse_Flye: "pull",
+  // deadlift / good morning / rack pull → legs (posterior chain / hinge)
+  Axle_Deadlift: "legs",
+  Barbell_Deadlift: "legs",
+  Deadlift_with_Bands: "legs",
+  Deadlift_with_Chains: "legs",
+  Deficit_Deadlift: "legs",
+  Reverse_Band_Deadlift: "legs",
+  Rack_Pulls: "legs",
+  Rack_Pull_with_Bands: "legs",
+  Seated_Good_Mornings: "legs",
+  Stiff_Leg_Barbell_Good_Morning: "legs",
+};
+
 /** Kategorie z listy mięśni (dedup). */
 export function categoriesForMuscles(muscles: string[]): MuscleCategory[] {
   const out = new Set<MuscleCategory>();
@@ -68,6 +103,12 @@ export function categoriesForMuscles(muscles: string[]): MuscleCategory[] {
     if (c) out.add(c);
   }
   return [...out];
+}
+
+/** Kategorie ćwiczenia — korekta per ID (zastępuje), w przeciwnym razie z mięśni. */
+export function categoriesForExercise(exerciseId: string, muscles: string[]): MuscleCategory[] {
+  const o = EXERCISE_CATEGORY_OVERRIDE[exerciseId];
+  return o ? [o] : categoriesForMuscles(muscles);
 }
 
 /**
