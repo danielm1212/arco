@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
+import { TimedStopwatch } from "./TimedStopwatch";
 
 export interface PrevSet {
   set_index: number;
@@ -29,6 +30,7 @@ export function SetRow({
   onPersist,
   onToggle,
   onDelete,
+  onTimedComplete,
 }: {
   index: number;
   set: SessionSet;
@@ -40,6 +42,7 @@ export function SetRow({
   onPersist: (patch: Partial<SessionSet>) => void;
   onToggle: () => void;
   onDelete: () => void;
+  onTimedComplete?: (seconds: number) => void;
 }) {
   const isWarmup = set.set_type === "warmup";
   // Placeholder = poprzedni wynik (szary podpowiadacz). Jednostki opisują nagłówki kolumn.
@@ -101,12 +104,15 @@ export function SetRow({
       </button>
 
       {type === "timed" ? (
-        <Field
+        <TimedStopwatch
           value={set.duration_seconds}
-          max={LIMITS.duration}
-          placeholder={ph(prev?.duration_seconds)}
-          onPatch={(n) => onPatch({ duration_seconds: n })}
-          onPersist={(n) => onPersist({ duration_seconds: n })}
+          prev={prev?.duration_seconds ?? null}
+          completed={set.completed}
+          onManualPersist={(n) => {
+            onPatch({ duration_seconds: n });
+            onPersist({ duration_seconds: n });
+          }}
+          onComplete={(sec) => onTimedComplete?.(sec)}
         />
       ) : type === "bodyweight" ? (
         <>

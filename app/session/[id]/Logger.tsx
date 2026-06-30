@@ -236,6 +236,13 @@ export function Logger({
     queueUpsert(sessionId, toRow({ ...set, completed: next }));
   }
 
+  // Stoper `timed`: atomowy zapis czasu + zaliczenie (jeden upsert, bez wyścigu patch/toggle).
+  function handleTimedComplete(ex: LoggerExercise, set: SessionSet, seconds: number) {
+    patchSetLocal(ex.sessionExerciseId, set.id, { duration_seconds: seconds, completed: true });
+    if (!set.completed && getAutoRest()) startRest(ex);
+    queueUpsert(sessionId, toRow({ ...set, duration_seconds: seconds, completed: true }));
+  }
+
   function persistSet(setId: string, patch: Partial<SessionSet>) {
     for (const ex of exercisesRef.current) {
       const s = ex.sets.find((x) => x.id === setId);
@@ -632,6 +639,7 @@ export function Logger({
                     onPersist={(patch) => persistSet(set.id, patch)}
                     onToggle={() => handleToggle(ex, set)}
                     onDelete={() => handleDeleteSet(ex.sessionExerciseId, set.id)}
+                    onTimedComplete={(sec) => handleTimedComplete(ex, set, sec)}
                   />
                 ))}
               </ul>
