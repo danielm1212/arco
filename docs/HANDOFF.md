@@ -1,9 +1,22 @@
 # Arco — stan projektu i handoff (do kontynuacji w nowej sesji)
 
 > Czytaj razem z `CLAUDE.md` (źródło prawdy) i resztą `docs/`. Ten plik mówi: gdzie jesteśmy i co dalej.
-> Aktualizacja: 2026-06-25.
+> Aktualizacja: 2026-06-26.
 
-## Redesign wizualny „Arco Athletic" (w toku)
+## ⭐ STAN NAJNOWSZY (czytaj to pierwsze)
+Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem Claude/Ty). Wizja + konkurencja: `docs/roadmap.md`, `docs/konkurencja-hevy.md`. Pamięć: `proactive-architecture-review`, `arco-long-term-vision`.
+
+**Zrobione:** redesign „Athletic" + theme toggle + **Sprint 1** (polish loggera) + **Sprint 2** (ekran po treningu/celebracja + cel tygodniowy + last-set per wiersz) + **Sprint 3** (kalendarz/passa na /history + **anatomiczna heatmapa** na /progress, `react-body-highlighter` zwendorowana do `vendor/`).
+
+**Następny: Sprint 4 — Picker & szybki wpis.** Część [Claude] niezależna: **filtry w pickerze** (partia/sprzęt/wzorzec — wspólny komponent dla `ExercisePicker` dodawania i `SwapPanel` podmiany) + **stoper dla `timed` (plank)**. Potem S5 = guidance rule-based (rdzeń wyróżnika „anti-Hevy").
+
+**Strategia:** wyróżnik vs Hevy = frictionless logging + **rule-based guidance** (jawne reguły, NIE AI) + **kameralny social** (pody + reakcje/nudge, zero komentarzy) — `docs/konkurencja-hevy.md`. Kickboxing porzucony.
+
+**Operacyjnie (ważne):** jeden `npm run build` na raz, **zatrzymaj Claude Preview przed buildem** (równoległy psuje `.next`); login do Preview robić przez natywne settery + `requestSubmit` (fill+click bywa wyścigowy); **po testach UI sprzątaj dane testowe** (`delete from sessions; select recompute_personal_records();` na lokalnym supabase przez `docker exec`); PATH/build/env — niżej w „Jak wznowić".
+
+---
+
+## Redesign wizualny „Arco Athletic" (zrobione)
 Po researchu Mobbin + audycie: stary UI był „default shadcn". Kierunek (decyzje właściciela): **akcent volt/lime-green**, **dark logger jako focus mode**, bento + elewacja zamiast 1px ramek, liczby jako bohater. Architektura tokenów bez zmian (primitive→semantic), tylko wartości/kompozycja. Pamięć: `arco-visual-redesign`.
 
 **Zrobione (na `main`):**
