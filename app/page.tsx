@@ -250,7 +250,13 @@ export default async function HomePage() {
               {guidance.map((g) => (
                 <li key={g.id} className="flex items-start gap-sm text-sm">
                   <span aria-hidden className="shrink-0 leading-6">
-                    {g.kind === "balance" ? "⚖️" : g.kind === "staleness" ? "⏳" : "💡"}
+                    {g.kind === "balance"
+                      ? "⚖️"
+                      : g.kind === "staleness"
+                        ? "⏳"
+                        : g.kind === "deload"
+                          ? "📉"
+                          : "💡"}
                   </span>
                   <span className="leading-6">{g.message}</span>
                 </li>

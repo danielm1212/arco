@@ -24,6 +24,8 @@ export const GUIDANCE = {
   balanceMinSets: 4,
   /** Partia „zwietrzała", gdy nietrenowana ≥ tylu dni (a była trenowana wcześniej). */
   stalenessDays: 8,
+  /** Deload: stagnacja, gdy metryka nie wzrosła przez tyle kolejnych sesji ćwiczenia. */
+  deloadSessions: 3,
   /** Ile flag max na home (reszta zostaje na /progress). */
   maxHomeFlags: 2,
 } as const;
@@ -140,9 +142,37 @@ export function stalenessFlags(
     }));
 }
 
-/** Łączy flagi na home: staleness (konkretne „trenuj to") przed balansem; cap maxHomeFlags. */
+/**
+ * Flaga deloadu — ćwiczenie ze stagnacją metryki (e1RM/powt./czas) przez ≥ deloadSessions.
+ * `series` = najlepsza metryka per sesja, chronologicznie (rosnąco wg daty). Zwraca max 1
+ * (najmocniejsza stagnacja) — anti-noise; deload to sygnał, nie nakaz.
+ */
+export function deloadFlags(items: { name: string; series: number[] }[]): GuidanceItem[] {
+  const n = GUIDANCE.deloadSessions;
+  const flagged = items
+    .filter((e) => e.series.length >= n)
+    .map((e) => {
+      const recent = e.series[e.series.length - 1];
+      const past = e.series[e.series.length - n];
+      return { name: e.name, drop: past - recent, stalled: recent <= past };
+    })
+    .filter((e) => e.stalled)
+    .sort((a, b) => b.drop - a.drop);
+  if (flagged.length === 0) return [];
+  const w = flagged[0];
+  return [
+    {
+      id: `deload-${w.name}`,
+      kind: "deload",
+      severity: "warn",
+      message: `${w.name}: ${n} sesje bez postępu → rozważ lżejszy tydzień`,
+    },
+  ];
+}
+
+/** Łączy flagi na home: staleness/deload (konkretne sygnały) przed balansem; cap maxHomeFlags. */
 export function homeGuidance(items: GuidanceItem[]): GuidanceItem[] {
-  const order: GuidanceKind[] = ["staleness", "balance", "deload", "progression"];
+  const order: GuidanceKind[] = ["staleness", "deload", "balance", "progression"];
   return [...items]
     .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind))
     .slice(0, GUIDANCE.maxHomeFlags);
