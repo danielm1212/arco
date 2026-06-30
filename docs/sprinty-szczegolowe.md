@@ -70,9 +70,9 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 ## Sprint 6 — Programy startowe: audyt + dopracowanie (#4) + custom ćwiczenie
 **[Claude]:**
 - **Analiza balansu obecnych FBW z danych** (sets-per-muscle, push/pull/nogi/core, objętość/tydz., schemat progresji) — jako punkt wyjścia do dyskusji.
-- Custom ćwiczenie: tabela user-exercises (`user_id`), CRUD w pickerze (jak Bevel „Add custom").
+- Custom ćwiczenie: tabela user-exercises (`user_id`), CRUD w pickerze (jak Bevel „Add custom") — **z własnym opisem i zdjęciami** (Supabase Storage). (Udostępnianie innym = Horyzont 5, patrz `roadmap.md`.)
 **[Ty]:** dopracowanie programowania FBW (jako trener) na bazie mojej analizy.
-**Done:** FBW zaudytowane i poprawione; można dodać własne ćwiczenie.
+**Done:** FBW zaudytowane i poprawione; można dodać własne ćwiczenie z opisem + zdjęciami.
 
 ## Sprint 7 — Więcej presetów + onboarding
 **[Ty]:** treść presetów **PPL, Upper/Lower** (sloty, sety×powt., wzorce).

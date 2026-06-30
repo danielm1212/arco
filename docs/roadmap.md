@@ -37,6 +37,7 @@ Wizja: **„Strava dla treningu siłowego"** — luka rynkowa (Strava jest cardi
 - **Znajomi:** zaproszenia, „znajomy wykonał trening", wzajemna motywacja.
 - **Tablica aktywności społeczności** — BEZ komentarzy i DM. Tylko **reakcje emotkami** + przycisk-nudge typu Duolingo („Wyślij wiadomość" → auto: „Radosław przypomina Ci o treningu"). To świadomy wyróżnik: zero toksyczności/moderacji, niski próg, na czasie (BeReal/Duolingo).
 - **Stories** (docelowo).
+- **Wspólna biblioteka ćwiczeń (UGC)** — userzy dodają własne ćwiczenia (opis + zdjęcia) i **udostępniają innym**. Kolaboracyjny, nie-vanity social (pasuje do „kameralnego" kierunku) + organicznie rośnie baza. ⚠️ wymaga **moderacji** (treści/zdjęcia), Storage, modelu udostępniania. Część osobista (dodawanie dla siebie) jest wcześniej — Sprint 6.
 - „Convert solo interface moments into shared ones" — momenty solo (PR, koniec treningu, streak) zamieniać na dzielone.
 - **Walidacja:** Ladder już udowadnia model „TEAMMATES WORKING OUT · double-tap to send cheers" + Teams + kalendarz. Nasza intuicja (volt, cheers, żelazny look) jest z nim zbieżna.
 - ⚠️ Social feed bez masy krytycznej = pusty. Dlatego OSTATNI: najpierw retencja solo (Horyzont 1–3) i prawdziwi użytkownicy.
