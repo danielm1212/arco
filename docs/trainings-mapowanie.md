@@ -11,13 +11,13 @@
 | Beginner Full Body 3× | DB Walking Lunge | `Dumbbell_Rear_Lunge` (Dumbbell Rear Lunge) | brak DB walking lunge → DB Rear Lunge (ten sam wzorzec lunge) |
 | Beginner Full Body 3× | Hanging Knee Raise | `Hanging_Leg_Raise` (Hanging Leg Raise) | brak knee raise → Hanging Leg Raise (ten sam ruch) |
 | Beginner Full Body 3× | DB Romanian Deadlift | `Stiff-Legged_Dumbbell_Deadlift` (Stiff-Legged Dumbbell Deadlift) | brak osobnego DB RDL → Stiff-Legged DB Deadlift (hinge z hantlami) |
-| Beginner Full Body 3× | Band Lat Pulldown | `Pullups` (Pullups) | dom: vertical pull → Pullups (drążek to default domowy wg README); guma jako swap w docs |
+| Beginner Full Body 3× | Band Lat Pulldown | `Straight-Arm_Dumbbell_Pullover` (Straight-Arm Dumbbell Pullover) | dom bez drążka → Straight-Arm DB Pullover (vertical pull z hantlem; drążek/guma jako swap w docs) |
 | Beginner Full Body 3× | DB Bulgarian Split Squat | `Split_Squat_with_Dumbbells` (Split Squat with Dumbbells) | brak Bulgarian → Split Squat with Dumbbells (unilateralny split squat) |
-| Beginner Full Body 3× | DB Hip Thrust / Glute Bridge | `Barbell_Hip_Thrust` (Barbell Hip Thrust) | brak DB hip thrust → Barbell Hip Thrust (glute bridge w bazie jest 'timed', nie pasuje do serii/powt.) |
-| Beginner Full Body 3× | Pike Push-up | `Handstand_Push-Ups` (Handstand Push-Ups) | ⚠️ brak Pike Push-up → Handstand Push-Ups (jedyny BW vertical push; dla początkującego to regresja robiona przy ścianie — do rozważenia) |
+| Beginner Full Body 3× | DB Hip Thrust / Glute Bridge | `Glute_Kickback` (Glute Kickback) | brak DB/sztangi w domu → Glute Kickback (bodyweight, powt.); z obciążeniem: Hip Lift with Band jako alternatywa |
+| Beginner Full Body 3× | Pike Push-up | `Pushups` (Pushups) | → zwykłe pompki (decyzja właściciela); dzień A ma teraz 2× pompki — trener może zróżnicować (np. decline) |
 | Beginner Full Body 3× | Reverse Lunge | `Bodyweight_Walking_Lunge` (Bodyweight Walking Lunge) | brak BW reverse lunge → Bodyweight Walking Lunge (ten sam wzorzec) |
 | Beginner Full Body 3× | Feet-Elevated Push-up | `Decline_Push-Up` (Decline Push-Up) | feet-elevated = Decline Push-Up |
-| Beginner Full Body 3× | Single-Leg Glute Bridge | `Single_Leg_Glute_Bridge` (Single Leg Glute Bridge) | w bazie 'timed'; jako hinge z powt. — do rozważenia zamiana na czas |
+| Beginner Full Body 3× | Single-Leg Glute Bridge | `Glute_Kickback` (Glute Kickback) | Single-Leg Glute Bridge w bazie jest 'timed' → Glute Kickback (bodyweight, powtórzenia) |
 | Beginner Full Body 3× | Hanging Knee Raise | `Hanging_Leg_Raise` (Hanging Leg Raise) | brak knee raise → Hanging Leg Raise |
 | Beginner Full Body 3× | Bulgarian Split Squat | `Split_Squat_with_Dumbbells` (Split Squat with Dumbbells) | brak BW Bulgarian → Split Squat with Dumbbells (unilateralny; BW wariant = leverage w docs) |
 | Beginner Full Body 3× | Archer / Pseudo-Planche Push-up | `Pushups` (Pushups) | progresja leverage → baza Push-up (trudniejsza wariacja to override usera) |
@@ -27,13 +27,13 @@
 | Intermediate Upper / Lower 4× | Bulgarian Split Squat | `Split_Squat_with_Dumbbells` (Split Squat with Dumbbells) | brak Bulgarian → Split Squat with Dumbbells |
 | Intermediate Upper / Lower 4× | DB Bulgarian Split Squat | `Split_Squat_with_Dumbbells` (Split Squat with Dumbbells) | brak Bulgarian → Split Squat with Dumbbells |
 | Intermediate Upper / Lower 4× | DB Romanian Deadlift | `Stiff-Legged_Dumbbell_Deadlift` (Stiff-Legged Dumbbell Deadlift) | brak DB RDL → Stiff-Legged DB Deadlift |
-| Intermediate Upper / Lower 4× | DB / Nordic-assisted Ham Curl | `Lying_Leg_Curls` (Lying Leg Curls) | brak nordic/slider → Lying Leg Curl (uginanie nóg) |
+| Intermediate Upper / Lower 4× | DB / Nordic-assisted Ham Curl | `Natural_Glute_Ham_Raise` (Natural Glute Ham Raise) | home ham curl → Natural Glute-Ham Raise (bodyweight nordic — dokładnie ten ruch) |
 | Intermediate Upper / Lower 4× | Chest-Supported DB Row | `Bent_Over_Two-Dumbbell_Row` (Bent Over Two-Dumbbell Row) | brak chest-supported → 2-DB Bent-Over Row |
 | Intermediate Upper / Lower 4× | Band/Cable Lateral Raise | `Cable_Seated_Lateral_Raise` (Cable Seated Lateral Raise) | → Cable Lateral Raise (guma jako swap w docs) |
 | Intermediate Upper / Lower 4× | DB Face Pull / Rear-Delt Fly | `Reverse_Flyes` (Reverse Flyes) | → Reverse Flyes (rear delt) |
 | Intermediate Upper / Lower 4× | DB Skull Crusher | `Lying_Dumbbell_Tricep_Extension` (Lying Dumbbell Tricep Extension) | DB skull crusher → Lying DB Tricep Extension |
-| Intermediate Upper / Lower 4× | DB Hip Thrust | `Barbell_Hip_Thrust` (Barbell Hip Thrust) | brak DB hip thrust → Barbell Hip Thrust |
-| Intermediate Upper / Lower 4× | Slider / DB Leg Curl | `Lying_Leg_Curls` (Lying Leg Curls) | brak slider → Lying Leg Curl |
+| Intermediate Upper / Lower 4× | DB Hip Thrust | `Glute_Kickback` (Glute Kickback) | dom bez sztangi → Glute Kickback (bodyweight, powt.); Hip Lift with Band jako alternatywa z obciążeniem |
+| Intermediate Upper / Lower 4× | Slider / DB Leg Curl | `Natural_Glute_Ham_Raise` (Natural Glute Ham Raise) | home ham curl → Natural Glute-Ham Raise (bodyweight nordic) |
 | Advanced Push / Pull / Legs 6× | Cable Lateral Raise | `Cable_Seated_Lateral_Raise` (Cable Seated Lateral Raise) | najbliższy cable lateral |
 | Advanced Push / Pull / Legs 6× | Weighted Pull-up | `Pullups` (Pullups) | brak wariantu obciążonego → Pullups (dokładaj obciążenie) |
 | Advanced Push / Pull / Legs 6× | Chest-Supported Row | `Seated_Cable_Rows` (Seated Cable Rows) | brak chest-supported → Seated Cable Row |
@@ -104,7 +104,7 @@
 |---|---|---|---|---|---|
 | 1 | DB Reverse Lunge | `Dumbbell_Rear_Lunge` | 3 × 8–10 | 1:30 | na nogę |
 | 2 | Incline DB Press | `Incline_Dumbbell_Press` | 3 × 8–12 | 2:00 |  |
-| 3 | 🔁 Band Lat Pulldown | `Pullups` | 3 × 10–15 | 1:30 |  |
+| 3 | 🔁 Band Lat Pulldown | `Straight-Arm_Dumbbell_Pullover` | 3 × 10–15 | 1:30 |  |
 | 4 | DB Stiff-Leg Deadlift | `Stiff-Legged_Dumbbell_Deadlift` | 3 × 10–12 | 1:30 |  |
 | 5 | DB Lateral Raise | `Side_Lateral_Raise` | 3 × 12–15 | 1:00 |  |
 | 6 | DB Standing Calf Raise | `Calf_Raise_On_A_Dumbbell` | 3 × 12–15 | 1:00 |  |
@@ -116,7 +116,7 @@
 | 1 | 🔁 DB Bulgarian Split Squat | `Split_Squat_with_Dumbbells` | 3 × 8–10 | 2:00 | na nogę |
 | 2 | 2-DB Bent-Over Row | `Bent_Over_Two-Dumbbell_Row` | 3 × 8–12 | 2:00 |  |
 | 3 | DB Bench Press | `Dumbbell_Bench_Press` | 3 × 8–12 | 2:00 |  |
-| 4 | 🔁 DB Hip Thrust / Glute Bridge | `Barbell_Hip_Thrust` | 3 × 10–15 | 1:30 |  |
+| 4 | 🔁 DB Hip Thrust / Glute Bridge | `Glute_Kickback` | 3 × 10–15 | 1:30 |  |
 | 5 | DB Curl | `Dumbbell_Bicep_Curl` | 2 × 10–12 | 1:00 |  |
 | 6 | DB Overhead Triceps Ext | `Standing_Dumbbell_Triceps_Extension` | 2 × 10–12 | 1:00 |  |
 | 7 | Dead Bug | `Dead_Bug` | 2 × 10–None | 45s | na stronę |
@@ -133,7 +133,7 @@
 | 1 | Bodyweight Squat | `Bodyweight_Squat` | 3 × 12–20 | 1:30 |  |
 | 2 | Push-up | `Pushups` | 3 × 8–15 | 1:30 |  |
 | 3 | Pull-up (drążek) | `Pullups` | 3 × 5–10 | 2:00 |  |
-| 4 | 🔁 Pike Push-up | `Handstand_Push-Ups` | 2 × 6–12 | 1:30 |  |
+| 4 | 🔁 Pike Push-up | `Pushups` | 2 × 6–12 | 1:30 |  |
 | 5 | Plank | `Plank` | 3 × na czas | 1:00 | na czas (stoper) |
 
 **Dzień B**
@@ -143,7 +143,7 @@
 | 1 | 🔁 Reverse Lunge | `Bodyweight_Walking_Lunge` | 3 × 10–15 | 1:30 | na nogę |
 | 2 | Inverted Row | `Inverted_Row` | 3 × 8–15 | 1:30 |  |
 | 3 | 🔁 Feet-Elevated Push-up | `Decline_Push-Up` | 3 × 8–15 | 1:30 |  |
-| 4 | 🔁 Single-Leg Glute Bridge | `Single_Leg_Glute_Bridge` | 3 × 8–12 | 1:30 | na nogę |
+| 4 | 🔁 Single-Leg Glute Bridge | `Glute_Kickback` | 3 × 8–12 | 1:30 | na nogę |
 | 5 | 🔁 Hanging Knee Raise | `Hanging_Leg_Raise` | 3 × 10–15 | 1:00 |  |
 
 **Dzień C**
@@ -233,7 +233,7 @@
 | 1 | 🔁 DB Bulgarian Split Squat | `Split_Squat_with_Dumbbells` | 4 × 8–12 | 2:30 | na nogę |
 | 2 | 🔁 DB Romanian Deadlift | `Stiff-Legged_Dumbbell_Deadlift` | 4 × 8–12 | 2:30 |  |
 | 3 | Goblet Squat (tempo 3-1-1) | `Goblet_Squat` | 3 × 10–15 | 2:00 | tempo 3-1-1 |
-| 4 | 🔁 DB / Nordic-assisted Ham Curl | `Lying_Leg_Curls` | 3 × 8–12 | 1:30 |  |
+| 4 | 🔁 DB / Nordic-assisted Ham Curl | `Natural_Glute_Ham_Raise` | 3 × 8–12 | 1:30 |  |
 | 5 | Single-Leg Calf Raise (DB) | `Calf_Raise_On_A_Dumbbell` | 4 × 12–20 | 1:00 | na nogę |
 | 6 | Hanging Leg Raise | `Hanging_Leg_Raise` | 3 × 10–15 | 1:00 |  |
 
@@ -257,8 +257,8 @@
 | 1 | DB Step-Up (wysoka skrzynia) | `Dumbbell_Step_Ups` | 4 × 8–12 | 2:30 | na nogę |
 | 2 | DB Stiff-Leg Deadlift | `Stiff-Legged_Dumbbell_Deadlift` | 4 × 10–12 | 2:30 |  |
 | 3 | Goblet Squat | `Goblet_Squat` | 3 × 12–15 | 2:00 |  |
-| 4 | 🔁 DB Hip Thrust | `Barbell_Hip_Thrust` | 3 × 10–15 | 2:00 |  |
-| 5 | 🔁 Slider / DB Leg Curl | `Lying_Leg_Curls` | 3 × 12–15 | 1:30 |  |
+| 4 | 🔁 DB Hip Thrust | `Glute_Kickback` | 3 × 10–15 | 2:00 |  |
+| 5 | 🔁 Slider / DB Leg Curl | `Natural_Glute_Ham_Raise` | 3 × 12–15 | 1:30 |  |
 | 6 | Seated Calf Raise (DB) | `Seated_Calf_Raise` | 4 × 15–20 | 1:00 |  |
 
 ### Advanced · Siłownia · Push / Pull / Legs 6×
