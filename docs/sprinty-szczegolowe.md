@@ -73,10 +73,13 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 **[Ty]:** obserwuj flagi w realnym użyciu → powiedz czy progi/agresywność OK (czy trafne, nie męczące).
 **Zweryfikowane w Preview:** staleness „Nogi 9 dni" + balans „Mało pull (6/0)" + hint „poniżej zakresu" (Faza A) · deload „Dumbbell Bench Press: 3 sesje bez postępu" + guard balansu min 4 serie (Faza B). Build czysty, 0 błędów konsoli.
 
-## Sprint 6 — Programy startowe: audyt + dopracowanie (#4) + custom ćwiczenie
+## Sprint 6 — Programy startowe: audyt + nowy zestaw + custom ćwiczenie
 **[Claude]:**
-- **Analiza balansu obecnych FBW z danych** (sets-per-muscle, push/pull/nogi/core, objętość/tydz., schemat progresji) — jako punkt wyjścia do dyskusji.
-- Custom ćwiczenie: tabela user-exercises (`user_id`), CRUD w pickerze (jak Bevel „Add custom") — **z własnym opisem i zdjęciami** (Supabase Storage). (Udostępnianie innym = Horyzont 5, patrz `roadmap.md`.)
+- ✅ **Analiza balansu FBW z danych** (`docs/audyt-fbw.md`, `d8e778a`) — push>pull, dziury (łydki/lats/glutes), stałe powt.; + flaga ślepych plam mapowania → korekty `EXERCISE_CATEGORY_OVERRIDE` (`e3887ee`).
+- ✅ **Nowy kuratorowany zestaw 6 programów** (`docs/trainings/` od trenera → seed, `ce53b29`): grid poziom×środowisko (beginner gym/dom/masa · intermediate gym/dom · advanced gym). Zastąpił stare 7. Mapowanie 141 slotów + podmiany braków: `docs/trainings-mapowanie.md`. Domyka wszystkie uwagi audytu (pion pull, łydki, pośladki, zakresy powt.). Aktywny domyślnie: „Dom z hantlami".
+  - ⚠️ Braki bez odpowiednika: **brak DB hip thrust** w bazie (użyto Glute Kickback bodyweight) — kandydat na custom ćwiczenie. „na czas" glute bridge też → Glute Kickback.
+- ⏳ **Custom ćwiczenie** (zostaje): tabela user-exercises (`user_id`), CRUD w pickerze (jak Bevel „Add custom") — **z własnym opisem i zdjęciami** (Supabase Storage). (Udostępnianie innym = Horyzont 5.)
+**[Ty]:** dopracowanie FBW jako trener (rekomendacje w `docs/audyt-fbw.md` §5); ew. konsultacja 5 podmian z trenerem (`docs/trainings-mapowanie.md`).
 **[Ty]:** dopracowanie programowania FBW (jako trener) na bazie mojej analizy.
 **Done:** FBW zaudytowane i poprawione; można dodać własne ćwiczenie z opisem + zdjęciami.
 

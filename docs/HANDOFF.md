@@ -10,7 +10,10 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione (cd.): Sprint 5 KOMPLETNY** — guidance rule-based (rdzeń wyróżnika): hint progresji rozszerzony (pełny/poniżej zakresu, timed) + balans push/pull + staleness partii (Faza A `e9cb7f1`) + **deload wg stagnacji metryki** (Faza B `1eb6969`). Wszystko w karcie „Wskazówki" na home + loggerze. Progi profilu „standardowego" jako stałe w `lib/guidance.ts` (`GUIDANCE`).
 
-**Następny: Sprint 6 — audyt FBW + custom ćwiczenie.** [Claude]: analiza balansu obecnych FBW z danych (push/pull/nogi/core, objętość, progresja) jako punkt wyjścia + custom ćwiczenie (tabela `user-exercises`, CRUD w pickerze, opis+zdjęcia przez Supabase Storage). [Ty]: dopracowanie FBW jako trener. Szczegóły: `docs/sprinty-szczegolowe.md` S6.
+**Zrobione (cd.): Sprint 6 — audyt FBW + nowy zestaw programów.** Audyt (`docs/audyt-fbw.md`) + korekty kategorii (`EXERCISE_CATEGORY_OVERRIDE`) + **6 kuratorowanych programów** (`docs/trainings/` od trenera → seed `ce53b29`, zastąpiły stare 7; mapowanie: `docs/trainings-mapowanie.md`). Aktywny: „Dom z hantlami".
+
+**Następny: Sprint 6 dokończenie — custom ćwiczenie.** Tabela `user-exercises` (RLS po `user_id`), CRUD w pickerze, opis + zdjęcia (Supabase Storage — nowa zależność, decyzja architektoniczna). Kandydat #1 do custom: **DB hip thrust** (brak w bazie). Szczegóły: `docs/sprinty-szczegolowe.md` S6.
+> Uwaga: re-seed kasuje programy z `user_id=null` (CASCADE czyści `user_active_program`) — po `npm run seed` ustaw aktywny program na nowo.
 > Otwarta sprawa (Twoja): po realnym użyciu guidance — czy progi/agresywność OK (kalibracja `GUIDANCE`), zanim ew. per-user.
 > Ops: lokalny LAN IP zmienił się na **192.168.100.53** — `.env.local` (gitignore) zaktualizowany. Stary `.16` był down. Sprawdzaj `ipconfig getifaddr en0` po zmianie sieci.
 
