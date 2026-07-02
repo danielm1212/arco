@@ -23,7 +23,9 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Strategia:** wyróżnik vs Hevy = frictionless logging + **rule-based guidance** (jawne reguły, NIE AI) + **kameralny social** (pody + reakcje/nudge, zero komentarzy) — `docs/konkurencja-hevy.md`. Kickboxing porzucony.
 
-**Operacyjnie (ważne):** jeden `npm run build` na raz, **zatrzymaj Claude Preview przed buildem** (równoległy psuje `.next`); login do Preview robić przez natywne settery + `requestSubmit` (fill+click bywa wyścigowy); **po testach UI sprzątaj dane testowe** (`delete from sessions; select recompute_personal_records();` na lokalnym supabase przez `docker exec`); PATH/build/env — niżej w „Jak wznowić".
+**Operacyjnie (ważne):** jeden `npm run build` na raz, **zatrzymaj Claude Preview przed buildem** (równoległy psuje `.next`); login do Preview: gdy formularz nie hydratuje (submit leci jako natywny GET), fallback = **cookie auth**: w `preview_eval` fetch do GoTrue (`/auth/v1/token?grant_type=password`, anon key z bundla) → `document.cookie='sb-192-auth-token=base64-'+base64url(JSON sesji)` → nawigacja (cookie ustawiaj będąc już na `http://localhost:3000`, nie na `data:`).
+
+**⚠️ SPRZĄTANIE DANYCH TESTOWYCH — NOWA PROCEDURA (od 2026-07-02, po incydencie):** apka jest w REALNYM użyciu na telefonie — **NIGDY hurtowe `delete from sessions`**. Kasuj wyłącznie po ID sesji utworzonych w teście (`delete from sessions where id in ('...')`), a przed kasowaniem sprawdź `select id, started_at, finished_at from sessions order by started_at` czy nie ma tam realnych treningów. `recompute_personal_records()` przez `docker exec` (superuser) **nie działa** (`auth.uid()` = null — funkcja cicho nic nie robi); PR-y przelicza apka przy `finishSession`, a ręcznie tylko z tokenem usera przez API.
 
 ---
 
