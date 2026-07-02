@@ -138,6 +138,81 @@ Werdykty: ✅ wdrożyć · 🔶 zaadaptować pod nasz klin · ❌ świadomie nie
 ## Czego się trzymać (potwierdzenia z tej analizy)
 
 - **Celebracja po treningu** — Hevy jej nie ma i mieć nie będzie (Finish = publikacja). Nasza przewaga emocjonalna jest realna, pogłębiać (Muscle Split + rep-PR badge na ekranie celebracji).
-- **Pre-fill + guidance** — kolumna PREVIOUS u Hevy to tylko kontekst, wpisujesz sam. Nasz model (pre-wypełniona sesja + jawne reguły) pozostaje unikalny.
+- **Pre-fill + guidance** — kolumna PREVIOUS u Hevy to kontekst; ⚠️ **korekta w §11** (koszt interakcji): ✓ najpewniej przejmuje placeholder, więc „1 tap na powtórzoną serię" Hevy częściowo MA. Nasz wyróżnik to nie sam 1 tap, tylko **wartości zaproponowane przez reguły, nie skopiowane z przeszłości**.
 - **Dark + volt** — Hevy jest jasny, niebieski, generyczny. Estetycznie nie konkurują.
 - **Onboarding z sensem** — ich onboarding nie personalizuje nic; nasz S7 (doświadczenie → plan, imię, cel) da lepszy pierwszy dzień.
+
+---
+
+## 11. Analiza funkcjonalna — perspektywa product designera
+
+> Dodane po review właściciela. Metoda: JTBD + koszt interakcji + model stanów + heurystyki (Nielsen, peak-end). Oznaczenia: **[obs]** = widoczne na ekranach Mobbin; **[wiedza]** = znane zachowanie Hevy spoza screenów — do weryfikacji w realnej apce, nie traktować jako pewnik.
+
+### 11.1 Kontekst użycia (JTBD loggera)
+
+Job-to-be-done: *„w 90–180-sekundowej przerwie, jedną ręką, ze spoconymi dłońmi, zanotuj serię i wróć pod sztangę — bez czytania i bez myślenia".* Każdy element loggera oceniam pod tym kątem: liczba tapów, zasięg kciuka, odporność na przerwania, zero decyzji.
+
+### 11.2 Koszt interakcji per seria (mikro-analiza)
+
+- Ścieżka pełna w Hevy: tap KG → wpisz → tap REPS → wpisz → tap ✓ = **5+ akcji z klawiaturą** na serię; przy ~20 seriach to setki interakcji na trening.
+- ALE **[wiedza]**: gdy pola są puste, ✓ przejmuje wartości placeholdera z PREVIOUS → typowa powtórzona seria = **1 tap**. Wniosek strategiczny: „frictionless" Hevy częściowo ma. Nasza różnica musi być precyzyjnie nazwana: **Hevy powtarza przeszłość, Arco proponuje następny krok** (pre-fill = wynik reguł progresji, nie kopia zeszłego tygodnia). Tak to komunikować i tak projektować.
+- Wpis wartości: Hevy = systemowa klawiatura (precyzyjna, wolna, zasłania pół ekranu). My = steppery ± (S1) — szybsze dla ±2,5 kg, gorsze dla dużych skoków. Hybryda (steppery + tap na liczbę → keypad) to właściwy kierunek; Ladder robi inline keypad **[obs w benchmarku]**.
+
+### 11.3 Ergonomia / thumb zone [obs]
+
+- **„Finish" w prawym górnym rogu** — poza strefą kciuka. Świadomy trade-off (utrudnia przypadkowe zakończenie), ale nasz slide-to-confirm „Zakończ" (S2) rozwiązuje to lepiej: celowo trudny **i** w zasięgu kciuka.
+- **Rest-bar na dole** = idealna strefa kciuka dla najczęstszych akcji w przerwie (±15/Skip). Dobre.
+- **Gęsta tabela = małe cele dotykowe.** Przy spoconych dłoniach ryzyko missclicków; nasze większe wiersze-karty mają przewagę dotykową — nie zagęszczać loggera „bo Hevy tak ma".
+
+### 11.4 Model stanów sesji (architektura, nie UI)
+
+- **[obs]** Chevron minimalizuje logger do mini-bara → **sesja jest obiektem globalnym aplikacji, nie ekranem**. Przeżywa nawigację, **[wiedza]** także kill/restart apki. To jest właściwa rama myślenia o pozycji #2 z matrycy: nie „pasek", tylko status sesji w architekturze.
+- **[obs]** Save Workout pozwala edytować **„When" (datę/czas)** → obsłużony case „logowałem po fakcie / z opóźnieniem".
+- **[wiedza]** Hevy pozwala **edytować zapisany trening** (serie po fakcie). Read-only historia podważa zaufanie do danych („mam błąd i nie naprawię") — u nas do sprawdzenia i najpewniej luka. Uwaga techniczna: edycja historii ⇒ recompute PR.
+- **[obs]** „Discard" w mini-barze siedzi obok „Resume" — missclick = utrata całej sesji; na screenach nie widać potwierdzenia. U nas zasada: destrukcyjne zawsze z potwierdzeniem/undo (mamy undo-toast, confirm przy Finish) — sprawdzić, czy porzucenie sesji też jest zabezpieczone.
+
+### 11.5 Defaulty (gdzie Hevy decyduje za usera)
+
+| Default Hevy [obs] | Ocena | Nasz odpowiednik |
+|---|---|---|
+| Rest Timer: **OFF** dla nowych ćwiczeń | ❌ zły — timer to core value, a nowy user go nie odkryje | default 120 s globalnie = lepiej; zostawić |
+| Visibility: **Everyone** | ❌ growth-first, prywatność-last | przy podach (H5): default = pod, nigdy public |
+| Auto-tytuł sesji („Leg day") | ✅ zdejmuje pracę | przejąć na celebracji (#17) |
+| Auto-start przerwy po ✓ | ✅ zero decyzji w przerwie | mamy (✓→rest) |
+
+### 11.6 Pętle feedbacku i emocje (peak-end rule)
+
+- W trakcie: live Duration/Volume/Sets + zielony wiersz = dobra pętla „widzę postęp" ambientowo, bez czytania. Parytet u nas jest (live pasek).
+- **Koniec: formularz.** Wg peak-end rule wspomnienie sesji kształtują szczyt i koniec — Hevy **systematycznie marnuje koniec**, a szczytu (pierwszy PR w sesji) w ogóle nie zaznacza w momencie, w którym się dzieje. Dwa wnioski dla Arco:
+  1. celebracja (S2) to inwestycja w retencję, nie ozdoba — pogłębiać;
+  2. **peak dzieje się przy serii, nie na końcu** → mikro-moment PR w loggerze (badge/haptic/volt-flash na wierszu, 1–2 s, bez przerywania flow) — nowa pozycja #26.
+
+### 11.7 Time-to-value (onboarding funkcjonalnie)
+
+Hevy: signup → jednostki → **pusty hub**. Pierwsza wartość wymaga samodzielnego zbudowania rutyny albo znalezienia Explore → TTV kilkanaście minut + wysiłek decyzyjny na starcie (najgorszy moment na decyzje). Nasz S7 (doświadczenie → gotowy plan → „Sugerowane dziś") może dać **TTV < 2 min z zerem decyzji**. To przewaga funkccyjna pierwszej sesji, nie kosmetyka — trzymać S7 wysoko.
+
+### 11.8 Statystyki: rejestr vs lustro
+
+Hevy ma dużo **danych**, prawie zero **wniosków** — żaden ekran statystyk nie mówi „co z tego wynika / co zrobić". Jedyny zalążek interpretacji: radar current-vs-previous i zielone delty (porównanie = interpretacja). Reguła projektowa dla /progress: **każdy wykres odpowiada na pytanie usera, nie renderuje tabeli** — nagłówek-interpretacja nad wykresem („Wolumen ↑12% — progresja działa", „Pull odstaje od push trzeci tydzień"), liczone przez istniejący silnik guidance. To pozycja #27 — i to jest miejsce, gdzie różnicujemy się od Hevy najgłębiej, bo u nich to sprzeczne z DNA „księgi".
+
+### 11.9 Findability
+
+Statystyki/Measures/Calendar schowane 2 poziomy (Profile → Dashboard) **[obs]** — świadomy koszt prostoty 3 tabów. U nas /progress jest pierwszym poziomem — zostawić; nie chować „lustra" za profilem, skoro to nasz wyróżnik.
+
+### 11.10 Czego Mobbin NIE pokaże (granice tej analizy)
+
+Haptics i dźwięki, gesty (swipe-to-delete serii), zachowanie offline/konflikty synca, edge-case'y klawiatury, Apple Watch, szczegóły paywalla w praktyce. Jeśli chcemy pełny audyt funkcjonalny — trzeba przeklikać realną apkę (Hevy free wystarczy); wnioski **[wiedza]** z tej sekcji zweryfikować wtedy w pierwszej kolejności.
+
+### 11.11 Delta do matrycy (nowe pozycje z analizy funkcjonalnej)
+
+| # | Funkcja/zasada | Werdykt | Wpływ | Koszt | Kiedy | Dlaczego |
+|---|---|---|---|---|---|---|
+| 24 | **Edycja daty/czasu sesji** (logowanie po fakcie) | ✅ | 🔥🔥 | M | S8 | Real-life: „telefon padł / zalogowałem wieczorem". Hevy ma w Save Workout [obs]. |
+| 25 | **Edycja zapisanego treningu** (serie po fakcie) + recompute PR | ✅ | 🔥🔥 | M–L | S8+ | Read-only historia podważa zaufanie do danych; błędy się zdarzają. |
+| 26 | **Mikro-celebracja PR w trakcie sesji** (volt-flash/haptic na wierszu) | ✅ | 🔥🔥 | S | S8 | Peak-end: peak jest przy serii, nie na końcu; Hevy tego nie ma wcale. |
+| 27 | **Nagłówki-interpretacje nad wykresami /progress** (z silnika guidance) | ✅ | 🔥🔥🔥 | M | S8 | Zamienia rejestr w lustro; najgłębsza różnica vs Hevy, sprzeczna z ich DNA. |
+| 28 | **Guard na porzucenie sesji** (confirm/undo na Discard-odpowiedniku) | ✅ | 🔥 | S | N2 | Missclick = utrata treningu; sprawdzić czy już zabezpieczone. |
+| 29 | **Hybryda wpisu: steppery ± + tap na liczbę → keypad** | 🔶 | 🔥 | M | S8+ | ± dobre dla ±2,5 kg, złe dla dużych skoków; wzorzec inline-keypad: Ladder. |
+| 30 | **Sesja jako obiekt globalny** (przeżywa nawigację i restart) — rama dla #2 | ✅ | 🔥🔥🔥 | M | N2/S8 | To architektura, nie pasek; dopiero ona daje pełne „nie boję się wyjść z loggera". |
+
+**Korekta priorytetów TOP 5:** #27 (interpretacje) wskakuje obok #1 (rep-PRs) na szczyt — oba wzmacniają wyróżnik guidance, a #27 jest widoczny każdego dnia użycia. #30 przejmuje miejsce #2 jako właściwe sformułowanie tej samej pracy.
