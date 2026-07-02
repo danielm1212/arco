@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
+import { CustomExerciseForm } from "./CustomExerciseForm";
 import {
   BODY_PART_GROUPS,
   EQUIPMENT_GROUPS,
@@ -18,6 +19,7 @@ export interface BrowserHit {
   name: string;
   equipment: string | null;
   image: string | null;
+  isCustom?: boolean;
 }
 
 /**
@@ -48,6 +50,7 @@ export function ExerciseBrowser({
   const [moreEquip, setMoreEquip] = useState(false);
   const [hits, setHits] = useState<BrowserHit[]>([]);
   const [loading, setLoading] = useState(false);
+  const [customOpen, setCustomOpen] = useState(false);
 
   const queryTerm = q.trim();
   const filtersActive =
@@ -66,7 +69,7 @@ export function ExerciseBrowser({
       const supabase = createClient();
       let req = supabase
         .from("exercises")
-        .select("id, name, equipment, images")
+        .select("id, name, equipment, images, user_id")
         .order("name")
         .limit(30);
       if (queryTerm.length >= 2) req = req.ilike("name", `%${queryTerm}%`);
@@ -81,6 +84,7 @@ export function ExerciseBrowser({
           name: r.name,
           equipment: r.equipment,
           image: (r.images as string[] | null)?.[0] ?? null,
+          isCustom: r.user_id != null,
         })),
       );
       setLoading(false);
@@ -174,7 +178,14 @@ export function ExerciseBrowser({
               onClick={() => onPick(h.id)}
               className="min-w-0 flex-1 text-left disabled:opacity-50"
             >
-              <p className="truncate text-sm">{h.name}</p>
+              <p className="truncate text-sm">
+                {h.name}
+                {h.isCustom && (
+                  <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                    własne
+                  </span>
+                )}
+              </p>
               <p className="truncate text-xs text-muted-foreground">{h.equipment ?? "—"}</p>
             </button>
             <ExerciseInfoSheet exerciseId={h.id}>
@@ -189,6 +200,26 @@ export function ExerciseBrowser({
           </li>
         ))}
       </ul>
+
+      {/* Własne ćwiczenie — gdy brak w katalogu (Sprint 6). Po dodaniu od razu wybiera. */}
+      {customOpen ? (
+        <CustomExerciseForm
+          initialName={queryTerm}
+          onCreated={(id) => {
+            setCustomOpen(false);
+            onPick(id);
+          }}
+          onCancel={() => setCustomOpen(false)}
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setCustomOpen(true)}
+          className="w-full rounded-md border border-dashed border-input py-1.5 text-xs text-muted-foreground hover:text-foreground"
+        >
+          + Własne ćwiczenie{queryTerm.length >= 2 ? ` („${queryTerm}")` : ""}
+        </button>
+      )}
     </div>
   );
 }

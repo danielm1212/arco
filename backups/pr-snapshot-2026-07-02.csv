@@ -1,0 +1,21 @@
+exercise_id,name,record_type,value,reps_context,achieved_at
+3_4_Sit-Up,3/4 Sit-Up,max_reps,12,,2026-07-01 15:44:58.335825+00
+Alternate_Incline_Dumbbell_Curl,Alternate Incline Dumbbell Curl,max_weight,28,12,2026-07-01 15:44:58.335825+00
+Alternate_Incline_Dumbbell_Curl,Alternate Incline Dumbbell Curl,max_e1rm,39.2,12,2026-07-01 15:44:58.335825+00
+Alternate_Incline_Dumbbell_Curl,Alternate Incline Dumbbell Curl,max_reps,12,,2026-07-01 15:44:58.335825+00
+Band_Skull_Crusher,Band Skull Crusher,max_weight,24,12,2026-07-01 15:44:58.335825+00
+Band_Skull_Crusher,Band Skull Crusher,max_e1rm,33.6,12,2026-07-01 15:44:58.335825+00
+Band_Skull_Crusher,Band Skull Crusher,max_reps,12,,2026-07-01 15:44:58.335825+00
+Dumbbell_Bench_Press,Dumbbell Bench Press,max_weight,44,12,2026-07-01 15:44:58.335825+00
+Dumbbell_Bench_Press,Dumbbell Bench Press,max_e1rm,61.6,12,2026-07-01 15:44:58.335825+00
+Dumbbell_Bench_Press,Dumbbell Bench Press,max_reps,15,,2026-07-01 15:44:58.335825+00
+Goblet_Squat,Goblet Squat,max_weight,20,15,2026-07-01 15:44:58.335825+00
+Goblet_Squat,Goblet Squat,max_e1rm,30.0,15,2026-07-01 15:44:58.335825+00
+Goblet_Squat,Goblet Squat,max_reps,15,,2026-07-01 15:44:58.335825+00
+One-Arm_Dumbbell_Row,One-Arm Dumbbell Row,max_weight,22,24,2026-07-01 15:44:58.335825+00
+One-Arm_Dumbbell_Row,One-Arm Dumbbell Row,max_e1rm,39.6,24,2026-07-01 15:44:58.335825+00
+One-Arm_Dumbbell_Row,One-Arm Dumbbell Row,max_reps,24,,2026-07-01 15:44:58.335825+00
+Seated_Dumbbell_Press,Seated Dumbbell Press,max_weight,24,12,2026-07-01 15:44:58.335825+00
+Seated_Dumbbell_Press,Seated Dumbbell Press,max_e1rm,33.6,12,2026-07-01 15:44:58.335825+00
+Seated_Dumbbell_Press,Seated Dumbbell Press,max_reps,12,,2026-07-01 15:44:58.335825+00
+(19 rows)

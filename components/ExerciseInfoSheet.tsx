@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, useTransition, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { Drawer } from "vaul";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { deleteUserExercise } from "@/app/actions/userExercises";
 
 interface Detail {
   name: string;
@@ -12,6 +15,7 @@ interface Detail {
   secondary_muscles: string[];
   equipment: string | null;
   level: string | null;
+  user_id: string | null;
 }
 
 /** Bottom sheet "jak wykonać" — leniwie pobiera dane ćwiczenia przy otwarciu. */
@@ -24,6 +28,8 @@ export function ExerciseInfoSheet({
 }) {
   const [detail, setDetail] = useState<Detail | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   // Po podmianie ćwiczenia (exerciseId się zmienia) unieważnij cache — inaczej
   // arkusz pokazuje opis poprzedniego ćwiczenia (bug ze swapem).
@@ -38,7 +44,7 @@ export function ExerciseInfoSheet({
     const { data } = await sb
       .from("exercises")
       .select(
-        "name, images, instructions, primary_muscles, secondary_muscles, equipment, level",
+        "name, images, instructions, primary_muscles, secondary_muscles, equipment, level, user_id",
       )
       .eq("id", exerciseId)
       .maybeSingle();
@@ -97,6 +103,34 @@ export function ExerciseInfoSheet({
                   </ol>
                 ) : (
                   <p className="text-sm text-muted-foreground">Brak opisu wykonania.</p>
+                )}
+
+                {/* Własne ćwiczenie — usuwanie (guard historii/programu w akcji serwera) */}
+                {detail.user_id != null && (
+                  <button
+                    type="button"
+                    disabled={pending}
+                    onClick={() => {
+                      if (!confirm(`Usunąć własne ćwiczenie „${detail.name}"?`)) return;
+                      startTransition(async () => {
+                        try {
+                          const res = await deleteUserExercise(exerciseId);
+                          if (res.error) {
+                            toast.error(res.error);
+                            return;
+                          }
+                          toast.success("Usunięto własne ćwiczenie.");
+                          setDetail(null);
+                          router.refresh();
+                        } catch {
+                          toast.error("Nie udało się usunąć.");
+                        }
+                      });
+                    }}
+                    className="text-xs text-muted-foreground hover:text-danger disabled:opacity-50"
+                  >
+                    {pending ? "Usuwam…" : "Usuń własne ćwiczenie"}
+                  </button>
                 )}
               </div>
             )}

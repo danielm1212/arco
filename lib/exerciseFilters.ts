@@ -42,6 +42,39 @@ export const MOVEMENT_PATTERNS: { id: MovementPattern; label: string }[] = [
   { id: "carry", label: "Przenoszenie" },
 ];
 
+/** Pojedyncze mięśnie DB → etykieta PL (formularz własnego ćwiczenia). */
+export const MUSCLE_OPTIONS: { id: string; label: string }[] = [
+  { id: "chest", label: "Klatka" },
+  { id: "shoulders", label: "Barki" },
+  { id: "biceps", label: "Biceps" },
+  { id: "triceps", label: "Triceps" },
+  { id: "forearms", label: "Przedramiona" },
+  { id: "lats", label: "Najszersze (lats)" },
+  { id: "middle back", label: "Środek pleców" },
+  { id: "lower back", label: "Dolny odcinek pleców" },
+  { id: "traps", label: "Kaptury" },
+  { id: "abdominals", label: "Brzuch" },
+  { id: "quadriceps", label: "Czworogłowe" },
+  { id: "hamstrings", label: "Dwugłowe uda" },
+  { id: "glutes", label: "Pośladki" },
+  { id: "calves", label: "Łydki" },
+  { id: "adductors", label: "Przywodziciele" },
+  { id: "abductors", label: "Odwodziciele" },
+  { id: "neck", label: "Kark" },
+];
+
+/** Pojedyncze wartości `equipment` DB → etykieta PL (formularz własnego ćwiczenia). */
+export const EQUIPMENT_DB_OPTIONS: { id: string; label: string }[] = [
+  { id: "dumbbell", label: "Hantle" },
+  { id: "barbell", label: "Sztanga" },
+  { id: "cable", label: "Wyciąg" },
+  { id: "machine", label: "Maszyna" },
+  { id: "kettlebells", label: "Kettlebell" },
+  { id: "bands", label: "Gumy" },
+  { id: "body only", label: "Masa ciała" },
+  { id: "other", label: "Inne" },
+];
+
 /** Suma `primary_muscles` z wybranych partii (union → semantyka OR w `.overlaps`). */
 export function musclesForBodyParts(ids: string[]): string[] {
   const out = new Set<string>();
