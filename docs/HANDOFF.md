@@ -13,6 +13,10 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 **Zrobione (cd.): Sprint 6 — audyt FBW + nowy zestaw programów.** Audyt (`docs/audyt-fbw.md`) + korekty kategorii (`EXERCISE_CATEGORY_OVERRIDE`) + **6 kuratorowanych programów** (`docs/trainings/` od trenera → seed `ce53b29`, zastąpiły stare 7; mapowanie: `docs/trainings-mapowanie.md`). Aktywny: „Dom z hantlami".
 
 **Następny: Sprint 6 dokończenie — custom ćwiczenie.** Tabela `user-exercises` (RLS po `user_id`), CRUD w pickerze, opis + zdjęcia (Supabase Storage — nowa zależność, decyzja architektoniczna). Kandydat #1 do custom: **DB hip thrust** (brak w bazie). Szczegóły: `docs/sprinty-szczegolowe.md` S6.
+
+**Nowe (2026-07-02): analiza UX Hevy** — `docs/konkurencja-hevy-ux.md` (ekrany + warstwa funkcjonalna, matryca #1–#30). Wynik: sprinty **S12–S14** w `sprinty-szczegolowe.md` (sesja globalna + rep-PRs · postępy-lustro + picker · empty states), punkty 8–9 dopisane do N2, 14 wpisów w Notion „Baza pomysłów" (Backlog). Kolejność wpięcia S12–S14 — propozycja w `plan-sprintow-2026-07.md`, czeka na [Ty].
+
+**⚠️ NOWA KOLEJNOŚĆ SPRINTÓW (2026-07-02):** po S6 wchodzi **`docs/plan-sprintow-2026-07.md`** — re-priorytetyzacja po audycie backlogu właściciela (Notion „ARCO — Baza pomysłów”): N1 deploy-lite HTTPS (wake lock/wibracje to artefakty HTTP, nie bugi kodu) → N2 paczka UX z notatek → decyzja wizualna (gate toru assetów) → S7 (+imię w onboardingu) → S8–S11. Czytaj ten plik przed planowaniem kolejnego sprintu.
 > Uwaga: re-seed kasuje programy z `user_id=null` (CASCADE czyści `user_active_program`) — po `npm run seed` ustaw aktywny program na nowo.
 > Otwarta sprawa (Twoja): po realnym użyciu guidance — czy progi/agresywność OK (kalibracja `GUIDANCE`), zanim ew. per-user.
 > Ops: lokalny LAN IP zmienił się na **192.168.100.53** — `.env.local` (gitignore) zaktualizowany. Stary `.16` był down. Sprawdzaj `ipconfig getifaddr en0` po zmianie sieci.

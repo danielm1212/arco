@@ -3,6 +3,7 @@
 > Rozpisanie Horyzontu 1 z `roadmap.md` na konkrety. Podział: **[Claude]** = robię ja, **[Ty]** = Daniel (decyzje/treść/assety).
 > Assety (ikony, zdjęcia) mają długi lead-time — **ruszaj je równolegle już teraz** (sekcja „Tor assetów").
 > Data: 2026-06-25.
+> ⚠️ **Kolejność sprintów od 2026-07-02 nadpisuje `plan-sprintow-2026-07.md`** (deploy-lite N1 + paczka UX N2 wchodzą po S6, przed S7). Zakresy S6–S11 tutaj pozostają aktualne.
 
 ## Walidacja planu (zanim ruszymy)
 1. **Offline-correctness niesie ryzyko utraty danych** — `product-audit` stawiał to jako Phase 5 „nie trać danych". W naszym planie to Sprint 5 (późno). **Korekta:** 2 krytyczne rzeczy (flush outboxa przed „Zakończ" + fix kolizji `set_index`) **przesuwam do Sprintu 1**. Reszta porządków kodu zostaje w Sprincie 5.
@@ -127,6 +128,49 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 - (opc.) fork `yuhonas/free-exercise-db` na własny GH jako backup online.
 - Akceptacja PL tłumaczeń.
 **Done:** apka na HTTPS, pełne PWA (instalacja, wibracje, wake lock), świeży start danych, **zdjęcia z własnego hostingu (nie hotlink)**.
+
+---
+
+# Sprinty 12–14 — pakiety z analizy Hevy (2026-07-02)
+
+> Źródło: `docs/konkurencja-hevy-ux.md` (analiza ekran-po-ekranie + warstwa funkcjonalna; numery #1–#30 = matryca rekomendacji).
+> Kolejność wpięcia: **`plan-sprintow-2026-07.md`** (propozycja tam — [Ty] zatwierdzasz). Drobnica z tej analizy (guard porzucenia sesji, zasada rest-timera) dopisana do Sprintu N2 w tamtym pliku.
+> Zasada przewodnia: bierzemy od Hevy ergonomię i głębię danych, NIE bierzemy filozofii (feed, komentarze, leaderboardy, formularz zamiast celebracji).
+
+## Sprint 12 — Sesja i rekordy (Hevy-inspired core)
+**Cel:** sesja jako obiekt globalny + rekordy per powtórzenia zasilające guidance. (#1, #2/#30, #24, #26)
+**[Claude]:**
+- **Sesja jako obiekt globalny:** mini-bar „Trening w toku · ▶ Wróć / ✕ Porzuć" nad nawigacją na każdym ekranie; sesja przeżywa nawigację i restart apki. Porzucenie zawsze z potwierdzeniem (spójnie z undo-toastami).
+- **Rep-PRs:** rozszerzenie `personal_records` o wymiar liczby powtórzeń (PR dla 3/5/8/10/12…) + recompute; sekcja „Rekordy per powtórzenia" w detalu ćwiczenia (wzorzec Hevy „Set Records").
+- **Guidance na rep-PRs:** `progressionHint` odwołuje się do rep-PR („rekord przy 8 powt.: 22,5 kg — dziś celuj 25").
+- **Mikro-celebracja PR w sesji:** wiersz serii dostaje volt-flash + badge „PR" + haptic (po HTTPS) w momencie pobicia — 1–2 s, bez przerywania flow. Peak-end: peak dzieje się przy serii, nie na ekranie końcowym.
+- **Edycja daty/czasu sesji** (logowanie po fakcie) — pole „Kiedy" na ekranie po treningu / w historii.
+**[Ty]:** decyzja — czy **edycja zapisanego treningu** (serie po fakcie, #25) wchodzi tu czy osobno (koszt: recompute PR + UX edycji historii).
+**Done:** sesję można zminimalizować i wrócić z każdego ekranu; PR liczone per powtórzenia i użyte w hintach; PR świętowany w momencie zdarzenia.
+
+## Sprint 13 — Postępy jako lustro (nie rejestr) + picker
+**Cel:** /progress odpowiada na pytania usera, nie renderuje tabel — najgłębsza różnica vs Hevy (#27, #7, #8, #9 + picker #4/#5/#6).
+**[Claude]:**
+- **Nagłówki-interpretacje** nad każdym wykresem /progress, liczone z istniejącego silnika guidance („Wolumen ↑12% vs poprzednie 30 dni — progresja działa", „Pull odstaje trzeci tydzień").
+- **Delta-karty:** Treningi / Czas / Objętość / Serie z porównaniem do poprzedniego okresu (volt ↑ / neutralne →).
+- **Muscle Split %** (poziome bary) w detalu treningu w historii + na ekranie celebracji — dane z `sets-per-muscle` już są.
+- **Tabela setów per partia** pod heatmapą-sylwetką (kolor + liczby = pełny obraz).
+- **Picker:** sekcja „Ostatnio używane" na górze · multi-select ze sticky „Dodaj N ćwiczeń" · link do progresu ćwiczenia z wiersza (ikona wykresu).
+**[Ty]:** ton copy interpretacji (motywujący vs rzeczowy) + progi „co uznajemy za wzrost" (kalibracja z `GUIDANCE`).
+**Done:** każdy wykres ma zdanie-wniosek; picker z Recent + multi-select; celebracja pokazuje Muscle Split.
+
+## Sprint 14 — Empty states i pierwsze wrażenie
+**Cel:** każdy pusty ekran = **obietnica wartości + jeden następny krok**, nigdy „brak danych". Hevy jest tu słabe („No data yet", pusty hub po onboardingu) — tania przewaga spójna z TTV < 2 min.
+**[Claude] — inwentarz + wdrożenie:**
+- **Home bez aktywnego programu / przed 1. treningiem:** hero „pierwszy krok" (wybierz program → „Sugerowane dziś"), nie pusta karta.
+- **/history pusta:** kalendarz z ringiem „dziś" + „Twój pierwszy trening pojawi się tutaj" + CTA start.
+- **/progress bez danych:** ghost-wykresy (szkielet z przykładowym kształtem — wzorzec „Measure progress" z onboardingu Hevy: pokaż, JAK będzie wyglądać wartość) + „po 2 treningach zobaczysz trendy"; heatmapa wyszarzona z podpisem, nie ukryta.
+- **Detal ćwiczenia bez historii:** „zaloguj 2 sesje, żeby zobaczyć trend" + placeholder rep-PR — zamiast pustego wykresu.
+- **Picker — brak wyników** search/filtrów: „Nie ma? Dodaj własne ćwiczenie" (CTA do custom z S6). Domyka wpis Notion o wyszukiwarce.
+- **Karta wskazówek bez flag:** pozytywny stan („Wszystko na torze 💪"), nie znikająca sekcja.
+- **Tech:** skeletony tras (przeniesione z opcji po-deploy) · stan offline (banner + disabled akcje wymagające sieci) · sprawdzić flashe ładowania na wolnej sieci.
+**[Ty]:** copy PL wszystkich empty states (krótkie, motywujące — jak copy celebracji).
+**Done:** przejście świeżego konta przez wszystkie ekrany bez ani jednego pustego/mylącego widoku; skeletony na trasach.
 
 ---
 
