@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useTheme } from "next-themes";
 import { updateSettings } from "@/app/actions/settings";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
 import { getAutoRest, setAutoRest, getKeepAwake, setKeepAwake } from "@/lib/prefs";
@@ -146,33 +147,27 @@ export function SettingsForm({
         <h2 className="text-sm font-medium text-muted-foreground">Trening</h2>
         <div className="flex items-center justify-between">
           <span className="text-sm">Auto-przerwa po zaliczeniu serii</span>
-          <Button
-            variant={autoRest ? "default" : "outline"}
-            size="sm"
-            onClick={() => {
-              const v = !autoRest;
+          <Switch
+            checked={mounted ? autoRest : true}
+            disabled={!mounted}
+            aria-label="Auto-przerwa po zaliczeniu serii"
+            onCheckedChange={(v) => {
               setAutoRest(v);
               setAutoRestState(v);
             }}
-            suppressHydrationWarning
-          >
-            {mounted ? (autoRest ? "Wł" : "Wył") : "—"}
-          </Button>
+          />
         </div>
         <div className="flex items-center justify-between">
           <span className="text-sm">Nie wygaszaj ekranu w treningu</span>
-          <Button
-            variant={keepAwake ? "default" : "outline"}
-            size="sm"
-            onClick={() => {
-              const v = !keepAwake;
+          <Switch
+            checked={mounted ? keepAwake : true}
+            disabled={!mounted}
+            aria-label="Nie wygaszaj ekranu w treningu"
+            onCheckedChange={(v) => {
               setKeepAwake(v);
               setKeepAwakeState(v);
             }}
-            suppressHydrationWarning
-          >
-            {mounted ? (keepAwake ? "Wł" : "Wył") : "—"}
-          </Button>
+          />
         </div>
       </section>
 
