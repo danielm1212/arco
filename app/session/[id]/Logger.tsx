@@ -110,6 +110,8 @@ export function Logger({
   const [rpeOn, setRpeOn] = useState<Record<string, boolean>>({});
   // Notatka zwinięta domyślnie (odgracenie karty) — otwarta gdy już jest treść
   const [noteOpen, setNoteOpen] = useState<Record<string, boolean>>({});
+  // Panel podmiany per ćwiczenie — trigger ⇄ w nagłówku karty (N2#5)
+  const [swapOpen, setSwapOpen] = useState<Record<string, boolean>>({});
   // Blokada wygaszania ekranu na czas aktywnego treningu (jeśli włączona w ustawieniach)
   useWakeLock(!isFinished && getKeepAwake());
   const { online, pending, syncing, queueUpsert, queueDelete, flush } = useSync();
@@ -435,7 +437,8 @@ export function Logger({
         </div>
       </header>
 
-      <main className="flex-1 space-y-md p-md">
+      {/* pb przy aktywnej przerwie — rest-bar (fixed bottom) nie zasłania dolnych wierszy (N2#9) */}
+      <main className={`flex-1 space-y-md p-md ${rest ? "pb-28" : ""}`}>
         {exercises.map((ex, i) => {
           const prev = formatPrevious(ex, unit);
           const grouped = ex.supersetGroup != null;
@@ -451,7 +454,8 @@ export function Logger({
               <div className="flex items-start justify-between gap-sm">
                 <div className="min-w-0">
                   <p className="font-medium">
-                    <ExerciseInfoSheet exerciseId={ex.exerciseId}>
+                    {/* key = remount po podmianie (N2#4) — zero szans na stary cache opisu */}
+                    <ExerciseInfoSheet key={ex.exerciseId} exerciseId={ex.exerciseId}>
                       <button
                         type="button"
                         className="text-left underline-offset-2 hover:underline"
@@ -487,26 +491,60 @@ export function Logger({
                     </p>
                   )}
                 </div>
-                {ex.slot ? (
-                  // Ćwiczenie z programu: „Pomiń" zamiast „Usuń" — zostaje slot/progres
-                  <button
-                    onClick={() => handleSkip(ex.sessionExerciseId, !ex.skipped)}
-                    className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
-                    aria-label={ex.skipped ? "Przywróć ćwiczenie" : "Pomiń ćwiczenie"}
-                  >
-                    {ex.skipped ? "Przywróć" : "Pomiń"}
-                  </button>
-                ) : (
-                  // Ćwiczenie dodane ad hoc (freestyle): twarde usunięcie OK
-                  <button
-                    onClick={() => handleDeleteExercise(ex.sessionExerciseId)}
-                    className="shrink-0 text-xs text-muted-foreground hover:text-danger"
-                    aria-label="Usuń ćwiczenie"
-                  >
-                    Usuń
-                  </button>
-                )}
+                <div className="flex shrink-0 items-center gap-md">
+                  {/* Podmiana przy nazwie (N2#5) — panel rozwija się pod nagłówkiem */}
+                  {!ex.skipped && (
+                    <button
+                      onClick={() =>
+                        setSwapOpen((o) => ({
+                          ...o,
+                          [ex.sessionExerciseId]: !o[ex.sessionExerciseId],
+                        }))
+                      }
+                      className={`text-xs ${
+                        swapOpen[ex.sessionExerciseId]
+                          ? "text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      aria-label="Podmień ćwiczenie"
+                      aria-expanded={!!swapOpen[ex.sessionExerciseId]}
+                      title="Podmień ćwiczenie"
+                    >
+                      ⇄ Podmień
+                    </button>
+                  )}
+                  {ex.slot ? (
+                    // Ćwiczenie z programu: „Pomiń" zamiast „Usuń" — zostaje slot/progres
+                    <button
+                      onClick={() => handleSkip(ex.sessionExerciseId, !ex.skipped)}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                      aria-label={ex.skipped ? "Przywróć ćwiczenie" : "Pomiń ćwiczenie"}
+                    >
+                      {ex.skipped ? "Przywróć" : "Pomiń"}
+                    </button>
+                  ) : (
+                    // Ćwiczenie dodane ad hoc (freestyle): twarde usunięcie OK
+                    <button
+                      onClick={() => handleDeleteExercise(ex.sessionExerciseId)}
+                      className="text-xs text-muted-foreground hover:text-danger"
+                      aria-label="Usuń ćwiczenie"
+                    >
+                      Usuń
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {!ex.skipped && (
+                <SwapPanel
+                  sessionId={sessionId}
+                  sessionExerciseId={ex.sessionExerciseId}
+                  open={!!swapOpen[ex.sessionExerciseId]}
+                  onClose={() =>
+                    setSwapOpen((o) => ({ ...o, [ex.sessionExerciseId]: false }))
+                  }
+                />
+              )}
 
               {ex.skipped ? (
                 <p className="text-xs italic text-muted-foreground">
@@ -586,8 +624,6 @@ export function Logger({
                   </button>
                 </div>
               )}
-
-              <SwapPanel sessionId={sessionId} sessionExerciseId={ex.sessionExerciseId} />
 
               {(() => {
                 const hint = progressionHint(ex, unit);

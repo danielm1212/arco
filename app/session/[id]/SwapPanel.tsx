@@ -1,41 +1,55 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getSubstitutes, swapExercise } from "@/app/actions/substitute";
 import { ExerciseBrowser, type BrowserHit } from "./ExerciseBrowser";
 
+/**
+ * Panel podmiany — kontrolowany z zewnątrz (N2#5: trigger ⇄ mieszka w nagłówku
+ * karty ćwiczenia w Loggerze, panel rozwija się pod nagłówkiem).
+ * Domyślnie rankowani kandydaci z getSubstitutes; chipy/search = pełny browse.
+ */
 export function SwapPanel({
   sessionId,
   sessionExerciseId,
+  open,
+  onClose,
 }: {
   sessionId: string;
   sessionExerciseId: string;
+  open: boolean;
+  onClose: () => void;
 }) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loose, setLoose] = useState(false);
   const [candidates, setCandidates] = useState<BrowserHit[]>([]);
   const [pending, startTransition] = useTransition();
 
-  async function load() {
-    setOpen(true);
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
     setLoading(true);
-    const res = await getSubstitutes(sessionExerciseId);
-    setLoose(res.loose);
-    setCandidates(
-      res.items.map((c) => ({ id: c.id, name: c.name, equipment: c.equipment, image: c.image })),
-    );
-    setLoading(false);
-  }
+    getSubstitutes(sessionExerciseId).then((res) => {
+      if (cancelled) return;
+      setLoose(res.loose);
+      setCandidates(
+        res.items.map((c) => ({ id: c.id, name: c.name, equipment: c.equipment, image: c.image })),
+      );
+      setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, sessionExerciseId]);
 
   function pick(id: string) {
     startTransition(async () => {
       try {
         await swapExercise(sessionId, sessionExerciseId, id);
-        setOpen(false);
+        onClose();
         router.refresh();
       } catch {
         toast.error("Nie udało się podmienić ćwiczenia.");
@@ -43,32 +57,21 @@ export function SwapPanel({
     });
   }
 
-  return (
-    <>
-      <button
-        onClick={open ? () => setOpen(false) : load}
-        className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
-        aria-label="Podmień ćwiczenie"
-        title="Podmień ćwiczenie"
-      >
-        ⇄ Podmień
-      </button>
+  if (!open) return null;
 
-      {open && (
-        <div className="mt-sm rounded-md border bg-background p-sm">
-          <ExerciseBrowser
-            onPick={pick}
-            pending={pending}
-            defaultItems={candidates}
-            defaultLoading={loading}
-            defaultNote={
-              loose
-                ? "Brak ścisłego dopasowania — pokazuję najbliższe z dostępnym sprzętem."
-                : null
-            }
-          />
-        </div>
-      )}
-    </>
+  return (
+    <div className="rounded-md border bg-background p-sm">
+      <ExerciseBrowser
+        onPick={pick}
+        pending={pending}
+        defaultItems={candidates}
+        defaultLoading={loading}
+        defaultNote={
+          loose
+            ? "Brak ścisłego dopasowania — pokazuję najbliższe z dostępnym sprzętem."
+            : null
+        }
+      />
+    </div>
   );
 }
