@@ -35,13 +35,16 @@ export function SettingsForm({
   rest,
   equipment,
   weeklyGoal,
+  displayName,
 }: {
   unit: UnitSystem;
   rest: number;
   equipment: string[];
   weeklyGoal: number;
+  displayName: string;
 }) {
   const [u, setU] = useState<UnitSystem>(unit);
+  const [name, setName] = useState(displayName);
   const [r, setR] = useState(rest);
   const [eq, setEq] = useState<string[]>(equipment);
   const [goal, setGoal] = useState(weeklyGoal);
@@ -72,6 +75,7 @@ export function SettingsForm({
         default_rest_seconds: r,
         available_equipment: eq,
         weekly_goal: goal,
+        display_name: name.trim() || null,
       });
       setSaved(true);
     });
@@ -79,6 +83,17 @@ export function SettingsForm({
 
   return (
     <div className="space-y-lg">
+      <section className="space-y-xs">
+        <h2 className="text-sm font-medium text-muted-foreground">Imię</h2>
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={40}
+          placeholder="Jak się do Ciebie zwracać?"
+        />
+        <p className="text-xs text-muted-foreground">Widoczne w powitaniu na ekranie Trening.</p>
+      </section>
+
       <section className="space-y-sm">
         <h2 className="text-sm font-medium text-muted-foreground">Motyw</h2>
         <div className="flex gap-xs">

@@ -8,7 +8,7 @@ export default async function SettingsPage() {
   const supabase = createClient();
   const { data: s } = await supabase
     .from("user_settings")
-    .select("unit_system, default_rest_seconds, available_equipment, weekly_goal")
+    .select("unit_system, default_rest_seconds, available_equipment, weekly_goal, display_name")
     .maybeSingle();
 
   return (
@@ -26,6 +26,7 @@ export default async function SettingsPage() {
           rest={s?.default_rest_seconds ?? 120}
           equipment={s?.available_equipment ?? []}
           weeklyGoal={s?.weekly_goal ?? 2}
+          displayName={s?.display_name ?? ""}
         />
       </main>
     </div>

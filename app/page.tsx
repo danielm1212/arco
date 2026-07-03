@@ -38,7 +38,7 @@ export default async function HomePage() {
       .select("started_at")
       .not("finished_at", "is", null)
       .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString()),
-    supabase.from("user_settings").select("unit_system, weekly_goal").maybeSingle(),
+    supabase.from("user_settings").select("unit_system, weekly_goal, display_name").maybeSingle(),
     supabase.from("sessions").select("id", { count: "exact", head: true }),
     getHomeGuidance(),
   ]);
@@ -142,6 +142,11 @@ export default async function HomePage() {
       <WelcomeOverlay
         eligible={(sessionCount ?? 0) === 0}
         unit={settings?.unit_system ?? "kg"}
+        weeklyGoal={settings?.weekly_goal ?? 2}
+        programs={((programs ?? []) as { id: string; name: string }[]).map((p) => ({
+          id: p.id,
+          name: p.name,
+        }))}
       />
       <header className="flex items-center justify-between border-b px-sm py-sm">
         <span className="pl-2xs text-lg font-bold tracking-tight">Arco</span>
@@ -160,6 +165,12 @@ export default async function HomePage() {
       </header>
 
       <main className="flex-1 space-y-lg p-md">
+        {/* Powitanie z imieniem (S7) — tylko gdy ustawione */}
+        {settings?.display_name && (
+          <h1 className="text-2xl font-bold tracking-tight">
+            Cześć, {settings.display_name} 👋
+          </h1>
+        )}
         <section className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
           <div className="mb-sm flex items-center justify-between">
             <span className="flex items-baseline gap-2">

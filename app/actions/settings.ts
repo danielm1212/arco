@@ -9,6 +9,7 @@ export async function updateSettings(values: {
   default_rest_seconds?: number;
   available_equipment?: string[];
   weekly_goal?: number;
+  display_name?: string | null;
 }) {
   const supabase = createClient();
   const {

@@ -458,6 +458,7 @@ export type Database = {
           bar_weight: number
           created_at: string
           default_rest_seconds: number
+          display_name: string | null
           unit_system: Database["public"]["Enums"]["unit_system"]
           updated_at: string
           user_id: string
@@ -469,6 +470,7 @@ export type Database = {
           bar_weight?: number
           created_at?: string
           default_rest_seconds?: number
+          display_name?: string | null
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id: string
@@ -480,6 +482,7 @@ export type Database = {
           bar_weight?: number
           created_at?: string
           default_rest_seconds?: number
+          display_name?: string | null
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id?: string
