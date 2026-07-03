@@ -15,9 +15,9 @@
 
 | # | Sprint | Status |
 |---|--------|--------|
-| 1 | S6-dokończenie — custom ćwiczenie (wg `sprinty-szczegolowe.md` S6) | ⏳ w toku |
-| 2 | **N1 — Deploy-lite (HTTPS)** — nowy, opis niżej | 🔜 |
-| 3 | **N2 — Paczka UX z notatek właściciela** — nowy, opis niżej | 🔜 |
+| 1 | S6-dokończenie — custom ćwiczenie (wg `sprinty-szczegolowe.md` S6) | ✅ ZROBIONE (`dbc8391`) |
+| 2 | **N1 — Deploy-lite (HTTPS)** — nowy, opis niżej | ⏳ **czeka na [Ty]: konta Supabase cloud + Vercel** |
+| 3 | **N2 — Paczka UX z notatek właściciela** — nowy, opis niżej | ✅ ZROBIONE 1–6, 8–9 (`89d5725`…`3c83e7d`); #7 reorder = opc., nietknięty |
 | 4 | **Decyzja wizualna** [Ty] + start toru assetów — opis niżej | 🔜 równolegle z N1/N2 |
 | 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | planowany |
 | 6 | S8 → S9 → S10 → S11-domknięcie | bez zmian |
@@ -52,15 +52,15 @@
 > Źródło: notatki właściciela (Notion, Faza 1). Drobne, wysokie value/cost. Każdy punkt osobny commit + weryfikacja w Preview.
 
 **[Claude]:**
-1. **Biblioteka programów: pełna nazwa programu** — nazwa ucinana na karcie (`app/programs/page.tsx`); zawijanie lub 2 linie + tooltip.
-2. **Podgląd ćwiczeń w programie z biblioteki** — w podglądzie programu nie widać listy konkretnych ćwiczeń (`app/programs/[id]/page.tsx` / widok biblioteczny).
-3. **Podgląd treningu bez odpalania sesji** — wejście w trening z home/biblioteki w trybie read-only (bez tworzenia `session`).
-4. **Bug: tooltip/info ćwiczenia nie aktualizuje się po podmianie** — nazwa się zmienia, `ExerciseInfoSheet` pokazuje stare dane (właściciel ma screen). Sprawdzić propagację propsów po swap w `Logger.tsx`/`SetRow.tsx`.
-5. **„Zamień ćwiczenie” bliżej nazwy ćwiczenia** — przenieść trigger swapa do nagłówka karty ćwiczenia w loggerze.
-6. **QA superserii** — przejść flow łączenia superserii E2E; naprawić co się wysypie.
-7. (opc., jeśli zostanie czas) **Reorder ćwiczeń w trakcie sesji** — logger; edytor programu już ma ↑/↓.
-8. *(nowe, z analizy Hevy 2026-07-02)* **Guard porzucenia sesji** — porzucenie/wyjście z niedokończonego treningu zawsze z potwierdzeniem lub undo (u Hevy „Discard" siedzi obok „Resume" bez guardu — anty-wzorzec). Sprawdzić nasze ścieżki wyjścia z loggera.
-9. *(nowe, z analizy Hevy 2026-07-02)* **Zasada rest-timera: przerwa nie blokuje edycji** — zweryfikować, że podczas odliczania przerwy da się edytować kolejne serie/notatki (wzorzec Hevy: timer jako bottom-bar, tabela dalej dostępna); jeśli nasz timer zasłania — poprawić.
+1. ✅ (`89d5725`) **Pełna nazwa programu** — `break-words` zamiast `truncate`; zweryfikowane: żadna z 6 nazw nie ucięta.
+2. ✅ (`f2b5e60`) **Podgląd ćwiczeń w programie** — widok preset pokazywał już dni+ćwiczenia; dodane ⓘ „jak wykonać" (ExerciseInfoSheet) na każdym ćwiczeniu.
+3. ✅ (`cf87d88`) **Podgląd treningu bez sesji** — link „Zobacz ćwiczenia (bez startu) →" w hero + nazwa aktywnego programu jako link do read-only widoku.
+4. ✅ (`3c83e7d`) **Bug ⓘ po podmianie** — hard-fix: `key={exerciseId}` na ExerciseInfoSheet (remount po swapie); zweryfikowane E2E (swap → sheet pokazuje nowe ćwiczenie).
+5. ✅ (`3c83e7d`) **Swap przy nazwie** — trigger „⇄ Podmień" w nagłówku karty obok Pomiń/Usuń (SwapPanel kontrolowany), panel pod nagłówkiem.
+6. ✅ **QA superserii** — E2E w Preview: łączenie (SS-badge na obu kartach) i rozłączanie czyste; nic się nie wysypało, zero zmian kodu.
+7. ⏸ (opc.) **Reorder ćwiczeń w sesji** — nietknięty (świadomie; wróci przy S12 „sesja globalna" albo na życzenie).
+8. ✅ **Guard porzucenia sesji** — audyt ścieżek: „Usuń sesję" ma confirm; „Zakończ" ma confirm przy niezaliczonych; wyjście „←" nie porzuca (sesja resumowalna z home „Wznów trening"). Anty-wzorca Hevy u nas nie ma — zero zmian kodu.
+9. ✅ (`3c83e7d`) **Rest-timer nie blokuje edycji** — potwierdzone (bar to fixed bottom, tabela dostępna; edycja serii podczas odliczania działa) + fix: `pb-28` na main przy aktywnej przerwie, żeby bar nie zasłaniał dolnych wierszy.
 
 **[Ty]:** szybki test na telefonie po każdej paczce; screeny do rzeczy, które nadal uwierają.
 

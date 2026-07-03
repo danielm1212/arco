@@ -12,7 +12,11 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione (cd.): Sprint 6 — audyt FBW + nowy zestaw programów.** Audyt (`docs/audyt-fbw.md`) + korekty kategorii (`EXERCISE_CATEGORY_OVERRIDE`) + **6 kuratorowanych programów** (`docs/trainings/` od trenera → seed `ce53b29`, zastąpiły stare 7; mapowanie: `docs/trainings-mapowanie.md`). Aktywny: „Dom z hantlami".
 
-**Następny: Sprint 6 dokończenie — custom ćwiczenie.** Tabela `user-exercises` (RLS po `user_id`), CRUD w pickerze, opis + zdjęcia (Supabase Storage — nowa zależność, decyzja architektoniczna). Kandydat #1 do custom: **DB hip thrust** (brak w bazie). Szczegóły: `docs/sprinty-szczegolowe.md` S6.
+**Zrobione (cd.): S6 KOMPLETNY** — custom ćwiczenie (`dbc8391`): `user_id` na `exercises` + RLS (wzorzec programs), formularz „+ Własne ćwiczenie" w pickerze (typ/sprzęt/partia/wzorzec/opis/zdjęcie → publiczny bucket `exercise-photos`), badge „własne", usuwanie w ⓘ z guardem historii/programu. Akcje zwracają `{error}` zamiast throw (Next maskuje message w prod). **N2 też ZROBIONE** (pkt 1–6, 8–9; #7 reorder opc. nietknięty) — statusy i commity w `plan-sprintow-2026-07.md`.
+
+**⚠️ Incydent 2026-07-02 (patrz pamięć `arco-test-data-cleanup`):** hurtowe `delete from sessions` skasowało realny trening właściciela z 1.07. Odtworzony z PR-ów jako sesja-rekonstrukcja `f2e5386a` (Dzień A + 3 extra, najlepsze serie; snapshot: `backups/pr-snapshot-2026-07-02.csv`). PR-y oryginalne nietknięte.
+
+**Następny: N1 — Deploy-lite (HTTPS)** — czeka na [Ty]: konta Supabase cloud + Vercel (właściciel deklarował 2026-07-03). Potem: decyzja wizualna [Ty] → S7.
 
 **Nowe (2026-07-02): analiza UX Hevy** — `docs/konkurencja-hevy-ux.md` (ekrany + warstwa funkcjonalna, matryca #1–#30). Wynik: sprinty **S12–S14** w `sprinty-szczegolowe.md` (sesja globalna + rep-PRs · postępy-lustro + picker · empty states), punkty 8–9 dopisane do N2, 14 wpisów w Notion „Baza pomysłów" (Backlog). Kolejność wpięcia S12–S14 — propozycja w `plan-sprintow-2026-07.md`, czeka na [Ty].
 
