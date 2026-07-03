@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { duplicateProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
+import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { ProgramEditor, type EditorDay } from "./ProgramEditor";
 
 export const dynamic = "force-dynamic";
@@ -112,8 +113,17 @@ export default async function ProgramEditorPage({ params }: { params: { id: stri
             <p className="font-medium">{day.label}</p>
             <ul className="mt-xs space-y-2xs text-sm">
               {day.slots.map((s) => (
-                <li key={s.id} className="flex items-center justify-between">
-                  <span className="truncate">{s.exerciseName}</span>
+                <li key={s.id} className="flex items-center justify-between gap-sm">
+                  {/* ⓘ podgląd „jak wykonać" (N2#2) — tap na nazwie otwiera sheet */}
+                  <ExerciseInfoSheet exerciseId={s.exerciseId}>
+                    <button
+                      type="button"
+                      className="min-w-0 truncate text-left underline-offset-2 hover:underline"
+                      title="Jak wykonać"
+                    >
+                      {s.exerciseName} <span className="text-muted-foreground">ⓘ</span>
+                    </button>
+                  </ExerciseInfoSheet>
                   <span className="shrink-0 text-muted-foreground tabular-nums">
                     {s.targetSets} ×{" "}
                     {s.repsMin != null
