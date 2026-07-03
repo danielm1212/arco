@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Sparkline } from "@/components/Sparkline";
 import { MuscleHeatmap } from "@/components/MuscleHeatmap";
 import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
+import { localDayKey } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 
 const PERIODS = [
@@ -151,7 +152,7 @@ export default async function ProgressPage({
     .select("started_at")
     .not("finished_at", "is", null)
     .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString());
-  const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+  const dayKey = localDayKey; // klucz LOKALNY (spójnie z home; fix przesunięcia dnia)
   const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
   const DOW = ["N", "P", "W", "Ś", "C", "P", "S"];
   const strip = Array.from({ length: 14 }, (_, idx) => {

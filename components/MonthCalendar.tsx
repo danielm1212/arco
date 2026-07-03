@@ -7,9 +7,10 @@ const MONTHS = [
   "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
   "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień",
 ];
-const utcKey = (d: Date) => d.toISOString().slice(0, 10);
+const localKey = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-/** Kalendarz miesięczny z dniami treningowymi (klucze UTC — spójnie z home/progress). */
+/** Kalendarz miesięczny z dniami treningowymi (klucze LOKALNE — spójnie z home/progress). */
 export function MonthCalendar({
   trainingDays,
   streak,
@@ -19,17 +20,17 @@ export function MonthCalendar({
 }) {
   const days = new Set(trainingDays);
   const now = new Date();
-  const todayKey = utcKey(now);
-  const [ym, setYm] = useState({ y: now.getUTCFullYear(), m: now.getUTCMonth() });
+  const todayKey = localKey(now);
+  const [ym, setYm] = useState({ y: now.getFullYear(), m: now.getMonth() });
 
-  const first = new Date(Date.UTC(ym.y, ym.m, 1));
-  const daysInMonth = new Date(Date.UTC(ym.y, ym.m + 1, 0)).getUTCDate();
-  const lead = (first.getUTCDay() + 6) % 7; // przesunięcie pod start od poniedziałku
+  const first = new Date(ym.y, ym.m, 1);
+  const daysInMonth = new Date(ym.y, ym.m + 1, 0).getDate();
+  const lead = (first.getDay() + 6) % 7; // przesunięcie pod start od poniedziałku
 
   const cells: ({ key: string; n: number } | null)[] = [];
   for (let i = 0; i < lead; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) {
-    cells.push({ key: utcKey(new Date(Date.UTC(ym.y, ym.m, d))), n: d });
+    cells.push({ key: localKey(new Date(ym.y, ym.m, d)), n: d });
   }
 
   const step = (delta: number) =>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { MonthCalendar } from "@/components/MonthCalendar";
-import { weekStart, computeStreak } from "@/lib/week";
+import { weekStart, computeStreak, localDayKey } from "@/lib/week";
 import { DeleteSessionButton } from "./DeleteSessionButton";
 
 export const dynamic = "force-dynamic";
@@ -16,10 +16,10 @@ export default async function HistoryPage() {
     )
     .order("started_at", { ascending: false });
 
-  // Kalendarz + passa (z ukończonych sesji; klucze UTC jak w home/progress)
+  // Kalendarz + passa (z ukończonych sesji; klucze LOKALNE — spójnie z home/progress)
   const done = (sessions ?? []).filter((s) => s.finished_at);
   const trainingDays = [
-    ...new Set(done.map((s) => new Date(s.started_at).toISOString().slice(0, 10))),
+    ...new Set(done.map((s) => localDayKey(new Date(s.started_at)))),
   ];
   const streak = computeStreak(
     new Set(done.map((s) => weekStart(new Date(s.started_at)))),

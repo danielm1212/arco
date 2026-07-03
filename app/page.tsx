@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Settings, LogOut } from "lucide-react";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeGuidance } from "@/lib/getHomeGuidance";
+import { localDayKey } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -52,7 +53,7 @@ export default async function HomePage() {
     : [];
 
   // Pasek tygodnia + streak
-  const dayKey = (d: Date) => d.toISOString().slice(0, 10);
+  const dayKey = localDayKey; // klucz LOKALNY (fix: ring „dziś" wskazywał sobotę w piątek)
   const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
   const monday = new Date();
   monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));

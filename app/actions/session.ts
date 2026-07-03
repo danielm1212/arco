@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { localDayKey } from "@/lib/week";
 
 async function requireUser() {
   const supabase = createClient();
@@ -118,7 +119,7 @@ export async function updateSessionDate(
   const delta = +newStart - +new Date(s.started_at);
   const patch: { started_at: string; date: string; finished_at?: string } = {
     started_at: newStart.toISOString(),
-    date: newStart.toISOString().slice(0, 10),
+    date: localDayKey(newStart),
   };
   if (s.finished_at)
     patch.finished_at = new Date(+new Date(s.finished_at) + delta).toISOString();
