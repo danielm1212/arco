@@ -16,7 +16,9 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **⚠️ Incydent 2026-07-02 (patrz pamięć `arco-test-data-cleanup`):** hurtowe `delete from sessions` skasowało realny trening właściciela z 1.07. Odtworzony z PR-ów jako sesja-rekonstrukcja `f2e5386a` (Dzień A + 3 extra, najlepsze serie; snapshot: `backups/pr-snapshot-2026-07-02.csv`). PR-y oryginalne nietknięte.
 
-**Następny: N1 — Deploy-lite (HTTPS)** — czeka na [Ty]: konta Supabase cloud + Vercel (właściciel deklarował 2026-07-03). Potem: decyzja wizualna [Ty] → S7.
+**Zrobione (cd.): S12 KOMPLETNY (bez „edycji zapisanego treningu” — Refinement [Ty])** — mini-bar „Trening w toku” globalnie (9401708), rep-PRs on-the-fly + hint „rekord przy N powt.” + mikro-celebracja PR (volt-flash+badge, b17aaca), edycja daty sesji (49904ea). Też: Switch w ustawieniach (0bfadfd). **Sync z Notion: rytuał działa** (wpisy S12 na „Do testu [Ty]”).
+
+**Następny: S13 — Postępy jako lustro + picker** (nagłówki-interpretacje z guidance, delta-karty, Muscle Split, tabela setów pod heatmapą; picker: Recent + multi-select). **N1 deploy-lite** wciąż czeka na [Ty] (konta; przypomnienie 9:00 aktywne). Decyzja wizualna [Ty] otwarta.
 
 **Nowe (2026-07-02): analiza UX Hevy** — `docs/konkurencja-hevy-ux.md` (ekrany + warstwa funkcjonalna, matryca #1–#30). Wynik: sprinty **S12–S14** w `sprinty-szczegolowe.md` (sesja globalna + rep-PRs · postępy-lustro + picker · empty states), punkty 8–9 dopisane do N2, 14 wpisów w Notion „Baza pomysłów" (Backlog). Kolejność wpięcia S12–S14 — propozycja w `plan-sprintow-2026-07.md`, czeka na [Ty].
 

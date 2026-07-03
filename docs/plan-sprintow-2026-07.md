@@ -20,7 +20,8 @@
 | 3 | **N2 — Paczka UX z notatek właściciela** — nowy, opis niżej | ✅ ZROBIONE 1–6, 8–9 (`89d5725`…`3c83e7d`); #7 reorder = opc., nietknięty |
 | 4 | **Decyzja wizualna** [Ty] + start toru assetów — opis niżej | 🔜 równolegle z N1/N2 |
 | 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | ✅ ZROBIONE (`3066d19`; N1 wciąż przed S8+) |
-| 6 | S8 → S9 → S10 → S11-domknięcie | bez zmian |
+| 6 | **S12 — Sesja i rekordy** (wybrany po S7 przez [Ty], opcja A) | ✅ ZROBIONE — mini-bar (9401708), rep-PRs+hint+celebracja (b17aaca), edycja daty (49904ea); „edycja zapisanego treningu” = Refinement [Ty] |
+| 7 | S13 → S8 → S9 → S10 → S11-domknięcie | S13 następny (druga część opcji A) |
 
 ---
 
