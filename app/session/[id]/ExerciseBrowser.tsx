@@ -30,6 +30,8 @@ export interface BrowserHit {
  */
 export function ExerciseBrowser({
   onPick,
+  onPickMany,
+  multi = false,
   pending,
   defaultItems,
   defaultLoading,
@@ -37,6 +39,9 @@ export function ExerciseBrowser({
   autoFocus,
 }: {
   onPick: (id: string) => void;
+  /** S13: tryb multi-select — sticky „Dodaj N ćwiczeń" zamiast add-per-tap */
+  onPickMany?: (ids: string[]) => void;
+  multi?: boolean;
   pending: boolean;
   defaultItems?: BrowserHit[];
   defaultLoading?: boolean;
@@ -51,6 +56,49 @@ export function ExerciseBrowser({
   const [hits, setHits] = useState<BrowserHit[]>([]);
   const [loading, setLoading] = useState(false);
   const [customOpen, setCustomOpen] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+  // S13: „Ostatnio używane" — default lista w trybie add (gdy brak defaultItems z zewnątrz)
+  const [recent, setRecent] = useState<BrowserHit[]>([]);
+  const [recentLoading, setRecentLoading] = useState(defaultItems === undefined);
+  const wantRecent = defaultItems === undefined;
+  useEffect(() => {
+    if (!wantRecent) return;
+    let cancelled = false;
+    const supabase = createClient();
+    supabase
+      .from("session_exercises")
+      .select("exercise_id, exercises(name, equipment, images, user_id), sessions!inner(started_at)")
+      .order("started_at", { ascending: false, referencedTable: "sessions" })
+      .limit(40)
+      .then(({ data }) => {
+        if (cancelled) return;
+        const seen = new Set<string>();
+        const out: BrowserHit[] = [];
+        (data ?? []).forEach((r) => {
+          if (seen.has(r.exercise_id) || out.length >= 8) return;
+          seen.add(r.exercise_id);
+          const ex = r.exercises as unknown as {
+            name: string;
+            equipment: string | null;
+            images: string[] | null;
+            user_id: string | null;
+          } | null;
+          if (!ex) return;
+          out.push({
+            id: r.exercise_id,
+            name: ex.name,
+            equipment: ex.equipment,
+            image: ex.images?.[0] ?? null,
+            isCustom: ex.user_id != null,
+          });
+        });
+        setRecent(out);
+        setRecentLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wantRecent]);
 
   const queryTerm = q.trim();
   const filtersActive =
@@ -100,8 +148,10 @@ export function ExerciseBrowser({
 
   const shownEquip = EQUIPMENT_GROUPS.filter((g) => g.primary || moreEquip || equip.includes(g.id));
   const showDefault = !filtersActive;
-  const items = showDefault ? (defaultItems ?? []) : hits;
-  const busy = showDefault ? !!defaultLoading : loading;
+  const items = showDefault ? (wantRecent ? recent : (defaultItems ?? [])) : hits;
+  const busy = showDefault ? (wantRecent ? recentLoading : !!defaultLoading) : loading;
+  const toggleSelect = (id: string) =>
+    setSelected((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
 
   return (
     <div className="space-y-sm">
@@ -148,10 +198,19 @@ export function ExerciseBrowser({
       {showDefault && defaultNote && (
         <p className="text-xs text-warning">{defaultNote}</p>
       )}
+      {showDefault && wantRecent && items.length > 0 && (
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Ostatnio używane
+        </p>
+      )}
       {busy && <p className="text-sm text-muted-foreground">Szukam…</p>}
       {!busy && items.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          {filtersActive ? "Brak wyników." : "Brak kandydatów."}
+          {filtersActive
+            ? "Brak wyników."
+            : wantRecent
+              ? "Szukaj albo filtruj chipami powyżej."
+              : "Brak kandydatów."}
         </p>
       )}
 
@@ -159,7 +218,9 @@ export function ExerciseBrowser({
         {items.map((h) => (
           <li
             key={h.id}
-            className="flex items-center gap-sm rounded-md py-xs pl-xs pr-sm hover:bg-accent"
+            className={`flex items-center gap-sm rounded-md py-xs pl-xs pr-sm hover:bg-accent ${
+              multi && selected.includes(h.id) ? "bg-primary/10 ring-1 ring-inset ring-primary/40" : ""
+            }`}
           >
             {h.image ? (
               /* eslint-disable-next-line @next/next/no-img-element */
@@ -175,7 +236,7 @@ export function ExerciseBrowser({
             <button
               type="button"
               disabled={pending}
-              onClick={() => onPick(h.id)}
+              onClick={() => (multi ? toggleSelect(h.id) : onPick(h.id))}
               className="min-w-0 flex-1 text-left disabled:opacity-50"
             >
               <p className="truncate text-sm">
@@ -188,6 +249,14 @@ export function ExerciseBrowser({
               </p>
               <p className="truncate text-xs text-muted-foreground">{h.equipment ?? "—"}</p>
             </button>
+            {/* S13: skok do progresu ćwiczenia */}
+            <a
+              href={`/exercise/${encodeURIComponent(h.id)}`}
+              aria-label="Progres ćwiczenia"
+              className="shrink-0 rounded-full border border-input px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+            >
+              📈
+            </a>
             <ExerciseInfoSheet exerciseId={h.id}>
               <button
                 type="button"
@@ -200,6 +269,22 @@ export function ExerciseBrowser({
           </li>
         ))}
       </ul>
+
+      {multi && selected.length > 0 && (
+        <div className="sticky bottom-0 z-10 -mx-1 bg-card/95 p-1 backdrop-blur">
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => {
+              onPickMany?.(selected);
+              setSelected([]);
+            }}
+            className="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            {pending ? "Dodaję…" : `Dodaj ${selected.length} ćw.`}
+          </button>
+        </div>
+      )}
 
       {/* Własne ćwiczenie — gdy brak w katalogu (Sprint 6). Po dodaniu od razu wybiera. */}
       {customOpen ? (

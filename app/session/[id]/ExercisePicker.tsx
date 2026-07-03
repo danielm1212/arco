@@ -24,6 +24,21 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
     });
   }
 
+  // S13: multi-select — dodanie kilku naraz (sekwencyjnie: pozycje liczone z count)
+  function pickMany(ids: string[]) {
+    startTransition(async () => {
+      try {
+        for (const id of ids) await addSessionExercise(sessionId, id);
+        toast.success(`Dodano ${ids.length} ćw.`);
+        setOpen(false);
+        router.refresh();
+      } catch {
+        toast.error("Nie udało się dodać wszystkich ćwiczeń.");
+        router.refresh();
+      }
+    });
+  }
+
   if (!open) {
     return (
       <Button variant="outline" className="w-full" onClick={() => setOpen(true)}>
@@ -40,7 +55,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
           Anuluj
         </Button>
       </div>
-      <ExerciseBrowser onPick={pick} pending={pending} autoFocus />
+      <ExerciseBrowser onPick={pick} onPickMany={pickMany} multi pending={pending} autoFocus />
     </div>
   );
 }
