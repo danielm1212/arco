@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Sparkline } from "@/components/Sparkline";
 import { MuscleHeatmap } from "@/components/MuscleHeatmap";
+import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 
 const PERIODS = [
@@ -29,47 +30,95 @@ export default async function ProgressPage({
     .maybeSingle();
   const unit: UnitSystem = settings?.unit_system ?? "kg";
 
-  // Sesje w wybranym okresie
-  const { data: recentSessions } = await supabase
-    .from("sessions")
-    .select("id")
-    .gte("started_at", cutoff);
-  const sessionIds = (recentSessions ?? []).map((s) => s.id);
+  // Agregat okresu (sesje → ćwiczenia → serie robocze): count/serie/objętość + partie + push/pull
+  async function periodStats(fromIso: string, toIso: string | null) {
+    let q = supabase.from("sessions").select("id").gte("started_at", fromIso);
+    if (toIso) q = q.lt("started_at", toIso);
+    const { data: recent } = await q;
+    const ids = (recent ?? []).map((s) => s.id);
+    const empty = {
+      sessionCount: ids.length,
+      setCount: 0,
+      volume: 0,
+      setsPerMuscle: new Map<string, number>(),
+      push: 0,
+      pull: 0,
+    };
+    if (!ids.length) return empty;
 
-  // Ćwiczenia tych sesji + partie mięśniowe
-  const { data: ses } = sessionIds.length
-    ? await supabase
-        .from("session_exercises")
-        .select("id, exercises(primary_muscles)")
-        .in("session_id", sessionIds)
-    : { data: [] as { id: string; exercises: { primary_muscles: string[] } | null }[] };
+    const { data: ses } = await supabase
+      .from("session_exercises")
+      .select("id, exercise_id, exercises(primary_muscles)")
+      .in("session_id", ids);
+    const bySe = new Map<string, { muscles: string[]; cats: MuscleCategory[] }>();
+    (ses ?? []).forEach((se) => {
+      const ex = se.exercises as unknown as { primary_muscles: string[] } | null;
+      bySe.set(se.id, {
+        muscles: ex?.primary_muscles ?? [],
+        cats: categoriesForExercise(se.exercise_id, ex?.primary_muscles ?? []),
+      });
+    });
+    const seIds = [...bySe.keys()];
+    if (!seIds.length) return empty;
+    const { data: sets } = await supabase
+      .from("session_sets")
+      .select("session_exercise_id, weight, reps")
+      .in("session_exercise_id", seIds)
+      .eq("completed", true)
+      .eq("set_type", "working");
 
-  const muscleBySe = new Map<string, string[]>();
-  (ses ?? []).forEach((se) => {
-    const ex = se.exercises as unknown as { primary_muscles: string[] } | null;
-    muscleBySe.set(se.id, ex?.primary_muscles ?? []);
-  });
+    const out = { ...empty, setCount: (sets ?? []).length };
+    (sets ?? []).forEach((s) => {
+      if (s.weight != null && s.reps != null) out.volume += s.weight * s.reps;
+      const info = bySe.get(s.session_exercise_id);
+      for (const m of info?.muscles ?? [])
+        out.setsPerMuscle.set(m, (out.setsPerMuscle.get(m) ?? 0) + 1);
+      if (info?.cats.includes("push")) out.push += 1;
+      if (info?.cats.includes("pull")) out.pull += 1;
+    });
+    return out;
+  }
 
-  // Serie ukończone (working) z tych ćwiczeń
-  const seIds = [...muscleBySe.keys()];
-  const { data: sets } = seIds.length
-    ? await supabase
-        .from("session_sets")
-        .select("session_exercise_id, weight, reps")
-        .in("session_exercise_id", seIds)
-        .eq("completed", true)
-        .eq("set_type", "working")
-    : { data: [] as { session_exercise_id: string; weight: number | null; reps: number | null }[] };
+  // Bieżący okres + (dla 7/30 dni) poprzedni okres tej samej długości — delta-karty (S13)
+  const prevCutoff = period.days
+    ? new Date(Date.now() - 2 * period.days * 86_400_000).toISOString()
+    : null;
+  const [cur, prev] = await Promise.all([
+    periodStats(cutoff, null),
+    period.days ? periodStats(prevCutoff!, cutoff) : Promise.resolve(null),
+  ]);
+  const volume = cur.volume;
+  const muscleRows = [...cur.setsPerMuscle.entries()].sort((a, b) => b[1] - a[1]);
 
-  let volume = 0;
-  const setsPerMuscle = new Map<string, number>();
-  (sets ?? []).forEach((s) => {
-    if (s.weight != null && s.reps != null) volume += s.weight * s.reps;
-    for (const m of muscleBySe.get(s.session_exercise_id) ?? []) {
-      setsPerMuscle.set(m, (setsPerMuscle.get(m) ?? 0) + 1);
+  // S13: interpretacje — zdanie-wniosek zamiast surowej tabeli (progi: ±10% = zmiana)
+  const pct = (a: number, b: number) => (b > 0 ? Math.round(((a - b) / b) * 100) : null);
+  const volPct = prev ? pct(cur.volume, prev.volume) : null;
+  const volInsight =
+    prev && volPct != null
+      ? volPct >= 10
+        ? `Objętość ↑${volPct}% vs poprzednie ${period.days} dni — progresja działa.`
+        : volPct <= -10
+          ? `Objętość ↓${Math.abs(volPct)}% vs poprzednie ${period.days} dni — lżejszy okres.`
+          : `Objętość stabilna vs poprzednie ${period.days} dni (${volPct >= 0 ? "+" : ""}${volPct}%).`
+      : null;
+  const balanceInsight = (() => {
+    const { push, pull } = cur;
+    const strong = Math.max(push, pull);
+    if (strong < GUIDANCE.balanceMinSets) return null;
+    if (Math.min(push, pull) < strong * GUIDANCE.balanceRatio) {
+      const lack = push < pull ? "push" : "pull";
+      return `${lack === "push" ? "Push" : "Pull"} odstaje w tym okresie (push ${push} / pull ${pull} serii).`;
     }
-  });
-  const muscleRows = [...setsPerMuscle.entries()].sort((a, b) => b[1] - a[1]);
+    return `Push i pull w równowadze (${push}/${pull} serii).`;
+  })();
+
+  const deltas = prev
+    ? {
+        sessions: pct(cur.sessionCount, prev.sessionCount),
+        sets: pct(cur.setCount, prev.setCount),
+        volume: volPct,
+      }
+    : { sessions: null, sets: null, volume: null };
 
   // Rekordy: najlepszy e1RM i max ciężaru per ćwiczenie
   const { data: prs } = await supabase
@@ -247,14 +296,18 @@ export default async function ProgressPage({
           ))}
         </div>
 
+        {volInsight && (
+          <p className="text-sm font-medium">{volInsight}</p>
+        )}
         <section className="grid grid-cols-3 gap-sm">
-          <Stat label={`Sesje · ${period.label}`} value={String(sessionIds.length)} />
-          <Stat label="Serie" value={String(sets?.length ?? 0)} />
-          <Stat label={`Objętość ${unit}`} value={Math.round(volume).toLocaleString("pl-PL")} />
+          <Stat label={`Sesje · ${period.label}`} value={String(cur.sessionCount)} delta={deltas.sessions} />
+          <Stat label="Serie" value={String(cur.setCount)} delta={deltas.sets} />
+          <Stat label={`Objętość ${unit}`} value={Math.round(volume).toLocaleString("pl-PL")} delta={deltas.volume} />
         </section>
 
         <section className="space-y-sm">
           <h2 className="text-base font-semibold">Bilans partii · {period.label}</h2>
+          {balanceInsight && <p className="text-sm text-muted-foreground">{balanceInsight}</p>}
           {muscleRows.length === 0 ? (
             <p className="text-sm text-muted-foreground">Brak danych w tym okresie.</p>
           ) : (
@@ -357,11 +410,32 @@ export default async function ProgressPage({
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  delta,
+}: {
+  label: string;
+  value: string;
+  delta?: number | null;
+}) {
+  // S13: delta vs poprzedni okres — ↑ volt / ↓ stonowane / → neutralne (±10% = bez zmiany)
+  const d =
+    delta == null ? null : delta >= 10 ? "up" : delta <= -10 ? "down" : "flat";
   return (
     <div className="rounded-xl bg-card p-sm text-center shadow-sm">
       <p className="text-xl font-bold tabular-nums">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
+      {d && (
+        <p
+          className={`mt-0.5 text-[11px] font-medium tabular-nums ${
+            d === "up" ? "text-primary" : "text-muted-foreground"
+          }`}
+        >
+          {d === "up" ? "↑" : d === "down" ? "↓" : "→"} {delta! > 0 ? "+" : ""}
+          {delta}%
+        </p>
+      )}
     </div>
   );
 }
