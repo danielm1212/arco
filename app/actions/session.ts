@@ -95,3 +95,40 @@ export async function deleteSession(sessionId: string) {
   revalidatePath("/progress");
   redirect("/history");
 }
+
+/** S12: edycja daty/czasu sesji (logowanie po fakcie). Zachowuje czas trwania. */
+export async function updateSessionDate(
+  sessionId: string,
+  newStartIso: string,
+): Promise<{ error?: string }> {
+  const { supabase } = await requireUser();
+  const newStart = new Date(newStartIso);
+  if (Number.isNaN(+newStart)) return { error: "Nieprawidłowa data." };
+  if (+newStart > Date.now()) return { error: "Data nie może być w przyszłości." };
+  if (+newStart < Date.now() - 366 * 86_400_000)
+    return { error: "Data starsza niż rok — sprawdź, czy się nie pomyliłeś." };
+
+  const { data: s } = await supabase
+    .from("sessions")
+    .select("started_at, finished_at")
+    .eq("id", sessionId)
+    .maybeSingle();
+  if (!s) return { error: "Nie znaleziono sesji." };
+
+  const delta = +newStart - +new Date(s.started_at);
+  const patch: { started_at: string; date: string; finished_at?: string } = {
+    started_at: newStart.toISOString(),
+    date: newStart.toISOString().slice(0, 10),
+  };
+  if (s.finished_at)
+    patch.finished_at = new Date(+new Date(s.finished_at) + delta).toISOString();
+
+  const { error } = await supabase.from("sessions").update(patch).eq("id", sessionId);
+  if (error) return { error: error.message };
+  await supabase.rpc("recompute_personal_records"); // achieved_at PR-ów pochodzi z started_at
+  revalidatePath("/history");
+  revalidatePath(`/history/${sessionId}`);
+  revalidatePath("/progress");
+  revalidatePath("/");
+  return {};
+}

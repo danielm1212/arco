@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
+import { DateEditor } from "./DateEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -89,10 +90,14 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
       </header>
 
       <main className="flex-1 space-y-md p-md">
-        <p className="text-sm text-muted-foreground">
-          {new Date(session.started_at).toLocaleString("pl-PL")}
-          {session.finished_at ? "" : " · w toku"}
-        </p>
+        {/* S12: edycja daty/czasu (logowanie po fakcie); sesja w toku — bez edycji */}
+        {session.finished_at ? (
+          <DateEditor sessionId={session.id} startedAt={session.started_at} />
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {new Date(session.started_at).toLocaleString("pl-PL")} · w toku
+          </p>
+        )}
 
         <section className="grid grid-cols-3 gap-sm">
           <div className="rounded-xl bg-card p-sm text-center shadow-sm">
