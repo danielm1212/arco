@@ -213,33 +213,39 @@ export default async function HomePage() {
           </Link>
         ) : (
           suggested && (
-            <form action={startSession.bind(null, suggested.dayId)}>
-              <button
-                type="submit"
-                className="block w-full rounded-xl bg-volt p-md text-left text-volt-foreground shadow-md"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-volt-foreground/70">Sugerowane dziś</span>
-                  <span className="flex items-center gap-1 rounded-full bg-volt-foreground px-3 py-1 text-xs font-semibold text-volt">
-                    Start →
-                  </span>
-                </div>
-                <p className="mt-sm text-2xl font-bold leading-tight">{suggested.label}</p>
-                {suggestedMeta && (
-                  <>
-                    <p className="mt-2xs text-sm font-medium text-volt-foreground/80">
-                      {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
-                    </p>
-                    {suggestedMeta.preview.length > 0 && (
-                      <p className="mt-2xs truncate text-xs text-volt-foreground/70">
-                        {suggestedMeta.preview.join(" · ")}
-                        {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
+            <div className="overflow-hidden rounded-xl bg-volt text-volt-foreground shadow-md">
+              <form action={startSession.bind(null, suggested.dayId)}>
+                <button type="submit" className="block w-full p-md text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-volt-foreground/70">Sugerowane dziś</span>
+                    <span className="flex items-center gap-1 rounded-full bg-volt-foreground px-3 py-1 text-xs font-semibold text-volt">
+                      Start →
+                    </span>
+                  </div>
+                  <p className="mt-sm text-2xl font-bold leading-tight">{suggested.label}</p>
+                  {suggestedMeta && (
+                    <>
+                      <p className="mt-2xs text-sm font-medium text-volt-foreground/80">
+                        {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
                       </p>
-                    )}
-                  </>
-                )}
-              </button>
-            </form>
+                      {suggestedMeta.preview.length > 0 && (
+                        <p className="mt-2xs truncate text-xs text-volt-foreground/70">
+                          {suggestedMeta.preview.join(" · ")}
+                          {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
+                        </p>
+                      )}
+                    </>
+                  )}
+                </button>
+              </form>
+              {/* Podgląd bez startowania sesji (N2#3) — read-only lista dni/ćwiczeń */}
+              <Link
+                href={`/programs/${activeId}`}
+                className="block border-t border-volt-foreground/15 px-md py-2 text-xs font-semibold text-volt-foreground/80"
+              >
+                Zobacz ćwiczenia (bez startu) →
+              </Link>
+            </div>
           )
         )}
 
@@ -282,9 +288,15 @@ export default async function HomePage() {
 
           {activeProgram ? (
             <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
-              <div className="flex items-center justify-between">
-                <p className="font-medium">{activeProgram.name}</p>
-                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+              <div className="flex items-center justify-between gap-sm">
+                {/* Nazwa = link do podglądu programu (N2#3) */}
+                <Link
+                  href={`/programs/${activeProgram.id}`}
+                  className="min-w-0 break-words font-medium underline-offset-2 hover:underline"
+                >
+                  {activeProgram.name}
+                </Link>
+                <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
                   Aktywny
                 </span>
               </div>
