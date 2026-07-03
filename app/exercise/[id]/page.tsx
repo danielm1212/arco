@@ -208,13 +208,18 @@ export default async function ExercisePage({
               <Sparkline values={trend} />
             ) : (
               <p className="text-sm text-muted-foreground">
-                Za mało danych — potrzeba 2+ sesji.
+                Drugi trening odblokuje trend — zobaczysz, czy siła idzie w górę.
               </p>
             )}
           </section>
         )}
 
         {/* S12: rekordy per liczba powtórzeń (wzorzec Hevy „Set Records") */}
+        {isWeighted && repRows.length === 0 && (
+          <p className="text-xs text-muted-foreground">
+            Rekordy per powtórzenia pojawią się po pierwszych seriach roboczych.
+          </p>
+        )}
         {isWeighted && repRows.length > 0 && (
           <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
             <h2 className="text-base font-semibold">Rekordy per powtórzenia</h2>
@@ -238,7 +243,7 @@ export default async function ExercisePage({
 
         {sessions.length === 0 ? (
           <p className="pt-xl text-center text-sm text-muted-foreground">
-            Brak zaliczonych serii tego ćwiczenia.
+            Jeszcze go nie robiłeś. Dodaj do treningu, a historia i rekordy zbudują się same.
           </p>
         ) : (
           sessions.map((s, i) => (

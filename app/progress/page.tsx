@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { Sparkline } from "@/components/Sparkline";
 import { MuscleHeatmap } from "@/components/MuscleHeatmap";
@@ -25,10 +26,11 @@ export default async function ProgressPage({
     ? new Date(Date.now() - period.days * 86_400_000).toISOString()
     : new Date(0).toISOString();
 
-  const { data: settings } = await supabase
-    .from("user_settings")
-    .select("unit_system")
-    .maybeSingle();
+  const [{ data: settings }, { count: totalSessions }] = await Promise.all([
+    supabase.from("user_settings").select("unit_system").maybeSingle(),
+    supabase.from("sessions").select("id", { count: "exact", head: true }),
+  ]);
+  const fresh = (totalSessions ?? 0) === 0; // świeże konto — inny stan niż pusty okres
   const unit: UnitSystem = settings?.unit_system ?? "kg";
 
   // Agregat okresu (sesje → ćwiczenia → serie robocze): count/serie/objętość + partie + push/pull
@@ -310,7 +312,36 @@ export default async function ProgressPage({
           <h2 className="text-base font-semibold">Bilans partii · {period.label}</h2>
           {balanceInsight && <p className="text-sm text-muted-foreground">{balanceInsight}</p>}
           {muscleRows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Brak danych w tym okresie.</p>
+            fresh ? (
+              /* S14 #3a: świeże konto — ghost zamiast „brak danych" */
+              <div className="space-y-sm rounded-xl bg-card p-md text-center shadow-sm">
+                <div className="pointer-events-none opacity-40" aria-hidden>
+                  <Sparkline values={[2, 3, 3, 4, 5, 5, 6]} className="h-16 w-full" />
+                </div>
+                <p className="text-sm font-medium">
+                  Po 2 treningach zobaczysz tu trend siły i bilans partii.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Heatmapa sylwetki zapali się po pierwszym treningu.
+                </p>
+                <Button asChild size="sm">
+                  <Link href="/">Zacznij trening</Link>
+                </Button>
+              </div>
+            ) : (
+              /* S14 #3b: pusty OKRES przy starszych danych — pokaż wyjście */
+              <div className="flex items-center justify-between gap-sm rounded-xl bg-card p-md shadow-sm">
+                <p className="text-sm text-muted-foreground">
+                  W tych {period.days} dniach pusto — Twoje dane są w szerszym zakresie.
+                </p>
+                <Link
+                  href="/progress?okres=all"
+                  className="shrink-0 rounded-md border border-primary bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
+                >
+                  Pokaż wszystko
+                </Link>
+              </div>
+            )
           ) : (
             <>
               <div className="rounded-xl bg-card p-md shadow-sm">
@@ -385,7 +416,8 @@ export default async function ProgressPage({
           <h2 className="text-base font-semibold">Rekordy</h2>
           {prRows.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Brak rekordów — zakończ sesję z zaliczonymi seriami.
+              Rekordy wpadną same — wystarczy zaliczać serie ✓. Pierwszy PR to zawsze
+              najlepszy dzień na siłowni.
             </p>
           ) : (
             <ul className="space-y-2xs">

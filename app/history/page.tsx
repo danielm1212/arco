@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { weekStart, computeStreak, localDayKey } from "@/lib/week";
@@ -39,9 +40,16 @@ export default async function HistoryPage() {
         <MonthCalendar trainingDays={trainingDays} streak={streak} />
 
         {(!sessions || sessions.length === 0) && (
-          <p className="pt-lg text-center text-sm text-muted-foreground">
-            Brak sesji. Zacznij trening na ekranie głównym.
-          </p>
+          /* S14 #2: kalendarz zostaje, pustka = obietnica + jeden krok */
+          <div className="space-y-sm pt-lg text-center">
+            <p className="text-base font-semibold">Tu zamieszka Twoja historia</p>
+            <p className="text-sm text-muted-foreground">
+              Każdy zakończony trening zapisze się w kalendarzu, a passa zacznie rosnąć 🔥
+            </p>
+            <Button asChild className="mx-auto">
+              <Link href="/">Zacznij pierwszy trening</Link>
+            </Button>
+          </div>
         )}
 
         {sessions?.map((s) => {

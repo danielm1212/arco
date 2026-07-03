@@ -261,6 +261,16 @@ export default async function HomePage() {
           )
         )}
 
+        {/* S14 #7: sekcja nie znika — pozytywny stan, żeby guidance było widoczne */}
+        {guidance.length === 0 && (sessionCount ?? 0) > 0 && (
+          <section className="space-y-2xs rounded-xl bg-card p-md shadow-sm">
+            <h2 className="text-sm font-semibold text-muted-foreground">Wskazówki</h2>
+            <p className="text-sm">Wszystko na torze 💪</p>
+            <p className="text-xs text-muted-foreground">
+              Trenuj zgodnie z planem — dam znać, gdy coś będzie wymagało uwagi (balans, przerwy, deload).
+            </p>
+          </section>
+        )}
         {guidance.length > 0 && (
           <section className="space-y-xs rounded-xl bg-card p-md shadow-sm">
             <h2 className="text-sm font-semibold text-muted-foreground">Wskazówki</h2>
@@ -330,12 +340,16 @@ export default async function HomePage() {
               </ul>
             </div>
           ) : (
-            <Link
-              href="/programs"
-              className="block rounded-xl border border-dashed p-md text-center text-sm text-muted-foreground"
-            >
-              Nie masz aktywnego programu — wybierz z biblioteki →
-            </Link>
+            /* S14 #1: obietnica wartości + jeden krok zamiast szarej ramki */
+            <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
+              <p className="text-lg font-bold">Zacznij od planu</p>
+              <p className="text-sm text-muted-foreground">
+                6 programów od trenera — wybierz swój, a apka poprowadzi Cię serię po serii.
+              </p>
+              <Button asChild className="w-full">
+                <Link href="/programs">Wybierz program →</Link>
+              </Button>
+            </div>
           )}
         </section>
 

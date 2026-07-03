@@ -76,7 +76,7 @@ export default async function BodyPage() {
         <section className="space-y-sm">
           <h2 className="text-base font-semibold">Historia pomiarów</h2>
           {(!metrics || metrics.length === 0) && (
-            <p className="text-sm text-muted-foreground">Brak pomiarów. Dodaj pierwszy powyżej.</p>
+            <p className="text-sm text-muted-foreground">Zważ się raz w tygodniu — po kilku wpisach zobaczysz trend, nie pojedyncze liczby.</p>
           )}
           <ul className="space-y-2xs">
             {metrics?.map((m) => (

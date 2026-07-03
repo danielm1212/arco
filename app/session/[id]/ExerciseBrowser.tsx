@@ -207,7 +207,9 @@ export function ExerciseBrowser({
       {!busy && items.length === 0 && (
         <p className="text-sm text-muted-foreground">
           {filtersActive
-            ? "Brak wyników."
+            ? queryTerm.length >= 2
+              ? `Nie ma „${queryTerm}" w bazie? Dodaj jako własne ćwiczenie — z opisem i zdjęciem.`
+              : "Brak wyników dla tych filtrów."
             : wantRecent
               ? "Szukaj albo filtruj chipami powyżej."
               : "Brak kandydatów."}
@@ -300,7 +302,12 @@ export function ExerciseBrowser({
         <button
           type="button"
           onClick={() => setCustomOpen(true)}
-          className="w-full rounded-md border border-dashed border-input py-1.5 text-xs text-muted-foreground hover:text-foreground"
+          className={
+            /* S14 #6: przy pustym wyniku CTA awansuje na primary */
+            !busy && items.length === 0 && filtersActive
+              ? "w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground"
+              : "w-full rounded-md border border-dashed border-input py-1.5 text-xs text-muted-foreground hover:text-foreground"
+          }
         >
           + Własne ćwiczenie{queryTerm.length >= 2 ? ` („${queryTerm}")` : ""}
         </button>
