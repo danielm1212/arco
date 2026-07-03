@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
+import { repPRRows } from "@/lib/repPRs";
 import { Sparkline } from "@/components/Sparkline";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
@@ -65,6 +66,16 @@ export default async function ExercisePage({
         .sort((a, b) => a.set_index - b.set_index),
     }))
     .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+
+  // S12: rep-PRs z już pobranych serii (roboczych) — mapa reps → najlepszy ciężar
+  const repBest: Record<number, number> = {};
+  sessions
+    .flatMap((s) => s.sets)
+    .forEach((s) => {
+      if (s.set_type !== "working" || s.weight == null || s.reps == null) return;
+      if (s.weight > (repBest[s.reps] ?? 0)) repBest[s.reps] = s.weight;
+    });
+  const repRows = repPRRows(repBest);
 
   // Wybór metryki (tylko ćwiczenia ciężarowe mają zakładki)
   const isWeighted = type === "weighted";
@@ -200,6 +211,26 @@ export default async function ExercisePage({
                 Za mało danych — potrzeba 2+ sesji.
               </p>
             )}
+          </section>
+        )}
+
+        {/* S12: rekordy per liczba powtórzeń (wzorzec Hevy „Set Records") */}
+        {isWeighted && repRows.length > 0 && (
+          <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
+            <h2 className="text-base font-semibold">Rekordy per powtórzenia</h2>
+            <ul className="space-y-px text-sm">
+              {repRows.map((r) => (
+                <li key={r.reps} className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{r.reps} powt.</span>
+                  <span className="font-medium tabular-nums">
+                    {r.weight} {unit}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[10px] text-muted-foreground">
+              Najlepszy ciężar przy danej liczbie powtórzeń (serie robocze). Zasila hint progresji w loggerze.
+            </p>
           </section>
         )}
 

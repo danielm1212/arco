@@ -123,9 +123,19 @@ export function progressionHint(input: {
   prev: { weight: number | null; reps: number | null; duration_seconds: number | null } | null;
   targetRepsMin?: number | null;
   targetRepsMax?: number | null;
+  /** S12: rekord przy docelowej liczbie powtórzeń (rep-PR) — wzbogaca hint. */
+  repPR?: { reps: number; weight: number } | null;
 }): string | null {
-  const { type, unit, prev, targetRepsMin, targetRepsMax } = input;
-  if (!prev) return null;
+  const { type, unit, prev, targetRepsMin, targetRepsMax, repPR } = input;
+  const prBit =
+    type === "weighted" && repPR ? ` · rekord przy ${repPR.reps} powt.: ${repPR.weight}${unit}` : "";
+
+  if (!prev) {
+    // Bez „poprzednio" (np. dawno nietrenowane) rep-PR sam w sobie daje cel
+    return type === "weighted" && repPR
+      ? `Rekord przy ${repPR.reps} powt.: ${repPR.weight}${unit} — spróbuj pobić`
+      : null;
+  }
 
   if (type === "timed") {
     return prev.duration_seconds != null
@@ -137,7 +147,7 @@ export function progressionHint(input: {
 
   if (type === "weighted" && prev.weight != null && prev.reps != null) {
     if (targetRepsMax && prev.reps >= targetRepsMax)
-      return `Ostatnio pełny zakres (${prev.reps}) → spróbuj ${prev.weight + inc}${unit}`;
+      return `Ostatnio pełny zakres (${prev.reps}) → spróbuj ${prev.weight + inc}${unit}${prBit}`;
     if (targetRepsMin && prev.reps < targetRepsMin)
       return `Ostatnio ${prev.reps} (poniżej zakresu) → utrzymaj ${prev.weight}${unit}, dobij powtórzeń`;
     return null;

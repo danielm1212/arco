@@ -18,6 +18,7 @@ import { useWakeLock } from "@/lib/useWakeLock";
 import { getAutoRest, getKeepAwake } from "@/lib/prefs";
 import { pendingCount, type OutboxSetRow } from "@/lib/outbox";
 import { progressionHint as guidanceProgressionHint } from "@/lib/guidance";
+import { vibrate } from "@/lib/feedback";
 import { uuid } from "@/lib/uuid";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
@@ -49,6 +50,8 @@ export interface LoggerExercise {
     added_weight: number | null;
   } | null;
   previousSets: PrevSet[];
+  /** S12: rekordy per liczba powtórzeń (reps → najlepszy ciężar), bez bieżącej sesji. */
+  repPRs: Record<number, number>;
 }
 
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -67,14 +70,17 @@ function formatPrevious(ex: LoggerExercise, unit: UnitSystem): string | null {
   return p.weight != null && p.reps != null ? `${p.weight}${unit} × ${p.reps}` : null;
 }
 
-/** Hint progresji (reguła rule-based z `lib/guidance` — pełny/poniżej zakresu, timed). */
+/** Hint progresji (reguła rule-based z `lib/guidance` — pełny/poniżej zakresu, timed, rep-PR). */
 function progressionHint(ex: LoggerExercise, unit: UnitSystem): string | null {
+  const top = ex.slot?.target_reps_max;
+  const prWeight = top != null ? ex.repPRs[top] : undefined;
   return guidanceProgressionHint({
     type: ex.type,
     unit,
     prev: ex.previous,
     targetRepsMin: ex.slot?.target_reps_min,
     targetRepsMax: ex.slot?.target_reps_max,
+    repPR: top != null && prWeight != null ? { reps: top, weight: prWeight } : null,
   });
 }
 
@@ -112,6 +118,10 @@ export function Logger({
   const [noteOpen, setNoteOpen] = useState<Record<string, boolean>>({});
   // Panel podmiany per ćwiczenie — trigger ⇄ w nagłówku karty (N2#5)
   const [swapOpen, setSwapOpen] = useState<Record<string, boolean>>({});
+  // S12: serie, które pobiły rep-PR w tej sesji (badge „PR" na wierszu)
+  const [prSets, setPrSets] = useState<Record<string, boolean>>({});
+  // Lokalna kopia rekordów — po pobiciu podbijamy, żeby 2. taka sama seria nie świeciła znowu
+  const repPRLocal = useRef<Record<string, Record<number, number>>>({});
   // Blokada wygaszania ekranu na czas aktywnego treningu (jeśli włączona w ustawieniach)
   useWakeLock(!isFinished && getKeepAwake());
   const { online, pending, syncing, queueUpsert, queueDelete, flush } = useSync();
@@ -232,6 +242,22 @@ export function Logger({
     const next = !set.completed;
     patchSetLocal(ex.sessionExerciseId, set.id, { completed: next });
     if (next && getAutoRest()) startRest(ex);
+    // S12: mikro-celebracja rep-PR — w momencie zaliczenia, nie na ekranie końcowym
+    if (
+      next &&
+      ex.type === "weighted" &&
+      set.set_type === "working" &&
+      set.weight != null &&
+      set.reps != null
+    ) {
+      const local = (repPRLocal.current[ex.exerciseId] ??= { ...ex.repPRs });
+      const best = local[set.reps] ?? 0;
+      if (best > 0 && set.weight > best) {
+        local[set.reps] = set.weight;
+        setPrSets((p) => ({ ...p, [set.id]: true }));
+        vibrate([80, 40, 80]); // krótszy niż koniec przerwy; no-op bez HTTPS
+      }
+    }
     queueUpsert(sessionId, toRow({ ...set, completed: next }));
   }
 
@@ -668,6 +694,7 @@ export function Logger({
                     type={ex.type}
                     unit={unit}
                     showRpe={!!rpeOn[ex.sessionExerciseId]}
+                    isPr={!!prSets[set.id]}
                     onPatch={(patch) => patchSetLocal(ex.sessionExerciseId, set.id, patch)}
                     onPersist={(patch) => persistSet(set.id, patch)}
                     onToggle={() => handleToggle(ex, set)}

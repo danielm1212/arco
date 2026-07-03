@@ -26,6 +26,7 @@ export function SetRow({
   type,
   unit,
   showRpe = false,
+  isPr = false,
   onPatch,
   onPersist,
   onToggle,
@@ -38,6 +39,8 @@ export function SetRow({
   type: ExerciseType;
   unit: UnitSystem;
   showRpe?: boolean;
+  /** S12: seria pobiła rep-PR w tej sesji — badge + flash w momencie zdarzenia */
+  isPr?: boolean;
   onPatch: (patch: Partial<SessionSet>) => void;
   onPersist: (patch: Partial<SessionSet>) => void;
   onToggle: () => void;
@@ -75,7 +78,11 @@ export function SetRow({
   }
 
   return (
-    <li className="flex flex-wrap items-center gap-xs">
+    <li
+      className={`flex flex-wrap items-center gap-xs rounded-md transition-colors ${
+        isPr ? "animate-pulse-once bg-primary/10 ring-1 ring-inset ring-primary/40" : ""
+      }`}
+    >
       {prevText && !set.completed && (
         <button
           type="button"
@@ -165,6 +172,11 @@ export function SetRow({
 
       {/* Akcept serii: ✓ zawsze widoczny (muted) → wypełniony volt po zaliczeniu
           (wzorzec Hevy/Gymshark — czytelne, że to przycisk zatwierdzenia) */}
+      {isPr && (
+        <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+          PR
+        </span>
+      )}
       <button
         onClick={onToggle}
         aria-label={set.completed ? "Cofnij zaliczenie" : "Zalicz serię"}

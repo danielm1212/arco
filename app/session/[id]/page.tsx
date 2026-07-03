@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getRepPRs } from "@/lib/repPRs";
 import { Logger, type LoggerExercise } from "./Logger";
 
 export const dynamic = "force-dynamic";
@@ -42,8 +43,10 @@ export default async function SessionPage({ params }: { params: { id: string } }
 
   // Serie z poprzedniej sesji per ćwiczenie (inline "last set", RLS-aware)
   const prevSets: Record<string, LoggerExercise["previousSets"]> = {};
-  await Promise.all(
-    (exercises ?? []).map(async (e) => {
+  const [repPRs] = await Promise.all([
+    // Rep-PRs (S12) — rekordy per liczba powtórzeń, bez bieżącej sesji
+    getRepPRs(supabase, [...new Set((exercises ?? []).map((e) => e.exercise_id))], sessionId),
+    ...(exercises ?? []).map(async (e) => {
       const { data } = await supabase.rpc("previous_session_sets", {
         p_slot: e.slot_id,
         p_exercise: e.exercise_id,
@@ -51,7 +54,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
       } as unknown as { p_slot: string; p_exercise: string; p_session: string });
       prevSets[e.id] = data ?? [];
     }),
-  );
+  ]);
 
   const model: LoggerExercise[] = (exercises ?? []).map((e) => {
     const ex = e.exercises as unknown as {
@@ -74,6 +77,7 @@ export default async function SessionPage({ params }: { params: { id: string } }
       sets: (sets ?? []).filter((s) => s.session_exercise_id === e.id),
       previousSets: ps,
       previous: ps.length ? ps[ps.length - 1] : null, // ostatnia seria — do hintu progresji
+      repPRs: repPRs[e.exercise_id] ?? {},
     };
   });
 
