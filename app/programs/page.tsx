@@ -38,7 +38,8 @@ export default async function ProgramsPage() {
     return (
       <div className="flex items-stretch rounded-lg border bg-card text-card-foreground">
         <Link href={`/programs/${p.id}`} className="block min-w-0 flex-1 p-md">
-          <p className="truncate font-medium">{p.name}</p>
+          {/* Pełna nazwa (N2#1) — zawijanie zamiast ucinania */}
+          <p className="break-words font-medium">{p.name}</p>
           <div className="mt-2xs flex flex-wrap items-center gap-2xs text-xs text-muted-foreground">
             {kind === "preset" ? (
               [p.goal, p.level, `${p.days_per_week}×/tydz.`].filter(Boolean).map((t) => (
