@@ -19,7 +19,7 @@
 | 2 | **N1 — Deploy-lite (HTTPS)** — nowy, opis niżej | ⏳ **czeka na [Ty]: konta Supabase cloud + Vercel** |
 | 3 | **N2 — Paczka UX z notatek właściciela** — nowy, opis niżej | ✅ ZROBIONE 1–6, 8–9 (`89d5725`…`3c83e7d`); #7 reorder = opc., nietknięty |
 | 4 | **Decyzja wizualna** [Ty] + start toru assetów — opis niżej | 🔜 równolegle z N1/N2 |
-| 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | planowany |
+| 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | ✅ ZROBIONE (`3066d19`; N1 wciąż przed S8+) |
 | 6 | S8 → S9 → S10 → S11-domknięcie | bez zmian |
 
 ---

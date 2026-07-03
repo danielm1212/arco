@@ -84,10 +84,12 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 **[Ty]:** dopracowanie programowania FBW (jako trener) na bazie mojej analizy.
 **Done:** FBW zaudytowane i poprawione; można dodać własne ćwiczenie z opisem + zdjęciami.
 
-## Sprint 7 — Więcej presetów + onboarding
-**[Ty]:** treść presetów **PPL, Upper/Lower** (sloty, sety×powt., wzorce).
-**[Claude]:** seed presetów; onboarding doświadczenie (początkujący/średni/zaawansowany) → sugestia presetu; mapowanie wg Twojej decyzji.
-**Done:** ≥4 sensowne presety; onboarding sugeruje plan.
+## Sprint 7 — Więcej presetów + onboarding — ✅ ZROBIONE (`3066d19`)
+- Presety: zamknięte przez **6 programów od trenera** (S6, grid poziom×środowisko) — punkt „treść PPL/UL [Ty]" nieaktualny.
+- ✅ Onboarding v2 (`WelcomeOverlay`, flag `arco-onboarded-v2`): imię+jednostki → poziom → środowisko → **polecany program z gridu** + cel tygodniowy → „Ustaw program i zaczynamy". Braki gridu wg README trainings (adv×dom → PPL ze swapami; masa ciała → FBW z twardszą progresją) jako notki przy rekomendacji.
+- ✅ Delta z `plan-sprintow-2026-07.md`: **imię** (`user_settings.display_name`, powitanie „Cześć, {imię}" na home, pole w Ustawieniach) + **cel tygodniowy w onboardingu**.
+- Zweryfikowane E2E na koncie testowym (admin API, dane właściciela nietknięte).
+**[Ty]:** mapowanie gridu w `components/WelcomeOverlay.tsx` (`GRID`) — moja propozycja, nadpisywalna.
 
 ## Sprint 8 — Audyt bazy ćwiczeń (#5)
 **[Claude]:** skan `scripts/data/exercises.json` (~800 z free-exercise-db): duplikaty/śmieci/dziwne, **martwe obrazki** (sprawdzić HTTP do raw.githubusercontent), poprawność nazw, jakość instrukcji (EN). Propozycja **kuracji** (podzbiór ~150–250 realnie używanych).
