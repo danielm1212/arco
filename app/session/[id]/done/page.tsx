@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { weekStart, computeStreak } from "@/lib/week";
 
@@ -33,7 +34,7 @@ export default async function SessionDonePage({ params }: { params: { id: string
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, session_exercises(id, exercises(exercise_type), session_sets(id, weight, reps, completed))",
+        "id, started_at, finished_at, session_exercises(id, exercises(exercise_type, primary_muscles), session_sets(id, weight, reps, set_type, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -50,7 +51,7 @@ export default async function SessionDonePage({ params }: { params: { id: string
   const exercises =
     (session.session_exercises as unknown as {
       id: string;
-      exercises: { exercise_type: ExerciseType };
+      exercises: { exercise_type: ExerciseType; primary_muscles: string[] };
       session_sets: SessionSet[];
     }[]) ?? [];
 
@@ -63,6 +64,16 @@ export default async function SessionDonePage({ params }: { params: { id: string
   const durationMin = Math.round(
     (+new Date(session.finished_at) - +new Date(session.started_at)) / 60000,
   );
+
+  // S13: Muscle Split % na celebracji
+  const perMuscle = new Map<string, number>();
+  exercises.forEach((e) => {
+    const m = e.exercises.primary_muscles?.[0];
+    if (!m) return;
+    const n = e.session_sets.filter((s) => s.completed && s.set_type === "working").length;
+    if (n > 0) perMuscle.set(m, (perMuscle.get(m) ?? 0) + n);
+  });
+  const split = muscleSplit(perMuscle);
 
   // PR-y zdobyte w tej sesji
   const setIds = allSets.map((s) => s.id);
@@ -124,6 +135,16 @@ export default async function SessionDonePage({ params }: { params: { id: string
         <span className="text-border">·</span>
         <Stat value={String(exCount)} label="ćwiczenia" />
       </div>
+
+      {/* S13: Muscle Split — co dziś pracowało */}
+      {split.length > 0 && (
+        <div className="w-full rounded-xl bg-card p-md text-left shadow-sm">
+          <p className="mb-sm text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Co dziś pracowało
+          </p>
+          <MuscleSplitBars rows={split} max={4} />
+        </div>
+      )}
 
       {/* CTA */}
       <div className="flex w-full flex-col gap-sm pt-lg">

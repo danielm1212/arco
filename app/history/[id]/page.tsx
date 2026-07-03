@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
 import { DateEditor } from "./DateEditor";
+import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, exercise_type), session_sets(id, set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
+        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, exercise_type, primary_muscles), session_sets(id, set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -35,7 +36,7 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
       id: string;
       position: number;
       superset_group: number | null;
-      exercises: { name: string; exercise_type: ExerciseType };
+      exercises: { name: string; exercise_type: ExerciseType; primary_muscles: string[] };
       session_sets: SessionSet[];
     }[]) ?? []
   )
@@ -52,6 +53,16 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
   const durationMin = session.finished_at
     ? Math.round((+new Date(session.finished_at) - +new Date(session.started_at)) / 60000)
     : null;
+
+  // S13: Muscle Split % — serie robocze per główna partia
+  const perMuscle = new Map<string, number>();
+  exercises.forEach((e) => {
+    const m = e.exercises.primary_muscles?.[0];
+    if (!m) return;
+    const n = e.session_sets.filter((s) => s.completed && s.set_type === "working").length;
+    if (n > 0) perMuscle.set(m, (perMuscle.get(m) ?? 0) + n);
+  });
+  const split = muscleSplit(perMuscle);
 
   // PR-y zdobyte w tej sesji (wciąż aktualne rekordy z setów tej sesji)
   const setIds = allSets.map((s) => s.id);
@@ -117,6 +128,13 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
             <p className="text-xs text-muted-foreground">czas</p>
           </div>
         </section>
+
+        {split.length > 0 && (
+          <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
+            <h2 className="text-sm font-semibold text-muted-foreground">Muscle Split</h2>
+            <MuscleSplitBars rows={split} />
+          </section>
+        )}
 
         {prs.length > 0 && (
           <section className="space-y-2xs rounded-xl border border-primary/40 bg-primary/5 p-md">
