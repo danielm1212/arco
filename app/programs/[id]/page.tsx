@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { duplicateProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
+import { Info } from "lucide-react";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { ProgramEditor, type EditorDay } from "./ProgramEditor";
 
@@ -121,7 +122,8 @@ export default async function ProgramEditorPage({ params }: { params: { id: stri
                       className="min-w-0 truncate text-left underline-offset-2 hover:underline"
                       title="Jak wykonać"
                     >
-                      {s.exerciseName} <span className="text-muted-foreground">ⓘ</span>
+                      {s.exerciseName}{" "}
+                      <Info className="inline size-3.5 align-[-2px] text-muted-foreground" />
                     </button>
                   </ExerciseInfoSheet>
                   <span className="shrink-0 text-muted-foreground tabular-nums">

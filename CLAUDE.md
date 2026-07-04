@@ -18,6 +18,22 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
 - Po działającej zmianie: commit. Weryfikuj REALNIE (build + Claude Preview), sprzątaj dane testowe po testach.
 - Ops/build (jeden build na raz, zatrzymaj Preview przed buildem, PATH do supabase/docker): patrz `docs/HANDOFF.md`.
 
+## Sync z Notion (OBOWIĄZKOWY rytuał końca sprintu/paczki)
+Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data source `e037aac8-6857-46b7-80ef-95d011d1816e`, hub „🥇 ARCO — Hub"). Właściwości: Pomysł (title), Priorytet, Kto wykonuje, Etap, Faza, Kategoria, Notatki.
+
+**Po każdej ukończonej paczce roboty (przed zamknięciem sesji):**
+1. Znajdź wpisy w bazie odpowiadające zrobionym zadaniom (`notion-search` po tytule / query po data source).
+2. Ustaw **Etap** wg reguły:
+   - `Do testu [Ty]` — zmiana w UI/flow wymagająca weryfikacji Daniela na telefonie (default dla features/bugfixów),
+   - `Done` — audyt/QA/research bez zmian kodu albo rzecz w pełni zweryfikowana,
+   - `In Progress` — rozgrzebane między sesjami,
+   - `Refinement` — odkryłeś decyzję, którą musi podjąć Daniel (dopisz w Notatkach CO trzeba rozstrzygnąć).
+3. W **Notatkach** dopisz: hash commita + jednozdaniowo co zrobione + co przetestować.
+4. **Nowe zadania odkryte w trakcie** → nowy wpis (Etap `Backlog`/`Inbox`, wypełnij wszystkie selecty). Nie trzymaj zadań tylko w plikach — Daniel planuje z tablicy.
+5. Statusy w `docs/plan-sprintow-2026-07.md` i w Notion mają się ZGADZAĆ (plik = szczegóły wykonawcze, Notion = widok właściciela).
+
+**Fallback bez Notion MCP w sesji:** dopisz operacje do `docs/notion-sync-queue.md` (format w pliku). Każda sesja, która MA dostęp do Notion, zaczyna od flushu tej kolejki i czyszczenia pliku.
+
 ## Zakres — zmienione vs brief v0.2 (żeby się nie odbijać od starego)
 - **Poza MVP, ale na DŁUGIEJ wizji (Horyzont 4–5 roadmap — NIE teraz):** social („Strava dla siłowni"), apki natywne iOS/Android, monetyzacja. To **nie jest „zakazane"** — to OSTATNI etap, dopiero gdy rdzeń hula + po testach userów. Nie zaczynaj przedwcześnie.
 - **Trwale poza zakresem:** AI auto-programming (manualny silnik podmiany to świadomy wyróżnik), makro/dieta, wearables/HRV.

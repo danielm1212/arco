@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
+import { Info, LineChart } from "lucide-react";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { CustomExerciseForm } from "./CustomExerciseForm";
 import {
@@ -257,7 +258,7 @@ export function ExerciseBrowser({
               aria-label="Progres ćwiczenia"
               className="shrink-0 rounded-full border border-input px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
             >
-              📈
+              <LineChart className="size-4" />
             </a>
             <ExerciseInfoSheet exerciseId={h.id}>
               <button
@@ -265,7 +266,7 @@ export function ExerciseBrowser({
                 aria-label="Podgląd ćwiczenia"
                 className="shrink-0 rounded-full border border-input px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
               >
-                ⓘ
+                <Info className="size-4" />
               </button>
             </ExerciseInfoSheet>
           </li>

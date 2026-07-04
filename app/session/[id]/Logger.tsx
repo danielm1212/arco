@@ -20,6 +20,7 @@ import { pendingCount, type OutboxSetRow } from "@/lib/outbox";
 import { progressionHint as guidanceProgressionHint } from "@/lib/guidance";
 import { vibrate } from "@/lib/feedback";
 import { uuid } from "@/lib/uuid";
+import { ArrowLeftRight, Dumbbell, Timer, Link2, Unlink, Lightbulb, Info } from "lucide-react";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { SwapPanel } from "./SwapPanel";
@@ -447,11 +448,12 @@ export function Logger({
         </div>
         </div>
         <div className="mt-xs flex items-center gap-lg text-xs text-muted-foreground">
-          <span>
-            ⏱ <span className="font-mono tabular-nums text-foreground">{elapsedStr}</span>
+          <span className="inline-flex items-center gap-1">
+            <Timer className="size-3.5" />
+            <span className="font-mono tabular-nums text-foreground">{elapsedStr}</span>
           </span>
-          <span>
-            🏋{" "}
+          <span className="inline-flex items-center gap-1">
+            <Dumbbell className="size-3.5" />
             <span className="font-medium text-foreground">
               {Math.round(volume).toLocaleString("pl-PL")}
               {unit}
@@ -487,7 +489,8 @@ export function Logger({
                         className="text-left underline-offset-2 hover:underline"
                         title="Jak wykonać"
                       >
-                        {ex.name} <span className="text-muted-foreground">ⓘ</span>
+                        {ex.name}{" "}
+                        <Info className="inline size-3.5 align-[-2px] text-muted-foreground" />
                       </button>
                     </ExerciseInfoSheet>
                     {grouped && (
@@ -527,7 +530,7 @@ export function Logger({
                           [ex.sessionExerciseId]: !o[ex.sessionExerciseId],
                         }))
                       }
-                      className={`text-xs ${
+                      className={`inline-flex items-center gap-1 text-xs ${
                         swapOpen[ex.sessionExerciseId]
                           ? "text-foreground"
                           : "text-muted-foreground hover:text-foreground"
@@ -536,7 +539,7 @@ export function Logger({
                       aria-expanded={!!swapOpen[ex.sessionExerciseId]}
                       title="Podmień ćwiczenie"
                     >
-                      ⇄ Podmień
+                      <ArrowLeftRight className="size-3.5" /> Podmień
                     </button>
                   )}
                   {ex.slot ? (
@@ -582,24 +585,24 @@ export function Logger({
                 {grouped ? (
                   <button
                     onClick={() => unlink(i)}
-                    className="text-muted-foreground hover:text-foreground"
+                    className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
                   >
-                    ⛓ Rozłącz superset
+                    <Unlink className="size-3.5" /> Rozłącz superset
                   </button>
                 ) : (
                   i > 0 && (
                     <button
                       onClick={() => linkWithPrevious(i)}
-                      className="text-muted-foreground hover:text-foreground"
+                      className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
                     >
-                      ⛓ Superset z poprzednim
+                      <Link2 className="size-3.5" /> Superset z poprzednim
                     </button>
                   )
                 )}
               </div>
 
               <div className="flex items-center gap-xs text-xs text-muted-foreground">
-                <span>⏱ Przerwa</span>
+                <span className="inline-flex items-center gap-1"><Timer className="size-3.5" /> Przerwa</span>
                 <button
                   aria-label="krótsza przerwa"
                   onClick={() =>
@@ -654,8 +657,8 @@ export function Logger({
               {(() => {
                 const hint = progressionHint(ex, unit);
                 return hint ? (
-                  <p className="rounded-md bg-success/10 px-sm py-xs text-xs text-success">
-                    💡 {hint}
+                  <p className="flex items-start gap-1.5 rounded-md bg-success/10 px-sm py-xs text-xs text-success">
+                    <Lightbulb className="mt-0.5 size-3.5 shrink-0" /> {hint}
                   </p>
                 ) : null;
               })()}

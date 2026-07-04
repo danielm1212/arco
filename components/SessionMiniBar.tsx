@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { deleteSession } from "@/app/actions/session";
+import { Play, X } from "lucide-react";
 
 interface OpenSession {
   id: string;
@@ -90,18 +91,19 @@ export function SessionMiniBar() {
     <div className="fixed inset-x-0 bottom-[calc(3.25rem+env(safe-area-inset-bottom))] z-40">
       <div className="mx-auto flex max-w-md items-center gap-sm border-t bg-volt px-md py-2 text-volt-foreground">
         <Link href={`/session/${open.id}`} className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">
-            ▶ Trening w toku{open.label ? ` · ${open.label}` : ""}
+          <p className="flex items-center gap-1 truncate text-sm font-semibold">
+            <Play className="size-3.5 shrink-0 fill-current" /> Trening w toku
+            {open.label ? ` · ${open.label}` : ""}
           </p>
           <p className="text-xs tabular-nums text-volt-foreground/70">{mmss(elapsed)} — wróć</p>
         </Link>
         <button
           onClick={discard}
           disabled={busy}
-          className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-volt-foreground/80 hover:text-volt-foreground disabled:opacity-50"
+          className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-volt-foreground/80 hover:text-volt-foreground disabled:opacity-50"
           aria-label="Porzuć trening"
         >
-          ✕ Porzuć
+          <X className="size-3.5" /> Porzuć
         </button>
       </div>
     </div>

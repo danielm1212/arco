@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/login/actions";
 import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut } from "lucide-react";
+import { Settings, LogOut, Scale, Hourglass, TrendingDown, Lightbulb } from "lucide-react";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeGuidance } from "@/lib/getHomeGuidance";
 import { localDayKey } from "@/lib/week";
@@ -277,14 +277,16 @@ export default async function HomePage() {
             <ul className="space-y-2xs">
               {guidance.map((g) => (
                 <li key={g.id} className="flex items-start gap-sm text-sm">
-                  <span aria-hidden className="shrink-0 leading-6">
-                    {g.kind === "balance"
-                      ? "⚖️"
-                      : g.kind === "staleness"
-                        ? "⏳"
-                        : g.kind === "deload"
-                          ? "📉"
-                          : "💡"}
+                  <span aria-hidden className="mt-1 shrink-0 text-muted-foreground">
+                    {g.kind === "balance" ? (
+                      <Scale className="size-4" />
+                    ) : g.kind === "staleness" ? (
+                      <Hourglass className="size-4" />
+                    ) : g.kind === "deload" ? (
+                      <TrendingDown className="size-4" />
+                    ) : (
+                      <Lightbulb className="size-4" />
+                    )}
                   </span>
                   <span className="leading-6">{g.message}</span>
                 </li>
