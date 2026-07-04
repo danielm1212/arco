@@ -22,7 +22,8 @@
 | 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | ✅ ZROBIONE (`3066d19`; N1 wciąż przed S8+) |
 | 6 | **S12 — Sesja i rekordy** (wybrany po S7 przez [Ty], opcja A) | ✅ ZROBIONE — mini-bar (9401708), rep-PRs+hint+celebracja (b17aaca), edycja daty (49904ea); „edycja zapisanego treningu” = Refinement [Ty] |
 | 7 | **S13 — Postępy jako lustro + picker** | ✅ ZROBIONE — Muscle Split (85c2cfa), delta-karty+interpretacje (33538bd), picker Recent+multi+📈 (88a8c6e); tabela setów pod heatmapą = już było (Done) |
-| 8 | S14 → S8 → S9 → S10 → S11-domknięcie | S14 (empty states) przed launchem; audyty wg planu |
+| 8 | **S14 — Empty states + pierwsze wrażenie** | ✅ ZROBIONE (a555d18 copy+CTA wg docs/empty-states-copy.md, 847e25b skeletony+offline); copy do ew. podmiany [Ty] |
+| 9 | S8 → S9 → S10 → S11-domknięcie | audyty — następne w kolejce [Claude]; N1 równolegle gdy będą konta |
 
 ---
 

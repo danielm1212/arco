@@ -20,7 +20,9 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione (cd.): S13 KOMPLETNY** — Muscle Split % (historia+celebracja, `85c2cfa`), delta-karty + nagłówki-interpretacje na /progress (`33538bd`, ton/progi do kalibracji [Ty]), picker: Ostatnio używane + multi-select + 📈 do progresu (`88a8c6e`). Notion zsynchronizowany (Do testu [Ty]).
 
-**Następny: S14 — empty states** (przed launchem) albo audyty S8–S10. **N1 deploy-lite** wciąż czeka na [Ty] (konta; przypomnienie 9:00 aktywne). Decyzja wizualna [Ty] otwarta.
+**Zrobione (cd.): S14 KOMPLETNY** — empty states wg `docs/empty-states-copy.md` (copy zaakceptowane warunkowo, `a555d18`) + skeletony tras i banner offline (`847e25b`). Też: **fix stref czasowych** (`fix(dates)` — klucze dni UTC→lokalne; caveat Vercel-UTC przy N1). Notion zsynchronizowany.
+
+**Następny: audyty S8→S9→S10** (baza ćwiczeń → kod/zależności → offline+longevity). **N1 deploy-lite** czeka na [Ty] (konta; przypomnienie 9:00). Decyzja wizualna [Ty] otwarta. Na telefonie czeka ~16 wpisów „Do testu [Ty]".
 
 **Nowe (2026-07-02): analiza UX Hevy** — `docs/konkurencja-hevy-ux.md` (ekrany + warstwa funkcjonalna, matryca #1–#30). Wynik: sprinty **S12–S14** w `sprinty-szczegolowe.md` (sesja globalna + rep-PRs · postępy-lustro + picker · empty states), punkty 8–9 dopisane do N2, 14 wpisów w Notion „Baza pomysłów" (Backlog). Kolejność wpięcia S12–S14 — propozycja w `plan-sprintow-2026-07.md`, czeka na [Ty].
 
