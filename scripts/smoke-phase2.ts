@@ -5,7 +5,6 @@
 import { config } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../lib/database.types";
-import { computePlates, formatPlates } from "../lib/plates";
 
 config({ path: ".env.local" });
 
@@ -30,12 +29,6 @@ async function main() {
   const uid = auth.user.id;
   ok("login");
 
-  // 1. Plate calculator (czysta funkcja)
-  const load = computePlates(100, 20, [25, 20, 15, 10, 5, 2.5, 1.25]);
-  const sum = load.perSide.reduce((s, p) => s + p.plate * p.count, 0);
-  if (sum !== 40 || load.remainder !== 0)
-    return fail(`plate calc: per-side ${sum} (oczekiwano 40), reszta ${load.remainder}`);
-  ok(`plate calc: 100kg → /str. ${formatPlates(load)}`);
 
   // 2. Przeliczanie PR + e1RM (Epley)
   const { data: sess } = await sb

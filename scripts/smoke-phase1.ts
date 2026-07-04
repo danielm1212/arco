@@ -33,16 +33,20 @@ async function main() {
   const userId = auth.user!.id;
   ok(`login jako ${EMAIL}`);
 
-  // 1. Przełączanie programu na 3× (acceptance: przełączanie 2×/3×)
+  // 1. Przełączanie programu (S8/S9: nowy zestaw seedów — bierzemy 3-dniowy beginner gym)
+  const { data: prevActive } = await sb
+    .from("user_active_program")
+    .select("program_id")
+    .maybeSingle(); // przywracamy na końcu — smoke nie może zmieniać stanu usera
   const { data: prog3 } = await sb
     .from("programs")
     .select("id")
-    .eq("name", "FBW 3× / tydzień")
+    .eq("name", "Beginner · Siłownia · Full Body 3×")
     .is("user_id", null)
     .single();
-  if (!prog3) fail("brak programu FBW 3×");
+  if (!prog3) fail("brak programu Beginner · Siłownia · Full Body 3×");
   await sb.from("user_active_program").upsert({ user_id: userId, program_id: prog3!.id });
-  ok("ustawiono aktywny program 3×");
+  ok("ustawiono aktywny program (beginner gym 3×)");
 
   // 2. Start sesji z dnia A → session_exercises ze slotów (mimika startSession)
   const { data: dayA } = await sb
@@ -144,7 +148,12 @@ async function main() {
 
   // Sprzątanie sesji testowych
   await sb.from("sessions").delete().in("id", [s1!.id, s2!.id, sf!.id]);
-  ok("posprzątano sesje testowe");
+  if (prevActive?.program_id) {
+    await sb.from("user_active_program").upsert({ user_id: userId, program_id: prevActive.program_id });
+  } else {
+    await sb.from("user_active_program").delete().eq("user_id", userId);
+  }
+  ok("posprzątano sesje testowe + przywrócono aktywny program");
 
   console.log("\n✅ Smoke Phase 1: wszystkie kryteria warstwy danych spełnione.");
 }
