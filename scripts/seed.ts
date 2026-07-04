@@ -41,6 +41,32 @@ interface RawExercise {
   images: string[];
 }
 
+// ── Uzupełnienia instrukcji (S8: 5 ćwiczeń z pustym `instructions` w upstream) ──
+const INSTRUCTION_OVERRIDES: Record<string, string[]> = {
+  Iron_Cross: [
+    "Hold a dumbbell in each hand at your sides.",
+    "Squat down, then stand up while raising both arms out to a T at shoulder height.",
+    "Lower the arms and repeat.",
+  ],
+  "One-Arm_Kettlebell_Swings": [
+    "Hinge at the hips and swing the kettlebell back between your legs.",
+    "Drive the hips forward to swing it up to shoulder height with one arm, back flat.",
+  ],
+  Push_Press: [
+    "Hold the bar at shoulder height, elbows slightly forward.",
+    "Dip a few centimeters at the knees, then drive up explosively and press the bar overhead.",
+    "Lower under control and repeat.",
+  ],
+  Side_Bridge: [
+    "Lie on your side and prop yourself on your forearm.",
+    "Lift the hips so the body forms a straight line; hold the position.",
+  ],
+  Side_Jackknife: [
+    "Lie on your side with legs stacked, top hand behind your head.",
+    "Crunch sideways, bringing the top elbow and top leg toward each other; switch sides.",
+  ],
+};
+
 // ── Nadpisania dla kluczowych liftów (seed-prompt-fbw.md, nadrzędne nad heurystyką) ──
 const TYPE_OVERRIDES: Record<string, ExerciseType> = {
   Plank: "timed",
@@ -111,7 +137,7 @@ async function seedExercises() {
     primary_muscles: ex.primaryMuscles ?? [],
     secondary_muscles: ex.secondaryMuscles ?? [],
     category: ex.category,
-    instructions: ex.instructions ?? [],
+    instructions: INSTRUCTION_OVERRIDES[ex.id] ?? ex.instructions ?? [],
     images: (ex.images ?? []).map((img) => IMG_PREFIX + img),
     movement_pattern: deriveMovementPattern(ex),
     exercise_type: deriveExerciseType(ex),
