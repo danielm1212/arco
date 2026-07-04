@@ -18,14 +18,15 @@
 | 1 | S6-dokończenie — custom ćwiczenie (wg `sprinty-szczegolowe.md` S6) | ✅ ZROBIONE (`dbc8391`) |
 | 2 | **N1 — Deploy-lite (HTTPS)** — nowy, opis niżej | ⏳ **czeka na [Ty]: konta Supabase cloud + Vercel** |
 | 3 | **N2 — Paczka UX z notatek właściciela** — nowy, opis niżej | ✅ ZROBIONE 1–6, 8–9 (`89d5725`…`3c83e7d`); #7 reorder = opc., nietknięty |
-| 4 | **Decyzja wizualna** [Ty] + start toru assetów — opis niżej | 🔜 równolegle z N1/N2 |
+| 4 | **Decyzja wizualna** [Ty] + start toru assetów — opis niżej | ✅ ROZSTRZYGNIĘTA 2026-07-04: „Arco Warm" (terracotta `#C63F21` + krem + ciepła czerń, light default) → wchodzi **Sprint N3** (niżej) |
 | 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | ✅ ZROBIONE (`3066d19`; N1 wciąż przed S8+) |
 | 6 | **S12 — Sesja i rekordy** (wybrany po S7 przez [Ty], opcja A) | ✅ ZROBIONE — mini-bar (9401708), rep-PRs+hint+celebracja (b17aaca), edycja daty (49904ea); „edycja zapisanego treningu” = Refinement [Ty] |
 | 7 | **S13 — Postępy jako lustro + picker** | ✅ ZROBIONE — Muscle Split (85c2cfa), delta-karty+interpretacje (33538bd), picker Recent+multi+📈 (88a8c6e); tabela setów pod heatmapą = już było (Done) |
 | 8 | **S14 — Empty states + pierwsze wrażenie** | ✅ ZROBIONE (a555d18 copy+CTA wg docs/empty-states-copy.md, 847e25b skeletony+offline); copy do ew. podmiany [Ty] |
 | 9 | **S8 — audyt bazy ćwiczeń** | ✅ ZROBIONE (fbb45fc, `docs/audyt-bazy-cwiczen.md`) — baza zdrowa; kuracja stretching+cardio = Refinement [Ty] |
 | 10 | **S9 — audyt kodu/zależności** | ✅ część 1 (0332493, `docs/audyt-kodu-zaleznosci.md`) — patche minor + smoke naprawione 3/3; majory = Refinement [Ty]; higiena (Logger split, N+1, paginacja) = część 2 |
-| 11 | S9-cz.2 (higiena) → S10 (offline+longevity) → S11-domknięcie | dalej [Claude]; N1 równolegle gdy będą konta |
+| 11 | **N3 — Reskin „Arco Warm"** | ✅ ZROBIONE (ec10f19) — tokeny/logo/jasny default/day-pills/elevation; logger jasny → decyzja forced-dark po teście [Ty] |
+| 12 | S9-cz.2 (higiena) → S10 (offline+longevity) → S11-domknięcie | dalej [Claude]; N1 równolegle gdy będą konta |
 
 ---
 
@@ -82,6 +83,26 @@
 - Po decyzji: [Claude] aktualizuje wartości tokenów (jeśli zmiana) + dopisuje werdykt do `CLAUDE.md` (sekcja „Kierunek wizualny”) i addendum v0.4.
 
 **Done:** werdykt zapisany w `CLAUDE.md` + Notion; tor A assetów (prompty w `sprinty-szczegolowe.md`) odblokowany.
+
+> ✅ **WERDYKT (2026-07-04):** „Arco Warm" — terracotta `#C63F21` + krem `#F6F2ED` + ciepła czerń `#1E1C1A`, **default jasny**, logo/favicon dostarczone w `../logo/`. Pełna specyfikacja: `CLAUDE.md` sekcja „Kierunek wizualny". Wdrożenie: Sprint N3 niżej. Tor ikon 3D: stal + ciepłe światło, spójne z terracottą.
+
+---
+
+## Sprint N3 — Reskin „Arco Warm" [Claude]
+
+> Decyzja właściciela z 2026-07-04. Specyfikacja i paleta: `CLAUDE.md` sekcja „Kierunek wizualny". Inspo elevation/day-pills: mock BytePal od właściciela.
+
+**[Claude]:**
+1. **Tokeny:** nowy ramp primitive rust-50…900 z bazą `#C63F21`; podmiana wartości semantic (akcent, canvas `#F6F2ED`, text `#1E1C1A`); dark mode: jasna terracotta ~`#E8845C` jako akcent na ciepłej czerni. Zero zmian w komponentach — tylko wartości tokenów.
+2. **Default motyw jasny** (`next-themes` defaultTheme) + **zdjęcie forced-dark z loggera** — logger dostaje wersję jasną; toggle zostaje.
+3. **Logo + favicon z `../logo/`:** kopiowanie do `public/`, `<link rel="icon">` (SVG + PNG fallback), manifest PWA z maskable icon (wariant z marginesem), apple-touch-icon; logo do headera/login/celebracji tam, gdzie dziś tekst „Arco".
+4. **Elevation rule:** canvas przyciemniony o ton względem tile'ów; tile = białe/jaśniejsze karty, radius-xl, miękki cień, bez ramek 1px. Przejść po hubach i ujednolicić.
+5. **Day-pills home wg inspo:** odhaczone dni (✓), „dziś" jako filled pill, przyszłe wygaszone — minimalistycznie.
+6. Weryfikacja WCAG AA po podmianie (terracotta jako tekst tylko `#C63F21`+ciemniejsze; jaśniejsze tylko jako fill).
+
+**[Ty]:** test na telefonie (szczególnie logger w wersji jasnej — decyzja, czy forced-dark wraca jako opcja w ustawieniach); ewentualna korekta tonu canvas vs tile.
+
+**Done:** apka w palecie Warm na wszystkich ekranach, logo/favicon wpięte, build + Preview czyste, WCAG AA, wpisy w Notion zaktualizowane.
 
 ---
 

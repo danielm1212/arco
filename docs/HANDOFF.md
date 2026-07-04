@@ -24,7 +24,9 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione (cd.): S8 + S9-cz.1** — audyt bazy ćwiczeń (`fbb45fc`: baza zdrowa, 5 braków instrukcji załatane, kuracja=Refinement) + audyt zależności (`0332493`: patche minor, smoke naprawione 3/3 — teraz przywracają aktywny program; 5 vuln = wszystkie w next@14 → decyzja majorów [Ty]). Smoke wymagają `ADMIN_PASSWORD=arco1` w env.
 
-**Następny: S9-cz.2 (higiena: rozbicie Logger.tsx, batch „poprzednio", paginacja historii) → S10 (offline+longevity)**. **N1** czeka na [Ty] (konta; przypomnienie 9:00). Decyzja wizualna [Ty] + kuracja bazy [Ty] + majory [Ty] otwarte. Na telefonie ~16 wpisów „Do testu [Ty]".
+**Zrobione (cd.): N3 — RESKIN „ARCO WARM"** (`ec10f19`, decyzja [Ty] 2026-07-04): terracotta #C63F21 + krem + ciepła czerń, **default JASNY**, logo/favicon wpięte, day-pills wg inspo, elevation bez ramek. **Forced-dark loggera ZAWIESZONY** — decyzja po teście [Ty]. Wcześniej: review repo + ikony→lucide (`972a3c9`). Stary „Athletic" tylko w historii gita.
+
+**Następny: S9-cz.2 (higiena: rozbicie Logger.tsx, batch „poprzednio", paginacja historii) → S10 (offline+longevity)**. **N1** czeka na [Ty] (konta; przypomnienie 9:00). Otwarte [Ty]: test Warm na telefonie (logger jasny!), kuracja bazy, majory. Na telefonie ~18 wpisów „Do testu [Ty]".
 
 **Nowe (2026-07-02): analiza UX Hevy** — `docs/konkurencja-hevy-ux.md` (ekrany + warstwa funkcjonalna, matryca #1–#30). Wynik: sprinty **S12–S14** w `sprinty-szczegolowe.md` (sesja globalna + rep-PRs · postępy-lustro + picker · empty states), punkty 8–9 dopisane do N2, 14 wpisów w Notion „Baza pomysłów" (Backlog). Kolejność wpięcia S12–S14 — propozycja w `plan-sprintow-2026-07.md`, czeka na [Ty].
 
