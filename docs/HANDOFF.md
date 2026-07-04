@@ -22,7 +22,9 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione (cd.): S14 KOMPLETNY** — empty states wg `docs/empty-states-copy.md` (copy zaakceptowane warunkowo, `a555d18`) + skeletony tras i banner offline (`847e25b`). Też: **fix stref czasowych** (`fix(dates)` — klucze dni UTC→lokalne; caveat Vercel-UTC przy N1). Notion zsynchronizowany.
 
-**Następny: audyty S8→S9→S10** (baza ćwiczeń → kod/zależności → offline+longevity). **N1 deploy-lite** czeka na [Ty] (konta; przypomnienie 9:00). Decyzja wizualna [Ty] otwarta. Na telefonie czeka ~16 wpisów „Do testu [Ty]".
+**Zrobione (cd.): S8 + S9-cz.1** — audyt bazy ćwiczeń (`fbb45fc`: baza zdrowa, 5 braków instrukcji załatane, kuracja=Refinement) + audyt zależności (`0332493`: patche minor, smoke naprawione 3/3 — teraz przywracają aktywny program; 5 vuln = wszystkie w next@14 → decyzja majorów [Ty]). Smoke wymagają `ADMIN_PASSWORD=arco1` w env.
+
+**Następny: S9-cz.2 (higiena: rozbicie Logger.tsx, batch „poprzednio", paginacja historii) → S10 (offline+longevity)**. **N1** czeka na [Ty] (konta; przypomnienie 9:00). Decyzja wizualna [Ty] + kuracja bazy [Ty] + majory [Ty] otwarte. Na telefonie ~16 wpisów „Do testu [Ty]".
 
 **Nowe (2026-07-02): analiza UX Hevy** — `docs/konkurencja-hevy-ux.md` (ekrany + warstwa funkcjonalna, matryca #1–#30). Wynik: sprinty **S12–S14** w `sprinty-szczegolowe.md` (sesja globalna + rep-PRs · postępy-lustro + picker · empty states), punkty 8–9 dopisane do N2, 14 wpisów w Notion „Baza pomysłów" (Backlog). Kolejność wpięcia S12–S14 — propozycja w `plan-sprintow-2026-07.md`, czeka na [Ty].
 
