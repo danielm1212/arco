@@ -21,7 +21,12 @@ export default function LoginPage() {
     <main className="flex min-h-dvh flex-col items-center justify-center px-md">
       <div className="w-full max-w-sm space-y-xl">
         <div className="space-y-2xs text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Arco</h1>
+          <h1 className="flex justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="Arco" className="h-10 w-auto dark:hidden" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-10 w-auto dark:block" />
+          </h1>
           <p className="text-sm text-muted-foreground">Zaloguj się, żeby trenować.</p>
         </div>
 

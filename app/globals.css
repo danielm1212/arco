@@ -11,28 +11,37 @@
 
 @layer base {
   :root {
-    /* ── L1 · PRIMITIVE — surowe wartości, bez znaczenia semantycznego ─────── */
+    /* ── L1 · PRIMITIVE — surowe wartości, bez znaczenia semantycznego ───────
+       „Arco Warm" (decyzja 2026-07-04): ciepłe neutrale (krem #F6F2ED /
+       ciepła czerń #1E1C1A) + ramp rust z bazą terracotta #C63F21. */
     --arco-neutral-0:   0 0% 100%;
-    --arco-neutral-50:  210 20% 98%;
-    --arco-neutral-100: 214 16% 95%;
-    --arco-neutral-200: 213 14% 89%;
-    --arco-neutral-300: 213 12% 80%;
-    --arco-neutral-400: 214 10% 60%;
-    --arco-neutral-500: 215 11% 45%;
-    --arco-neutral-600: 217 13% 34%;
-    --arco-neutral-700: 218 15% 24%;
-    --arco-neutral-800: 220 18% 15%;
-    --arco-neutral-900: 222 22% 10%;
-    --arco-neutral-950: 224 28% 6%;
+    --arco-neutral-50:  33 33% 97%;   /* jaśniejszy krem */
+    --arco-neutral-100: 33 33% 95%;   /* krem #F6F2ED */
+    --arco-neutral-200: 32 26% 91%;   /* canvas — krem ton niżej (elevation) */
+    --arco-neutral-300: 30 18% 82%;
+    --arco-neutral-400: 30 12% 58%;
+    --arco-neutral-500: 30 10% 42%;
+    --arco-neutral-600: 30 10% 32%;
+    --arco-neutral-700: 28 9% 24%;
+    --arco-neutral-800: 27 10% 15%;   /* dark: tile */
+    --arco-neutral-900: 30 7% 11%;    /* ciepła czerń #1E1C1A — tekst / dark canvas */
+    --arco-neutral-950: 30 8% 8%;
 
-    /* akcent — volt / lime-green (athletic). Używać jako WYPEŁNIENIA z ciemnym
-       tekstem; volt-600 to jedyny stop bezpieczny jako tekst na jasnym tle (AA). */
-    --arco-volt-300: 74 88% 72%;
-    --arco-volt-400: 76 80% 56%;   /* bright fill — ciemny tekst na wierzchu */
-    --arco-volt-500: 78 78% 46%;   /* mid stop (hover/active fill) */
-    --arco-volt-600: 80 70% 28%;   /* akcent-jako-tekst / primary na jasnym tle — 5.05:1 AA */
+    /* akcent — rust / terracotta. rust-600 (#C63F21) = jedyny stop bezpieczny
+       jako TEKST na kremie (≈4.6:1 AA); jaśniejsze stopy wyłącznie jako fill
+       (rust-400 #E8845C = akcent na ciemnych tłach). */
+    --arco-rust-50:  20 60% 96%;
+    --arco-rust-100: 18 62% 91%;
+    --arco-rust-200: 16 65% 82%;
+    --arco-rust-300: 16 70% 72%;
+    --arco-rust-400: 17 75% 64%;   /* #E8845C — akcent na dark */
+    --arco-rust-500: 13 72% 54%;   /* hover/active fill */
+    --arco-rust-600: 11 71% 45%;   /* #C63F21 — baza brand, tekst-akcent na jasnym */
+    --arco-rust-700: 11 72% 38%;
+    --arco-rust-800: 10 70% 30%;
+    --arco-rust-900: 10 65% 22%;
 
-    --arco-green-500: 142 71% 45%;
+    --arco-green-500: 142 60% 38%;
     --arco-amber-500: 38 92% 50%;
     --arco-red-500:   0 72% 51%;
 
@@ -52,25 +61,25 @@
     --radius-xl: 1.25rem;   /* karty bento */
     --radius-full: 9999px;
 
-    /* elewacja — miękki cień zamiast 1px ramki (kierunek "Athletic") */
-    --shadow-sm: 0 1px 2px 0 hsl(220 25% 12% / 0.05);
-    --shadow-md: 0 6px 20px -6px hsl(220 25% 12% / 0.10);
+    /* elewacja — miękki cień zamiast 1px ramki (kierunek "Warm") */
+    --shadow-sm: 0 1px 2px 0 hsl(28 30% 12% / 0.06);
+    --shadow-md: 0 6px 20px -6px hsl(28 30% 12% / 0.12);
 
     /* ── L2 · SEMANTIC (light) — referencje do primitive, nigdy surowe HSL ─── */
-    --color-bg:              var(--arco-neutral-100);   /* tinted canvas pod bento */
-    --color-surface:         var(--arco-neutral-0);
-    --color-surface-muted:   var(--arco-neutral-100);
-    --color-text:            var(--arco-neutral-900);
+    --color-bg:              var(--arco-neutral-200);   /* kremowy canvas — ton niżej niż tile */
+    --color-surface:         var(--arco-neutral-0);     /* białe tile (elevation przez jasność) */
+    --color-surface-muted:   var(--arco-neutral-100);   /* zagnieżdżone wiersze = krem */
+    --color-text:            var(--arco-neutral-900);   /* ciepła czerń #1E1C1A */
     --color-text-muted:      var(--arco-neutral-500);
-    --color-border:          var(--arco-neutral-200);
-    --color-accent:          var(--arco-volt-600);       /* primary/akcent-tekst — AA na jasnym */
-    --color-accent-contrast: var(--arco-neutral-0);      /* biały tekst na ciemnym volcie */
-    --color-volt:            var(--arco-volt-400);       /* jasny fill: dziś/streak/ringi/aktywne */
-    --color-volt-contrast:   var(--arco-neutral-950);    /* ciemny tekst na jasnym volcie */
+    --color-border:          var(--arco-neutral-300);
+    --color-accent:          var(--arco-rust-600);      /* terracotta #C63F21 — AA na kremie */
+    --color-accent-contrast: var(--arco-neutral-0);     /* biały tekst na terakocie (≈5.4:1) */
+    --color-volt:            var(--arco-rust-600);      /* brand-fill: hero/dziś/streak/aktywne */
+    --color-volt-contrast:   var(--arco-neutral-0);     /* biały tekst na terracotta fill */
     --color-success:         var(--arco-green-500);
     --color-warning:         var(--arco-amber-500);
     --color-danger:          var(--arco-red-500);
-    --color-ring:            var(--arco-volt-600);   /* ciemny ring — widoczny na białym (1.4.11) */
+    --color-ring:            var(--arco-rust-600);  /* widoczny na białym (1.4.11) */
 
     /* ── L3-bridge · zmienne shadcn (czytają z warstwy semantycznej) ──────── */
     --background:            var(--color-bg);
@@ -99,20 +108,20 @@
 
   .dark {
     /* ── L2 · SEMANTIC (dark) — nadpisanie referencji; primitive bez zmian ── */
-    --color-bg:              var(--arco-neutral-950);
-    --color-surface:         var(--arco-neutral-900);
-    --color-surface-muted:   var(--arco-neutral-800);
-    --color-text:            var(--arco-neutral-50);
+    --color-bg:              var(--arco-neutral-900);   /* ciepła czerń — canvas */
+    --color-surface:         var(--arco-neutral-800);   /* tile ton wyżej */
+    --color-surface-muted:   var(--arco-neutral-700);
+    --color-text:            var(--arco-neutral-100);   /* krem */
     --color-text-muted:      var(--arco-neutral-400);
-    --color-border:          var(--arco-neutral-800);
-    --color-accent:          var(--arco-volt-400);       /* bright na ciemnym tle — AA z ciemnym tekstem */
-    --color-accent-contrast: var(--arco-neutral-950);
-    --color-volt:            var(--arco-volt-400);
-    --color-volt-contrast:   var(--arco-neutral-950);
-    --color-success:         var(--arco-green-500);
+    --color-border:          var(--arco-neutral-700);
+    --color-accent:          var(--arco-rust-400);      /* jasna terracotta #E8845C na ciemnym */
+    --color-accent-contrast: var(--arco-neutral-900);   /* ciepła czerń na jasnej terakocie */
+    --color-volt:            var(--arco-rust-400);
+    --color-volt-contrast:   var(--arco-neutral-900);
+    --color-success:         142 55% 55%;
     --color-warning:         var(--arco-amber-500);
-    --color-danger:          var(--arco-red-500);
-    --color-ring:            var(--arco-volt-400);
+    --color-danger:          0 72% 60%;
+    --color-ring:            var(--arco-rust-400);
 
     --destructive-foreground: var(--arco-neutral-50);
 

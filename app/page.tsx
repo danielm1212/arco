@@ -150,7 +150,12 @@ export default async function HomePage() {
         }))}
       />
       <header className="flex items-center justify-between border-b px-sm py-sm">
-        <span className="pl-2xs text-lg font-bold tracking-tight">Arco</span>
+        <span className="pl-2xs">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Arco" className="h-6 w-auto dark:hidden" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-6 w-auto dark:block" />
+        </span>
         <nav className="flex items-center">
           <Button variant="ghost" size="icon" aria-label="Ustawienia" asChild>
             <Link href="/settings">
@@ -193,25 +198,39 @@ export default async function HomePage() {
               </span>
             </span>
           </div>
+          {/* Day-pills „Warm": done = terracotta ✓ · dziś = wypełniona ciepła czerń · przyszłe wygaszone */}
           <div className="flex gap-1.5">
-            {week.map((d) => (
-              <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
-                <div
-                  className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium ${
-                    d.on ? "bg-volt text-volt-foreground" : "bg-muted text-muted-foreground"
-                  } ${d.today ? "ring-2 ring-volt ring-offset-2 ring-offset-card" : ""}`}
-                >
-                  {d.on ? "✓" : ""}
+            {week.map((d) => {
+              const future = d.key > todayKey;
+              return (
+                <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium ${
+                      d.on
+                        ? "bg-volt text-volt-foreground"
+                        : d.today
+                          ? "bg-foreground text-background"
+                          : future
+                            ? "bg-muted/60 text-muted-foreground/50"
+                            : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {d.on ? "✓" : d.today ? d.dow.charAt(0) : ""}
+                  </div>
+                  <span
+                    className={`text-[11px] ${
+                      d.today
+                        ? "font-bold text-foreground"
+                        : future
+                          ? "text-muted-foreground/60"
+                          : "text-muted-foreground"
+                    }`}
+                  >
+                    {d.dow}
+                  </span>
                 </div>
-                <span
-                  className={`text-[11px] ${
-                    d.today ? "font-bold text-foreground" : "text-muted-foreground"
-                  }`}
-                >
-                  {d.dow}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 

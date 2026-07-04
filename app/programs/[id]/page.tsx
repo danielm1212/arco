@@ -110,7 +110,7 @@ export default async function ProgramEditorPage({ params }: { params: { id: stri
         </div>
 
         {days.map((day) => (
-          <section key={day.id} className="rounded-lg border bg-card p-md text-card-foreground">
+          <section key={day.id} className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
             <p className="font-medium">{day.label}</p>
             <ul className="mt-xs space-y-2xs text-sm">
               {day.slots.map((s) => (

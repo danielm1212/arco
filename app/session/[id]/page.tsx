@@ -85,10 +85,10 @@ export default async function SessionPage({ params }: { params: { id: string } }
     | { label: string; programs: { name: string } | null }
     | null;
 
-  // Logger = dark focus mode: wymuszamy ciemny motyw na całym ekranie sesji
-  // (niezależnie od motywu reszty apki) — mniej glare na siłowni, większy kontrast.
+  // „Arco Warm": logger podąża za motywem apki (forced-dark ZAWIESZONY decyzją
+  // 2026-07-04 — właściciel oceni jasną wersję na telefonie; ew. powrót jako opcja).
   return (
-    <div className="dark min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <Logger
         sessionId={session.id}
         title={dayMeta ? `${dayMeta.programs?.name ?? ""} · ${dayMeta.label}` : "Freestyle"}
