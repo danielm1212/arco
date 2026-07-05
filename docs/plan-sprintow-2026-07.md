@@ -16,7 +16,7 @@
 | # | Sprint | Status |
 |---|--------|--------|
 | 1 | S6-dokończenie — custom ćwiczenie (wg `sprinty-szczegolowe.md` S6) | ✅ ZROBIONE (`dbc8391`) |
-| 2 | **N1 — Deploy-lite (HTTPS)** — nowy, opis niżej | ⏳ **czeka na [Ty]: konta Supabase cloud + Vercel** |
+| 2 | **N1 — Deploy-lite (HTTPS)** — nowy, opis niżej | ✅ ZROBIONE 2026-07-05 (`8992b56`) — https://arco-olive.vercel.app; QA na telefonie = **[Ty] do testu** |
 | 3 | **N2 — Paczka UX z notatek właściciela** — nowy, opis niżej | ✅ ZROBIONE 1–6, 8–9 (`89d5725`…`3c83e7d`); #7 reorder = opc., nietknięty |
 | 4 | **Decyzja wizualna** [Ty] + start toru assetów — opis niżej | ✅ ROZSTRZYGNIĘTA 2026-07-04: „Arco Warm" (terracotta `#C63F21` + krem + ciepła czerń, light default) → wchodzi **Sprint N3** (niżej) |
 | 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | ✅ ZROBIONE (`3066d19`; N1 wciąż przed S8+) |
@@ -50,6 +50,8 @@
 - [ ] Wyszukiwarka ćwiczeń na realnych danych (limit 2 znaków, nazwy EN) — werdykt: bug czy UX do poprawy.
 
 **Done:** apka na własnym URL HTTPS, wake lock + sygnały przerwy potwierdzone na telefonie, QA odhaczone w Notion.
+
+**✅ Zrobione 2026-07-05 (`8992b56`):** GitHub (`danielm1212/arco`, SSH) · Supabase cloud link+migracje(14)+seed(873 ćwiczeń/8 programów)+bootstrap konta, region **eu-central-1 (Frankfurt)** · Vercel (`arcoapp/arco`, auto-deploy z GitHub, region **fra1**, 5 zmiennych prod, `ADMIN_PASSWORD` nowo wygenerowane — NIE dev). **URL: https://arco-olive.vercel.app** (zweryfikowany: /login 200, manifest 200). Ops-notatka: URL z hashem deploya jest za Vercel SSO — zawsze używać stałego aliasu `arco-olive.vercel.app`. QA checklist wyżej → 3 wpisy w Notion na „Do testu [Ty]".
 
 ---
 
