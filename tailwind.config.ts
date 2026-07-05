@@ -52,10 +52,16 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Jasny akcent volt (fill z ciemnym tekstem): dziś/streak/ringi/aktywne
+        // Akcent-fill (terracotta): ✓ serii, mini-bar, streak, aktywne
         volt: {
           DEFAULT: "hsl(var(--volt))",
           foreground: "hsl(var(--volt-foreground))",
+        },
+        // Powierzchnia BRANDOWA (sand/krem) — hero, celebracja, onboarding; max 1/ekran
+        brand: {
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
+          muted: "hsl(var(--brand-muted))",
         },
         // Semantyczne kolory feedbacku (poza zestawem shadcn)
         success: "hsl(var(--color-success))",

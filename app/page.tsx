@@ -152,9 +152,9 @@ export default async function HomePage() {
       <header className="flex items-center justify-between border-b px-sm py-sm">
         <span className="pl-2xs">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Arco" className="h-6 w-auto dark:hidden" />
+          <img src="/logo.svg" alt="Arco" className="h-8 w-auto dark:hidden" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-6 w-auto dark:block" />
+          <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-8 w-auto dark:block" />
         </span>
         <nav className="flex items-center">
           <Button variant="ghost" size="icon" aria-label="Ustawienia" asChild>
@@ -244,23 +244,24 @@ export default async function HomePage() {
           </Link>
         ) : (
           suggested && (
-            <div className="overflow-hidden rounded-xl bg-volt text-volt-foreground shadow-md">
+            // Hero = powierzchnia BRANDOWA (sand, paleta §sand) — jedyna na tym ekranie
+            <div className="overflow-hidden rounded-xl bg-brand text-brand-foreground shadow-md">
               <form action={startSession.bind(null, suggested.dayId)}>
                 <button type="submit" className="block w-full p-md text-left">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-volt-foreground/70">Sugerowane dziś</span>
-                    <span className="flex items-center gap-1 rounded-full bg-volt-foreground px-3 py-1 text-xs font-semibold text-volt">
+                    <span className="text-xs font-medium text-brand-muted">Sugerowane dziś</span>
+                    <span className="flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
                       Start →
                     </span>
                   </div>
                   <p className="mt-sm text-2xl font-bold leading-tight">{suggested.label}</p>
                   {suggestedMeta && (
                     <>
-                      <p className="mt-2xs text-sm font-medium text-volt-foreground/80">
+                      <p className="mt-2xs text-sm font-medium text-brand-muted">
                         {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
                       </p>
                       {suggestedMeta.preview.length > 0 && (
-                        <p className="mt-2xs truncate text-xs text-volt-foreground/70">
+                        <p className="mt-2xs truncate text-xs text-brand-muted">
                           {suggestedMeta.preview.join(" · ")}
                           {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
                         </p>
@@ -272,7 +273,7 @@ export default async function HomePage() {
               {/* Podgląd bez startowania sesji (N2#3) — read-only lista dni/ćwiczeń */}
               <Link
                 href={`/programs/${activeId}`}
-                className="block border-t border-volt-foreground/15 px-md py-2 text-xs font-semibold text-volt-foreground/80"
+                className="block border-t border-brand-foreground/10 px-md py-2 text-xs font-semibold text-primary"
               >
                 Zobacz ćwiczenia (bez startu) →
               </Link>

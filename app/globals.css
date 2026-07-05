@@ -11,39 +11,54 @@
 
 @layer base {
   :root {
-    /* ── L1 · PRIMITIVE — surowe wartości, bez znaczenia semantycznego ───────
-       „Arco Warm" (decyzja 2026-07-04): ciepłe neutrale (krem #F6F2ED /
-       ciepła czerń #1E1C1A) + ramp rust z bazą terracotta #C63F21. */
-    --arco-neutral-0:   0 0% 100%;
-    --arco-neutral-50:  33 33% 97%;   /* jaśniejszy krem */
-    --arco-neutral-100: 33 33% 95%;   /* krem #F6F2ED */
-    --arco-neutral-200: 32 26% 91%;   /* canvas — krem ton niżej (elevation) */
-    --arco-neutral-300: 30 18% 82%;
-    --arco-neutral-400: 30 12% 58%;
-    --arco-neutral-500: 30 10% 42%;
-    --arco-neutral-600: 30 10% 32%;
-    --arco-neutral-700: 28 9% 24%;
-    --arco-neutral-800: 27 10% 15%;   /* dark: tile */
-    --arco-neutral-900: 30 7% 11%;    /* ciepła czerń #1E1C1A — tekst / dark canvas */
-    --arco-neutral-950: 30 8% 8%;
+    /* ── L1 · PRIMITIVE — surowe wartości (docs/paleta-arco-warm.md) ─────────
+       grey = baza UI · sand(krem) = powierzchnia BRANDOWA (nie canvas!) ·
+       rust = akcent · ink = tekst primary + powierzchnie dark ·
+       stone = szarość TYLKO na powierzchniach sand. */
+    --arco-grey-0:   0 0% 100%;    /* tile */
+    --arco-grey-50:  0 0% 98%;     /* tile hover / zagnieżdżone #FBFBFB */
+    --arco-grey-100: 0 0% 97%;     /* canvas light #F7F7F7 */
+    --arco-grey-200: 0 0% 94%;     /* wygaszone / wiersze zagnieżdżone #EFEFEF */
+    --arco-grey-300: 60 2% 89%;    /* border #E4E4E3 */
+    --arco-grey-400: 60 2% 82%;    /* disabled #D1D1CF */
+    --arco-grey-500: 45 2% 60%;    /* placeholder/muted #9C9B98 */
+    --arco-grey-600: 45 2% 43%;    /* tekst secondary #6F6E6B (4.7:1 na canvas) */
+    --arco-grey-700: 50 4% 32%;    /* #55544F */
 
-    /* akcent — rust / terracotta. rust-600 (#C63F21) = jedyny stop bezpieczny
-       jako TEKST na kremie (≈4.6:1 AA); jaśniejsze stopy wyłącznie jako fill
-       (rust-400 #E8845C = akcent na ciemnych tłach). */
-    --arco-rust-50:  20 60% 96%;
-    --arco-rust-100: 18 62% 91%;
-    --arco-rust-200: 16 65% 82%;
-    --arco-rust-300: 16 70% 72%;
-    --arco-rust-400: 17 75% 64%;   /* #E8845C — akcent na dark */
-    --arco-rust-500: 13 72% 54%;   /* hover/active fill */
-    --arco-rust-600: 11 71% 45%;   /* #C63F21 — baza brand, tekst-akcent na jasnym */
-    --arco-rust-700: 11 72% 38%;
-    --arco-rust-800: 10 70% 30%;
-    --arco-rust-900: 10 65% 22%;
+    --arco-rust-50:  20 69% 95%;   /* tinted bg akcentu #FBEFE9 */
+    --arco-rust-100: 18 67% 89%;   /* #F6DCD1 */
+    --arco-rust-200: 17 69% 80%;   /* #EFBCA7 */
+    --arco-rust-300: 16 67% 69%;   /* #E5977A */
+    --arco-rust-400: 15 68% 57%;   /* #DC6B45 — akcent w dark (4.9:1 na ink-800) */
+    --arco-rust-500: 11 71% 45%;   /* #C63F21 — brand / akcent light (może być tekstem) */
+    --arco-rust-600: 12 75% 37%;   /* hover #A53418 */
+    --arco-rust-700: 13 80% 29%;   /* pressed #85290F */
+    --arco-rust-800: 13 80% 22%;   /* tekst na rust-50/100 #641F0B */
+    --arco-rust-900: 14 82% 15%;   /* #451507 */
 
-    --arco-green-500: 142 60% 38%;
+    --arco-sand-50:  40 43% 97%;   /* #FBF9F5 */
+    --arco-sand-100: 33 33% 95%;   /* BRAND SURFACE #F6F2ED (hero/celebracja/onboarding) */
+    --arco-sand-200: 36 31% 90%;   /* zagnieżdżenia na brand #EEE8DF */
+    --arco-sand-300: 37 27% 85%;   /* border na brand #E2DACD */
+    --arco-sand-400: 38 22% 76%;   /* disabled na brand; secondary w dark #CFC5B4 */
+
+    --arco-stone-500: 35 10% 49%;  /* caption na kremie #8A8072 */
+    --arco-stone-600: 33 10% 39%;  /* secondary na kremie #6E655A (5.1:1) */
+    --arco-stone-700: 34 10% 30%;  /* #554E45 */
+
+    --arco-ink-500: 30 6% 25%;     /* border dark #45413D */
+    --arco-ink-600: 30 6% 19%;     /* tile hover dark #33302D */
+    --arco-ink-700: 24 7% 15%;     /* tile dark #282523 */
+    --arco-ink-800: 30 7% 11%;     /* canvas dark + TEKST primary light #1E1C1A */
+    --arco-ink-900: 30 11% 7%;     /* głębia/overlay dark #141210 */
+
+    /* funkcjonalne — PROPOZYCJA Claude (paleta §6, do akceptacji [Ty]):
+       danger odsunięty od rusta w malinę (hue 353), success przygaszona zieleń */
+    --arco-green-500: 146 45% 36%;
+    --arco-green-400: 146 40% 55%;   /* dark */
     --arco-amber-500: 38 92% 50%;
-    --arco-red-500:   0 72% 51%;
+    --arco-red-500:   353 65% 46%;
+    --arco-red-400:   353 70% 62%;   /* dark */
 
     /* skala spacingu (primitive) */
     --space-2xs: 0.25rem;
@@ -66,20 +81,24 @@
     --shadow-md: 0 6px 20px -6px hsl(28 30% 12% / 0.12);
 
     /* ── L2 · SEMANTIC (light) — referencje do primitive, nigdy surowe HSL ─── */
-    --color-bg:              var(--arco-neutral-200);   /* kremowy canvas — ton niżej niż tile */
-    --color-surface:         var(--arco-neutral-0);     /* białe tile (elevation przez jasność) */
-    --color-surface-muted:   var(--arco-neutral-100);   /* zagnieżdżone wiersze = krem */
-    --color-text:            var(--arco-neutral-900);   /* ciepła czerń #1E1C1A */
-    --color-text-muted:      var(--arco-neutral-500);
-    --color-border:          var(--arco-neutral-300);
-    --color-accent:          var(--arco-rust-600);      /* terracotta #C63F21 — AA na kremie */
-    --color-accent-contrast: var(--arco-neutral-0);     /* biały tekst na terakocie (≈5.4:1) */
-    --color-volt:            var(--arco-rust-600);      /* brand-fill: hero/dziś/streak/aktywne */
-    --color-volt-contrast:   var(--arco-neutral-0);     /* biały tekst na terracotta fill */
+    --color-bg:              var(--arco-grey-100);      /* neutralny canvas #F7F7F7 */
+    --color-surface:         var(--arco-grey-0);        /* białe tile */
+    --color-surface-muted:   var(--arco-grey-200);      /* zagnieżdżone wiersze */
+    --color-text:            var(--arco-ink-800);       /* ciepła czerń #1E1C1A */
+    --color-text-muted:      var(--arco-grey-600);      /* secondary 4.7:1 AA */
+    --color-border:          var(--arco-grey-300);
+    --color-accent:          var(--arco-rust-500);      /* #C63F21 — może być tekstem */
+    --color-accent-contrast: var(--arco-grey-0);
+    --color-volt:            var(--arco-rust-500);      /* akcent-fill (mini-bar/✓/streak) */
+    --color-volt-contrast:   var(--arco-grey-0);
+    /* powierzchnia BRANDOWA (sand) — hero/celebracja/onboarding; max 1 na ekran */
+    --color-brand-surface:   var(--arco-sand-100);
+    --color-brand-text:      var(--arco-ink-800);
+    --color-brand-muted:     var(--arco-stone-600);     /* szarość STONE tylko na sand */
     --color-success:         var(--arco-green-500);
     --color-warning:         var(--arco-amber-500);
     --color-danger:          var(--arco-red-500);
-    --color-ring:            var(--arco-rust-600);  /* widoczny na białym (1.4.11) */
+    --color-ring:            var(--arco-rust-500);  /* widoczny na białym (1.4.11) */
 
     /* ── L3-bridge · zmienne shadcn (czytają z warstwy semantycznej) ──────── */
     --background:            var(--color-bg);
@@ -97,33 +116,40 @@
     --accent:                var(--color-surface-muted);
     --accent-foreground:     var(--color-text);
     --destructive:           var(--color-danger);
-    --destructive-foreground: var(--arco-neutral-0);
+    --destructive-foreground: var(--arco-grey-0);
     --border:                var(--color-border);
     --input:                 var(--color-border);
     --ring:                  var(--color-ring);
     --volt:                  var(--color-volt);
     --volt-foreground:       var(--color-volt-contrast);
+    --brand:                 var(--color-brand-surface);
+    --brand-foreground:      var(--color-brand-text);
+    --brand-muted:           var(--color-brand-muted);
     --radius:                var(--radius-md);
   }
 
   .dark {
     /* ── L2 · SEMANTIC (dark) — nadpisanie referencji; primitive bez zmian ── */
-    --color-bg:              var(--arco-neutral-900);   /* ciepła czerń — canvas */
-    --color-surface:         var(--arco-neutral-800);   /* tile ton wyżej */
-    --color-surface-muted:   var(--arco-neutral-700);
-    --color-text:            var(--arco-neutral-100);   /* krem */
-    --color-text-muted:      var(--arco-neutral-400);
-    --color-border:          var(--arco-neutral-700);
-    --color-accent:          var(--arco-rust-400);      /* jasna terracotta #E8845C na ciemnym */
-    --color-accent-contrast: var(--arco-neutral-900);   /* ciepła czerń na jasnej terakocie */
+    --color-bg:              var(--arco-ink-800);       /* ciepła czerń — canvas */
+    --color-surface:         var(--arco-ink-700);       /* tile ton wyżej (elevation lustrzane) */
+    --color-surface-muted:   var(--arco-ink-600);
+    --color-text:            var(--arco-sand-50);
+    --color-text-muted:      var(--arco-sand-400);
+    --color-border:          var(--arco-ink-500);
+    --color-accent:          var(--arco-rust-400);      /* #DC6B45 — 4.9:1 na ink-800 */
+    --color-accent-contrast: var(--arco-ink-900);
     --color-volt:            var(--arco-rust-400);
-    --color-volt-contrast:   var(--arco-neutral-900);
-    --color-success:         142 55% 55%;
+    --color-volt-contrast:   var(--arco-ink-900);
+    /* brand w dark = zwykły tile + akcenty rust (mapa: „ink-700 + akcenty rust") */
+    --color-brand-surface:   var(--arco-ink-700);
+    --color-brand-text:      var(--arco-sand-50);
+    --color-brand-muted:     var(--arco-sand-400);
+    --color-success:         var(--arco-green-400);
     --color-warning:         var(--arco-amber-500);
-    --color-danger:          0 72% 60%;
+    --color-danger:          var(--arco-red-400);
     --color-ring:            var(--arco-rust-400);
 
-    --destructive-foreground: var(--arco-neutral-50);
+    --destructive-foreground: var(--arco-sand-50);
 
     /* L3-bridge musi być re-deklarowany w .dark — inaczej var() w moście
        (zadeklarowanym w :root) nie re-resolvuje się w poddrzewie z klasą .dark
@@ -148,6 +174,9 @@
     --ring:                  var(--color-ring);
     --volt:                  var(--color-volt);
     --volt-foreground:       var(--color-volt-contrast);
+    --brand:                 var(--color-brand-surface);
+    --brand-foreground:      var(--color-brand-text);
+    --brand-muted:           var(--color-brand-muted);
   }
 
   /* Motyw steruje wyłącznie klasą `.dark` (next-themes; opcja „system" sama

@@ -114,6 +114,7 @@ export default async function SessionDonePage({ params }: { params: { id: string
   const goalLeft = Math.max(0, goal - weeklyCount);
 
   return (
+    <div className="bg-brand text-brand-foreground">
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-xl p-lg text-center">
       {/* Hero — liczba-bohater */}
       <div>
@@ -164,6 +165,7 @@ export default async function SessionDonePage({ params }: { params: { id: string
           </p>
         )}
       </div>
+    </div>
     </div>
   );
 }

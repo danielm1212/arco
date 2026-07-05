@@ -119,7 +119,7 @@ export function WelcomeOverlay({
   const steps = 4;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background p-md">
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md text-brand-foreground">
       <div className="flex justify-end">
         <button onClick={skip} className="text-sm text-muted-foreground">
           Pomiń
@@ -209,11 +209,11 @@ export function WelcomeOverlay({
           <div className="space-y-md">
             <h1 className="text-2xl font-bold tracking-tight">Twój plan</h1>
             {suggestion ? (
-              <div className="rounded-xl bg-volt p-md text-volt-foreground shadow-md">
-                <p className="text-xs font-medium text-volt-foreground/70">Polecany program</p>
+              <div className="rounded-xl bg-primary p-md text-primary-foreground shadow-md">
+                <p className="text-xs font-medium text-primary-foreground/80">Polecany program</p>
                 <p className="mt-2xs text-xl font-bold leading-tight">{suggestion.name}</p>
                 {suggestion.note && (
-                  <p className="mt-xs text-xs text-volt-foreground/80">{suggestion.note}</p>
+                  <p className="mt-xs text-xs text-primary-foreground/80">{suggestion.note}</p>
                 )}
               </div>
             ) : (
