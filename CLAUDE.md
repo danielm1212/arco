@@ -39,12 +39,16 @@ Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data 
 - **Trwale poza zakresem:** AI auto-programming (manualny silnik podmiany to świadomy wyróżnik), makro/dieta, wearables/HRV.
 - **Descoped (usunięte):** kalkulator talerzy + ustawienia gryf/talerze — apka jest dumbbell-first.
 
-## Kierunek wizualny — „Arco Athletic" (OBECNY kierunek; identyfikacja może jeszcze ewoluować)
-> ⚠️ To spójny, wdrożony kierunek — ale **identyfikacja wizualna nie jest ostateczna** i może się zmienić (np. metalik/„żelazny" look z Horyzontu 3, inny akcent, rebranding). Nie traktuj poniższego jak betonu; przy zmianie aktualizuj tę sekcję. Architektura tokenów (primitive→semantic) ma to umożliwiać tanim kosztem.
-- Akcent: **volt / lime-green** (nie pomarańcz). Light = volt-600 (AA), dark = bright volt-400. Reguła: volt jako tekst tylko w wersji -600; jasny volt-400 wyłącznie jako fill z ciemnym tekstem.
-- **Theme toggle** jasny/ciemny/system, default ciemny, przez `next-themes` (klasa `.dark` na `<html>`, zapis localStorage; **bez** `@media prefers-color-scheme`). **Logger zawsze ciemny** (focus mode).
-- Tinted canvas + bento (radius-xl + miękka elewacja zamiast 1px ramek). Liczba-bohater. Celebracja w „momentach" (ekran po treningu).
-- Warstwy tokenów: primitive → semantic → most shadcn (HSL; **re-deklarowany też w `.dark`**, inaczej `var()` nie re-resolvuje się w poddrzewie) → Tailwind. **Zero magic numbers** — komponenty czytają tylko semantykę. **WCAG 2.1 AA.**
+## Kierunek wizualny — „Arco Warm" (DECYZJA właściciela 2026-07-04; zastępuje „Athletic")
+> ✅ Rozstrzygnięta decyzja wizualna. Rebranding z volt/dark na **terracotta + krem + ciepła czerń**. Kierunek lifestyle'owy, inkluzywny (nie tylko pod mężczyzn). Wdrożenie = Sprint N3 w `docs/plan-sprintow-2026-07.md`. Stary „Athletic" (volt) opisany w historii gita — nie wracać bez decyzji właściciela.
+- **Paleta brand:** terracotta `#C63F21` (akcent; na kremie ~4.6:1 → może być tekstem akcentowym) · krem `#F6F2ED` (canvas light) · ciepła czerń `#1E1C1A` (tekst primary / canvas dark) · jasna terracotta ~`#E8845C` (akcent na ciemnych tłach). Ramp primitive rust-50…900 wyprowadzić z `#C63F21`.
+- **Logo i favicon: `../logo/`** (siblingi folderu `arco`): `logo.svg/png` + warianty `logo-1/2`, favicon w 4 wersjach (primary/secondary/black/white), SVG + PNG 396px. Wpiąć do `public/` + manifest PWA (maskable z marginesem) + `<link rel="icon">`. Sygnet = „o"-talerz.
+- **Font: DM Sans** (next/font/google, subsets latin+latin-ext, self-host przy buildzie; zmapowany w Tailwind `fontFamily.sans` przez `--font-sans`; klasa fontu NA `<body>`).
+- **Default motyw: JASNY** (zmiana decyzji — koniec dark-as-default). Toggle jasny/ciemny/system zostaje (`next-themes`). ⚠️ Reguła „logger zawsze ciemny" jest ZAWIESZONA — zbudować logger w wersji jasnej, właściciel zdecyduje po teście na telefonie, czy forced-dark wraca jako opcja.
+- **Elevation (wzorzec z inspo BytePal):** canvas = delikatnie przyciemniony krem (`#F6F2ED` → ton niżej), na nim jaśniejsze/pełne białe „tile" (radius-xl, miękki cień, bez 1px ramek). Hierarchia przez jasność powierzchni, nie przez bordery.
+- **Day-pills na home:** minimalistyczny pasek dni tygodnia u góry (jak inspo): odhaczone dni + „dziś" jako wypełniona pigułka (ciepła czerń/terracotta), przyszłe wygaszone. Zastępuje/upraszcza obecne day-pills.
+- Liczba-bohater i celebracja w „momentach" — bez zmian. Zadziora w copy — bez zmian.
+- Warstwy tokenów: primitive → semantic → most shadcn (HSL; **re-deklarowany też w `.dark`**, inaczej `var()` nie re-resolvuje się w poddrzewie) → Tailwind. **Zero magic numbers** — komponenty czytają tylko semantykę. **WCAG 2.1 AA** (tekst na kremie: terracotta tylko `#C63F21` lub ciemniejsza; jaśniejsze odcienie wyłącznie jako fill).
 
 ## Design system & Figma (przyszły workstream)
 - Na pewnym etapie: **eksport design systemu + komponentów do Figmy** (tokeny, kolory, typografia, komponenty UI).

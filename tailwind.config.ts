@@ -14,6 +14,10 @@ const config: Config = {
       screens: { "2xl": "1400px" },
     },
     extend: {
+      fontFamily: {
+        // bez tego mapowania klasa `font-sans` ignorowała font z next/font (bug od startu)
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

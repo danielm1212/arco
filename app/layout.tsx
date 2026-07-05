@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
+import { DM_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import { AppChrome } from "@/components/AppChrome";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
-const geist = localFont({
-  src: "./fonts/GeistVF.woff",
+// DM Sans (decyzja 2026-07-05, spójny z „Arco Warm"). next/font self-hostuje
+// pliki przy buildzie — zero runtime'owych zapytań do Google. latin-ext = PL znaki.
+const dmSans = DM_Sans({
+  subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
-  weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pl" suppressHydrationWarning>
-      <body className={cn(geist.variable, "min-h-dvh font-sans antialiased")}>
+      <body className={cn(dmSans.variable, "min-h-dvh font-sans antialiased")}>
         <ThemeProvider>
           <AppChrome>{children}</AppChrome>
           <Toaster position="top-center" richColors closeButton />
