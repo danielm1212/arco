@@ -26,7 +26,19 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Zrobione (cd.): N3 — RESKIN „ARCO WARM"** (`ec10f19`, decyzja [Ty] 2026-07-04): terracotta #C63F21 + krem + ciepła czerń, **default JASNY**, logo/favicon wpięte, day-pills wg inspo, elevation bez ramek. **Forced-dark loggera ZAWIESZONY** — decyzja po teście [Ty]. Wcześniej: review repo + ikony→lucide (`972a3c9`). Stary „Athletic" tylko w historii gita.
 
-**Następny: S9-cz.2 (higiena: rozbicie Logger.tsx, batch „poprzednio", paginacja historii) → S10 (offline+longevity)**. **N1** czeka na [Ty] (konta; przypomnienie 9:00). Otwarte [Ty]: test Warm na telefonie (logger jasny!), kuracja bazy, majory. Na telefonie ~18 wpisów „Do testu [Ty]".
+**Zrobione (cd.): Font DM Sans** (`c080db1`) — przy okazji naprawiony brakujący `fontFamily.sans` w Tailwind (font z `next/font` był od startu nieużywany).
+
+**Zrobione (cd.): Paleta Warm v2 + większe logo** (`7910137`, wg `docs/paleta-arco-warm.md` — **źródło prawdy dla tokenów**, nadpisuje opis w N3): canvas **neutralny szary** `#F7F7F7` (nie kremowy), sand/krem `#F6F2ED` tylko jako **powierzchnia brandowa** (hero/celebracja/onboarding, max 1/ekran), logo w headerze powiększone `h-6→h-8`. Rampy grey/rust/sand/stone/ink w `globals.css`.
+
+**Zrobione (cd.): 2 autorskie programy** (`e56a404`) — „Autorski · Siłownia · FBW 2×" + „Autorski · Dom z hantlami · FBW 2×" wpięte w **istniejący** system `programs`/`program_day_slots` (nie nowy schemat — porzucony pomysł równoległego `content_programs`, zob. niżej). Mapowanie na realne `exercise_id`; 3 braki 1:1 rozwiązane swapami **z plików źródłowych autora** (nie zgadywane). Pull-up jako prawdziwy AMRAP (pierwszy taki przypadek w seedzie). Biblioteka: **8 programów**.
+
+**Zmiana procesu (2026-07-05): Sync z Notion NA ŻĄDANIE**, nie automatycznie po paczce — koszt tokenów przy częstych aktualizacjach. Lokalne docs (ten plik + `plan-sprintow`) aktualizuję zawsze; do Notion wypycham dopiero gdy Daniel poprosi. Zaległe wpisy czekają w `docs/notion-sync-queue.md` (Warm v2 + logo, 2 nowe programy).
+
+**Odrzucony pomysł (2026-07-05):** równoległy schemat `content_programs`/`content_sessions`/`content_program_exercises` (Program/Session/ProgramExercise z enumami pattern/target, bez FK do `exercises`) dla contentowego seeda z Markdownu. Właściciel uznał to za nadmiarowe — wystarczył istniejący pipeline. Nie odtwarzać bez wyraźnej nowej decyzji.
+
+**Następny: S9-cz.2 (higiena: rozbicie Logger.tsx, batch „poprzednio", paginacja historii) → S10 (offline+longevity)**. **N1** czeka na [Ty] (konta; przypomnienie 9:00). Otwarte [Ty]: test Warm v2 na telefonie (logger jasny + neutralny canvas!), kuracja bazy, majory, 2 nowe programy. Na telefonie ~20 wpisów „Do testu [Ty]" w Notion (nie zsynchronizowane od 2026-07-04 wieczorem — patrz kolejka).
+
+**⚠️ Sesja niejasnego pochodzenia w bazie (2026-07-05, `33acba2e...`):** przy weryfikacji zauważona zakończona sesja z ćwiczeniami „Dzień B" i niekompletnymi seriami — może być realny test właściciela na telefonie (serwer LAN chodził cały dzień). **Nie usunięta** — czeka na decyzję właściciela, czy to jego dane czy coś do wyczyszczenia.
 
 **Nowe (2026-07-02): analiza UX Hevy** — `docs/konkurencja-hevy-ux.md` (ekrany + warstwa funkcjonalna, matryca #1–#30). Wynik: sprinty **S12–S14** w `sprinty-szczegolowe.md` (sesja globalna + rep-PRs · postępy-lustro + picker · empty states), punkty 8–9 dopisane do N2, 14 wpisów w Notion „Baza pomysłów" (Backlog). Kolejność wpięcia S12–S14 — propozycja w `plan-sprintow-2026-07.md`, czeka na [Ty].
 
