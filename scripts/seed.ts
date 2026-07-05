@@ -486,6 +486,78 @@ const PROGRAMS: Program[] = [
       },
     ],
   },
+  // ── Autorskie (Daniel), dodane 2026-07-05 · content/personal-*.md ──
+  // Mapowanie ćwiczeń bez 1:1 w bazie: użyty SWAP z pliku źródłowego (Standing DB
+  // Curl→Barbell Curl, Ab Wheel Rollout→Cable Crunch, Hollow Body Hold→Plank) —
+  // nie zgadywanie zamiennika, tylko odczytanie decyzji autora wprost z tabeli.
+  {
+    name: "Autorski · Siłownia · FBW 2×",
+    description: "FBW 2×/tydz. dla intermediate na pełnym sprzęcie. Compoundy nisko (6–8), izolacje 10–15. RIR 1–2.",
+    goal: "Siłownia · FBW autorski",
+    level: "średniozaawansowany",
+    days_per_week: 2,
+    days: [
+      {
+        label: "Trening A",
+        slots: [
+          { exercise_id: "Barbell_Squat", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
+          { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
+          { exercise_id: "Bent_Over_Barbell_Row", sets: 4, repsMin: 8, repsMax: 10, rest: 120 },
+          { exercise_id: "Standing_Military_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 120 },
+          { exercise_id: "Barbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60, notes: "Standing DB Curl → swap z pliku (brak 1:1 w bazie)" },
+          { exercise_id: "EZ-Bar_Skullcrusher", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper), 30–60 s" },
+        ],
+      },
+      {
+        label: "Trening B",
+        slots: [
+          { exercise_id: "Barbell_Walking_Lunge", sets: 3, repsMin: 10, repsMax: 10, rest: 120, notes: "na nogę" },
+          { exercise_id: "Pullups", sets: 4, repsMin: null, repsMax: null, rest: 120, notes: "max, RIR 1–2 (AMRAP) · nachwyt" },
+          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 120 },
+          { exercise_id: "Face_Pull", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
+          { exercise_id: "Hammer_Curls", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Cable_Crunch", sets: 3, repsMin: 12, repsMax: 15, rest: 60, notes: "Ab Wheel Rollout → swap z pliku (brak w bazie)" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Autorski · Dom z hantlami · FBW 2×",
+    description: "FBW 2×/tydz. dla intermediate, hantle + kettlebell. RIR 1–2.",
+    goal: "Dom (hantle+kettlebell) · FBW autorski",
+    level: "średniozaawansowany",
+    days_per_week: 2,
+    days: [
+      {
+        label: "Trening A",
+        slots: [
+          { exercise_id: "Goblet_Squat", sets: 4, repsMin: 10, repsMax: 10, rest: 120 },
+          { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 4, repsMin: 10, repsMax: 10, rest: 120, notes: "DB Romanian Deadlift" },
+          { exercise_id: "Bent_Over_Two-Dumbbell_Row", sets: 4, repsMin: 10, repsMax: 10, rest: 120 },
+          { exercise_id: "Dumbbell_Bench_Press", sets: 4, repsMin: 10, repsMax: 10, rest: 120 },
+          { exercise_id: "Dumbbell_Shoulder_Press", sets: 3, repsMin: 10, repsMax: 10, rest: 90 },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 3, repsMin: 12, repsMax: 12, rest: 60 },
+          { exercise_id: "Lying_Dumbbell_Tricep_Extension", sets: 3, repsMin: 12, repsMax: 12, rest: 60, notes: "DB Skull Crusher" },
+          { exercise_id: "Dead_Bug", sets: 3, repsMin: 10, repsMax: 10, rest: 45, notes: "na stronę" },
+        ],
+      },
+      {
+        label: "Trening B",
+        slots: [
+          { exercise_id: "Dumbbell_Rear_Lunge", sets: 4, repsMin: 8, repsMax: 8, rest: 90, notes: "na nogę" },
+          { exercise_id: "Kettlebell_One-Legged_Deadlift", sets: 3, repsMin: 8, repsMax: 8, rest: 90, notes: "Single-Leg RDL" },
+          { exercise_id: "Alternating_Renegade_Row", sets: 4, repsMin: 8, repsMax: 8, rest: 90, notes: "na stronę" },
+          { exercise_id: "Push-Ups_With_Feet_Elevated", sets: 4, repsMin: 12, repsMax: 12, rest: 75 },
+          { exercise_id: "Side_Lateral_Raise", sets: 3, repsMin: 15, repsMax: 15, rest: 60 },
+          { exercise_id: "Hammer_Curls", sets: 3, repsMin: 12, repsMax: 12, rest: 60 },
+          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 3, repsMin: 12, repsMax: 12, rest: 60 },
+          { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 45, notes: "Hollow Body Hold → swap z pliku; na czas (stoper), ~30 s" },
+        ],
+      },
+    ],
+  },
 ];
 
 async function seedPrograms() {

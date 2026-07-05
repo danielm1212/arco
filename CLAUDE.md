@@ -18,21 +18,16 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
 - Po działającej zmianie: commit. Weryfikuj REALNIE (build + Claude Preview), sprzątaj dane testowe po testach.
 - Ops/build (jeden build na raz, zatrzymaj Preview przed buildem, PATH do supabase/docker): patrz `docs/HANDOFF.md`.
 
-## Sync z Notion (OBOWIĄZKOWY rytuał końca sprintu/paczki)
+## Sync z Notion (NA ŻĄDANIE — zmiana 2026-07-05, było „obowiązkowo co paczkę")
 Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data source `e037aac8-6857-46b7-80ef-95d011d1816e`, hub „🥇 ARCO — Hub"). Właściwości: Pomysł (title), Priorytet, Kto wykonuje, Etap, Faza, Kategoria, Notatki.
 
-**Po każdej ukończonej paczce roboty (przed zamknięciem sesji):**
-1. Znajdź wpisy w bazie odpowiadające zrobionym zadaniom (`notion-search` po tytule / query po data source).
-2. Ustaw **Etap** wg reguły:
-   - `Do testu [Ty]` — zmiana w UI/flow wymagająca weryfikacji Daniela na telefonie (default dla features/bugfixów),
-   - `Done` — audyt/QA/research bez zmian kodu albo rzecz w pełni zweryfikowana,
-   - `In Progress` — rozgrzebane między sesjami,
-   - `Refinement` — odkryłeś decyzję, którą musi podjąć Daniel (dopisz w Notatkach CO trzeba rozstrzygnąć).
-3. W **Notatkach** dopisz: hash commita + jednozdaniowo co zrobione + co przetestować.
-4. **Nowe zadania odkryte w trakcie** → nowy wpis (Etap `Backlog`/`Inbox`, wypełnij wszystkie selecty). Nie trzymaj zadań tylko w plikach — Daniel planuje z tablicy.
-5. Statusy w `docs/plan-sprintow-2026-07.md` i w Notion mają się ZGADZAĆ (plik = szczegóły wykonawcze, Notion = widok właściciela).
+**Dlaczego zmiana:** wyszukiwanie/aktualizacja Notion po każdej paczce kosztowało realnie dużo tokenów (pełny fetch schematu + query całej tabeli za każdym razem). Nieproporcjonalne do wartości przy drobnych paczkach.
 
-**Fallback bez Notion MCP w sesji:** dopisz operacje do `docs/notion-sync-queue.md` (format w pliku). Każda sesja, która MA dostęp do Notion, zaczyna od flushu tej kolejki i czyszczenia pliku.
+**Domyślnie (zawsze, tanie — bez API):**
+1. Aktualizuj **lokalnie**: `docs/HANDOFF.md`, `docs/plan-sprintow-2026-07.md`.
+2. Dopisz operację do `docs/notion-sync-queue.md` (format w pliku) — to jest kolejka „do wysłania", nie tylko fallback bez MCP.
+
+**Do Notion wypychaj TYLKO gdy Daniel o to poprosi** („zsynchronizuj Notion" / „zaktualizuj Notion" / podobne). Wtedy: flush całej kolejki z `docs/notion-sync-queue.md` (wszystkie zaległe wpisy jedną turą wywołań), ustaw Etapy wg reguły (`Do testu [Ty]` / `Done` / `In Progress` / `Refinement` — jak dotychczas), wyczyść kolejkę.
 
 ## Zakres — zmienione vs brief v0.2 (żeby się nie odbijać od starego)
 - **Poza MVP, ale na DŁUGIEJ wizji (Horyzont 4–5 roadmap — NIE teraz):** social („Strava dla siłowni"), apki natywne iOS/Android, monetyzacja. To **nie jest „zakazane"** — to OSTATNI etap, dopiero gdy rdzeń hula + po testach userów. Nie zaczynaj przedwcześnie.
@@ -41,11 +36,11 @@ Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data 
 
 ## Kierunek wizualny — „Arco Warm" (DECYZJA właściciela 2026-07-04; zastępuje „Athletic")
 > ✅ Rozstrzygnięta decyzja wizualna. Rebranding z volt/dark na **terracotta + krem + ciepła czerń**. Kierunek lifestyle'owy, inkluzywny (nie tylko pod mężczyzn). Wdrożenie = Sprint N3 w `docs/plan-sprintow-2026-07.md`. Stary „Athletic" (volt) opisany w historii gita — nie wracać bez decyzji właściciela.
-- **Paleta brand:** terracotta `#C63F21` (akcent; na kremie ~4.6:1 → może być tekstem akcentowym) · krem `#F6F2ED` (canvas light) · ciepła czerń `#1E1C1A` (tekst primary / canvas dark) · jasna terracotta ~`#E8845C` (akcent na ciemnych tłach). Ramp primitive rust-50…900 wyprowadzić z `#C63F21`.
+- **Paleta:** pełne rampy + mapowanie semantic w **`docs/paleta-arco-warm.md`** (źródło prawdy). Skrót: canvas aplikacji = neutralny **grey `#F7F7F7`** + białe tile; terracotta `#C63F21` (akcent, AA jako tekst na jasnych); krem `#F6F2ED` = **powierzchnia brandowa** (hero/celebracja/onboarding/marketing), NIE canvas; ciepła czerń `#1E1C1A` (tekst primary / canvas dark); `#DC6B45` akcent w dark.
 - **Logo i favicon: `../logo/`** (siblingi folderu `arco`): `logo.svg/png` + warianty `logo-1/2`, favicon w 4 wersjach (primary/secondary/black/white), SVG + PNG 396px. Wpiąć do `public/` + manifest PWA (maskable z marginesem) + `<link rel="icon">`. Sygnet = „o"-talerz.
 - **Font: DM Sans** (next/font/google, subsets latin+latin-ext, self-host przy buildzie; zmapowany w Tailwind `fontFamily.sans` przez `--font-sans`; klasa fontu NA `<body>`).
 - **Default motyw: JASNY** (zmiana decyzji — koniec dark-as-default). Toggle jasny/ciemny/system zostaje (`next-themes`). ⚠️ Reguła „logger zawsze ciemny" jest ZAWIESZONA — zbudować logger w wersji jasnej, właściciel zdecyduje po teście na telefonie, czy forced-dark wraca jako opcja.
-- **Elevation (wzorzec z inspo BytePal):** canvas = delikatnie przyciemniony krem (`#F6F2ED` → ton niżej), na nim jaśniejsze/pełne białe „tile" (radius-xl, miękki cień, bez 1px ramek). Hierarchia przez jasność powierzchni, nie przez bordery.
+- **Elevation (wzorzec z inspo BytePal):** canvas = neutralny grey `#F7F7F7`, na nim białe „tile" (radius-xl, miękki cień, bez 1px ramek). Hierarchia przez jasność powierzchni, nie przez bordery. Dark lustrzanie: ink-800 → ink-700 → ink-600.
 - **Day-pills na home:** minimalistyczny pasek dni tygodnia u góry (jak inspo): odhaczone dni + „dziś" jako wypełniona pigułka (ciepła czerń/terracotta), przyszłe wygaszone. Zastępuje/upraszcza obecne day-pills.
 - Liczba-bohater i celebracja w „momentach" — bez zmian. Zadziora w copy — bez zmian.
 - Warstwy tokenów: primitive → semantic → most shadcn (HSL; **re-deklarowany też w `.dark`**, inaczej `var()` nie re-resolvuje się w poddrzewie) → Tailwind. **Zero magic numbers** — komponenty czytają tylko semantykę. **WCAG 2.1 AA** (tekst na kremie: terracotta tylko `#C63F21` lub ciemniejsza; jaśniejsze odcienie wyłącznie jako fill).
