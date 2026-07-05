@@ -93,7 +93,7 @@
 > Decyzja właściciela z 2026-07-04. Specyfikacja i paleta: `CLAUDE.md` sekcja „Kierunek wizualny". Inspo elevation/day-pills: mock BytePal od właściciela.
 
 **[Claude]:**
-1. **Tokeny:** nowy ramp primitive rust-50…900 z bazą `#C63F21`; podmiana wartości semantic (akcent, canvas `#F6F2ED`, text `#1E1C1A`); dark mode: jasna terracotta ~`#E8845C` jako akcent na ciepłej czerni. Zero zmian w komponentach — tylko wartości tokenów.
+1. **Tokeny:** pełne rampy primitive + mapowanie semantic są GOTOWE w **`docs/paleta-arco-warm.md`** (rust/sand/stone/ink + reguły twarde + kontrasty policzone). Wdrożyć 1:1. Zero zmian w komponentach — tylko wartości tokenów.
 2. **Default motyw jasny** (`next-themes` defaultTheme) + **zdjęcie forced-dark z loggera** — logger dostaje wersję jasną; toggle zostaje.
 3. **Logo + favicon z `../logo/`:** kopiowanie do `public/`, `<link rel="icon">` (SVG + PNG fallback), manifest PWA z maskable icon (wariant z marginesem), apple-touch-icon; logo do headera/login/celebracji tam, gdzie dziś tekst „Arco".
 4. **Elevation rule:** canvas przyciemniony o ton względem tile'ów; tile = białe/jaśniejsze karty, radius-xl, miękki cień, bez ramek 1px. Przejść po hubach i ujednolicić.
