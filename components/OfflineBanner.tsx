@@ -16,7 +16,8 @@ export function OfflineBanner() {
   const online = useSyncExternalStore(subscribe, () => navigator.onLine, () => true);
   if (online) return null;
   return (
-    <div className="fixed inset-x-0 top-0 z-50 bg-warning/95 px-md py-1.5 text-center text-xs font-medium text-black">
+    // fixed → ignoruje pt-safe na <body>; potrzebuje własnego safe-area (notch PWA)
+    <div className="fixed inset-x-0 top-0 z-50 bg-warning/95 px-md pb-1.5 pt-[calc(0.375rem+env(safe-area-inset-top))] text-center text-xs font-medium text-black">
       Jesteś offline — serie zapisują się lokalnie i zsynchronizują po powrocie sieci.
     </div>
   );

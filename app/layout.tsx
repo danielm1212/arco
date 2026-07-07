@@ -40,7 +40,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pl" suppressHydrationWarning>
-      <body className={cn(dmSans.variable, "min-h-dvh font-sans antialiased")}>
+      {/* statusBarStyle="black-translucent" + viewportFit="cover" (wyżej) każą treści
+          wchodzić pod notch/status bar w PWA standalone na iOS — pt-safe to koryguje,
+          inaczej nagłówek nachodzi na zegar/ikony systemowe (zgłoszone 2026-07-07). */}
+      <body
+        className={cn(
+          dmSans.variable,
+          "min-h-dvh pt-[env(safe-area-inset-top)] font-sans antialiased",
+        )}
+      >
         <ThemeProvider>
           <AppChrome>{children}</AppChrome>
           <Toaster position="top-center" richColors closeButton />

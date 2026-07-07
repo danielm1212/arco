@@ -76,7 +76,7 @@ export function RestTimer({
 
   if (done) {
     return (
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-volt text-volt-foreground">
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-volt pb-[env(safe-area-inset-bottom)] text-volt-foreground">
         <div className="mx-auto flex max-w-md items-center gap-sm p-md">
           <p className="flex-1 text-base font-semibold">
             Przerwa skończona — czas na serię! 💪
@@ -91,7 +91,7 @@ export function RestTimer({
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 z-50 border-t backdrop-blur transition-colors ${
+      className={`fixed inset-x-0 bottom-0 z-50 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur transition-colors ${
         finishing ? "bg-primary/15" : "bg-card/95"
       }`}
     >

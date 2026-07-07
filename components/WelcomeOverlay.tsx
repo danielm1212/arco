@@ -119,7 +119,8 @@ export function WelcomeOverlay({
   const steps = 4;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md text-brand-foreground">
+    // fixed → poza pt-safe z <body>; własny safe-area (notch PWA, ekran pełnoekranowy)
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] text-brand-foreground">
       <div className="flex justify-end">
         <button onClick={skip} className="text-sm text-muted-foreground">
           Pomiń
