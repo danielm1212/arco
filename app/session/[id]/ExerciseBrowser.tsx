@@ -121,7 +121,10 @@ export function ExerciseBrowser({
         .select("id, name, equipment, images, user_id")
         .order("name")
         .limit(30);
+      // Stopień 1 kuracji (audyt S8 + trenerski 2026-07-08): browse po chipach ukrywa
+      // hidden (stretching/cardio/przestarzałe); search po nazwie NADAL znajduje wszystko.
       if (queryTerm.length >= 2) req = req.ilike("name", `%${queryTerm}%`);
+      else req = req.eq("hidden", false);
       if (parts.length) req = req.overlaps("primary_muscles", musclesForBodyParts(parts));
       if (equip.length) req = req.in("equipment", equipmentForGroups(equip));
       if (patterns.length) req = req.in("movement_pattern", patterns);

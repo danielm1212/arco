@@ -73,6 +73,7 @@ export type Database = {
           equipment: string | null
           exercise_type: Database["public"]["Enums"]["exercise_type"]
           force: string | null
+          hidden: boolean
           id: string
           images: string[]
           instructions: string[]
@@ -91,6 +92,7 @@ export type Database = {
           equipment?: string | null
           exercise_type: Database["public"]["Enums"]["exercise_type"]
           force?: string | null
+          hidden?: boolean
           id: string
           images?: string[]
           instructions?: string[]
@@ -109,6 +111,7 @@ export type Database = {
           equipment?: string | null
           exercise_type?: Database["public"]["Enums"]["exercise_type"]
           force?: string | null
+          hidden?: boolean
           id?: string
           images?: string[]
           instructions?: string[]

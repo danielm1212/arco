@@ -74,6 +74,9 @@ const TYPE_OVERRIDES: Record<string, ExerciseType> = {
   Bodyweight_Walking_Lunge: "bodyweight",
   Hanging_Leg_Raise: "bodyweight",
   Pushups: "bodyweight",
+  // Audyt trenerski 2026-07-08: nowe ćwiczenia (equipment ≠ body only, a logują się bez ciężaru)
+  Ab_Wheel_Rollout: "bodyweight",
+  Spanish_Squat: "bodyweight",
 };
 
 const PATTERN_OVERRIDES: Record<string, MovementPattern> = {
@@ -98,6 +101,22 @@ const PATTERN_OVERRIDES: Record<string, MovementPattern> = {
   Dumbbell_Lunges: "lunge",
   Plank: "core",
   Hanging_Leg_Raise: "core",
+  // Audyt trenerski 2026-07-08: hip hinge zamiast heurystyki "press/raise → push"
+  Barbell_Hip_Thrust: "hinge",
+  Dumbbell_Hip_Thrust: "hinge",
+  "Single-Leg_Hip_Thrust": "hinge",
+  Frog_Pump: "hinge",
+  "Cable_Pull-Through": "hinge",
+  Kettlebell_Swing: "hinge",
+  "One-Arm_Kettlebell_Swings": "hinge",
+  // nowe ćwiczenia bez trafnej heurystyki
+  Wall_Sit: "squat",
+  Reverse_Nordic_Curl: "squat",
+  Bird_Dog: "core",
+  Hollow_Body_Hold: "core",
+  "Toes-To-Bar": "core",
+  "L-Sit_Hold": "core",
+  Prone_Y_Raise: "pull",
 };
 
 const TIMED_RE = /\b(plank|hold|wall sit|isometric|l-sit|dead hang|bridge)\b/i;
@@ -126,6 +145,35 @@ function deriveMovementPattern(ex: RawExercise): MovementPattern | null {
   return null;
 }
 
+// ── Kuracja bazy (audyt trenerski 2026-07-08 = Stopień 1 z docs/audyt-bazy-cwiczen.md + przestarzałe) ──
+// hidden = ukryte w browse/chipach pickera i w swap engine; search po nazwie NADAL znajduje wszystko.
+const HIDDEN_CATEGORIES = new Set(["stretching", "cardio"]);
+// Przestarzałe/kontuzjogenne (behind-the-neck, guillotine, ładowana rotacja kręgosłupa).
+const OUTDATED_HIDDEN_IDS = new Set([
+  "Barbell_Guillotine_Bench_Press",
+  "Neck_Press",
+  "Standing_Barbell_Press_Behind_Neck",
+  "Push_Press_-_Behind_the_Neck",
+  "Wide-Grip_Pulldown_Behind_The_Neck",
+  "Rocky_Pull-Ups_Pulldowns",
+  "Bradford_Rocky_Presses",
+  "Seated_Barbell_Twist",
+]);
+// Błędna kategoria upstream (stretching), a realnie logowalne — zostają widoczne.
+const MISCATEGORIZED_VISIBLE = new Set([
+  "Superman",
+  "Crossover_Reverse_Lunge",
+  "Split_Squats",
+  "Pelvic_Tilt_Into_Bridge",
+  "Scissor_Kick",
+]);
+
+function deriveHidden(ex: RawExercise): boolean {
+  if (MISCATEGORIZED_VISIBLE.has(ex.id)) return false;
+  if (OUTDATED_HIDDEN_IDS.has(ex.id)) return true;
+  return HIDDEN_CATEGORIES.has(ex.category ?? "");
+}
+
 async function seedExercises() {
   const exercises = (rawExercises as RawExercise[]).map((ex) => ({
     id: ex.id,
@@ -138,9 +186,13 @@ async function seedExercises() {
     secondary_muscles: ex.secondaryMuscles ?? [],
     category: ex.category,
     instructions: INSTRUCTION_OVERRIDES[ex.id] ?? ex.instructions ?? [],
-    images: (ex.images ?? []).map((img) => IMG_PREFIX + img),
+    // Nowe ćwiczenia (audyt 2026-07-08) mają lokalny placeholder ("/…") zamiast hotlinka.
+    images: (ex.images ?? []).map((img) =>
+      img.startsWith("http") || img.startsWith("/") ? img : IMG_PREFIX + img,
+    ),
     movement_pattern: deriveMovementPattern(ex),
     exercise_type: deriveExerciseType(ex),
+    hidden: deriveHidden(ex),
   }));
 
   // Upsert w paczkach
@@ -197,10 +249,10 @@ const PROGRAMS: Program[] = [
         label: "Dzień B",
         slots: [
           { exercise_id: "Romanian_Deadlift", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
-          { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Dumbbell_Rear_Lunge", sets: 2, repsMin: 10, repsMax: 12, rest: 90, notes: "na nogę" },
-          { exercise_id: "Hanging_Leg_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Hanging_Knee_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -248,10 +300,10 @@ const PROGRAMS: Program[] = [
       {
         label: "Dzień C",
         slots: [
-          { exercise_id: "Split_Squat_with_Dumbbells", sets: 3, repsMin: 8, repsMax: 10, rest: 120, notes: "na nogę" },
+          { exercise_id: "Bulgarian_Split_Squat", sets: 3, repsMin: 8, repsMax: 10, rest: 120, notes: "na nogę" },
           { exercise_id: "Bent_Over_Two-Dumbbell_Row", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
-          { exercise_id: "Glute_Kickback", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
+          { exercise_id: "Dumbbell_Hip_Thrust", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Dead_Bug", sets: 2, repsMin: 10, repsMax: null, rest: 45, notes: "na stronę" },
@@ -272,7 +324,7 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Bodyweight_Squat", sets: 3, repsMin: 12, repsMax: 20, rest: 90 },
           { exercise_id: "Pushups", sets: 3, repsMin: 8, repsMax: 15, rest: 90 },
           { exercise_id: "Pullups", sets: 3, repsMin: 5, repsMax: 10, rest: 120 },
-          { exercise_id: "Pushups", sets: 2, repsMin: 6, repsMax: 12, rest: 90 },
+          { exercise_id: "Pike_Push-Up", sets: 2, repsMin: 6, repsMax: 12, rest: 90 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper)" },
         ],
       },
@@ -282,18 +334,18 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Bodyweight_Walking_Lunge", sets: 3, repsMin: 10, repsMax: 15, rest: 90, notes: "na nogę" },
           { exercise_id: "Inverted_Row", sets: 3, repsMin: 8, repsMax: 15, rest: 90 },
           { exercise_id: "Decline_Push-Up", sets: 3, repsMin: 8, repsMax: 15, rest: 90 },
-          { exercise_id: "Glute_Kickback", sets: 3, repsMin: 8, repsMax: 12, rest: 90, notes: "na nogę" },
-          { exercise_id: "Hanging_Leg_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Single_Leg_Glute_Bridge", sets: 3, repsMin: 8, repsMax: 12, rest: 90, notes: "na nogę" },
+          { exercise_id: "Hanging_Knee_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
         label: "Dzień C",
         slots: [
-          { exercise_id: "Split_Squat_with_Dumbbells", sets: 3, repsMin: 10, repsMax: 15, rest: 90, notes: "na nogę" },
+          { exercise_id: "Bulgarian_Split_Squat", sets: 3, repsMin: 10, repsMax: 15, rest: 90, notes: "na nogę · bez obciążenia (progres: plecak)" },
           { exercise_id: "Chin-Up", sets: 3, repsMin: 5, repsMax: 10, rest: 120 },
-          { exercise_id: "Pushups", sets: 3, repsMin: 6, repsMax: 12, rest: 90 },
+          { exercise_id: "Pushups", sets: 3, repsMin: 6, repsMax: 12, rest: 90, notes: "docelowo archer / pseudo-planche (drabinka leverage)" },
           { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 3, repsMin: 12, repsMax: 20, rest: 60, notes: "na nogę" },
-          { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 45, notes: "na czas (stoper)" },
+          { exercise_id: "Hollow_Body_Hold", sets: 3, repsMin: null, repsMax: null, rest: 45, notes: "na czas (stoper)" },
           { exercise_id: "Superman", sets: 2, repsMin: 12, repsMax: 15, rest: 45 },
         ],
       },
@@ -347,7 +399,7 @@ const PROGRAMS: Program[] = [
         slots: [
           { exercise_id: "Barbell_Deadlift", sets: 3, repsMin: 3, repsMax: 5, rest: 180 },
           { exercise_id: "Front_Barbell_Squat", sets: 3, repsMin: 8, repsMax: 10, rest: 150 },
-          { exercise_id: "Split_Squat_with_Dumbbells", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
+          { exercise_id: "Bulgarian_Split_Squat", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
           { exercise_id: "Leg_Extensions", sets: 3, repsMin: 12, repsMax: 15, rest: 90 },
           { exercise_id: "Seated_Leg_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Calf_Press", sets: 4, repsMin: 12, repsMax: 15, rest: 60 },
@@ -377,10 +429,10 @@ const PROGRAMS: Program[] = [
       {
         label: "Lower A · siła",
         slots: [
-          { exercise_id: "Split_Squat_with_Dumbbells", sets: 4, repsMin: 8, repsMax: 12, rest: 150, notes: "na nogę" },
+          { exercise_id: "Bulgarian_Split_Squat", sets: 4, repsMin: 8, repsMax: 12, rest: 150, notes: "na nogę" },
           { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 4, repsMin: 8, repsMax: 12, rest: 150 },
           { exercise_id: "Goblet_Squat", sets: 3, repsMin: 10, repsMax: 15, rest: 120, notes: "tempo 3-1-1" },
-          { exercise_id: "Natural_Glute_Ham_Raise", sets: 3, repsMin: 8, repsMax: 12, rest: 90 },
+          { exercise_id: "Nordic_Hamstring_Curl", sets: 3, repsMin: 8, repsMax: 12, rest: 90, notes: "z asystą, jeśli pełny za trudny" },
           { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 4, repsMin: 12, repsMax: 20, rest: 60, notes: "na nogę" },
           { exercise_id: "Hanging_Leg_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
@@ -389,7 +441,7 @@ const PROGRAMS: Program[] = [
         label: "Upper B · hipertrofia",
         slots: [
           { exercise_id: "Incline_Dumbbell_Press", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
-          { exercise_id: "Bent_Over_Two-Dumbbell_Row", sets: 4, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 4, repsMin: 10, repsMax: 12, rest: 120 },
           { exercise_id: "Chin-Up", sets: 3, repsMin: 6, repsMax: 10, rest: 120 },
           { exercise_id: "Seated_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Cable_Seated_Lateral_Raise", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
@@ -404,8 +456,8 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Dumbbell_Step_Ups", sets: 4, repsMin: 8, repsMax: 12, rest: 150, notes: "na nogę" },
           { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 4, repsMin: 10, repsMax: 12, rest: 150 },
           { exercise_id: "Goblet_Squat", sets: 3, repsMin: 12, repsMax: 15, rest: 120 },
-          { exercise_id: "Glute_Kickback", sets: 3, repsMin: 10, repsMax: 15, rest: 120 },
-          { exercise_id: "Natural_Glute_Ham_Raise", sets: 3, repsMin: 12, repsMax: 15, rest: 90 },
+          { exercise_id: "Dumbbell_Hip_Thrust", sets: 3, repsMin: 10, repsMax: 15, rest: 120 },
+          { exercise_id: "Natural_Glute_Ham_Raise", sets: 3, repsMin: 12, repsMax: 15, rest: 90, notes: "z asystą; alternatywnie leg curl na ślizgach" },
           { exercise_id: "Seated_Calf_Raise", sets: 4, repsMin: 15, repsMax: 20, rest: 60 },
         ],
       },
@@ -425,7 +477,7 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Standing_Military_Press", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
           { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Cable_Seated_Lateral_Raise", sets: 4, repsMin: 12, repsMax: 20, rest: 60 },
-          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 3, repsMin: 8, repsMax: 12, rest: 60 },
+          { exercise_id: "Overhead_Cable_Triceps_Extension", sets: 3, repsMin: 8, repsMax: 12, rest: 60 },
           { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
         ],
       },
@@ -435,7 +487,7 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Barbell_Deadlift", sets: 3, repsMin: 3, repsMax: 5, rest: 180 },
           { exercise_id: "Pullups", sets: 4, repsMin: 5, repsMax: 8, rest: 150 },
           { exercise_id: "Bent_Over_Barbell_Row", sets: 4, repsMin: 6, repsMax: 10, rest: 150 },
-          { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
           { exercise_id: "Face_Pull", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
           { exercise_id: "Barbell_Curl", sets: 3, repsMin: 8, repsMax: 12, rest: 60 },
           { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
@@ -467,7 +519,7 @@ const PROGRAMS: Program[] = [
         slots: [
           { exercise_id: "Pullups", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Seated_Cable_Rows", sets: 4, repsMin: 10, repsMax: 12, rest: 120 },
-          { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 3, repsMin: 12, repsMax: 15, rest: 90 },
+          { exercise_id: "Close-Grip_Front_Lat_Pulldown", sets: 3, repsMin: 12, repsMax: 15, rest: 90, notes: "wąski chwyt" },
           { exercise_id: "Reverse_Flyes", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
           { exercise_id: "Hammer_Curls", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Standing_Biceps_Cable_Curl", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
@@ -477,7 +529,7 @@ const PROGRAMS: Program[] = [
         label: "Legs B · objętość",
         slots: [
           { exercise_id: "Front_Barbell_Squat", sets: 4, repsMin: 6, repsMax: 10, rest: 150 },
-          { exercise_id: "Split_Squat_with_Dumbbells", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
+          { exercise_id: "Bulgarian_Split_Squat", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
           { exercise_id: "Leg_Extensions", sets: 4, repsMin: 12, repsMax: 20, rest: 90 },
           { exercise_id: "Seated_Leg_Curl", sets: 4, repsMin: 12, repsMax: 15, rest: 90 },
           { exercise_id: "Barbell_Hip_Thrust", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
@@ -486,14 +538,14 @@ const PROGRAMS: Program[] = [
       },
     ],
   },
-  // ── Autorskie (Daniel), dodane 2026-07-05 · content/personal-*.md ──
-  // Mapowanie ćwiczeń bez 1:1 w bazie: użyty SWAP z pliku źródłowego (Standing DB
-  // Curl→Barbell Curl, Ab Wheel Rollout→Cable Crunch, Hollow Body Hold→Plank) —
-  // nie zgadywanie zamiennika, tylko odczytanie decyzji autora wprost z tabeli.
+  // ── FBW 2× (Daniel), dodane 2026-07-05 · content/personal-*.md ──
+  // 2026-07-08: po kuracji bazy przywrócone oryginalne ćwiczenia autora
+  // (Ab Wheel Rollout, Hollow Body Hold — wcześniej swapowane z braku w bazie).
+  // Nazwy bez „Autorski" — spójny schemat „Poziom · Miejsce · Typ".
   {
-    name: "Autorski · Siłownia · FBW 2×",
-    description: "FBW 2×/tydz. dla intermediate na pełnym sprzęcie. Compoundy nisko (6–8), izolacje 10–15. RIR 1–2.",
-    goal: "Siłownia · FBW autorski",
+    name: "Intermediate · Siłownia · FBW 2×",
+    description: "FBW 2×/tydz. na pełnym sprzęcie — dla zabieganych. Compoundy nisko (6–8), izolacje 10–15. RIR 1–2.",
+    goal: "Siłownia · masa i siła",
     level: "średniozaawansowany",
     days_per_week: 2,
     days: [
@@ -504,7 +556,7 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
           { exercise_id: "Bent_Over_Barbell_Row", sets: 4, repsMin: 8, repsMax: 10, rest: 120 },
           { exercise_id: "Standing_Military_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 120 },
-          { exercise_id: "Barbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60, notes: "Standing DB Curl → swap z pliku (brak 1:1 w bazie)" },
+          { exercise_id: "Barbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "EZ-Bar_Skullcrusher", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper), 30–60 s" },
         ],
@@ -518,15 +570,15 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Face_Pull", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
           { exercise_id: "Hammer_Curls", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
-          { exercise_id: "Cable_Crunch", sets: 3, repsMin: 12, repsMax: 15, rest: 60, notes: "Ab Wheel Rollout → swap z pliku (brak w bazie)" },
+          { exercise_id: "Ab_Wheel_Rollout", sets: 3, repsMin: 8, repsMax: 12, rest: 60, notes: "z kolan; bez kółka → Cable Crunch" },
         ],
       },
     ],
   },
   {
-    name: "Autorski · Dom z hantlami · FBW 2×",
-    description: "FBW 2×/tydz. dla intermediate, hantle + kettlebell. RIR 1–2.",
-    goal: "Dom (hantle+kettlebell) · FBW autorski",
+    name: "Intermediate · Dom z hantlami · FBW 2×",
+    description: "FBW 2×/tydz., hantle + kettlebell — dla zabieganych. RIR 1–2.",
+    goal: "Dom (hantle+kettlebell) · masa i siła",
     level: "średniozaawansowany",
     days_per_week: 2,
     days: [
@@ -553,7 +605,7 @@ const PROGRAMS: Program[] = [
           { exercise_id: "Side_Lateral_Raise", sets: 3, repsMin: 15, repsMax: 15, rest: 60 },
           { exercise_id: "Hammer_Curls", sets: 3, repsMin: 12, repsMax: 12, rest: 60 },
           { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 3, repsMin: 12, repsMax: 12, rest: 60 },
-          { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 45, notes: "Hollow Body Hold → swap z pliku; na czas (stoper), ~30 s" },
+          { exercise_id: "Hollow_Body_Hold", sets: 3, repsMin: null, repsMax: null, rest: 45, notes: "na czas (stoper), ~30 s; regres: kolana ugięte" },
         ],
       },
     ],

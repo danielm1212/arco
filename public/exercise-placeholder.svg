@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Ćwiczenie — ilustracja wkrótce">
+  <rect width="800" height="600" fill="#F6F2ED"/>
+  <g transform="translate(400 285)">
+    <!-- gryf -->
+    <rect x="-150" y="-10" width="300" height="20" rx="10" fill="#C63F21"/>
+    <!-- talerze wewnętrzne -->
+    <rect x="-190" y="-52" width="34" height="104" rx="12" fill="#C63F21"/>
+    <rect x="156" y="-52" width="34" height="104" rx="12" fill="#C63F21"/>
+    <!-- talerze zewnętrzne -->
+    <rect x="-236" y="-38" width="30" height="76" rx="12" fill="#C63F21" opacity="0.55"/>
+    <rect x="206" y="-38" width="30" height="76" rx="12" fill="#C63F21" opacity="0.55"/>
+  </g>
+  <text x="400" y="452" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-size="26" fill="#1E1C1A" opacity="0.45">Ilustracja wkrótce</text>
+</svg>

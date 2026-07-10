@@ -41,3 +41,44 @@ Plan mówił „podzbiór ~150–250". Po skanie rekomenduję **łagodniejszą, 
 
 ## 4. Status „Done" S8
 - Baza zweryfikowana ✓ · zero martwych obrazków w użyciu ✓ (sample + komplet w backupie) · braki instrukcji załatane ✓ · kuracja: propozycja czeka na [Ty].
+
+---
+
+## 5. Audyt trenerski + kuracja WYKONANA (2026-07-08, decyzja [Ty])
+
+> Uzupełnienie audytu S8 o warstwę **treściową** (co powinno być w bazie, a czego nie ma / co jest przestarzałe). Zaakceptowane: flaga hidden, ~30–40 nowych, seed+SQL, Stopień 1 wdrożony.
+
+### 5.1 Dodane: 31 ćwiczeń (współczesny kanon, brakowały w upstream)
+
+`scripts/data/exercises.json` (873 → **904**), pełny schemat + instrukcje EN, `images = ["/exercise-placeholder.svg"]` (lokalny placeholder w palecie Warm — docelowe zdjęcia to osobny tor assetów [Ty]).
+
+- **Nogi/pośladki:** Bulgarian Split Squat, Nordic Hamstring Curl, Reverse Nordic Curl, Spanish Squat, Curtsy Lunge, Dumbbell Hip Thrust, Single-Leg Hip Thrust, Frog Pump, Cable Pull-Through, Machine Hip Abduction, Tibialis Raise, Wall Sit
+- **Plecy:** Pendlay Row, Seal Row, Chest-Supported Dumbbell Row, Meadows Row
+- **Barki/ramiona:** Z Press, Landmine Press, Machine Lateral Raise, Prone Y Raise, Bayesian Cable Curl, Overhead Cable Triceps Extension
+- **Core/carry/balistyka:** Copenhagen Plank, Bird Dog, Hollow Body Hold, Toes-To-Bar, L-Sit Hold, Hanging Knee Raise, Ab Wheel Rollout, Suitcase Carry, **Kettlebell Swing** (dwuręczny — upstream miał tylko jednoręczny!)
+
+Nowe wpisy mają nadpisania w `seed.ts` tam, gdzie heurystyka by się myliła (`TYPE_OVERRIDES`: Ab Wheel/Spanish Squat → bodyweight; `PATTERN_OVERRIDES`: Wall Sit/Reverse Nordic → squat, holdy → core, Prone Y → pull).
+
+### 5.2 Ukryte: flaga `exercises.hidden` (140 wpisów)
+
+- Migracja `20260708100000_exercise_curation_hidden.sql` (kolumna + backfill z whitelistą FK: programy, historia, PR-y, custom). **Źródło prawdy = `deriveHidden()` w `seed.ts`** (idempotentne przy re-seedzie).
+- `stretching` (123) + `cardio` (14) minus 5 błędnie skategoryzowanych logowalnych (Superman, Crossover Reverse Lunge, Split Squats, Pelvic Tilt Into Bridge, Scissor Kick) = 132.
+- **+8 przestarzałych/kontuzjogennych (ocena trenerska):** Barbell Guillotine Bench Press, Neck Press, Standing Barbell Press Behind Neck, Push Press Behind the Neck, Wide-Grip Pulldown Behind The Neck, Rocky Pull-Ups/Pulldowns, Bradford/Rocky Presses (behind-the-neck = impingement barku bez przewagi nad wariantami przednimi), Seated Barbell Twist (balistyczna ładowana rotacja kręgosłupa).
+- **Świadomie NIE ukryte:** good mornings, upright rows (legalne przy poprawnej technice — współczesny konsensus), plyo/strongman/olympic (bez zmian względem §3).
+
+### 5.3 Stopień 1 — semantyka „hidden"
+
+- `ExerciseBrowser` (picker add+swap): browse po chipach filtruje `hidden=false`; **search po nazwie (≥2 znaki) znajduje wszystko** — zgodnie z §3.
+- `substitute.ts` (swap engine): kandydaci zawsze `hidden=false`.
+- `ProgramEditor` (search po nazwie): bez filtra — celowo.
+- Custom ćwiczenia usera: nigdy nie ukrywane (`user_id is null` w SQL, seed nie dotyka).
+
+### 5.4 Bonus: poprawki `movement_pattern`
+
+Hip thrusty (Barbell/Dumbbell/Single-Leg), Frog Pump, Cable Pull-Through, KB Swings (jedno- i dwuręczny) → **hinge** (heurystyka `press/raise → push` dawała bez sensu np. wyciskania jako swap dla hip thrustu).
+
+### 5.5 Do zrobienia [Ty]
+
+1. `supabase db push` / `migration up` + `npm run seed` (upsert 904 + hidden).
+2. Test w Preview: picker (chipy bez szumu, search znajduje np. „stretch"), swap dla Hip Thrust (powinien proponować hinge, nie pressy).
+3. Docelowe zdjęcia dla 31 nowych (placeholder → asset pipeline; self-host obrazków = S11 bez zmian).
