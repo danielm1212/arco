@@ -1,0 +1,285 @@
+import { createClient } from "@/lib/supabase/server";
+import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
+import { localDayKey } from "@/lib/week";
+import type { ExerciseType, UnitSystem } from "@/lib/types";
+
+/**
+ * Warstwa danych trasy /progress — S9-cz.2 paczka 4: logika przeniesiona 1:1
+ * z progress/page.tsx (bez zmiany zapytań ani obliczeń).
+ */
+
+export const PERIODS = [
+  { key: "7", label: "7 dni", days: 7 },
+  { key: "30", label: "30 dni", days: 30 },
+  { key: "all", label: "Wszystko", days: null as number | null },
+];
+
+type Supabase = ReturnType<typeof createClient>;
+
+export interface PeriodStats {
+  sessionCount: number;
+  setCount: number;
+  volume: number;
+  setsPerMuscle: Map<string, number>;
+  push: number;
+  pull: number;
+}
+
+// Agregat okresu (sesje → ćwiczenia → serie robocze): count/serie/objętość + partie + push/pull
+async function periodStats(
+  supabase: Supabase,
+  fromIso: string,
+  toIso: string | null,
+): Promise<PeriodStats> {
+  let q = supabase.from("sessions").select("id").gte("started_at", fromIso);
+  if (toIso) q = q.lt("started_at", toIso);
+  const { data: recent } = await q;
+  const ids = (recent ?? []).map((s) => s.id);
+  const empty: PeriodStats = {
+    sessionCount: ids.length,
+    setCount: 0,
+    volume: 0,
+    setsPerMuscle: new Map<string, number>(),
+    push: 0,
+    pull: 0,
+  };
+  if (!ids.length) return empty;
+
+  const { data: ses } = await supabase
+    .from("session_exercises")
+    .select("id, exercise_id, exercises(primary_muscles)")
+    .in("session_id", ids);
+  const bySe = new Map<string, { muscles: string[]; cats: MuscleCategory[] }>();
+  (ses ?? []).forEach((se) => {
+    const ex = se.exercises as unknown as { primary_muscles: string[] } | null;
+    bySe.set(se.id, {
+      muscles: ex?.primary_muscles ?? [],
+      cats: categoriesForExercise(se.exercise_id, ex?.primary_muscles ?? []),
+    });
+  });
+  const seIds = [...bySe.keys()];
+  if (!seIds.length) return empty;
+  const { data: sets } = await supabase
+    .from("session_sets")
+    .select("session_exercise_id, weight, reps")
+    .in("session_exercise_id", seIds)
+    .eq("completed", true)
+    .eq("set_type", "working");
+
+  const out = { ...empty, setCount: (sets ?? []).length };
+  (sets ?? []).forEach((s) => {
+    if (s.weight != null && s.reps != null) out.volume += s.weight * s.reps;
+    const info = bySe.get(s.session_exercise_id);
+    for (const m of info?.muscles ?? [])
+      out.setsPerMuscle.set(m, (out.setsPerMuscle.get(m) ?? 0) + 1);
+    if (info?.cats.includes("push")) out.push += 1;
+    if (info?.cats.includes("pull")) out.pull += 1;
+  });
+  return out;
+}
+
+const pct = (a: number, b: number) => (b > 0 ? Math.round(((a - b) / b) * 100) : null);
+
+/** Bieżący + poprzedni okres (delta-karty S13) wraz z interpretacjami-zdaniami. */
+export async function getPeriodOverview(
+  supabase: Supabase,
+  period: (typeof PERIODS)[number],
+) {
+  const cutoff = period.days
+    ? new Date(Date.now() - period.days * 86_400_000).toISOString()
+    : new Date(0).toISOString();
+  const prevCutoff = period.days
+    ? new Date(Date.now() - 2 * period.days * 86_400_000).toISOString()
+    : null;
+  const [cur, prev] = await Promise.all([
+    periodStats(supabase, cutoff, null),
+    period.days
+      ? periodStats(supabase, prevCutoff!, cutoff)
+      : Promise.resolve<PeriodStats | null>(null),
+  ]);
+
+  // S13: interpretacje — zdanie-wniosek zamiast surowej tabeli (progi: ±10% = zmiana)
+  const volPct = prev ? pct(cur.volume, prev.volume) : null;
+  const volInsight =
+    prev && volPct != null
+      ? volPct >= 10
+        ? `Objętość ↑${volPct}% vs poprzednie ${period.days} dni — progresja działa.`
+        : volPct <= -10
+          ? `Objętość ↓${Math.abs(volPct)}% vs poprzednie ${period.days} dni — lżejszy okres.`
+          : `Objętość stabilna vs poprzednie ${period.days} dni (${volPct >= 0 ? "+" : ""}${volPct}%).`
+      : null;
+  const balanceInsight = (() => {
+    const { push, pull } = cur;
+    const strong = Math.max(push, pull);
+    if (strong < GUIDANCE.balanceMinSets) return null;
+    if (Math.min(push, pull) < strong * GUIDANCE.balanceRatio) {
+      const lack = push < pull ? "push" : "pull";
+      return `${lack === "push" ? "Push" : "Pull"} odstaje w tym okresie (push ${push} / pull ${pull} serii).`;
+    }
+    return `Push i pull w równowadze (${push}/${pull} serii).`;
+  })();
+
+  const deltas = prev
+    ? {
+        sessions: pct(cur.sessionCount, prev.sessionCount),
+        sets: pct(cur.setCount, prev.setCount),
+        volume: volPct,
+      }
+    : { sessions: null, sets: null, volume: null };
+
+  return { cur, volInsight, balanceInsight, deltas };
+}
+
+export interface PrEntry {
+  name: string;
+  e1rm?: number;
+  maxWeight?: number;
+}
+
+/** Rekordy: najlepszy e1RM i max ciężaru per ćwiczenie. */
+export async function getPersonalRecords(supabase: Supabase): Promise<[string, PrEntry][]> {
+  const { data: prs } = await supabase
+    .from("personal_records")
+    .select("exercise_id, record_type, value, reps_context, exercises(name)")
+    .in("record_type", ["max_e1rm", "max_weight"])
+    .order("value", { ascending: false });
+
+  type PrRow = {
+    exercise_id: string;
+    record_type: string;
+    value: number;
+    reps_context: number | null;
+    exercises: { name: string } | null;
+  };
+  const byExercise = new Map<string, PrEntry>();
+  ((prs as unknown as PrRow[]) ?? []).forEach((p) => {
+    const cur = byExercise.get(p.exercise_id) ?? { name: p.exercises?.name ?? p.exercise_id };
+    if (p.record_type === "max_e1rm") cur.e1rm = p.value;
+    if (p.record_type === "max_weight") cur.maxWeight = p.value;
+    byExercise.set(p.exercise_id, cur);
+  });
+  return [...byExercise.entries()].sort((a, b) => (b[1].e1rm ?? 0) - (a[1].e1rm ?? 0));
+}
+
+/** Aktywność / streak (zakończone sesje z ~120 dni): pasek 14 dni + passa tygodniowa. */
+export async function getActivity(supabase: Supabase) {
+  const { data: finished } = await supabase
+    .from("sessions")
+    .select("started_at")
+    .not("finished_at", "is", null)
+    .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString());
+  const dayKey = localDayKey; // klucz LOKALNY (spójnie z home; fix przesunięcia dnia)
+  const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
+  const DOW = ["N", "P", "W", "Ś", "C", "P", "S"];
+  const strip = Array.from({ length: 14 }, (_, idx) => {
+    const d = new Date(Date.now() - (13 - idx) * 86_400_000);
+    return { key: dayKey(d), on: doneDays.has(dayKey(d)), dow: DOW[d.getDay()] };
+  });
+  const weekStart = (d: Date) => {
+    const x = new Date(d);
+    x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+    x.setHours(0, 0, 0, 0);
+    return x.getTime();
+  };
+  const weeks = new Set((finished ?? []).map((s) => weekStart(new Date(s.started_at))));
+  const WEEK = 7 * 86_400_000;
+  let streak = 0;
+  let w = weekStart(new Date());
+  if (!weeks.has(w)) w -= WEEK; // bieżący tydzień bez treningu nie zeruje passy
+  while (weeks.has(w)) {
+    streak++;
+    w -= WEEK;
+  }
+  return { strip, streak };
+}
+
+export interface StrengthRow {
+  id: string;
+  name: string;
+  series: number[];
+  last: number;
+  delta: number;
+  suffix: string;
+}
+
+/** Postęp siły — najlepsza metryka per sesja, per ćwiczenie (~90 dni). */
+export async function getStrengthTrends(
+  supabase: Supabase,
+  unit: UnitSystem,
+): Promise<StrengthRow[]> {
+  const strengthCutoff = new Date(Date.now() - 90 * 86_400_000).toISOString();
+  const { data: sSessions } = await supabase
+    .from("sessions")
+    .select("id, started_at")
+    .gte("started_at", strengthCutoff);
+  const sStart = new Map((sSessions ?? []).map((s) => [s.id, s.started_at]));
+  const sSessIds = [...sStart.keys()];
+  const { data: sExs } = sSessIds.length
+    ? await supabase
+        .from("session_exercises")
+        .select("id, exercise_id, session_id, exercises(name, exercise_type)")
+        .in("session_id", sSessIds)
+    : { data: [] };
+  const seMeta = new Map<
+    string,
+    { exerciseId: string; name: string; type: ExerciseType; sessionId: string }
+  >();
+  (sExs ?? []).forEach((se) => {
+    const ex = se.exercises as unknown as { name: string; exercise_type: ExerciseType } | null;
+    seMeta.set(se.id, {
+      exerciseId: se.exercise_id,
+      name: ex?.name ?? se.exercise_id,
+      type: ex?.exercise_type ?? "weighted",
+      sessionId: se.session_id,
+    });
+  });
+  const sSeIds = [...seMeta.keys()];
+  const { data: sStrSets } = sSeIds.length
+    ? await supabase
+        .from("session_sets")
+        .select("session_exercise_id, weight, reps, duration_seconds")
+        .eq("completed", true)
+        .eq("set_type", "working")
+        .in("session_exercise_id", sSeIds)
+    : { data: [] };
+  const metric = (
+    type: ExerciseType,
+    s: { weight: number | null; reps: number | null; duration_seconds: number | null },
+  ): number | null => {
+    if (type === "weighted" && s.weight != null && s.reps != null)
+      return Math.round(s.weight * (1 + s.reps / 30) * 10) / 10;
+    if (type === "bodyweight" && s.reps != null) return s.reps;
+    if (type === "timed" && s.duration_seconds != null) return s.duration_seconds;
+    return null;
+  };
+  const byExSession = new Map<
+    string,
+    { name: string; type: ExerciseType; perSession: Map<string, number> }
+  >();
+  (sStrSets ?? []).forEach((ss) => {
+    const m = seMeta.get(ss.session_exercise_id);
+    if (!m) return;
+    const v = metric(m.type, ss);
+    if (v == null) return;
+    let e = byExSession.get(m.exerciseId);
+    if (!e) {
+      e = { name: m.name, type: m.type, perSession: new Map() };
+      byExSession.set(m.exerciseId, e);
+    }
+    const cur = e.perSession.get(m.sessionId);
+    if (cur == null || v > cur) e.perSession.set(m.sessionId, v);
+  });
+  return [...byExSession.entries()]
+    .map(([id, e]) => {
+      const series = [...e.perSession.entries()]
+        .sort((a, b) => +new Date(sStart.get(a[0])!) - +new Date(sStart.get(b[0])!))
+        .map(([, v]) => v);
+      const last = series[series.length - 1];
+      const delta = series.length >= 2 ? Math.round((last - series[0]) * 10) / 10 : 0;
+      const suffix = e.type === "weighted" ? unit : e.type === "timed" ? "s" : "";
+      return { id, name: e.name, series, last, delta, suffix };
+    })
+    .filter((x) => x.series.length >= 2)
+    .sort((a, b) => b.series.length - a.series.length)
+    .slice(0, 6);
+}
