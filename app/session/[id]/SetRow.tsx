@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
@@ -19,7 +20,13 @@ const parseNum = (v: string): number | null => {
   return Number.isFinite(n) ? n : null;
 };
 
-export function SetRow({
+/**
+ * S9-cz.2 paczka 3: memo z komparatorem pomijającym propsy-funkcje — tap ✓ jednej
+ * serii nie renderuje pozostałych wierszy karty. Bezpieczne, bo handlery rodzica
+ * (ExerciseCard/Logger) operują wyłącznie na ID + funkcyjnych setState/refach,
+ * a domknięte obiekty `ex`/`set` są porównywane referencyjnie w komparatorach.
+ */
+export const SetRow = memo(function SetRow({
   index,
   set,
   prev,
@@ -198,7 +205,18 @@ export function SetRow({
       </button>
     </li>
   );
-}
+},
+// Komparator pomija funkcje (patrz doc-comment): re-render tylko gdy zmieniły się
+// dane TEGO wiersza. `set`/`prev` porównywane referencyjnie — patchSetLocal tworzy
+// nowy obiekt wyłącznie dla edytowanej serii.
+(a, b) =>
+  a.index === b.index &&
+  a.set === b.set &&
+  a.prev === b.prev &&
+  a.type === b.type &&
+  a.unit === b.unit &&
+  a.showRpe === b.showRpe &&
+  a.isPr === b.isPr);
 
 function Field({
   value,
