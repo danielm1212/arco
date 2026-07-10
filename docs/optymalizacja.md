@@ -40,11 +40,11 @@ Lean deps (zero wykresów z paczek, 16 zależności, vendor 100 KB) · 13 indeks
 | P | Finding | Akcja | Etap |
 |---|---|---|---|
 | **P1** | **Obrazy ćwiczeń surowym `<img>` bez wymiarów** (CLS) | ✅ **załatane 2026-07-08**: `width/height` + `lazy` + `decoding=async` w exercise/[id], InfoSheet, Browser, body (loga SVG celowo bez zmian — stała wysokość klasą). Docelowo: **self-host w rozmiarach (S11)**, spina się z AI-gradingiem top ~200 (generować 2 rozmiary WebP) | ✅ / S11 |
-| **P1** | **N+1 „poprzednio"** (RPC per ćwiczenie) + **brak paginacji historii** (pobiera wszystko — z latami danych umrze) | batch RPC + paginacja/infinite scroll | **S9-cz.2** (już w planie) |
+| **P1** | **N+1 „poprzednio"** (RPC per ćwiczenie) + **brak paginacji historii** (pobiera wszystko — z latami danych umrze) | ✅ **S9-cz.2 (2026-07-10)**: `previous_session_sets_batch` (1 RPC, LATERAL) + historia 20/kursor `?before=` (kalendarz osobnym lekkim zapytaniem) | ✅ |
 | **P2** | `select("*")` na `exercises` w `substitute.ts` (ciągnęło instructions+images niepotrzebnie) | ✅ **załatane 2026-07-08** — wąski select + `Pick<>`. Korekta przeglądu: `select("*")` na `session_sets` w session page zostaje — kolumny lekkie i wszystkie używane | ✅ |
-| **P2** | `Logger.tsx` 768 / `progress` 474 linii — bundle trasy + re-rendery całości przy każdej serii | split (już w S9-cz.2); przy okazji `memo` na wierszach serii | S9-cz.2 |
-| **P3** | Heatmapa (vendor) ładowana statycznie na /progress | `next/dynamic` przy splicie progress | S9-cz.2 |
-| **P3** | Detal ćwiczenia `force-dynamic`? (dane seedowe — cache'owalne) | sprawdzić przy splicie; ISR/`revalidate` dla seedowych | S9-cz.2 |
+| **P2** | `Logger.tsx` 768 / `progress` 474 linii — bundle trasy + re-rendery całości przy każdej serii | ✅ **S9-cz.2 (2026-07-10)**: Logger 768→249 (5 modułów), progress 474→~100; `memo` na `ExerciseCard`+`SetRow` (komparatory pomijają funkcje) — tap ✓ renderuje 1 kartę/1 wiersz, nie listę | ✅ |
+| **P3** | Heatmapa (vendor) ładowana statycznie na /progress | ✅ **S9-cz.2 (2026-07-10)**: `MuscleHeatmapLazy` (`next/dynamic`, ssr:false, fallback trzyma wysokość) — First Load /progress 98,7 kB | ✅ |
+| **P3** | Detal ćwiczenia `force-dynamic`? (dane seedowe — cache'owalne) | ✅ **sprawdzone i ODRZUCONE (S9-cz.2, 2026-07-10)**: RLS `exercises_select` wymaga `authenticated` (anon nie czyta seedu) → `unstable_cache` wymagałby nowej polityki anon-read albo service-role (zakaz poza scripts/, `bezpieczenstwo.md` §1); zysk = 1 indeksowany SELECT — nieproporcjonalny do nowej powierzchni. Re-ocena przy S11, jeśli self-host obrazków i tak wprowadzi anon-read | ✅ (odrzucone) |
 | **P3** | Zero pomiaru z pola | web vitals w PostHog (Faza 1 instrumentacji — wbudowane) | S11 |
 
 **Wniosek przeglądu:** ~80% długu wydajnościowego już siedzi w zaplanowanym S9-cz.2 — ten dokument dodaje mu budżety i kolejność, nie nową górę pracy. Jedyna nowość „na teraz": wymiary+lazy na obrazkach (godzina pracy, zdejmuje CLS).

@@ -1,4 +1,6 @@
-# Plan sprintu S9-cz.2 — higiena kodu (DO AKCEPTACJI [Ty])
+# Plan sprintu S9-cz.2 — higiena kodu — ✅ WYKONANY W CAŁOŚCI (2026-07-10)
+
+> **Status:** paczki 1–2 (2026-07-08, `a0fdecf`) · paczki 3–5 (2026-07-10, `fcf8669` + `dbce3fa`). Raport: HANDOFF wpis X; Lighthouse przed→po i statusy findingów: `audyt-kodu-zaleznosci.md` §3 + `optymalizacja.md` §Findings. Jedyne odstępstwo: cache detalu ćwiczenia sprawdzony i ODRZUCONY (RLS wymaga authenticated — nowa powierzchnia nieproporcjonalna do zysku).
 
 > **Data:** 2026-07-08 · **Zasada:** plan przed kodem (CLAUDE.md). Zakres = higiena z audytu zależności + findings z `optymalizacja.md`. **Cel sprintu:** kod gotowy na dobudowy Kroku 3 (paywall/limity wejdą w te pliki!) i na lata danych w historii. Zero zmian funkcjonalnych widocznych dla usera (poza szybszym działaniem).
 > **Prerekwizyt kolejności:** ten sprint PRZED Krokiem 3 (audyt-kodu §4.3 — nie doklejamy paywalla do monolitów).

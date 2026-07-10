@@ -28,12 +28,15 @@ Ocena eksploatowalności **w naszym kontekście** (apka za loginem, single-user,
 
 **Rekomendacja (bez zmian vs plan):** Next 16 + React 19 + Tailwind 4 + TS 6 robić **świadomie po N1/launchu**, jeden major na raz z pełną weryfikacją — nie teraz w środku sprintów produktowych. Ryzyko bieżące akceptowalne. Jeśli wolisz przed deployem — powiedz, wtedy najpierw sam Next 16 (największy zysk security).
 
-## 3. Higiena kodu — część 2 (do osobnej tury, po decyzji [Ty])
+## 3. Higiena kodu — część 2 — ✅ WYKONANE (S9-cz.2, 2026-07-10)
 
-- **Rozbicie `Logger.tsx`** (~780 linii po S12) na moduły (nagłówek ćwiczenia / serie / rest) — czysty refaktor, wymaga pełnej re-weryfikacji loggera.
-- **N+1 w „poprzednio"**: `previous_session_sets` RPC wołane per ćwiczenie (Promise.all — równolegle, ale nadal N zapytań) → jedna funkcja batch.
-- **Paginacja historii** — dziś pełna lista sesji; przy realnym użyciu urośnie.
-- Mniej `as unknown as` przy joinach Supabase (typed helpers).
+- **Rozbicie `Logger.tsx`** ✅ 768→249 linii: `ExerciseCard` + `SetRow` (oba `memo` z komparatorami pomijającymi funkcje) + `useRestTimer` + `useSessionOutbox` (grunt pod S10) + `useSessionMutations` + `finish.ts`. Przenosiny 1:1; inwariant handlerów (ID + funkcyjne setState + `exercisesRef`) udokumentowany w `useSessionMutations.ts`.
+- **N+1 w „poprzednio"** ✅ `previous_session_sets_batch(p_session)` (LATERAL na starej funkcji = poprawność z konstrukcji; zweryfikowane 8/8 identycznie ze starą) — 1 RPC zamiast N.
+- **Paginacja historii** ✅ 20 + kursor `?before=`; kalendarz+passa z osobnego lekkiego zapytania po datach.
+- Bonus: split `/progress` (474→~100) + heatmapa przez `next/dynamic` (First Load trasy 98,7 kB).
+- Mniej `as unknown as` przy joinach Supabase (typed helpers) — NIE ruszone (niski priorytet, osobna okazja).
+
+**Lighthouse przed→po** (mobile, symulowany throttling, prod `next start`, LH 13.4): home 94→95 · /progress 94→95 (LCP 3,1→2,9 s) · logger 95→95. Wszystko ≥90 (budżet `optymalizacja.md` §1). Zysk loggera to re-rendery (memo — niewidoczne w Lighthouse przy TBT 0 ms); zysk /progress to vendor poza initial.
 
 ## 4. Status Done S9
-Patche minor ✓ · 0 known-exploitable w naszym kontekście (ocena wyżej) ✓ · smoke czyste ✓ · decyzja majorów: **czeka [Ty]** · higiena: zakres spisany (część 2).
+Patche minor ✓ · 0 known-exploitable w naszym kontekście (ocena wyżej) ✓ · smoke czyste ✓ · decyzja majorów: **czeka [Ty]** (re-audit 2026-07-10: te same 5 vuln, wszystkie w next@14) · higiena: **część 2 = DONE** (§3).
