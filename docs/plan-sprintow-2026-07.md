@@ -22,8 +22,8 @@
 | 5 | S7 — presety + onboarding (**+ rozszerzenie: imię**, patrz niżej) | ✅ ZROBIONE (`3066d19`; N1 wciąż przed S8+) |
 | 6 | **S12 — Sesja i rekordy** (wybrany po S7 przez [Ty], opcja A) | ✅ ZROBIONE — mini-bar (9401708), rep-PRs+hint+celebracja (b17aaca), edycja daty (49904ea); „edycja zapisanego treningu” = Refinement [Ty] |
 | 7 | **S13 — Postępy jako lustro + picker** | ✅ ZROBIONE — Muscle Split (85c2cfa), delta-karty+interpretacje (33538bd), picker Recent+multi+📈 (88a8c6e); tabela setów pod heatmapą = już było (Done) |
-| 8 | **S14 — Empty states + pierwsze wrażenie** | ✅ ZROBIONE (a555d18 copy+CTA wg docs/empty-states-copy.md, 847e25b skeletony+offline); copy do ew. podmiany [Ty] |
-| 9 | **S8 — audyt bazy ćwiczeń** | ✅ ZROBIONE (fbb45fc, `docs/audyt-bazy-cwiczen.md`) — baza zdrowa; kuracja stretching+cardio = Refinement [Ty] |
+| 8 | **S14 — Empty states + pierwsze wrażenie** | ✅ ZROBIONE (a555d18 copy+CTA wg docs/archive/empty-states-copy.md, 847e25b skeletony+offline); copy do ew. podmiany [Ty] |
+| 9 | **S8 — audyt bazy ćwiczeń** | ✅ ZROBIONE (fbb45fc) + **kuracja WYKONANA 2026-07-08** (audyt trenerski: +32 ćwiczenia → 905, flaga `hidden` na 140, programy przywrócone do zamysłu trenera, nazwy bez „Autorski" — `docs/audyt-bazy-cwiczen.md` §5; wdrożenie migracja+seed = [Ty]) |
 | 10 | **S9 — audyt kodu/zależności** | ✅ część 1 (0332493, `docs/audyt-kodu-zaleznosci.md`) — patche minor + smoke naprawione 3/3; majory = Refinement [Ty]; higiena (Logger split, N+1, paginacja) = część 2 |
 | 11 | **N3 — Reskin „Arco Warm"** | ✅ ZROBIONE (ec10f19) — tokeny/logo/jasny default/day-pills/elevation; logger jasny → decyzja forced-dark po teście [Ty] |
 | 12 | S9-cz.2 (higiena) → S10 (offline+longevity) → S11-domknięcie | dalej [Claude]; N1 równolegle gdy będą konta |

@@ -39,7 +39,7 @@ Jeden użytkownik na start, ale schema i auth od początku pod multi-user / whit
 ## 3. Model danych (Postgres)
 
 **`user_settings`**
-`user_id`, `unit_system` (kg | lbs), `default_rest_seconds`, `bar_weight` (do plate calc), `available_plates` (numeric[]).
+`user_id`, `unit_system` (kg | lbs), `default_rest_seconds`, ~~`bar_weight`, `available_plates`~~ (kolumny istnieją, nieużywane — plate calc descoped, addendum v0.3 §1).
 
 **`exercises`** (seed z free-exercise-db, sekcja 11)
 `id`, `name`, `force`, `level`, `mechanic` (compound | isolation), `equipment`, `primary_muscles` (text[]), `secondary_muscles` (text[]), `category`, `instructions` (text[]), `images` (text[]),
@@ -84,7 +84,7 @@ Cel: brak sprzętu → user wybiera zamiennik, progres mapuje się do slotu (`ex
 
 ## 5. Programy na start (seed) — KONKRET
 
-Wspólne zasady: working sets poniżej (bez serii rozgrzewkowych). **RIR 1-2 na compoundach, bez chodzenia do failure** (regeneracja pod kickboxing). Rest: 2-3 min compound, 1-2 min isolation/core. Progresja: dobij górę zakresu powtórzeń we wszystkich seriach → dołóż ciężar. Każdy slot ma domyślne ćwiczenie; reszta wariantów leci przez silnik podmiany.
+Wspólne zasady: working sets poniżej (bez serii rozgrzewkowych). **RIR 1-2 na compoundach, bez chodzenia do failure.** Rest: 2-3 min compound, 1-2 min isolation/core. Progresja: dobij górę zakresu powtórzeń we wszystkich seriach → dołóż ciężar. Każdy slot ma domyślne ćwiczenie; reszta wariantów leci przez silnik podmiany.
 
 ### Program A — FBW 2×/tydzień (warianty A/B)
 
@@ -156,7 +156,7 @@ Wybór programu → start sesji → **logger**:
 - dane: online-first + optimistic UI + lekka kolejka retry (BEZ pełnego offline mirror)
 
 **Phase 2 — Głębia**
-Silnik podmiany + filtr sprzętu · dashboard progresu (sekcja 8) · widok exercise-first · plate calculator (z `bar_weight` + `available_plates`) · supersety (`superset_group`) · RPE · **hint progresji** („ostatnio 60 kg w pełnym zakresie → spróbuj 62.5").
+Silnik podmiany + filtr sprzętu · dashboard progresu (sekcja 8) · widok exercise-first · ~~plate calculator~~ (descoped — addendum v0.3) · supersety (`superset_group`) · RPE · **hint progresji** („ostatnio 60 kg w pełnym zakresie → spróbuj 62.5").
 
 **Phase 2.5 — Offline hardening** (osobno, bo trudne)
 Local store (IndexedDB) + sync queue + reconcyliacja. Dopiero gdy rdzeń stabilny.
@@ -198,7 +198,7 @@ Jedno źródło prawdy, white-label = podmiana warstwy semantic. Komponenty czyt
 
 **Phase 0:** migracje przechodzą · seed ładuje ćwiczenia + oba programy · login działa · spike rest-timer ma werdykt (działa / fallback).
 **Phase 1:** przełączanie 2×/3× · start sesji tworzy `session_exercises` ze slotów · widoczny poprzedni wynik · rest timer startuje po ✓ · edycja/usuwanie serii i sesji działa · freestyle działa · sesja w historii · brak hardkodów stylów.
-**Phase 2:** podmiana zwraca trafnych kandydatów i ma fallback · dashboard pokazuje e1RM/objętość/PR/serie-na-partię · plate calc liczy z konfiguracji · widok exercise-first agreguje po `exercise_id`.
+**Phase 2:** podmiana zwraca trafnych kandydatów i ma fallback · dashboard pokazuje e1RM/objętość/PR/serie-na-partię · ~~plate calc~~ (descoped) · widok exercise-first agreguje po `exercise_id`.
 
 ---
 

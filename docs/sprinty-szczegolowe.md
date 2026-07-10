@@ -179,7 +179,7 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 # Tor assetów (Ty, równolegle) — z promptami AI
 
 > Te dwie rzeczy mają długi lead-time i są niezależne od kodu — **rób je już teraz**, wepnę je w Horyzoncie 3.
-> Marka: **dark + volt lime-green (~#B9E935)** + metalik. Podawaj ten hex w promptach.
+> ⚠️ NIEAKTUALNE (pre-Warm): ~~dark + volt lime-green (~#B9E935) + metalik~~. Od 2026-07-04 marka = **„Arco Warm"** (terracotta `#C63F21` + krem `#F6F2ED` + ciepła czerń `#1E1C1A` — `docs/paleta-arco-warm.md`). Prompty poniżej wymagają przepisania pod Warm przed użyciem; kierunek 3D ROZSTRZYGNIĘTY 2026-07-08 (wizja v2 §1.2): **matowe/clay w terracotta/krem, metalik ODRZUCONY**; zestaw kurowany (hantel, ławka, kettlebell, talerz), użycie tylko empty states/onboarding/celebracje — nie nawigacja.
 
 ## A) Ikony „żelazne/srebrne" (zestaw sprzętu)
 **Cel:** spójny zestaw 3D metalicznych ikon: hantel, sztanga, kettlebell, talerz, ławeczka, drążek, guma, maszyna.

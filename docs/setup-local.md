@@ -18,7 +18,7 @@ npm run dev                    # http://localhost:3000
 Smoke testy warstwy danych (logowanie + przepływ przez RLS):
 ```bash
 npm run smoke          # Phase 1: sesja, logger, poprzedni wynik, edycja, freestyle, historia
-npm run smoke:phase2   # Phase 2: podmiana+fallback, PR/e1RM, plate calc
+npm run smoke:phase2   # Phase 2: podmiana+fallback, PR/e1RM (plate calc descoped — test wycięty)
 npm run smoke:offline  # Phase 2.5: idempotentny zapis serii (odtwarzanie outboxa)
 ```
 
@@ -67,6 +67,6 @@ Werdykt i instrukcja testu: [`spike-rest-timer.md`](./spike-rest-timer.md). Tras
 - **e1RM (Epley) + PR** przeliczane z zera przy zakończeniu/usunięciu sesji (`recompute_personal_records`).
 - **Dashboard** `/progress`: objętość, serie, serie-na-partię (7 dni), rekordy (e1RM/max).
 - **Widok exercise-first** `/exercise/[id]`: agregacja po `exercise_id`.
-- **Plate calculator** (`lib/plates.ts`) z `bar_weight` + `available_plates`; podgląd w loggerze.
+- ~~Plate calculator~~ — descoped (addendum v0.3, `02fa08e`); `lib/plates.ts` usunięty.
 - **RPE** na seriach roboczych; **hint progresji** po dobiciu górnego zakresu.
 - Odłożone post-MVP: edytor supersetów (schema gotowa), pełny offline (Phase 2.5).

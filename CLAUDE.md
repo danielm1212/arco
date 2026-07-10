@@ -6,10 +6,12 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
 - Plan/sprinty: **`docs/roadmap.md`** (horyzonty + długa wizja) + **`docs/sprinty-szczegolowe.md`** (podział Claude/Ty + prompty assetów)
 
 ## Źródło prawdy (w tej kolejności — addendum i roadmap EWOLUUJĄ stary brief)
-1. **`docs/build-brief-v0.3-addendum.md`** — NADPISUJE brief v0.2 w wymienionych punktach (descope talerzy, reguła „kto/kiedy", repriorytety, walidacja). Czytaj NAJPIERW.
-2. **`docs/build-brief-apka-treningowa-v0.2.md`** — bazowa specyfikacja (model danych, programy FBW). Obowiązuje tam, gdzie addendum nie nadpisuje.
-3. **`docs/roadmap.md`** — kierunek i horyzonty. `docs/seed-prompt-fbw.md` — seed.
+1. **`docs/wizja-i-plan-produktu-v2.md`** (2026-07-08) — KANON produktowo-biznesowy: wizja, model freemium (Z1–Z3, limity+wartość, 14,99/99 zł, reverse trial 21 dni), **pody = silnik wzrostu (fast-follow po launchu)**, **warstwa trenerska ODŁOŻONA**, sekwencja Kroków 0–5, bramki B1–B4, art direction retro-analog Warm (§1.2). Nadpisuje `monetyzacja.md` (model/sekwencja/R3) i tabelę moatów z `konkurencja-hevy.md`.
+2. **`docs/build-brief-v0.3-addendum.md`** — NADPISUJE brief v0.2 w wymienionych punktach (descope talerzy, reguła „kto/kiedy", repriorytety, walidacja).
+3. **`docs/build-brief-apka-treningowa-v0.2.md`** — bazowa specyfikacja (model danych, programy FBW). Obowiązuje tam, gdzie addendum nie nadpisuje.
+4. **`docs/roadmap.md`** — kierunek i horyzonty (zrewidowane 2026-07-08 pod wizję v2). `docs/seed-prompt-fbw.md` — seed.
 > Nie traktuj briefu v0.2 jako jedynego, niezmiennego źródła — od niego się ewoluowało.
+> **Mapa całej dokumentacji (kanon/plany/audyty/marketing/archiwum): `docs/README.md`** — zacznij tam, gdy szukasz właściwego pliku.
 
 ## Zasady pracy
 - Phase 0–1 (STOP-y na review) dawno za nami. Teraz: sprinty wg roadmap. Przed większym kawałkiem — plan, potem kod.
@@ -29,12 +31,15 @@ Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data 
 
 **Do Notion wypychaj TYLKO gdy Daniel o to poprosi** („zsynchronizuj Notion" / „zaktualizuj Notion" / podobne). Wtedy: flush całej kolejki z `docs/notion-sync-queue.md` (wszystkie zaległe wpisy jedną turą wywołań), ustaw Etapy wg reguły (`Do testu [Ty]` / `Done` / `In Progress` / `Refinement` — jak dotychczas), wyczyść kolejkę.
 
-## Zakres — zmienione vs brief v0.2 (żeby się nie odbijać od starego)
-- **Poza MVP, ale na DŁUGIEJ wizji (Horyzont 4–5 roadmap — NIE teraz):** social („Strava dla siłowni"), apki natywne iOS/Android, monetyzacja. To **nie jest „zakazane"** — to OSTATNI etap, dopiero gdy rdzeń hula + po testach userów. Nie zaczynaj przedwcześnie.
-- **Trwale poza zakresem:** AI auto-programming (manualny silnik podmiany to świadomy wyróżnik), makro/dieta, wearables/HRV.
+## Zakres — zmienione vs brief v0.2 (żeby się nie odbijać od starego; rewizja 2026-07-08 wg wizji v2)
+- **Sekwencja po H1–H2:** bramka kont+RODO (Krok 2, rozszerzona o zgodę podową/wiek 16+/e-mail) → **launch z pełnym freemium od dnia zero** (Krok 3) → **pody jako fast-follow 4–8 tyg. po launchu** (Krok 4, silnik wzrostu — już NIE Horyzont 5). Reszta socialu (stories, UGC, tablica) dalej H5.
+- **Odłożone (nie skreślone):** warstwa trenerska (warunki re-otwarcia: wizja v2 §9; architektonicznie nie zamykać drogi) · natyw iOS/Android (jedyny wyjątek re-oceny: TWA, gdy iOS dusi pętlę podów).
+- **Trwale poza zakresem:** AI auto-programming (manualny silnik podmiany to świadomy wyróżnik), makro/dieta, wearables/HRV, publiczny feed, komentarze, DM, marketplace programów.
 - **Descoped (usunięte):** kalkulator talerzy + ustawienia gryf/talerze — apka jest dumbbell-first.
+- **Zasady niepodważalne modelu (Z1–Z3, wizja v2 §2):** rdzeń pętli logowania zawsze darmowy · pody/zaproszenia/nudge zawsze darmowe · limitujemy dostęp, nie dane (nic nie kasujemy; eksport RODO zawsze darmowy). Każda decyzja produktowa/kodowa musi je respektować.
 
 ## Kierunek wizualny — „Arco Warm" (DECYZJA właściciela 2026-07-04; zastępuje „Athletic")
+> **Rozszerzenie 2026-07-08 (wizja v2 §1.2): retro-analog Warm, architektura dwuwarstwowa.** Warstwa komunikacji (landing/social/momenty) = retro: ziarno, fotografia analogowa, display-typografia. Warstwa narzędzia (UI apki) = czysty minimal — ziarniste zdjęcia NIE wchodzą do UI jako tła. Ikony 3D: matowe/clay w terracotta/krem (metalik odrzucony), mały kurowany zestaw, tylko empty states/onboarding/celebracje. Zdjęcia ćwiczeń (AI-grading): ten sam warm/analog look, priorytet top ~200.
 > ✅ Rozstrzygnięta decyzja wizualna. Rebranding z volt/dark na **terracotta + krem + ciepła czerń**. Kierunek lifestyle'owy, inkluzywny (nie tylko pod mężczyzn). Wdrożenie = Sprint N3 w `docs/plan-sprintow-2026-07.md`. Stary „Athletic" (volt) opisany w historii gita — nie wracać bez decyzji właściciela.
 - **Paleta:** pełne rampy + mapowanie semantic w **`docs/paleta-arco-warm.md`** (źródło prawdy). Skrót: canvas aplikacji = neutralny **grey `#F7F7F7`** + białe tile; terracotta `#C63F21` (akcent, AA jako tekst na jasnych); krem `#F6F2ED` = **powierzchnia brandowa** (hero/celebracja/onboarding/marketing), NIE canvas; ciepła czerń `#1E1C1A` (tekst primary / canvas dark); `#DC6B45` akcent w dark.
 - **Logo i favicon: `../logo/`** (siblingi folderu `arco`): `logo.svg/png` + warianty `logo-1/2`, favicon w 4 wersjach (primary/secondary/black/white), SVG + PNG 396px. Wpiąć do `public/` + manifest PWA (maskable z marginesem) + `<link rel="icon">`. Sygnet = „o"-talerz.
@@ -53,6 +58,8 @@ Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data 
 ## Techniczne
 - Migracje DB tylko przez Supabase migrations (nie ad-hoc SQL). Auth przez `@supabase/ssr` (nie `auth-helpers`). PWA: Serwist pod App Router (nie `next-pwa`).
 - RLS po `user_id` na wszystkich tabelach z danymi usera. Seed (`exercises`, `programs` z `user_id = null`) read-only dla zalogowanych.
+- **Wydajność: `docs/optymalizacja.md` = budżety i zasady twarde** (INP tapu w loggerze <100 ms; nowa paczka = ocena wagi; wąskie selecty, zero N+1, paginacja od 1. dnia na rosnących listach; sprzęt odniesienia: średni Android). Checklist §4 przy zmianach na gorących trasach.
+- **Bezpieczeństwo: `docs/bezpieczenstwo.md` = zasady twarde** (RLS w tej samej migracji co tabela + test wielokontowy; service-role tylko w scripts/; pełny guard w każdej akcji; zero hurtowych DELETE; nowa powierzchnia = przegląd). Checklisty per bramka tamże.
 - Preferencje urządzenia (motyw, auto-przerwa, wake lock) → `localStorage` (`lib/prefs.ts`). Ustawienia konta (jednostki, rest, cel, sprzęt) → `user_settings`.
 
 ## Stack i konfiguracja (zatwierdzone)
@@ -66,4 +73,4 @@ Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data 
 - **Vendored deps (żeby nie zniknęły z npm):** `react-body-highlighter` (heatmapa mięśni, MIT) jest skopiowany do `vendor/react-body-highlighter/` i podpięty przez `file:` w `package.json`. `npm install` bierze z naszej kopii, nie z rejestru.
 
 ## Definicja done
-Zmiana jest skończona, gdy: `npm run build` przechodzi · zweryfikowana w Claude Preview · dane testowe sprzątnięte · brak hardkodów stylów · WCAG AA. (Acceptance Phase 0–4 z briefu: spełnione.)
+Zmiana jest skończona, gdy: `npm run build` przechodzi · zweryfikowana w Claude Preview · dane testowe sprzątnięte · brak hardkodów stylów · WCAG AA · **przy zmianach UI: checklist z `docs/wytyczne-designu.md` §3** (HIG adaptowane pod PWA — decyzja 2026-07-08; hierarchia konfliktów: nasz system → wytyczne → odruchy platformy). (Acceptance Phase 0–4 z briefu: spełnione.)
