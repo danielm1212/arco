@@ -234,6 +234,9 @@ export function ExerciseBrowser({
                 src={h.image}
                 alt=""
                 loading="lazy"
+                decoding="async"
+                width={88}
+                height={88}
                 className="size-11 shrink-0 rounded-md border bg-muted object-cover"
               />
             ) : (

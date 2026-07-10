@@ -41,20 +41,23 @@ export default async function SessionPage({ params }: { params: { id: string } }
         .order("set_index")
     : { data: [] };
 
-  // Serie z poprzedniej sesji per ćwiczenie (inline "last set", RLS-aware)
+  // Serie z poprzedniej sesji per ćwiczenie (inline "last set", RLS-aware).
+  // S9-cz.2 paczka 1: jedno batchowe RPC dla całej sesji zamiast N wywołań per ćwiczenie.
   const prevSets: Record<string, LoggerExercise["previousSets"]> = {};
-  const [repPRs] = await Promise.all([
+  const [repPRs, { data: prevRows }] = await Promise.all([
     // Rep-PRs (S12) — rekordy per liczba powtórzeń, bez bieżącej sesji
     getRepPRs(supabase, [...new Set((exercises ?? []).map((e) => e.exercise_id))], sessionId),
-    ...(exercises ?? []).map(async (e) => {
-      const { data } = await supabase.rpc("previous_session_sets", {
-        p_slot: e.slot_id,
-        p_exercise: e.exercise_id,
-        p_session: sessionId,
-      } as unknown as { p_slot: string; p_exercise: string; p_session: string });
-      prevSets[e.id] = data ?? [];
-    }),
+    supabase.rpc("previous_session_sets_batch", { p_session: sessionId }),
   ]);
+  for (const row of prevRows ?? []) {
+    (prevSets[row.session_exercise_id] ??= []).push({
+      set_index: row.set_index,
+      weight: row.weight,
+      reps: row.reps,
+      duration_seconds: row.duration_seconds,
+      added_weight: row.added_weight,
+    });
+  }
 
   const model: LoggerExercise[] = (exercises ?? []).map((e) => {
     const ex = e.exercises as unknown as {

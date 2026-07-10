@@ -91,6 +91,10 @@ export default async function BodyPage() {
                       <img
                         src={photoUrls[m.photo_path]}
                         alt="zdjęcie postępu"
+                        loading="lazy"
+                        decoding="async"
+                        width={80}
+                        height={80}
                         className="size-10 shrink-0 rounded-md border object-cover"
                       />
                     </a>

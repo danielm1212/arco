@@ -89,7 +89,10 @@ export function ExerciseInfoSheet({
                         src={src}
                         alt={detail.name}
                         loading="lazy"
-                        className="w-full rounded-md border bg-muted"
+                        decoding="async"
+                        width={800}
+                        height={600}
+                        className="h-auto w-full rounded-md border bg-muted"
                       />
                     ))}
                   </div>

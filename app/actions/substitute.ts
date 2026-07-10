@@ -42,7 +42,8 @@ export async function getSubstitutes(
 
   const { data: current } = await supabase
     .from("exercises")
-    .select("*")
+    // wąski select (optymalizacja.md §2.3) — "*" ciągnęło instructions+images niepotrzebnie
+    .select("id, name, mechanic, level, movement_pattern, primary_muscles, secondary_muscles")
     .eq("id", se.exercise_id)
     .single();
   if (!current) return { loose: false, items: [] };
@@ -53,7 +54,10 @@ export async function getSubstitutes(
     .maybeSingle();
   const equipment = settings?.available_equipment ?? [];
 
-  const cur = current as Exercise;
+  const cur = current as Pick<
+    Exercise,
+    "id" | "name" | "mechanic" | "level" | "movement_pattern" | "primary_muscles" | "secondary_muscles"
+  >;
 
   async function query(opts: { pattern: boolean; muscles: boolean }) {
     let q = supabase

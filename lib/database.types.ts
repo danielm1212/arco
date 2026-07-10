@@ -508,6 +508,17 @@ export type Database = {
           weight: number
         }[]
       }
+      previous_session_sets_batch: {
+        Args: { p_session: string }
+        Returns: {
+          added_weight: number
+          duration_seconds: number
+          reps: number
+          session_exercise_id: string
+          set_index: number
+          weight: number
+        }[]
+      }
       previous_working_set: {
         Args: { p_exercise: string; p_session: string; p_slot: string }
         Returns: {
