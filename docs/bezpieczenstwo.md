@@ -45,7 +45,7 @@ Krok 2: Stripe webhooks (weryfikacja sygnatur!), publiczny signup (enumeracja ko
 
 ## 3. Checklisty per etap
 
-**S10 (mini-gate — rozszerzony):** service-role poza bundlem (potwierdzone, re-check) · RLS włączone wszędzie (potwierdzone, re-check po nowych migracjach) · świeży start danych · **CSP Report-Only** · przegląd logów Supabase pod nietypowe zapytania.
+**S10 (mini-gate — rozszerzony): ✅ ZROBIONE 2026-07-11.** service-role poza bundlem (re-check: 0 wystąpień poza `scripts/`, `.env*` gitignorowane, `.env.ops.local` z deployu usunięty) · RLS włączone wszędzie (re-check po migracji kuracji+batch: 11/11 tabel z politykami, 0 bez) · **CSP Report-Only wdrożone** (`next.config.mjs`, nagłówek potwierdzony na `next start` — `default-src 'self'` + dozwolone Supabase/hotlink obrazków; enforce = S11 po przeglądzie raportów w DevTools) · **offline-guardy** dla swap/add/skip (`lib/offlineGuard.ts` — sygnał zamiast cichego błędu; zweryfikowane: brak POST w sieci przy offline). Przegląd logów Supabase pod nietypowe zapytania — odłożone do S11 (mało ruchu = mało sygnału teraz).
 **S11 (launch gate):** decyzja majorów next · CSP enforce · plan backupów + test restore · `npm audit` czysty lub zaakceptowany · headers zweryfikowane na prodzie (securityheaders.com).
 **Krok 2:** wszystko z bramki roadmapy + decyzja exercise-photos + rate limiting + Stripe webhook signature + polityka haseł + audyt RLS wielokontowy (scenariusze w schemacie §5).
 **Krok 4:** test wielokontowy podów (różne pody nie widzą się; były członek traci dostęp natychmiast) + brute-force test invite + SPF/DKIM/DMARC.

@@ -106,18 +106,19 @@ Ekran po treningu (hero „tyle dziś uniosłeś" + rotujące nagłówki per sta
 **[Ty]:** decyzja — wchodzimy w duże majory teraz czy po launchu?
 **Done:** 0 known-exploitable vuln; patche minor zrobione; decyzja ws. majorów; kod odchudzony; build/lint czyste.
 
-## Sprint 10 — Offline correctness + audyt longevity
+## Sprint 10 — Offline correctness + audyt longevity — ✅ ZROBIONY 2026-07-11
 **[Claude]:**
-- Offline-guard dla swap/add/skip (z sygnałem błędu); reszta correctness (flush/`set_index` już są).
-- **Checklista audytu longevity** (wg pamięci `proactive-architecture-review`):
-  - [ ] Zależności: krytyczne libki zwendorowane (`vendor/`, `file:`)? `npm audit` czyste?
-  - [ ] Assety: backup zdjęć (`../free-exercise-db`) aktualny + plan self-hostu gotowy?
-  - [ ] Utrata danych: offline-correctness, `set_index`, recompute PR — sprawdzone?
-  - [ ] Migracje: wszystkie gotowe do `db push` (skipped, weekly_goal…)?
-  - [ ] Sekrety: service-role poza repo/bundlem, env prod rozdzielony?
-  - [ ] Przenośność: tokeny semantic jedno źródło, zero magic numbers?
-  > Powtarzać przed launchem (gate S11) i przy większych zmianach zależności/assetów.
-**Done:** brak utraty danych offline; checklista odhaczona.
+- ✅ Offline-guard dla swap/add/skip (`lib/offlineGuard.ts`, sygnał zamiast cichego błędu — zweryfikowane w Preview: skip pokazuje toast + nie aplikuje zmiany, add-picker nie wysyła POST offline); reszta correctness (flush/`set_index`) już była.
+- ✅ **Checklista audytu longevity** (wg pamięci `proactive-architecture-review`) — wszystko odhaczone 2026-07-11:
+  - [x] Zależności: `react-body-highlighter` zwendorowana (`vendor/` + `file:`) ✓. `npm audit`: 5 vuln (1 mod, 4 high), bez zmian od S9 — wszystkie w `next@14`, decyzja majorów [Ty] czeka (S11).
+  - [x] Assety: backup `../free-exercise-db` obecny, 197 MB, aktualny.
+  - [x] Utrata danych: `smoke-offline` 3/3 zielone (idempotencja/odtwarzalność); offline-guardy dodane wyżej.
+  - [x] Migracje: wszystkie 16 lokalnych = 16 na remote (`migration list` bez rozjazdu, potwierdzone przy deployu 2026-07-10).
+  - [x] Sekrety: 0 wystąpień `SUPABASE_SERVICE_ROLE_KEY` poza `scripts/`; `.env*` gitignorowane; `.env.ops.local` z deployu usunięty.
+  - [x] Przenośność: 0 hardkodowanych hex w komponentach (2 wyjątki uzasadnione: `theme-color` meta w `layout.tsx` musi być raw hex, wartości = dokładnie tokeny sand-100/ink-800).
+  > Powtórzyć przed launchem (gate S11) i przy większych zmianach zależności/assetów.
+- ✅ CSP Report-Only (`next.config.mjs`) — bonus przeniesiony z `bezpieczenstwo.md` S10-gate, bo naturalnie pasuje do tej samej paczki.
+**Done:** brak utraty danych offline; checklista odhaczona. Raport pełny: `docs/bezpieczenstwo.md` §3 (S10 gate) + HANDOFF.
 
 ## Sprint 11 — Launch (Phase 10)
 **[Claude]:** kod gotowy do deploya; instrukcja krok-po-kroku; PL tłumaczenia top-instrukcji; skeletony tras.
