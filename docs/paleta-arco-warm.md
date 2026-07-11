@@ -6,7 +6,7 @@
 ## Logika systemu (przeczytaj najpierw)
 
 - **grey** = baza UI aplikacji (canvas, tile, bordery, teksty wtórne). Neutralna, żeby dane i treść były czyste.
-- **sand (krem)** = powierzchnia BRANDOWA, nie canvas: hero card, ekran celebracji, onboarding, empty-states, landing/marketing, kafle z logo. Ciepły moment, nie tapeta.
+- **sand (krem)** — **⚠️ rewizja 2026-07-11 (decyzja [Ty], eksploracja hero V1–V4 → wybrane V4):** sand **wychodzi z codziennego UI narzędzia** (żadnych sand-kafli na home/loggerze/listach — na canvasie `#F7F7F7` obok białych kafli czytał się jak „przybrudzony biały", kontrast ~1.03:1). Zostaje WYŁĄCZNIE w warstwie momentów/komunikacji: pełnoekranowa celebracja, onboarding, landing/marketing. **Hero na home = biały kafel: hierarchię robi skala typografii + jedyne wypełnione rust-CTA na ekranie.** Przy pełnoekranowym sand sąsiadującym z bielą rozważyć pogłębienie do `#EFE5D3`.
 - **rust** = akcent (CTA, aktywne stany, liczba-bohater, PR).
 - **ink** = tekst primary w light + powierzchnie dark mode.
 - **stone** żyje TYLKO na powierzchniach sand (tekst wtórny na kremie). W UI na grey używamy grey-500/600 — nie mieszamy dwóch temperatur szarości na jednej powierzchni.

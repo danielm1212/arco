@@ -13,7 +13,8 @@
 
 ## Oczekujące
 
-*(pusto — pełny flush 2026-07-10)*
+- [ ] CREATE | Audyt UX loggera: karta ⋯, jedno „poprzednio", finish-sheet | Wysoki | Ty+Claude | Refinement | — | UX | Notatka: 2026-07-11 — docs/audyt-loggera.md; 12 findings (F1: 6 akcji zawsze widocznych ×N kart; F2: poprzednio ×3; F10-P1: superset tylko wizualny — przerwa odpala się między partnerami pary!), 6 rekomendacji (menu ⋯, targety 44px, finish-sheet, R6: przerwa świadoma grupy + „Połącz w superset" z partnerem default=następny); +R7: reorder ⋯ wyżej/niżej (N2#7 wraca; position w schemacie, grupa SS jako jednostka, bez dnd-liba); sprint „logger polish" ~3–4 wieczory przed H2; czeka akcept [Ty].
+- [ ] CREATE | Redesign home: FlameWeek + hero + guidance-chip (koncept) | Wysoki | Ty+Claude | Refinement | — | UX | Notatka: 2026-07-11 — docs/redesign-home.md; 7 bloków → 3 sekcje, 3 paradygmaty startu → 1; płomienie tygodnia (done=terracotta, bez wstydu za dni wolne), wskazówki jako 1-liniowy chip ze sheetem; sekcja Program wypada do sheeta; F1 hierarchia → F2 płomienie → F3 test w H2 Z0 (skrypt zaktualizowany); czeka: akcept [Ty] + 4 pytania z §5.
 
 ## Ostatni flush: 2026-07-10
 
