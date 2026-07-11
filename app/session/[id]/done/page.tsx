@@ -151,7 +151,9 @@ export default async function SessionDonePage({ params }: { params: { id: string
       {/* CTA */}
       <div className="flex w-full flex-col gap-sm pt-lg">
         <Button asChild size="lg" className="w-full">
-          <Link href="/">Zamknij i odpoczywaj</Link>
+          {/* F2 (redesign-home.md §3.6): ?trained=1 odpala zapłon flame'a
+              dzisiejszego dnia na home, raz, po powrocie z celebracji */}
+          <Link href="/?trained=1">Zamknij i odpoczywaj</Link>
         </Button>
         {goalLeft > 0 && (
           <Button asChild variant="outline" size="lg" className="w-full">

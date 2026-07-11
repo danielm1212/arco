@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { startSession, startFreestyle } from "@/app/actions/session";
@@ -8,6 +9,7 @@ import { getHomeGuidance } from "@/lib/getHomeGuidance";
 import { localDayKey } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
 import { GuidanceChip } from "./GuidanceChip";
+import { FlameWeek } from "./FlameWeek";
 
 export const dynamic = "force-dynamic";
 
@@ -175,62 +177,13 @@ export default async function HomePage() {
             Cześć, {settings.display_name} 👋
           </h1>
         )}
-        <section className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
-          <div className="mb-sm flex items-center justify-between">
-            <span className="flex items-baseline gap-2">
-              <span className="text-sm font-medium text-muted-foreground">Ten tydzień</span>
-              <span className="text-sm font-semibold tabular-nums">
-                {weeklyDone}/{weeklyGoal}
-                {weeklyDone >= weeklyGoal && (
-                  <span className="ml-1 text-primary" aria-label="cel osiągnięty">
-                    🎯
-                  </span>
-                )}
-              </span>
-            </span>
-            <span className="flex items-center gap-1 rounded-full bg-volt/15 px-2.5 py-1">
-              <span aria-hidden>🔥</span>
-              <span className="text-base font-semibold tabular-nums text-foreground">{streak}</span>
-              <span className="text-xs text-muted-foreground">
-                {streak === 1 ? "tydz." : "tyg."}
-              </span>
-            </span>
-          </div>
-          {/* Day-pills „Warm": done = terracotta ✓ · dziś = wypełniona ciepła czerń · przyszłe wygaszone */}
-          <div className="flex gap-1.5">
-            {week.map((d) => {
-              const future = d.key > todayKey;
-              return (
-                <div key={d.key} className="flex flex-1 flex-col items-center gap-1.5">
-                  <div
-                    className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium ${
-                      d.on
-                        ? "bg-volt text-volt-foreground"
-                        : d.today
-                          ? "bg-foreground text-background"
-                          : future
-                            ? "bg-muted/60 text-muted-foreground/50"
-                            : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {d.on ? "✓" : d.today ? d.dow.charAt(0) : ""}
-                  </div>
-                  <span
-                    className={`text-[11px] ${
-                      d.today
-                        ? "font-bold text-foreground"
-                        : future
-                          ? "text-muted-foreground/60"
-                          : "text-muted-foreground"
-                    }`}
-                  >
-                    {d.dow}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {/* F2 (redesign-home.md §3.6): FlameWeek ukryty do 1. treningu —
+            rząd wygaszonych płomieni na dzień dobry to smutek, nie obietnica */}
+        {(sessionCount ?? 0) > 0 && (
+          <Suspense fallback={null}>
+            <FlameWeek week={week} streak={streak} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />
+          </Suspense>
+        )}
 
         {openSession ? (
           <Link

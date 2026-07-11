@@ -210,3 +210,42 @@
 .animate-pulse-once {
   animation: pr-flash 1.2s ease-out 1;
 }
+
+/* F2 (redesign-home.md §3.1): zapłon płomienia FlameWeek po powrocie z celebracji
+   — overshoot skali, jednorazowo. Dziś-nietrenowany dostaje osobny, spokojny puls. */
+@keyframes flame-ignite {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.3;
+  }
+  60% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-flame-ignite {
+  animation: flame-ignite 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+}
+@keyframes flame-today-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+.animate-flame-today {
+  animation: flame-today-pulse 2.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-flame-ignite,
+  .animate-flame-today,
+  .animate-pulse-once {
+    animation: none !important;
+  }
+}
