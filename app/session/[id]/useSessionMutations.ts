@@ -10,6 +10,7 @@ import {
 } from "@/app/actions/sets";
 import type { SessionSet, SetType } from "@/lib/types";
 import { getAutoRest } from "@/lib/prefs";
+import { ensureOnline } from "@/lib/offlineGuard";
 import { vibrate } from "@/lib/feedback";
 import { uuid } from "@/lib/uuid";
 import type { LoggerExercise } from "./Logger";
@@ -183,6 +184,7 @@ export function useSessionMutations({
 
   // „Pomiń"/„Przywróć" ćwiczenie z programu — zostaje slot, nie usuwamy wiersza
   async function handleSkip(seId: string, skipped: boolean) {
+    if (!ensureOnline(skipped ? "pominięcie ćwiczenia" : "przywrócenie ćwiczenia")) return; // S10
     const snapshot = exercisesRef.current;
     setExercises((prev) =>
       prev.map((ex) => (ex.sessionExerciseId === seId ? { ...ex, skipped } : ex)),

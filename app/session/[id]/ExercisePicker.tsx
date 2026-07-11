@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { addSessionExercise } from "@/app/actions/sets";
+import { ensureOnline } from "@/lib/offlineGuard";
 import { Button } from "@/components/ui/button";
 import { ExerciseBrowser } from "./ExerciseBrowser";
 
@@ -13,6 +14,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
   const [pending, startTransition] = useTransition();
 
   function pick(id: string) {
+    if (!ensureOnline("dodanie ćwiczenia")) return; // S10: offline-guard
     startTransition(async () => {
       try {
         await addSessionExercise(sessionId, id);
@@ -26,6 +28,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
 
   // S13: multi-select — dodanie kilku naraz (sekwencyjnie: pozycje liczone z count)
   function pickMany(ids: string[]) {
+    if (!ensureOnline("dodanie ćwiczeń")) return; // S10: offline-guard
     startTransition(async () => {
       try {
         for (const id of ids) await addSessionExercise(sessionId, id);

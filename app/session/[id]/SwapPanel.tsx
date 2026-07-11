@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getSubstitutes, swapExercise } from "@/app/actions/substitute";
+import { ensureOnline } from "@/lib/offlineGuard";
 import { ExerciseBrowser, type BrowserHit } from "./ExerciseBrowser";
 
 /**
@@ -46,6 +47,7 @@ export function SwapPanel({
   }, [open, sessionExerciseId]);
 
   function pick(id: string) {
+    if (!ensureOnline("podmiana ćwiczenia")) return; // S10: offline-guard
     startTransition(async () => {
       try {
         await swapExercise(sessionId, sessionExerciseId, id);
