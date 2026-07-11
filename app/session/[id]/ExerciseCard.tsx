@@ -38,11 +38,14 @@ export interface ExerciseCardProps {
   rpeOn: boolean;
   /** setId → pobity rep-PR w tej sesji (badge). Comparator porównuje tylko wpisy tego ćwiczenia. */
   prSets: Record<string, boolean>;
+  /** R6b: nazwy+grupy wszystkich ćwiczeń sesji (picker "Połącz w superset") — referencyjnie
+   *  stabilne między toggle'ami serii, patrz komentarz w Logger.tsx przy useMemo. */
+  exerciseSummaries: { id: string; name: string; group: number | null }[];
   onToggleSwap: (seId: string) => void;
   onCloseSwap: (seId: string) => void;
   onSkip: (seId: string, skipped: boolean) => void;
   onDeleteExercise: (seId: string) => void;
-  onLink: (index: number) => void;
+  onLinkPartner: (index: number, partnerIndex: number) => void;
   onUnlink: (index: number) => void;
   onAdjustRest: (ex: LoggerExercise, delta: number) => void;
   onOpenNote: (seId: string) => void;
@@ -74,11 +77,12 @@ export const ExerciseCard = memo(function ExerciseCard({
   noteOpen,
   rpeOn,
   prSets,
+  exerciseSummaries,
   onToggleSwap,
   onCloseSwap,
   onSkip,
   onDeleteExercise,
-  onLink,
+  onLinkPartner,
   onUnlink,
   onAdjustRest,
   onOpenNote,
@@ -107,24 +111,27 @@ export const ExerciseCard = memo(function ExerciseCard({
           zostaje reprezentacja per-wiersz (↺ + placeholder w SetRow). */}
       <div className="flex items-start justify-between gap-sm">
         <div className="min-w-0">
-          <p className="font-medium">
+          {/* flex zamiast inline-w-<p>: przy długiej nazwie wcześniej zawijała się
+              CAŁA linia i ⓘ+badge SS spadały pod tekst (feedback 2026-07-11) —
+              teraz nazwa się truncate'uje, ⓘ i badge zawsze zostają obok. */}
+          <div className="flex items-center gap-xs">
             {/* key = remount po podmianie (N2#4) — zero szans na stary cache opisu */}
             <ExerciseInfoSheet key={ex.exerciseId} exerciseId={ex.exerciseId}>
               <button
                 type="button"
-                className="text-left underline-offset-2 hover:underline"
+                className="flex min-w-0 items-center gap-1 text-left"
                 title="Jak wykonać"
               >
-                {ex.name}{" "}
-                <Info className="inline size-3.5 align-[-2px] text-muted-foreground" />
+                <span className="truncate font-medium">{ex.name}</span>
+                <Info className="size-3.5 shrink-0 text-muted-foreground" />
               </button>
             </ExerciseInfoSheet>
             {grouped && (
-              <span className="ml-xs rounded-full bg-primary/15 px-2 py-0.5 align-middle text-xs font-medium text-primary">
+              <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
                 SS{ex.supersetGroup}
               </span>
             )}
-          </p>
+          </div>
           <p className="text-xs text-muted-foreground">
             {ex.slot
               ? `${ex.slot.target_sets} × ${
@@ -158,10 +165,11 @@ export const ExerciseCard = memo(function ExerciseCard({
         restSeconds={restSeconds}
         rpeOn={rpeOn}
         grouped={grouped}
+        exerciseSummaries={exerciseSummaries}
         onSwap={() => onToggleSwap(ex.sessionExerciseId)}
         onSkip={() => onSkip(ex.sessionExerciseId, !ex.skipped)}
         onDeleteExercise={() => onDeleteExercise(ex.sessionExerciseId)}
-        onLink={() => onLink(index)}
+        onLinkWith={(partnerIndex) => onLinkPartner(index, partnerIndex)}
         onUnlink={() => onUnlink(index)}
         onAdjustRest={(delta) => onAdjustRest(ex, delta)}
         onOpenNote={() => onOpenNote(ex.sessionExerciseId)}
@@ -221,8 +229,10 @@ export const ExerciseCard = memo(function ExerciseCard({
                 </>
               )}
               {ex.type !== "timed" && rpeOn && <span className="w-16 text-center">RPE</span>}
-              <span className="w-10 shrink-0" />
-              <span className="w-4 shrink-0" />
+              {/* w-11/w-9 = dokładna szerokość ✓/✕ w SetRow (były w-10/w-4 — nagłówek
+                  KG/POWT. nie celował w środek pól, feedback 2026-07-11) */}
+              <span className="w-11 shrink-0" />
+              <span className="w-9 shrink-0" />
             </div>
           )}
 
@@ -268,5 +278,6 @@ export const ExerciseCard = memo(function ExerciseCard({
   prev.swapOpen === next.swapOpen &&
   prev.noteOpen === next.noteOpen &&
   prev.rpeOn === next.rpeOn &&
+  prev.exerciseSummaries === next.exerciseSummaries &&
   // PR-y: porównaj tylko wpisy dotyczące serii TEGO ćwiczenia
   next.ex.sets.every((s) => prev.prSets[s.id] === next.prSets[s.id]));

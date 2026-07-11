@@ -107,7 +107,7 @@ export const SetRow = memo(function SetRow({
           onPatch({ set_type: next });
           onPersist({ set_type: next });
         }}
-        className={`h-9 w-7 shrink-0 rounded-md border text-xs font-medium tabular-nums ${
+        className={`h-11 w-7 shrink-0 rounded-md border text-xs font-medium tabular-nums ${
           isWarmup
             ? "border-warning bg-warning/15 text-warning"
             : "border-input text-muted-foreground"
@@ -279,7 +279,7 @@ function Field({
         setRaw(n != null ? String(n) : "");
         onPersist(n);
       }}
-      className={`h-9 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"}`}
+      className={`h-11 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"}`}
     />
   );
 }

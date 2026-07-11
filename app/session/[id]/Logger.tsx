@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getKeepAwake } from "@/lib/prefs";
-import { Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
+import { ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
@@ -55,6 +55,7 @@ export interface LoggerExercise {
 export function Logger({
   sessionId,
   title,
+  programName,
   isFinished,
   startedAt,
   unit,
@@ -62,7 +63,10 @@ export function Logger({
   initialExercises,
 }: {
   sessionId: string;
+  /** Etykieta dnia ("Trening A") — tytuł główny; jedyna część odróżniająca sesje,
+   *  program w trakcie treningu jest bezwartościowy (wiadomo, co się kliknęło). */
   title: string;
+  programName: string | null;
   isFinished: boolean;
   startedAt: string;
   unit: UnitSystem;
@@ -95,9 +99,22 @@ export function Logger({
     handleDeleteSet,
     handleDeleteExercise,
     handleSkip,
-    linkWithPrevious,
+    linkWithPartner,
     unlink,
   } = useSessionMutations({ sessionId, setExercises, exercisesRef, saveSet, removeSet, startRest });
+
+  // R6b: lista nazw+grup dla pickera "Połącz w superset" w ⋯ karty. Referencyjnie
+  // stabilna między toggle'ami serii (klucz = id+nazwa+grupa, nie cały `exercises`)
+  // — inaczej każdy tap ✓ złamałby memo na WSZYSTKICH kartach (patrz komparator
+  // w ExerciseCard.tsx).
+  const summaryKey = exercises
+    .map((e) => `${e.sessionExerciseId}:${e.name}:${e.supersetGroup}`)
+    .join("|");
+  const exerciseSummaries = useMemo(
+    () => exercises.map((e) => ({ id: e.sessionExerciseId, name: e.name, group: e.supersetGroup })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [summaryKey],
+  );
 
   // RPE domyślnie ukryte (opcjonalne) — odsłaniane per ćwiczenie na czas sesji
   const [rpeOn, setRpeOn] = useState<Record<string, boolean>>({});
@@ -144,12 +161,24 @@ export function Logger({
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
       <header className="sticky top-0 z-10 border-b bg-background/95 px-md py-sm backdrop-blur">
-        <div className="flex items-center justify-between">
-          <div className="min-w-0">
-            <button onClick={() => router.push("/")} className="text-xs text-muted-foreground">
-              ← Trening
+        <div className="flex items-center justify-between gap-sm">
+          <div className="flex min-w-0 items-center gap-2xs">
+            {/* 44px pełnowymiarowy target (było: mikro-tekst "← Trening") */}
+            <button
+              onClick={() => router.push("/")}
+              aria-label="Wróć do treningu"
+              className="flex h-11 w-11 shrink-0 -ml-2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+            >
+              <ChevronLeft className="size-5" />
             </button>
-            <p className="truncate font-semibold">{title}</p>
+            <div className="min-w-0">
+              {/* Nazwa dnia = tytuł: jedyna część odróżniająca sesję, program
+                  w trakcie treningu jest bezwartościowy — zostaje podpisem */}
+              <p className="truncate font-semibold leading-tight">{title}</p>
+              {programName && (
+                <p className="truncate text-xs text-muted-foreground">{programName}</p>
+              )}
+            </div>
           </div>
           <div className="flex shrink-0 items-center gap-sm">
             {(!online || pending > 0) && (
@@ -167,8 +196,13 @@ export function Logger({
               </span>
             )}
             {!isFinished && (
+              // Nie wypełniony rust — akcją główną ekranu jest logowanie serii,
+              // nie kończenie treningu (ten sam argument co V4 hero na home).
+              // Siatka bezpieczeństwa na przypadkowy tap: R4 (finish-sheet).
               <Button
                 size="sm"
+                variant="outline"
+                className="text-primary"
                 onClick={() => handleFinish({ sessionId, exercises, online, flush })}
               >
                 Zakończ
@@ -215,11 +249,12 @@ export function Logger({
             noteOpen={noteOpen[ex.sessionExerciseId]}
             rpeOn={!!rpeOn[ex.sessionExerciseId]}
             prSets={prSets}
+            exerciseSummaries={exerciseSummaries}
             onToggleSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: !o[id] }))}
             onCloseSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: false }))}
             onSkip={handleSkip}
             onDeleteExercise={handleDeleteExercise}
-            onLink={linkWithPrevious}
+            onLinkPartner={linkWithPartner}
             onUnlink={unlink}
             onAdjustRest={adjustRest}
             onOpenNote={(id) => setNoteOpen((o) => ({ ...o, [id]: true }))}

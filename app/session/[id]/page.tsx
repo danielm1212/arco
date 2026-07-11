@@ -94,7 +94,8 @@ export default async function SessionPage({ params }: { params: { id: string } }
     <div className="min-h-dvh bg-background text-foreground">
       <Logger
         sessionId={session.id}
-        title={dayMeta ? `${dayMeta.programs?.name ?? ""} · ${dayMeta.label}` : "Freestyle"}
+        title={dayMeta?.label ?? "Freestyle"}
+        programName={dayMeta?.programs?.name ?? null}
         isFinished={!!session.finished_at}
         startedAt={session.started_at}
         unit={settings?.unit_system ?? "kg"}

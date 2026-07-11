@@ -38,7 +38,7 @@ export function useSessionMutations({
   exercisesRef: MutableRefObject<LoggerExercise[]>;
   saveSet: (s: SessionSet, patch?: Partial<SessionSet>) => void;
   removeSet: (setId: string) => void;
-  startRest: (ex: LoggerExercise) => void;
+  startRest: (ex: LoggerExercise, label?: string) => void;
 }) {
   // S12: serie, które pobiły rep-PR w tej sesji (badge „PR" na wierszu)
   const [prSets, setPrSets] = useState<Record<string, boolean>>({});
@@ -99,10 +99,36 @@ export function useSessionMutations({
     saveSet(newSet);
   }
 
+  // R6a (audyt-loggera.md §5): superset ma świadomą przerwę — jeśli partner w
+  // grupie ma jeszcze niezaliczoną serię TEJ rundy, przerwa NIE startuje (sedno
+  // metody: A→od razu B), zamiast tego mikro-hint kto teraz. Przerwa odpala się
+  // dopiero po ostatnim ogniwie rundy, z labelem "Przerwa po supersecie".
+  function maybeStartRest(ex: LoggerExercise) {
+    if (!getAutoRest()) return;
+    if (ex.supersetGroup == null) {
+      startRest(ex);
+      return;
+    }
+    const partners = exercisesRef.current.filter(
+      (e) => e.supersetGroup === ex.supersetGroup && e.sessionExerciseId !== ex.sessionExerciseId,
+    );
+    const curDone = ex.sets.filter((s) => s.completed).length + 1;
+    const behind = partners.find(
+      (p) =>
+        p.sets.some((s) => !s.completed) &&
+        p.sets.filter((s) => s.completed).length < curDone,
+    );
+    if (behind) {
+      toast(`→ teraz: ${behind.name}`);
+      return;
+    }
+    startRest(ex, "Przerwa po supersecie");
+  }
+
   function handleToggle(ex: LoggerExercise, set: SessionSet) {
     const next = !set.completed;
     patchSetLocal(ex.sessionExerciseId, set.id, { completed: next });
-    if (next && getAutoRest()) startRest(ex);
+    if (next) maybeStartRest(ex);
     // S12: mikro-celebracja rep-PR — w momencie zaliczenia, nie na ekranie końcowym
     if (
       next &&
@@ -125,7 +151,7 @@ export function useSessionMutations({
   // Stoper `timed`: atomowy zapis czasu + zaliczenie (jeden upsert, bez wyścigu patch/toggle).
   function handleTimedComplete(ex: LoggerExercise, set: SessionSet, seconds: number) {
     patchSetLocal(ex.sessionExerciseId, set.id, { duration_seconds: seconds, completed: true });
-    if (!set.completed && getAutoRest()) startRest(ex);
+    if (!set.completed) maybeStartRest(ex);
     saveSet(set, { duration_seconds: seconds, completed: true });
   }
 
@@ -213,18 +239,23 @@ export function useSessionMutations({
     }
   }
 
-  function linkWithPrevious(i: number) {
-    if (i <= 0) return;
+  // R6b (audyt-loggera.md §5): łączenie kierunko-agnostyczne — "Połącz w superset"
+  // działa z DOWOLNYM partnerem (nie tylko poprzednim), ta sama ścieżka dołącza
+  // do już istniejącej grupy z dowolnej strony (giant sety 3+ zostają możliwe).
+  function linkWithPartner(i: number, partnerIndex: number) {
     const list = exercisesRef.current;
-    const prev = list[i - 1];
     const cur = list[i];
-    if (prev.supersetGroup != null) {
-      setGroups([{ id: cur.sessionExerciseId, group: prev.supersetGroup }]);
+    const partner = list[partnerIndex];
+    if (!cur || !partner) return;
+    if (partner.supersetGroup != null) {
+      setGroups([{ id: cur.sessionExerciseId, group: partner.supersetGroup }]);
+    } else if (cur.supersetGroup != null) {
+      setGroups([{ id: partner.sessionExerciseId, group: cur.supersetGroup }]);
     } else {
       const g = Math.max(0, ...list.map((e) => e.supersetGroup ?? 0)) + 1;
       setGroups([
-        { id: prev.sessionExerciseId, group: g },
         { id: cur.sessionExerciseId, group: g },
+        { id: partner.sessionExerciseId, group: g },
       ]);
     }
   }
@@ -256,7 +287,7 @@ export function useSessionMutations({
     handleDeleteSet,
     handleDeleteExercise,
     handleSkip,
-    linkWithPrevious,
+    linkWithPartner,
     unlink,
   };
 }

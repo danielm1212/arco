@@ -15,8 +15,10 @@ export function useRestTimer(defaultRest: number) {
   const restFor = (ex: LoggerExercise) =>
     restOverride[ex.sessionExerciseId] ?? ex.slot?.rest_seconds ?? defaultRest;
 
-  function startRest(ex: LoggerExercise) {
-    setRest({ endAt: Date.now() + restFor(ex) * 1000, label: ex.name });
+  // R6a (audyt-loggera.md §5): label opcjonalny — grupa supersetu podmienia go
+  // na "Przerwa po supersecie" (patrz maybeStartRest w useSessionMutations).
+  function startRest(ex: LoggerExercise, label?: string) {
+    setRest({ endAt: Date.now() + restFor(ex) * 1000, label: label ?? ex.name });
   }
 
   const adjustRest = (ex: LoggerExercise, delta: number) =>
