@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
@@ -184,11 +184,12 @@ export const SetRow = memo(function SetRow({
           PR
         </span>
       )}
+      {/* 44px = minimum z wytyczne-designu.md (było 40px — pod normą, feedback 2026-07-11) */}
       <button
         onClick={onToggle}
         aria-label={set.completed ? "Cofnij zaliczenie" : "Zalicz serię"}
         aria-pressed={set.completed}
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md border text-base ${
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-md border text-base ${
           set.completed
             ? "border-primary bg-primary text-primary-foreground"
             : "border-input text-muted-foreground"
@@ -196,10 +197,12 @@ export const SetRow = memo(function SetRow({
       >
         ✓
       </button>
+      {/* hit-area 44px pełną wysokością wiersza mimo wąskiej wizualnej szerokości —
+          padding zamiast szerokości, żeby nie ściskać pól wagi/powtórzeń obok */}
       <button
         onClick={onDelete}
         aria-label="Usuń serię"
-        className="shrink-0 px-1 text-xs text-muted-foreground hover:text-danger"
+        className="flex h-11 w-9 shrink-0 items-center justify-center text-xs text-muted-foreground hover:text-danger"
       >
         ✕
       </button>
@@ -238,17 +241,44 @@ function Field({
   onPersist: (n: number | null) => void;
 }) {
   const clamp = (v: string) => clampNum(parseNum(v), { min, max });
+
+  // type="text" (nie "number") celowo: natywny input[type=number] odrzuca przecinek
+  // na poziomie DOM niezależnie od inputMode — polska klawiatura wpisuje wagę z ","
+  // (22,5 kg), znak nigdy nie docierał do onChange. parseNum już obsługuje ","→".".
+  // Wyświetlany tekst trzymamy LOKALNIE (nie wprost ze sparsowanej `value`) — inaczej
+  // przy type="text" React nadpisuje pole w trakcie pisania (React ma wyjątek od tego
+  // tylko dla type="number", którego świadomie tu nie używamy) i "22," wraca do "22"
+  // zanim user dopisze "5". Sync z zewnętrznym `value` tylko gdy pole nie ma fokusu
+  // (np. po "skopiuj poprzedni wynik" albo po przełączeniu ćwiczenia).
+  const [raw, setRaw] = useState(() => (value != null ? String(value) : ""));
+  const focused = useRef(false);
+  useEffect(() => {
+    if (!focused.current) setRaw(value != null ? String(value) : "");
+  }, [value]);
+
   return (
     <Input
-      type="number"
+      type="text"
       inputMode="decimal"
+      pattern="[0-9]*[.,]?[0-9]*"
       step={step}
       min={min}
       max={max}
       placeholder={placeholder}
-      value={value ?? ""}
-      onChange={(e) => onPatch(clamp(e.target.value))}
-      onBlur={(e) => onPersist(clamp(e.target.value))}
+      value={raw}
+      onFocus={() => {
+        focused.current = true;
+      }}
+      onChange={(e) => {
+        setRaw(e.target.value);
+        onPatch(clamp(e.target.value));
+      }}
+      onBlur={(e) => {
+        focused.current = false;
+        const n = clamp(e.target.value);
+        setRaw(n != null ? String(n) : "");
+        onPersist(n);
+      }}
       className={`h-9 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"}`}
     />
   );

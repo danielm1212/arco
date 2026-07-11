@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getSubstitutes, swapExercise } from "@/app/actions/substitute";
 import { ensureOnline } from "@/lib/offlineGuard";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { ExerciseBrowser, type BrowserHit } from "./ExerciseBrowser";
 
 /**
  * Panel podmiany — kontrolowany z zewnątrz (N2#5: trigger ⇄ mieszka w nagłówku
- * karty ćwiczenia w Loggerze, panel rozwija się pod nagłówkiem).
+ * karty ćwiczenia w Loggerze). Bottom sheet (nie inline panel — feedback
+ * 2026-07-11: nie było jak zamknąć bez wyboru); X/przeciągnięcie/tap tła zamykają.
  * Domyślnie rankowani kandydaci z getSubstitutes; chipy/search = pełny browse.
  */
 export function SwapPanel({
@@ -59,10 +61,13 @@ export function SwapPanel({
     });
   }
 
-  if (!open) return null;
-
   return (
-    <div className="rounded-md border bg-background p-sm">
+    <BottomSheet
+      open={open}
+      onOpenChange={(o) => !o && onClose()}
+      title="Podmień ćwiczenie"
+      description="Wybierz zamiennik ćwiczenia z listy lub wyszukaj"
+    >
       <ExerciseBrowser
         onPick={pick}
         pending={pending}
@@ -74,6 +79,6 @@ export function SwapPanel({
             : null
         }
       />
-    </div>
+    </BottomSheet>
   );
 }

@@ -303,7 +303,9 @@ export const ExerciseCard = memo(function ExerciseCard({
             </div>
           )}
 
-          <ul className="space-y-2xs">
+          {/* space-y-xs (nie 2xs): 4px między wierszami z 44px checkboxem = łatwo trafić
+              w sąsiedni rząd (feedback 2026-07-11); wytyczne-designu.md §touch targets */}
+          <ul className="space-y-xs">
             {ex.sets.map((set, i) => (
               <SetRow
                 key={set.id}
