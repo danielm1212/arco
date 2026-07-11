@@ -1,30 +1,15 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useState } from "react";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { Button } from "@/components/ui/button";
 import type { SessionSet, UnitSystem } from "@/lib/types";
 import { progressionHint as guidanceProgressionHint } from "@/lib/guidance";
-import { ArrowLeftRight, Timer, Link2, Unlink, Lightbulb, Info } from "lucide-react";
+import { Lightbulb, Info, MoreHorizontal } from "lucide-react";
 import { SwapPanel } from "./SwapPanel";
 import { SetRow } from "./SetRow";
+import { ExerciseCardMenu } from "./ExerciseCardMenu";
 import type { LoggerExercise } from "./Logger";
-
-const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-
-function formatPrevious(ex: LoggerExercise, unit: UnitSystem): string | null {
-  const p = ex.previous;
-  if (!p) return null;
-  if (ex.type === "timed") return p.duration_seconds != null ? `${p.duration_seconds}s` : null;
-  if (ex.type === "bodyweight")
-    return [
-      p.reps != null ? `${p.reps} powt.` : null,
-      p.added_weight ? `+${p.added_weight}${unit}` : null,
-    ]
-      .filter(Boolean)
-      .join(" ") || null;
-  return p.weight != null && p.reps != null ? `${p.weight}${unit} × ${p.reps}` : null;
-}
 
 /** Hint progresji (reguła rule-based z `lib/guidance` — pełny/poniżej zakresu, timed, rep-PR). */
 function progressionHint(ex: LoggerExercise, unit: UnitSystem): string | null {
@@ -106,7 +91,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   onPersistSet,
   onDeleteSet,
 }: ExerciseCardProps) {
-  const prev = formatPrevious(ex, unit);
+  const [menuOpen, setMenuOpen] = useState(false);
   const grouped = ex.supersetGroup != null;
   // Po podmianie slot-note opisuje stare ćwiczenie — wtedy pokaż sprzęt nowego
   const swapped = ex.slot != null && ex.exerciseId !== ex.slot.default_exercise_id;
@@ -116,6 +101,10 @@ export const ExerciseCard = memo(function ExerciseCard({
         grouped ? "border-l-4 border-l-primary" : ""
       } ${ex.skipped ? "opacity-60" : ""}`}
     >
+      {/* R1+R2 (audyt-loggera.md): karta pokazuje TYLKO nazwę+ⓘ, cel, hint,
+          serie, „+ seria" — wszystko inne (Podmień/Pomiń/Superset/Przerwa/
+          notatka/RPE) żyje w ⋯. Agregat „Poprzednio" z nagłówka wypadł —
+          zostaje reprezentacja per-wiersz (↺ + placeholder w SetRow). */}
       <div className="flex items-start justify-between gap-sm">
         <div className="min-w-0">
           <p className="font-medium">
@@ -151,48 +140,33 @@ export const ExerciseCard = memo(function ExerciseCard({
                 }`
               : ex.equipment ?? "freestyle"}
           </p>
-          {prev && (
-            <p className="mt-2xs text-xs text-muted-foreground">
-              Poprzednio: <span className="font-medium text-foreground">{prev}</span>
-            </p>
-          )}
         </div>
-        <div className="flex shrink-0 items-center gap-md">
-          {/* Podmiana przy nazwie (N2#5) — panel rozwija się pod nagłówkiem */}
-          {!ex.skipped && (
-            <button
-              onClick={() => onToggleSwap(ex.sessionExerciseId)}
-              className={`inline-flex items-center gap-1 text-xs ${
-                swapOpen ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-              }`}
-              aria-label="Podmień ćwiczenie"
-              aria-expanded={swapOpen}
-              title="Podmień ćwiczenie"
-            >
-              <ArrowLeftRight className="size-3.5" /> Podmień
-            </button>
-          )}
-          {ex.slot ? (
-            // Ćwiczenie z programu: „Pomiń" zamiast „Usuń" — zostaje slot/progres
-            <button
-              onClick={() => onSkip(ex.sessionExerciseId, !ex.skipped)}
-              className="text-xs text-muted-foreground hover:text-foreground"
-              aria-label={ex.skipped ? "Przywróć ćwiczenie" : "Pomiń ćwiczenie"}
-            >
-              {ex.skipped ? "Przywróć" : "Pomiń"}
-            </button>
-          ) : (
-            // Ćwiczenie dodane ad hoc (freestyle): twarde usunięcie OK
-            <button
-              onClick={() => onDeleteExercise(ex.sessionExerciseId)}
-              className="text-xs text-muted-foreground hover:text-danger"
-              aria-label="Usuń ćwiczenie"
-            >
-              Usuń
-            </button>
-          )}
-        </div>
+        <button
+          onClick={() => setMenuOpen(true)}
+          aria-label="Więcej akcji dla ćwiczenia"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+        >
+          <MoreHorizontal className="size-5" />
+        </button>
       </div>
+
+      <ExerciseCardMenu
+        ex={ex}
+        index={index}
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        restSeconds={restSeconds}
+        rpeOn={rpeOn}
+        grouped={grouped}
+        onSwap={() => onToggleSwap(ex.sessionExerciseId)}
+        onSkip={() => onSkip(ex.sessionExerciseId, !ex.skipped)}
+        onDeleteExercise={() => onDeleteExercise(ex.sessionExerciseId)}
+        onLink={() => onLink(index)}
+        onUnlink={() => onUnlink(index)}
+        onAdjustRest={(delta) => onAdjustRest(ex, delta)}
+        onOpenNote={() => onOpenNote(ex.sessionExerciseId)}
+        onToggleRpe={() => onToggleRpe(ex.sessionExerciseId)}
+      />
 
       {!ex.skipped && (
         <SwapPanel
@@ -209,50 +183,9 @@ export const ExerciseCard = memo(function ExerciseCard({
         </p>
       ) : (
         <>
-          <div className="flex items-center gap-md text-xs">
-            {grouped ? (
-              <button
-                onClick={() => onUnlink(index)}
-                className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
-              >
-                <Unlink className="size-3.5" /> Rozłącz superset
-              </button>
-            ) : (
-              index > 0 && (
-                <button
-                  onClick={() => onLink(index)}
-                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                >
-                  <Link2 className="size-3.5" /> Superset z poprzednim
-                </button>
-              )
-            )}
-          </div>
-
-          <div className="flex items-center gap-xs text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1">
-              <Timer className="size-3.5" /> Przerwa
-            </span>
-            <button
-              aria-label="krótsza przerwa"
-              onClick={() => onAdjustRest(ex, -15)}
-              className="h-6 w-6 rounded border border-input active:bg-muted"
-            >
-              −
-            </button>
-            <span className="w-10 text-center font-mono tabular-nums text-foreground">
-              {mmss(restSeconds)}
-            </span>
-            <button
-              aria-label="dłuższa przerwa"
-              onClick={() => onAdjustRest(ex, 15)}
-              className="h-6 w-6 rounded border border-input active:bg-muted"
-            >
-              +
-            </button>
-          </div>
-
-          {noteOpen ?? !!ex.notes ? (
+          {/* Trigger otwarcia notatki żyje w ⋯ (R1) — tu tylko sam input, gdy
+              user go otworzył albo notatka już ma treść z wcześniej */}
+          {(noteOpen ?? !!ex.notes) && (
             <input
               defaultValue={ex.notes ?? ""}
               autoFocus={!!noteOpen}
@@ -260,16 +193,6 @@ export const ExerciseCard = memo(function ExerciseCard({
               onBlur={(e) => onPersistNotes(ex.sessionExerciseId, e.target.value)}
               className="w-full rounded-md border border-input bg-background px-sm py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
-          ) : (
-            <div>
-              <button
-                type="button"
-                onClick={() => onOpenNote(ex.sessionExerciseId)}
-                className="text-xs text-muted-foreground hover:text-foreground"
-              >
-                + notatka
-              </button>
-            </div>
           )}
 
           {(() => {
@@ -325,23 +248,10 @@ export const ExerciseCard = memo(function ExerciseCard({
             ))}
           </ul>
 
-          <div className="flex items-center gap-sm">
-            <Button variant="ghost" size="sm" className="flex-1" onClick={() => onAddSet(ex)}>
-              + seria
-            </Button>
-            {ex.type !== "timed" && (
-              <button
-                type="button"
-                onClick={() => onToggleRpe(ex.sessionExerciseId)}
-                title="RPE — ocena wysiłku 1–10 (ile powtórzeń zostało w zapasie). Opcjonalne."
-                className={`shrink-0 rounded-md px-2 py-1 text-xs ${
-                  rpeOn ? "text-primary" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {rpeOn ? "RPE ✓" : "+ RPE"}
-              </button>
-            )}
-          </div>
+          {/* RPE toggle przeniesiony do ⋯ (R1) — tu tylko "+ seria", pełna szerokość */}
+          <Button variant="ghost" size="sm" className="w-full" onClick={() => onAddSet(ex)}>
+            + seria
+          </Button>
         </>
       )}
     </section>

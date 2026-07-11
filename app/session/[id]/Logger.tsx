@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getKeepAwake } from "@/lib/prefs";
-import { Dumbbell, Timer } from "lucide-react";
+import { Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseCard } from "./ExerciseCard";
@@ -104,6 +105,9 @@ export function Logger({
   const [noteOpen, setNoteOpen] = useState<Record<string, boolean>>({});
   // Panel podmiany per ćwiczenie — trigger ⇄ w nagłówku karty (N2#5)
   const [swapOpen, setSwapOpen] = useState<Record<string, boolean>>({});
+  // R1 (audyt-loggera.md): ⋯ sesji w headerze — dziś tylko "Usuń sesję",
+  // docelowo edycja daty/reorder trafią tu też
+  const [sessionMenuOpen, setSessionMenuOpen] = useState(false);
   // Blokada wygaszania ekranu na czas aktywnego treningu (jeśli włączona w ustawieniach)
   useWakeLock(!isFinished && getKeepAwake());
 
@@ -170,6 +174,13 @@ export function Logger({
                 Zakończ
               </Button>
             )}
+            <button
+              onClick={() => setSessionMenuOpen(true)}
+              aria-label="Więcej akcji dla sesji"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+            >
+              <MoreVertical className="size-5" />
+            </button>
           </div>
         </div>
         <div className="mt-xs flex items-center gap-lg text-xs text-muted-foreground">
@@ -224,16 +235,28 @@ export function Logger({
         ))}
 
         <ExercisePicker sessionId={sessionId} />
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => handleDeleteSession({ sessionId, online })}
-          className="w-full text-danger"
-        >
-          Usuń sesję
-        </Button>
       </main>
+
+      {/* R1: "Usuń sesję" — akcja raz-na-miesiąc, dawniej zawsze widoczna
+          tuż pod pickerem (strefa eksploracji); teraz w ⋯ sesji z headera */}
+      <BottomSheet
+        open={sessionMenuOpen}
+        onOpenChange={setSessionMenuOpen}
+        title="Sesja"
+        description="Akcje dla całej sesji"
+      >
+        <button
+          type="button"
+          onClick={() => {
+            setSessionMenuOpen(false);
+            handleDeleteSession({ sessionId, online });
+          }}
+          className="flex h-11 w-full items-center gap-sm px-0 text-left text-sm text-danger"
+        >
+          <Trash2 className="size-4" aria-hidden />
+          Usuń sesję
+        </button>
+      </BottomSheet>
 
       {rest && (
         <RestTimer
