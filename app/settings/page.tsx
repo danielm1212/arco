@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { logout } from "@/app/login/actions";
+import { Button } from "@/components/ui/button";
 import { SettingsForm } from "./SettingsForm";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +30,13 @@ export default async function SettingsPage() {
           weeklyGoal={s?.weekly_goal ?? 2}
           displayName={s?.display_name ?? ""}
         />
+        {/* F1 (redesign-home.md §3.4): przeniesione z home — jedna ikona
+            wylogowania w apce, tu gdzie się jej realnie szuka */}
+        <form action={logout} className="mt-lg">
+          <Button variant="outline" type="submit" className="w-full text-danger">
+            Wyloguj
+          </Button>
+        </form>
       </main>
     </div>
   );

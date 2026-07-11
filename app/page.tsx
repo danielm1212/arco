@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { logout } from "@/app/login/actions";
 import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, Scale, Hourglass, TrendingDown, Lightbulb } from "lucide-react";
+import { Settings } from "lucide-react";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeGuidance } from "@/lib/getHomeGuidance";
 import { localDayKey } from "@/lib/week";
+import { DayPickerSheet } from "./DayPickerSheet";
+import { GuidanceChip } from "./GuidanceChip";
 
 export const dynamic = "force-dynamic";
 
@@ -157,16 +158,13 @@ export default async function HomePage() {
           <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-8 w-auto dark:block" />
         </span>
         <nav className="flex items-center">
+          {/* F1 (redesign-home.md §3.4): wylogowanie przeniesione do /settings —
+              raz-na-kwartał akcja nie zasługuje na drugą ikonę w headerze */}
           <Button variant="ghost" size="icon" aria-label="Ustawienia" asChild>
             <Link href="/settings">
               <Settings />
             </Link>
           </Button>
-          <form action={logout}>
-            <Button variant="ghost" size="icon" type="submit" aria-label="Wyloguj">
-              <LogOut />
-            </Button>
-          </form>
         </nav>
       </header>
 
@@ -242,147 +240,83 @@ export default async function HomePage() {
             <p className="font-semibold text-primary">Wznów trening →</p>
             <p className="text-sm text-muted-foreground">Masz niezakończoną sesję.</p>
           </Link>
-        ) : (
-          suggested && (
-            // Hero = powierzchnia BRANDOWA (sand, paleta §sand) — jedyna na tym ekranie
-            <div className="overflow-hidden rounded-xl bg-brand text-brand-foreground shadow-md">
-              <form action={startSession.bind(null, suggested.dayId)}>
-                <button type="submit" className="block w-full p-md text-left">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-brand-muted">Sugerowane dziś</span>
-                    <span className="flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                      Start →
-                    </span>
-                  </div>
-                  <p className="mt-sm text-2xl font-bold leading-tight">{suggested.label}</p>
-                  {suggestedMeta && (
-                    <>
-                      <p className="mt-2xs text-sm font-medium text-brand-muted">
-                        {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
+        ) : suggested ? (
+          // F1 (redesign-home.md V4): hero = BIAŁY kafel (nie sand) — hierarchię
+          // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.
+          <div className="overflow-hidden rounded-xl bg-card text-card-foreground shadow-md">
+            <form action={startSession.bind(null, suggested.dayId)}>
+              <button type="submit" className="block w-full p-md text-left">
+                <div className="flex items-center justify-between gap-sm">
+                  <span className="min-w-0 truncate text-xs font-medium text-muted-foreground">
+                    {activeProgram?.name}
+                  </span>
+                  <span className="shrink-0 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                    Start →
+                  </span>
+                </div>
+                <p className="mt-sm text-2xl font-bold leading-tight">
+                  Dziś · {suggested.label}
+                </p>
+                {suggestedMeta && (
+                  <>
+                    <p className="mt-2xs text-sm font-medium text-muted-foreground">
+                      {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
+                    </p>
+                    {suggestedMeta.preview.length > 0 && (
+                      <p className="mt-2xs truncate text-xs text-muted-foreground">
+                        {suggestedMeta.preview.join(" · ")}
+                        {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
                       </p>
-                      {suggestedMeta.preview.length > 0 && (
-                        <p className="mt-2xs truncate text-xs text-brand-muted">
-                          {suggestedMeta.preview.join(" · ")}
-                          {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
-                        </p>
-                      )}
-                    </>
-                  )}
+                    )}
+                  </>
+                )}
+              </button>
+            </form>
+            {/* F1 (§3.2): stopka hero przejmuje WSZYSTKIE alternatywy jako ciche
+                tekst-linki — koniec z trzema równorzędnymi drogami startu */}
+            <div className="flex items-center gap-md border-t px-md py-2 text-xs font-semibold text-primary">
+              <Link href={`/programs/${activeId}`} className="underline-offset-2 hover:underline">
+                Zobacz ćwiczenia
+              </Link>
+              {activeDays.length > 1 && (
+                <DayPickerSheet programName={activeProgram!.name} days={activeDays} />
+              )}
+              <form action={startFreestyle}>
+                <button type="submit" className="underline-offset-2 hover:underline">
+                  Freestyle
                 </button>
               </form>
-              {/* Podgląd bez startowania sesji (N2#3) — read-only lista dni/ćwiczeń */}
-              <Link
-                href={`/programs/${activeId}`}
-                className="block border-t border-brand-foreground/10 px-md py-2 text-xs font-semibold text-primary"
-              >
-                Zobacz ćwiczenia (bez startu) →
-              </Link>
             </div>
-          )
-        )}
-
-        {/* S14 #7: sekcja nie znika — pozytywny stan, żeby guidance było widoczne */}
-        {guidance.length === 0 && (sessionCount ?? 0) > 0 && (
-          <section className="space-y-2xs rounded-xl bg-card p-md shadow-sm">
-            <h2 className="text-sm font-semibold text-muted-foreground">Wskazówki</h2>
-            <p className="text-sm">Wszystko na torze 💪</p>
-            <p className="text-xs text-muted-foreground">
-              Trenuj zgodnie z planem — dam znać, gdy coś będzie wymagało uwagi (balans, przerwy, deload).
-            </p>
-          </section>
-        )}
-        {guidance.length > 0 && (
-          <section className="space-y-xs rounded-xl bg-card p-md shadow-sm">
-            <h2 className="text-sm font-semibold text-muted-foreground">Wskazówki</h2>
-            <ul className="space-y-2xs">
-              {guidance.map((g) => (
-                <li key={g.id} className="flex items-start gap-sm text-sm">
-                  <span aria-hidden className="mt-1 shrink-0 text-muted-foreground">
-                    {g.kind === "balance" ? (
-                      <Scale className="size-4" />
-                    ) : g.kind === "staleness" ? (
-                      <Hourglass className="size-4" />
-                    ) : g.kind === "deload" ? (
-                      <TrendingDown className="size-4" />
-                    ) : (
-                      <Lightbulb className="size-4" />
-                    )}
-                  </span>
-                  <span className="leading-6">{g.message}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="text-[10px] text-muted-foreground">
-              Podpowiedzi z Twoich danych — sugestia, nie nakaz. Pełny bilans na{" "}
-              <Link href="/progress" className="underline">
-                Postępach
-              </Link>
-              .
-            </p>
-          </section>
-        )}
-
-        <section className="space-y-sm">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-base font-semibold">Program</h2>
-            <Link href="/programs" className="text-xs text-primary">
-              {activeId ? "Zmień →" : "Biblioteka →"}
-            </Link>
           </div>
-
-          {activeProgram ? (
-            <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
-              <div className="flex items-center justify-between gap-sm">
-                {/* Nazwa = link do podglądu programu (N2#3) */}
-                <Link
-                  href={`/programs/${activeProgram.id}`}
-                  className="min-w-0 break-words font-medium underline-offset-2 hover:underline"
-                >
-                  {activeProgram.name}
-                </Link>
-                <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
-                  Aktywny
-                </span>
-              </div>
-              <ul className="space-y-2xs">
-                {activeDays.map((d) => (
-                  <li key={d.id}>
-                    <form action={startSession.bind(null, d.id)}>
-                      <Button
-                        variant="secondary"
-                        type="submit"
-                        className="w-full justify-between"
-                      >
-                        <span>{d.label}</span>
-                        <span className="text-xs text-muted-foreground">Start →</span>
-                      </Button>
-                    </form>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            /* S14 #1: obietnica wartości + jeden krok zamiast szarej ramki */
-            <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
-              <p className="text-lg font-bold">Zacznij od planu</p>
+        ) : (
+          /* Pusty stan (redesign-home.md §3.6, wariant B — bez zapamiętanej
+             sugestii z onboardingu; wariant A wymaga persystencji poziom/
+             środowisko z WelcomeOverlay, nie w tym zakresie, patrz HANDOFF) */
+          <div className="space-y-sm">
+            <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-md">
+              <p className="text-2xl font-bold leading-tight">Zacznij od planu</p>
               <p className="text-sm text-muted-foreground">
-                6 programów od trenera — wybierz swój, a apka poprowadzi Cię serię po serii.
+                8 programów od trenera — wybierz swój, a apka poprowadzi Cię serię po serii.
               </p>
               <Button asChild className="w-full">
                 <Link href="/programs">Wybierz program →</Link>
               </Button>
             </div>
-          )}
-        </section>
+            <form action={startFreestyle}>
+              <button
+                type="submit"
+                className="block w-full rounded-xl bg-card p-md text-left text-sm font-medium shadow-sm"
+              >
+                Freestyle
+                <span className="block text-xs font-normal text-muted-foreground">
+                  Zacznij bez planu — dodawaj ćwiczenia w trakcie
+                </span>
+              </button>
+            </form>
+          </div>
+        )}
 
-        <section className="space-y-sm">
-          <h2 className="text-base font-semibold">Bez programu</h2>
-          <form action={startFreestyle}>
-            <Button variant="outline" type="submit" className="w-full">
-              Start freestyle
-            </Button>
-          </form>
-        </section>
+        <GuidanceChip items={guidance} />
       </main>
     </div>
   );
