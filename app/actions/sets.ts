@@ -156,6 +156,58 @@ export async function setSessionExerciseSkipped(
   revalidatePath(`/session/${sessionId}`);
 }
 
+/**
+ * R7 (audyt-loggera.md §6): przenieś ćwiczenie o jedną pozycję w górę/dół.
+ * Jednostka przesunięcia = ćwiczenie LUB cała grupa supersetu (zgrupowane
+ * sąsiednie wiersze przesuwają się razem — reorder nie może rozrywać pary,
+ * spójne z R6). Bez dnd-liba: `position` już w schemacie, przenumerowanie
+ * całej (małej) listy sesji jest tanie.
+ */
+export async function reorderExercise(
+  sessionId: string,
+  sessionExerciseId: string,
+  direction: "up" | "down",
+) {
+  const supabase = await db();
+  const { data: rows, error } = await supabase
+    .from("session_exercises")
+    .select("id, position, superset_group")
+    .eq("session_id", sessionId)
+    .order("position");
+  if (error) throw new Error(error.message);
+  const list = rows ?? [];
+
+  // Bloki = maksymalne przebiegi SĄSIEDNICH wierszy tej samej niepustej grupy.
+  // Singletony i (rzadki przypadek) niesąsiadująca grupa zostają osobnymi blokami.
+  const blocks: typeof list[] = [];
+  for (const row of list) {
+    const last = blocks[blocks.length - 1];
+    if (last && row.superset_group != null && last[0].superset_group === row.superset_group) {
+      last.push(row);
+    } else {
+      blocks.push([row]);
+    }
+  }
+
+  const blockIndex = blocks.findIndex((b) => b.some((r) => r.id === sessionExerciseId));
+  if (blockIndex === -1) return;
+  const targetIndex = direction === "up" ? blockIndex - 1 : blockIndex + 1;
+  if (targetIndex < 0 || targetIndex >= blocks.length) return; // już na skraju — no-op
+
+  [blocks[blockIndex], blocks[targetIndex]] = [blocks[targetIndex], blocks[blockIndex]];
+
+  const flat = blocks.flat();
+  for (let i = 0; i < flat.length; i++) {
+    if (flat[i].position === i) continue;
+    const { error: updErr } = await supabase
+      .from("session_exercises")
+      .update({ position: i })
+      .eq("id", flat[i].id);
+    if (updErr) throw new Error(updErr.message);
+  }
+  revalidatePath(`/session/${sessionId}`);
+}
+
 /** Usuń ćwiczenie z sesji (kaskadowo serie). */
 export async function deleteSessionExercise(sessionId: string, sessionExerciseId: string) {
   const supabase = await db();

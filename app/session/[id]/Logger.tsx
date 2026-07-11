@@ -2,12 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getKeepAwake } from "@/lib/prefs";
 import { ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { reorderExercise } from "@/app/actions/sets";
+import { ensureOnline } from "@/lib/offlineGuard";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseCard } from "./ExerciseCard";
@@ -115,6 +118,16 @@ export function Logger({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [summaryKey],
   );
+
+  // R7 (audyt-loggera.md §6): przenieś ⋯ wyżej/niżej — serwer przenumerowuje
+  // `position` (jednostka = ćwiczenie LUB cała grupa SS), router.refresh()
+  // dociąga nowy porządek. Reorder idzie przez sieć (jak swap/skip) — offline-guard.
+  function moveExercise(seId: string, direction: "up" | "down") {
+    if (!ensureOnline("zmiana kolejności ćwiczeń")) return;
+    reorderExercise(sessionId, seId, direction)
+      .then(() => router.refresh())
+      .catch(() => toast.error("Nie zapisano — sprawdź połączenie i spróbuj ponownie."));
+  }
 
   // RPE domyślnie ukryte (opcjonalne) — odsłaniane per ćwiczenie na czas sesji
   const [rpeOn, setRpeOn] = useState<Record<string, boolean>>({});
@@ -256,6 +269,7 @@ export function Logger({
             onDeleteExercise={handleDeleteExercise}
             onLinkPartner={linkWithPartner}
             onUnlink={unlink}
+            onMove={moveExercise}
             onAdjustRest={adjustRest}
             onOpenNote={(id) => setNoteOpen((o) => ({ ...o, [id]: true }))}
             onPersistNotes={persistNotes}

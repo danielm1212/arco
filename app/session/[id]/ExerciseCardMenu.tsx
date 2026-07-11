@@ -5,6 +5,8 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import {
   ArrowLeftRight,
   ArrowLeft,
+  ArrowUp,
+  ArrowDown,
   Timer,
   Link2,
   Unlink,
@@ -42,6 +44,8 @@ export function ExerciseCardMenu({
   onDeleteExercise,
   onLinkWith,
   onUnlink,
+  onMoveUp,
+  onMoveDown,
   onAdjustRest,
   onOpenNote,
   onToggleRpe,
@@ -59,6 +63,8 @@ export function ExerciseCardMenu({
   onDeleteExercise: () => void;
   onLinkWith: (partnerIndex: number) => void;
   onUnlink: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   onAdjustRest: (delta: number) => void;
   onOpenNote: () => void;
   onToggleRpe: () => void;
@@ -151,6 +157,14 @@ export function ExerciseCardMenu({
                 onClick={() => setView("partner")}
               />
             )
+          )}
+          {/* R7 (audyt-loggera.md §6): jednostka przesunięcia = to ćwiczenie LUB
+              cała grupa SS (serwer przenosi blok, nie pojedynczy wiersz) */}
+          {index > 0 && (
+            <MenuItem icon={ArrowUp} label="Przenieś wyżej" onClick={() => act(onMoveUp)} />
+          )}
+          {index < exerciseSummaries.length - 1 && (
+            <MenuItem icon={ArrowDown} label="Przenieś niżej" onClick={() => act(onMoveDown)} />
           )}
           <li className="flex items-center justify-between px-md py-sm">
             <span className="flex items-center gap-sm text-sm">

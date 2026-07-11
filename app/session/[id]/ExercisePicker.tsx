@@ -5,8 +5,17 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { addSessionExercise } from "@/app/actions/sets";
 import { ensureOnline } from "@/lib/offlineGuard";
+import { getReorderHintSeen, setReorderHintSeen } from "@/lib/prefs";
 import { Button } from "@/components/ui/button";
 import { ExerciseBrowser } from "./ExerciseBrowser";
+
+// R7 (audyt-loggera.md §6): jednorazowa edukacja gestu — dodane ćwiczenie ląduje
+// na końcu, a reorder (⋯ → Przenieś wyżej/niżej) żyje na karcie, nie tutaj.
+function maybeShowReorderHint() {
+  if (getReorderHintSeen()) return;
+  setReorderHintSeen(true);
+  toast("Dodane na końcu — przenieś ⋯, jeśli chcesz wcześniej");
+}
 
 export function ExercisePicker({ sessionId }: { sessionId: string }) {
   const router = useRouter();
@@ -20,6 +29,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
         await addSessionExercise(sessionId, id);
         setOpen(false);
         router.refresh();
+        maybeShowReorderHint();
       } catch {
         toast.error("Nie udało się dodać ćwiczenia.");
       }
@@ -35,6 +45,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
         toast.success(`Dodano ${ids.length} ćw.`);
         setOpen(false);
         router.refresh();
+        maybeShowReorderHint();
       } catch {
         toast.error("Nie udało się dodać wszystkich ćwiczeń.");
         router.refresh();

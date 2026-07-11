@@ -47,6 +47,8 @@ export interface ExerciseCardProps {
   onDeleteExercise: (seId: string) => void;
   onLinkPartner: (index: number, partnerIndex: number) => void;
   onUnlink: (index: number) => void;
+  /** R7: przenieś ⋯ wyżej/niżej (jednostka = ćwiczenie lub cała grupa SS). */
+  onMove: (seId: string, direction: "up" | "down") => void;
   onAdjustRest: (ex: LoggerExercise, delta: number) => void;
   onOpenNote: (seId: string) => void;
   onPersistNotes: (seId: string, notes: string) => void;
@@ -84,6 +86,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   onDeleteExercise,
   onLinkPartner,
   onUnlink,
+  onMove,
   onAdjustRest,
   onOpenNote,
   onPersistNotes,
@@ -171,6 +174,8 @@ export const ExerciseCard = memo(function ExerciseCard({
         onDeleteExercise={() => onDeleteExercise(ex.sessionExerciseId)}
         onLinkWith={(partnerIndex) => onLinkPartner(index, partnerIndex)}
         onUnlink={() => onUnlink(index)}
+        onMoveUp={() => onMove(ex.sessionExerciseId, "up")}
+        onMoveDown={() => onMove(ex.sessionExerciseId, "down")}
         onAdjustRest={(delta) => onAdjustRest(ex, delta)}
         onOpenNote={() => onOpenNote(ex.sessionExerciseId)}
         onToggleRpe={() => onToggleRpe(ex.sessionExerciseId)}
