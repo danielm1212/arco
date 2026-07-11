@@ -36,6 +36,14 @@ Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem
 
 **Odrzucony pomysł (2026-07-05):** równoległy schemat `content_programs`/`content_sessions`/`content_program_exercises` (Program/Session/ProgramExercise z enumami pattern/target, bez FK do `exercises`) dla contentowego seeda z Markdownu. Właściciel uznał to za nadmiarowe — wystarczył istniejący pipeline. Nie odtwarzać bez wyraźnej nowej decyzji.
 
+**Zrobione (2026-07-11 · XIII) — BUGFIXY Z DOGFOODINGU (feedback #2, `c40efb4`).**
+- **Nowy wspólny komponent `components/ui/bottom-sheet.tsx`** (vaul, `handleOnly`+`Drawer.Handle`) — naprawia u źródła konflikt scroll/przeciągnij-zamknij, który dotykał KAŻDEGO sheeta w apce, nie tylko tego jednego zgłoszonego. `ExerciseInfoSheet` i `SwapPanel` (dotąd inline panel bez zamknięcia) przepisane na wspólny komponent.
+- **Waga po przecinku** — `input[type=number]` blokował przecinek na poziomie DOM; przejście na `type="text"` z odsprzęgniętym lokalnym stanem tekstu (inaczej React zjadał "22," → "22" w trakcie pisania — number ma na to wyjątek w silniku, text nie).
+- **Touch targety w loggerze** — ✓ 40→44px, ✕ pełna 44px hit-area, gap między wierszami serii 4→8px (mechanizm mylenia rzędów).
+- **Top bar na dacie** — sprawdzone na wszystkich ekranach, nie reprodukuje się w przeglądarce; prawdopodobnie już pokryte przez wcześniejszy safe-area fix (`bdeb477`) na `<body>` — **do potwierdzenia na telefonie z notchem**.
+- Zdjęcie-nakładka po treningu (Strava-style) — świadomie zostawione jako backlog/feature, nie wchodziło w scope bugfixów.
+- Zweryfikowane w Preview end-to-end (scroll bez auto-close, X/tło zamykają sheet, "22,5"→DB `22.5`, ✓ 44×44px), tsc+build ✓, smoke 3/3, sesja testowa sprzątnięta po ID. Szczegóły: `docs/feedback-uzytkownikow.md` #2.
+
 **Zrobione (2026-07-11 · XII) — S10 KOMPLETNY (offline correctness + audyt longevity).**
 - **Offline-guardy** (`lib/offlineGuard.ts`): `ensureOnline()` wpięty w `SwapPanel.pick`, `ExercisePicker.pick`/`pickMany`, `useSessionMutations.handleSkip` — offline pokazuje czytelny komunikat zamiast cichego/generycznego błędu z catch. Serie NIE dotknięte (mają już outbox z S9-cz.2). Zweryfikowane w Preview z `navigator.onLine=false`: skip pokazał toast i nie zaaplikował zmiany; add-picker nie wysłał POST-a (network log czysty przy offline) — identyczna implementacja jak zweryfikowany wizualnie skip.
 - **CSP Report-Only** (`next.config.mjs`): `default-src 'self'` + dozwolone Supabase (connect/img) i hotlink `raw.githubusercontent.com`; nagłówek potwierdzony na `next start`. Enforce dopiero S11, po przejrzeniu realnych naruszeń w DevTools.
