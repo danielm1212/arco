@@ -116,17 +116,20 @@ export const ExerciseCard = memo(function ExerciseCard({
         <div className="min-w-0">
           {/* flex zamiast inline-w-<p>: przy długiej nazwie wcześniej zawijała się
               CAŁA linia i ⓘ+badge SS spadały pod tekst (feedback 2026-07-11) —
-              teraz nazwa się truncate'uje, ⓘ i badge zawsze zostają obok. */}
+              teraz nazwa się truncate'uje, ⓘ i badge zawsze zostają obok.
+              R5 (F7+F9): nazwa czystym tekstem — na dotyku hover nie istnieje,
+              affordance robi wyłącznie ⓘ; aria-label zamiast title (tooltipy
+              title= niedostępne na dotyku). */}
           <div className="flex items-center gap-xs">
+            <span className="min-w-0 truncate font-medium">{ex.name}</span>
             {/* key = remount po podmianie (N2#4) — zero szans na stary cache opisu */}
             <ExerciseInfoSheet key={ex.exerciseId} exerciseId={ex.exerciseId}>
               <button
                 type="button"
-                className="flex min-w-0 items-center gap-1 text-left"
-                title="Jak wykonać"
+                aria-label="Jak wykonać"
+                className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground"
               >
-                <span className="truncate font-medium">{ex.name}</span>
-                <Info className="size-3.5 shrink-0 text-muted-foreground" />
+                <Info className="size-3.5" aria-hidden />
               </button>
             </ExerciseInfoSheet>
             {grouped && (
@@ -191,8 +194,10 @@ export const ExerciseCard = memo(function ExerciseCard({
       )}
 
       {ex.skipped ? (
+        // R5 (F9): copy odświeżone pod R1 — akcja żyje teraz w ⋯, nie na karcie;
+        // zniknęły też zagnieżdżone cudzysłowy z poprzedniej wersji
         <p className="text-xs italic text-muted-foreground">
-          Pominięte w tej sesji — tap „Przywróć”, żeby wrócić.
+          Pominięte w tej sesji — przywróć przez ⋯.
         </p>
       ) : (
         <>

@@ -100,7 +100,9 @@ export const SetRow = memo(function SetRow({
           ↺ {prevText}
         </button>
       )}
-      {/* Jawny przełącznik typu serii — obramowany, więc widać że klikalny */}
+      {/* Jawny przełącznik typu serii — obramowany, więc widać że klikalny.
+          R5 (F9): aria-label obok title — samo title jest niedostępne na dotyku,
+          a widoczna treść przycisku ("W"/numer) nie tłumaczy się sama. */}
       <button
         onClick={() => {
           const next: SetType = isWarmup ? "working" : "warmup";
@@ -112,6 +114,7 @@ export const SetRow = memo(function SetRow({
             ? "border-warning bg-warning/15 text-warning"
             : "border-input text-muted-foreground"
         }`}
+        aria-label={isWarmup ? "rozgrzewkowa (tap → robocza)" : "robocza (tap → rozgrzewkowa)"}
         title={isWarmup ? "rozgrzewkowa (tap → robocza)" : "robocza (tap → rozgrzewkowa)"}
       >
         {isWarmup ? "W" : index}
