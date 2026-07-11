@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 import { AppChrome } from "@/components/AppChrome";
@@ -11,6 +12,19 @@ import "./globals.css";
 const dmSans = DM_Sans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
+});
+
+// Gambarino (decyzja 2026-07-11, roadmap.md) — WYŁĄCZNIE momenty (celebracja/PR/
+// recap/trial/hero/landing), nigdy UI narzędzia. Self-host z vendor/ (licencja ITF
+// FFL przez Fontshare, zweryfikowana — bez zależności od Adobe CC). Jeden statyczny
+// plik (nie next/font/google) bo to font spoza Google Fonts — next/font/local i tak
+// go subsetuje/self-hostuje przy buildzie tak samo jak DM Sans.
+const gambarino = localFont({
+  src: "../vendor/gambarino/Gambarino-Regular.woff2",
+  variable: "--font-display",
+  weight: "400",
+  style: "normal",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -46,6 +60,7 @@ export default function RootLayout({
       <body
         className={cn(
           dmSans.variable,
+          gambarino.variable,
           "min-h-dvh pt-[env(safe-area-inset-top)] font-sans antialiased",
         )}
       >

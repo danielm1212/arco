@@ -116,9 +116,10 @@ export default async function SessionDonePage({ params }: { params: { id: string
   return (
     <div className="bg-brand text-brand-foreground">
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-xl p-lg text-center">
-      {/* Hero — liczba-bohater */}
+      {/* Hero — liczba-bohater. font-display (Gambarino, 2026-07-11): pierwszy
+          z 3 ekranów testowych z roadmap.md (celebracja/kłódka premium/recap) */}
       <div>
-        <p className="text-6xl font-bold leading-none tabular-nums text-primary">
+        <p className="font-display text-6xl leading-none tabular-nums text-primary">
           {Math.round(volume).toLocaleString("pl-PL")}
           <span className="text-2xl font-semibold"> {unit}</span>
         </p>

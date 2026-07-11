@@ -17,6 +17,8 @@ const config: Config = {
       fontFamily: {
         // bez tego mapowania klasa `font-sans` ignorowała font z next/font (bug od startu)
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        // Gambarino — TYLKO momenty (celebracja/PR/recap/trial/hero/landing), nigdy UI
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
