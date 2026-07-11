@@ -14,6 +14,7 @@ import { ensureOnline } from "@/lib/offlineGuard";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseCard } from "./ExerciseCard";
+import { FinishSheet } from "./FinishSheet";
 import type { PrevSet } from "./SetRow";
 import { useRestTimer } from "./useRestTimer";
 import { useSessionOutbox } from "./useSessionOutbox";
@@ -138,6 +139,8 @@ export function Logger({
   // R1 (audyt-loggera.md): ⋯ sesji w headerze — dziś tylko "Usuń sesję",
   // docelowo edycja daty/reorder trafią tu też
   const [sessionMenuOpen, setSessionMenuOpen] = useState(false);
+  // R4: finish-sheet zamiast confirm() — otwierany tylko gdy są niezaliczone serie
+  const [finishSheetOpen, setFinishSheetOpen] = useState(false);
   // Blokada wygaszania ekranu na czas aktywnego treningu (jeśli włączona w ustawieniach)
   useWakeLock(!isFinished && getKeepAwake());
 
@@ -156,6 +159,11 @@ export function Logger({
 
   // Live podsumowanie z lokalnego stanu
   const doneSets = exercises.reduce((n, ex) => n + ex.sets.filter((s) => s.completed).length, 0);
+  // R4: seria niezaliczone = kandydat do finish-sheeta zamiast confirm()
+  const incompleteSets = exercises.reduce(
+    (n, ex) => n + ex.sets.filter((s) => !s.completed).length,
+    0,
+  );
   const volume = exercises.reduce(
     (n, ex) =>
       n +
@@ -216,7 +224,11 @@ export function Logger({
                 size="sm"
                 variant="outline"
                 className="text-primary"
-                onClick={() => handleFinish({ sessionId, exercises, online, flush })}
+                onClick={() =>
+                  incompleteSets > 0
+                    ? setFinishSheetOpen(true)
+                    : handleFinish({ sessionId, exercises, online, flush })
+                }
               >
                 Zakończ
               </Button>
@@ -306,6 +318,15 @@ export function Logger({
           Usuń sesję
         </button>
       </BottomSheet>
+
+      <FinishSheet
+        open={finishSheetOpen}
+        onOpenChange={setFinishSheetOpen}
+        doneSets={doneSets}
+        incompleteSets={incompleteSets}
+        minutes={Math.floor(elapsed / 60)}
+        onConfirm={() => handleFinish({ sessionId, exercises, online, flush })}
+      />
 
       {rest && (
         <RestTimer

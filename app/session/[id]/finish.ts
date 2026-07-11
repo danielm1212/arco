@@ -8,6 +8,8 @@ import type { LoggerExercise } from "./Logger";
 /**
  * Zakończenie / usunięcie sesji z walidacjami (offline, zaległy outbox).
  * S9-cz.2 paczka 3: przeniesione 1:1 z Logger.tsx (bez zmiany zachowania).
+ * R4 (audyt-loggera.md F4): decyzja "są niezaliczone serie, kontynuować?" żyje
+ * teraz w FinishSheet (wywoływana PRZED tą funkcją) — tu tylko sam finish.
  */
 export async function handleFinish(args: {
   sessionId: string;
@@ -15,9 +17,7 @@ export async function handleFinish(args: {
   online: boolean;
   flush: () => Promise<void>;
 }) {
-  const { sessionId, exercises, online, flush } = args;
-  const incomplete = exercises.some((ex) => ex.sets.some((s) => !s.completed));
-  if (incomplete && !confirm("Masz niezaznaczone serie. Zakończyć trening mimo to?")) return;
+  const { sessionId, online, flush } = args;
   if (!online) {
     toast.error("Jesteś offline. Serie są zapisane lokalnie — zakończ, gdy wróci sieć.");
     return;
