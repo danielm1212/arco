@@ -107,7 +107,7 @@ export const SetRow = memo(function SetRow({
           onPatch({ set_type: next });
           onPersist({ set_type: next });
         }}
-        className={`h-11 w-7 shrink-0 rounded-md border text-xs font-medium tabular-nums ${
+        className={`h-11 w-9 shrink-0 rounded-md border text-xs font-medium tabular-nums ${
           isWarmup
             ? "border-warning bg-warning/15 text-warning"
             : "border-input text-muted-foreground"
@@ -197,12 +197,12 @@ export const SetRow = memo(function SetRow({
       >
         ✓
       </button>
-      {/* hit-area 44px pełną wysokością wiersza mimo wąskiej wizualnej szerokości —
-          padding zamiast szerokości, żeby nie ściskać pól wagi/powtórzeń obok */}
+      {/* R3 (audyt-loggera.md F3): w-11 zamiast w-9 — pełny 44×44 target jak ✓,
+          nie tylko wysokość (feedback 2026-07-11: "trzeba wyrównać") */}
       <button
         onClick={onDelete}
         aria-label="Usuń serię"
-        className="flex h-11 w-9 shrink-0 items-center justify-center text-xs text-muted-foreground hover:text-danger"
+        className="flex h-11 w-11 shrink-0 items-center justify-center text-xs text-muted-foreground hover:text-danger"
       >
         ✕
       </button>

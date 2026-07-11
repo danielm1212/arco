@@ -219,7 +219,7 @@ export const ExerciseCard = memo(function ExerciseCard({
 
           {ex.sets.length > 0 && (
             <div className="flex items-center gap-xs px-px text-[10px] uppercase tracking-wide text-muted-foreground">
-              <span className="w-7 shrink-0 text-center">#</span>
+              <span className="w-9 shrink-0 text-center">#</span>
               {ex.type === "timed" ? (
                 <span className="flex-1 text-center">czas</span>
               ) : ex.type === "bodyweight" ? (
@@ -234,10 +234,10 @@ export const ExerciseCard = memo(function ExerciseCard({
                 </>
               )}
               {ex.type !== "timed" && rpeOn && <span className="w-16 text-center">RPE</span>}
-              {/* w-11/w-9 = dokładna szerokość ✓/✕ w SetRow (były w-10/w-4 — nagłówek
-                  KG/POWT. nie celował w środek pól, feedback 2026-07-11) */}
+              {/* w-11+w-11 = dokładna szerokość ✓/✕ w SetRow (R3: oba 44×44 — nagłówek
+                  KG/POWT. musi celować w środek pól, feedback 2026-07-11) */}
               <span className="w-11 shrink-0" />
-              <span className="w-9 shrink-0" />
+              <span className="w-11 shrink-0" />
             </div>
           )}
 
