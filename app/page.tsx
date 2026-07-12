@@ -147,10 +147,9 @@ export default async function HomePage() {
         eligible={(sessionCount ?? 0) === 0}
         unit={settings?.unit_system ?? "kg"}
         weeklyGoal={settings?.weekly_goal ?? 2}
-        programs={((programs ?? []) as { id: string; name: string }[]).map((p) => ({
-          id: p.id,
-          name: p.name,
-        }))}
+        programs={((programs ?? []) as { id: string; name: string; days_per_week: number }[]).map(
+          (p) => ({ id: p.id, name: p.name, days_per_week: p.days_per_week }),
+        )}
       />
       <header className="flex items-center justify-between border-b px-sm py-sm">
         <span className="pl-2xs">
@@ -173,7 +172,7 @@ export default async function HomePage() {
       <main className="flex-1 space-y-lg p-md">
         {/* Powitanie z imieniem (S7) — tylko gdy ustawione */}
         {settings?.display_name && (
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-2xl font-semibold tracking-tight">
             Cześć, {settings.display_name} 👋
           </h1>
         )}
@@ -207,7 +206,7 @@ export default async function HomePage() {
                     Start →
                   </span>
                 </div>
-                <p className="mt-sm text-2xl font-bold leading-tight">
+                <p className="mt-sm text-2xl font-semibold leading-tight">
                   Dziś · {suggested.label}
                 </p>
                 {suggestedMeta && (
@@ -247,7 +246,7 @@ export default async function HomePage() {
              środowisko z WelcomeOverlay, nie w tym zakresie, patrz HANDOFF) */
           <div className="space-y-sm">
             <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-md">
-              <p className="text-2xl font-bold leading-tight">Zacznij od planu</p>
+              <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
               <p className="text-sm text-muted-foreground">
                 8 programów od trenera — wybierz swój, a apka poprowadzi Cię serię po serii.
               </p>
