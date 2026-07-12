@@ -9,7 +9,7 @@
 
 **3dicons.co — zweryfikowane 2026-07-08:** licencja **CC0** (komercyjnie, bez atrybucji), ~200 ikon / 1400+ renderów, źródła Figma + Blender, **edytor online koloru i kąta** (early access). Styl już jest miękki/clay-owy — idealna baza.
 
-- ✅ **Bierzemy z 3dicons (generyczne momenty):** Trophy (PR/celebracja), Medal (rekordy), Target (cel tygodniowy), Calendar (historia/passa), Bell/Call ringing (nudge), Lock (kłódka premium — fala 2), Rocket (onboarding/start), Gift Box (trial), Chat bubble/Thumb up (reakcje w podach), Fire — jeśli jest w secie (passa).
+- ✅ **Bierzemy z 3dicons (generyczne momenty):** Trophy (PR/celebracja), Medal (rekordy), Target (cel tygodniowy), Calendar (historia/passa), Bell/Call ringing (nudge), Lock (kłódka premium — fala 2), Rocket (onboarding/start), Gift Box (trial), Chat bubble/Thumb up (reakcje w ekipach), Fire — jeśli jest w secie (passa).
 - ❌ **Czego 3dicons NIE ma:** hantel, ławka, kettlebell, talerz — zestaw jest generyczny (biuro/social/commerce). **Gym-set robimy AI** (prompty §4) i przepuszczamy przez ten sam color-pass, żeby siedział obok 3dicons bez zgrzytu.
 - Alternatywy rozważone: icons8 3D (płatne/atrybucja — odpada przy CC0 na stole), Spline community (licencje mieszane — ryzyko), pełne AI (spójność z generycznymi trzeba by budować od zera). **Hybryda wygrywa:** darmowa baza + AI tylko tam, gdzie trzeba.
 - Opcja ambitniejsza (później): domodelować 4 gym-obiekty w Blenderze na scenie świateł 3dicons (źródła CC0) — 100% spójności. Nie blokuje startu.
@@ -81,6 +81,6 @@ Zasady serii: generuj po 4–6 wariantów na obiekt, wybieraj **jeden wspólny j
 | Calendar/Fire (3dicons) | passa, historia empty state |
 | Lock (3dicons) | kłódka historii (fala 2) — z copy z `tone-of-voice.md` §3 |
 | Kettlebell / Ławka / Talerz | onboarding (wybór środowiska: dom/siłownia/masa ciała), celebracje |
-| Bell (3dicons) | nudge / skrzynka (pody, Krok 4) |
+| Bell (3dicons) | nudge / skrzynka (ekipy, Krok 4) |
 
 **Twardy limit z wizji:** ikony 3D nie wchodzą do nawigacji dziennej ani list. Jak coś potrzebuje ikony w UI narzędzia → lucide (płaskie), nie clay.

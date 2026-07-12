@@ -6,7 +6,7 @@ MVP + rozszerzenia gotowe i działające: Phase 0–4 + biblioteka programów, c
 - Plan/sprinty: **`docs/roadmap.md`** (horyzonty + długa wizja) + **`docs/sprinty-szczegolowe.md`** (podział Claude/Ty + prompty assetów)
 
 ## Źródło prawdy (w tej kolejności — addendum i roadmap EWOLUUJĄ stary brief)
-1. **`docs/wizja-i-plan-produktu-v2.md`** (2026-07-08) — KANON produktowo-biznesowy: wizja, model freemium (Z1–Z3, limity+wartość, 14,99/99 zł, reverse trial 21 dni), **pody = silnik wzrostu (fast-follow po launchu)**, **warstwa trenerska ODŁOŻONA**, sekwencja Kroków 0–5, bramki B1–B4, art direction retro-analog Warm (§1.2). Nadpisuje `monetyzacja.md` (model/sekwencja/R3) i tabelę moatów z `konkurencja-hevy.md`.
+1. **`docs/wizja-i-plan-produktu-v2.md`** (2026-07-08) — KANON produktowo-biznesowy: wizja, model freemium (Z1–Z3, limity+wartość, 14,99/99 zł, reverse trial 21 dni), **ekipa (dawniej „pody") = silnik wzrostu (fast-follow po launchu)**, **warstwa trenerska ODŁOŻONA**, sekwencja Kroków 0–5, bramki B1–B4, art direction retro-analog Warm (§1.2). Nadpisuje `monetyzacja.md` (model/sekwencja/R3) i tabelę moatów z `konkurencja-hevy.md`.
 2. **`docs/build-brief-v0.3-addendum.md`** — NADPISUJE brief v0.2 w wymienionych punktach (descope talerzy, reguła „kto/kiedy", repriorytety, walidacja).
 3. **`docs/build-brief-apka-treningowa-v0.2.md`** — bazowa specyfikacja (model danych, programy FBW). Obowiązuje tam, gdzie addendum nie nadpisuje.
 4. **`docs/roadmap.md`** — kierunek i horyzonty (zrewidowane 2026-07-08 pod wizję v2). `docs/seed-prompt-fbw.md` — seed.
@@ -32,11 +32,11 @@ Jedna tablica prawdy dla Daniela: Notion **„ARCO — Baza pomysłów"** (data 
 **Do Notion wypychaj TYLKO gdy Daniel o to poprosi** („zsynchronizuj Notion" / „zaktualizuj Notion" / podobne). Wtedy: flush całej kolejki z `docs/notion-sync-queue.md` (wszystkie zaległe wpisy jedną turą wywołań), ustaw Etapy wg reguły (`Do testu [Ty]` / `Done` / `In Progress` / `Refinement` — jak dotychczas), wyczyść kolejkę.
 
 ## Zakres — zmienione vs brief v0.2 (żeby się nie odbijać od starego; rewizja 2026-07-08 wg wizji v2)
-- **Sekwencja po H1–H2:** bramka kont+RODO (Krok 2, rozszerzona o zgodę podową/wiek 16+/e-mail) → **launch z pełnym freemium od dnia zero** (Krok 3) → **pody jako fast-follow 4–8 tyg. po launchu** (Krok 4, silnik wzrostu — już NIE Horyzont 5). Reszta socialu (stories, UGC, tablica) dalej H5.
-- **Odłożone (nie skreślone):** warstwa trenerska (warunki re-otwarcia: wizja v2 §9; architektonicznie nie zamykać drogi) · natyw iOS/Android (jedyny wyjątek re-oceny: TWA, gdy iOS dusi pętlę podów).
+- **Sekwencja po H1–H2:** bramka kont+RODO (Krok 2, rozszerzona o zgodę ekipową/wiek 16+/e-mail) → **launch z pełnym freemium od dnia zero** (Krok 3) → **ekipy jako fast-follow 4–8 tyg. po launchu** (Krok 4, silnik wzrostu — już NIE Horyzont 5). Reszta socialu (stories, UGC, tablica) dalej H5.
+- **Odłożone (nie skreślone):** warstwa trenerska (warunki re-otwarcia: wizja v2 §9; architektonicznie nie zamykać drogi) · natyw iOS/Android (jedyny wyjątek re-oceny: TWA, gdy iOS dusi pętlę ekip).
 - **Trwale poza zakresem:** AI auto-programming (manualny silnik podmiany to świadomy wyróżnik), makro/dieta, wearables/HRV, publiczny feed, komentarze, DM, marketplace programów.
 - **Descoped (usunięte):** kalkulator talerzy + ustawienia gryf/talerze — apka jest dumbbell-first.
-- **Zasady niepodważalne modelu (Z1–Z3, wizja v2 §2):** rdzeń pętli logowania zawsze darmowy · pody/zaproszenia/nudge zawsze darmowe · limitujemy dostęp, nie dane (nic nie kasujemy; eksport RODO zawsze darmowy). Każda decyzja produktowa/kodowa musi je respektować.
+- **Zasady niepodważalne modelu (Z1–Z3, wizja v2 §2):** rdzeń pętli logowania zawsze darmowy · ekipy/zaproszenia/nudge zawsze darmowe · limitujemy dostęp, nie dane (nic nie kasujemy; eksport RODO zawsze darmowy). Każda decyzja produktowa/kodowa musi je respektować.
 
 ## Kierunek wizualny — „Arco Warm" (DECYZJA właściciela 2026-07-04; zastępuje „Athletic")
 > **Rozszerzenie 2026-07-08 (wizja v2 §1.2): retro-analog Warm, architektura dwuwarstwowa.** Warstwa komunikacji (landing/social/momenty) = retro: ziarno, fotografia analogowa, display-typografia. Warstwa narzędzia (UI apki) = czysty minimal — ziarniste zdjęcia NIE wchodzą do UI jako tła. Ikony 3D: matowe/clay w terracotta/krem (metalik odrzucony), mały kurowany zestaw, tylko empty states/onboarding/celebracje. Zdjęcia ćwiczeń (AI-grading): ten sam warm/analog look, priorytet top ~200.

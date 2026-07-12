@@ -1,6 +1,6 @@
 # Arco — strategia monetyzacji (fundament)
 
-> ⚠️ **AKTUALIZACJA 2026-07-08:** w zakresie **modelu (podział free/paid, cennik, trial), sekwencji wykonawczej i R3** ten dokument jest **nadpisany przez `wizja-i-plan-produktu-v2.md`** (kanon). Największe zmiany: model hybrydowy limity+wartość (R3 v2), reverse trial 21 dni, cena 14,99 zł/99 zł, **warstwa trenerska ODŁOŻONA** (nie jest już „docelowym silnikiem przychodowym" ani planem B — §9 wizji), **pody awansują na silnik wzrostu** (fast-follow po launchu). Poniżej aktualne pozostają: benchmarki (§2), matematyka sufitu (§3), teza główna (§1) i tło decyzji R1–R6.
+> ⚠️ **AKTUALIZACJA 2026-07-08:** w zakresie **modelu (podział free/paid, cennik, trial), sekwencji wykonawczej i R3** ten dokument jest **nadpisany przez `wizja-i-plan-produktu-v2.md`** (kanon). Największe zmiany: model hybrydowy limity+wartość (R3 v2), reverse trial 21 dni, cena 14,99 zł/99 zł, **warstwa trenerska ODŁOŻONA** (nie jest już „docelowym silnikiem przychodowym" ani planem B — §9 wizji), **ekipy awansują na silnik wzrostu** (fast-follow po launchu). Poniżej aktualne pozostają: benchmarki (§2), matematyka sufitu (§3), teza główna (§1) i tło decyzji R1–R6.
 >
 > Decyzja kierunkowa właściciela 2026-07-06: **PL-first z opcją ekspansji**. Odrzucone: marketplace programów autorskich (kanibalizacja przez darmowe startery + przyszłe community). Pełna analiza z liczbami i źródłami: sesja Cowork 2026-07-06 (`arco-monetyzacja-strategia.md`).
 > Status: kierunek strategiczny — **nie zmienia scope'u Horyzontu 1–2**. Rdzeń dalej ma priorytet; launch publiczny idzie z pełnym freemium od dnia zero (Krok 3 wizji v2).
@@ -62,5 +62,5 @@ Nie zmienia: Horyzont 1–2 i bieżące sprinty (S9-cz.2 → S10) idą bez zmian
 Zmienia:
 1. Przy decyzjach architektonicznych uwzględniać przyszłą relację trener↔podopieczny (nie budować, nie blokować) — mimo odłożenia warstwy trenerskiej (R5 w mocy).
 2. Copy i tokeny projektować i18n-ready (już w duchu design-token-first).
-3. `docs/legal-i-konta.md` wjedzie na roadmapę wcześniej (bramka kont+RODO = Krok 2 wizji v2, zakres rozszerzony o zgodę podową, wiek 16+, e-mail transakcyjny).
+3. `docs/legal-i-konta.md` wjedzie na roadmapę wcześniej (bramka kont+RODO = Krok 2 wizji v2, zakres rozszerzony o zgodę ekipową, wiek 16+, e-mail transakcyjny).
 4. ~~Decyzja otwarta [Ty]: R2~~ → **R2 rozstrzygnięte w wizji v2 §3.1: 14,99 zł/mies · 99 zł/rok** (pozycjonowanie premium z uzasadnieniem guidance+PL); otwarty pozostaje ew. test A/B na liście oczekujących (wizja v2 §10.3). R3 → R3 v2 (limity+wartość, patrz §5).

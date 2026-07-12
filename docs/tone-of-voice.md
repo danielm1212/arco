@@ -40,7 +40,7 @@ Zasada kciuka: **im bliżej sztangi, tym mniej gadania.** W loggerze user ma rę
 - Wykrzykniki na siłę, CAPS LOCK poza display-typografią momentów.
 - Wstyd/wina („Znowu nie trenowałeś…" ❌ — nudge brzmi: „Radek przypomina Ci o treningu").
 - **Groźba utraty passy** („Nie strać passy!" ❌) — loss aversion działa (patrz Duolingo), ale to presja; passa zawsze pozytywnie („4. tydzień z rzędu 🔥"), a lęk przed utratą adresuje ochrona passy (premium), nie copy. *(wniosek: inspiracje/wnioski-dla-arco.md)*
-- **Curiosity gap w podach** („ktoś coś zrobił…" ❌) — kameralność = zawsze kto i co, wprost.
+- **Curiosity gap w ekipach** („ktoś coś zrobił…" ❌) — kameralność = zawsze kto i co, wprost.
 - Żargon fitness-influencerski („szmelc", „pompa gwarantowana") i anglicyzmy, gdy jest polskie słowo.
 - Obietnice wyników zdrowotnych/sylwetkowych (prawnie i etycznie śliskie).
 - Fake urgency: odliczania, „oferta znika za 10 minut", spin-the-wheel — dark patterns, których nie tykamy niezależnie od konwersji.
@@ -49,11 +49,11 @@ Zasada kciuka: **im bliżej sztangi, tym mniej gadania.** W loggerze user ma rę
 
 | Moment | Copy-wzorzec |
 |---|---|
-| Nudge (pod) | „Radek przypomina Ci o treningu 💪" — imię + fakt, zero presji |
-| Check-in (pod) | „Daniel trenował dziś — 4. tydzień z rzędu" |
+| Nudge (ekipa) | „Radek przypomina Ci o treningu 💪" — imię + fakt, zero presji |
+| Check-in (ekipa) | „Daniel trenował dziś — 4. tydzień z rzędu" |
 | Kłódka historii (fala 2) | „Wszystko tu jest, bezpieczne. Arco Coach sięga głębiej niż 12 tygodni." |
 | Trigger stagnacji (fala 1) | „Push stoi w miejscu od 3 tygodni. Coach wie, jak to ruszyć →" |
-| Koniec triala | „Trial się kończy — Twoje treningi i pody zostają za darmo, na zawsze. Coach zabiera głębię." |
+| Koniec triala | „Trial się kończy — Twoje treningi i ekipy zostają za darmo, na zawsze. Coach zabiera głębię." |
 | **Start triala (dzień 0, timeline)** | „Przez 21 dni masz wszystko. Dzień 18: przypomnimy, co się zmieni. Dzień 22: zostaje darmowy rdzeń — nic nie znika. **Bez karty — nie ma czego zapomnieć anulować.**" *(wzorzec Blinkist-timeline; wnioski-dla-arco P2)* |
 | Pricing (subtitle pod CTA) | „Bez zobowiązań. Anuluj kiedy chcesz — dwa tapnięcia w ustawieniach." *(P3; anulowanie MUSI być realnie takie proste)* |
 | Prompt instalacji (celebracja 1. treningu) | „Dodaj Arco na ekran główny — ekran nie zgaśnie przy sztandze, a kumple dadzą znać, że trenują." |
@@ -86,4 +86,4 @@ Dla każdego tekstu podaj: wariant główny + 1 alternatywę + (jeśli UI) limit
 
 ## 5. Otwarte [Ty]
 1. Zadziora: obecna dawka (jedno zdanie „z charakterem" na ekran) — potwierdzić po feedbacku z H2.
-2. Per „ty" lekko trenerskie — zaakceptowane warunkowo przy S14; wraca do recenzji razem z copy podów (nowa powierzchnia: komunikaty między userami).
+2. Per „ty" lekko trenerskie — zaakceptowane warunkowo przy S14; wraca do recenzji razem z copy ekip (nowa powierzchnia: komunikaty między userami).

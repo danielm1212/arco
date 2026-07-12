@@ -13,12 +13,12 @@
 | **Równolegle:** landing + K1 content start + prep H2 (pilot, dane demo, P0/P1) | landing-plan, scenariusz-h2 | sie 2026 | lip–sie 2026 |
 | **H2** — sesje 3–5 osób + rozstrzygnięcie B1 | scenariusz-h2 | **poł. wrz 2026** (2 tyg. z analizą) | wrz 2026 |
 | **Krok 2** — konta+RODO+Stripe (4–7 tyg. wyceny) | audyt §5, schemat | **paź–poł. lis 2026** | wrz–paź 2026 |
-| **Równolegle:** concierge-test podów (3 tyg. + wnioski) | concierge-test-podow | paź 2026 | wrz–paź 2026 |
+| **Równolegle:** concierge-test ekip (3 tyg. + wnioski) | concierge-test-ekip | paź 2026 | wrz–paź 2026 |
 | **Krok 3** — freemium live (3–5 tyg.) | audyt §5 | **poł. lis–poł. gru 2026** | paź–lis 2026 |
 | **🚀 LAUNCH cichy** (lista → społeczności) | wizja Krok 3 | **poł. gru 2026 / sty 2027*** | pocz. gru 2026 |
-| **Krok 4** — pody (6–8 tyg.; JEŚLI concierge 🟢/🟡) | audyt §5, schemat §4 | **sty–lut 2027** | gru 2026–sty 2027 |
+| **Krok 4** — ekipy (6–8 tyg.; JEŚLI concierge 🟢/🟡) | audyt §5, schemat §4 | **sty–lut 2027** | gru 2026–sty 2027 |
 | **B2** (fala 1, 3 mies. od launchu) | wizja §7 | **~mar–kwi 2027** | ~mar 2027 |
-| **B3** (pętla podów, 3 mies. od startu podów) | wizja §7 | **~mai 2027** | ~kwi 2027 |
+| **B3** (pętla ekip, 3 mies. od startu ekip) | wizja §7 | **~mai 2027** | ~kwi 2027 |
 | **B4** (próg sensu, 9–12 mies. od launchu) | wizja §7 | **~wrz–gru 2027** | ~wrz 2027 |
 
 \* **Decyzja launchowa [Ty]:** poł. grudnia to sezonowy dołek (święta), ale **sty 1–15 to najlepsze okno roku w fitness** (postanowienia). Rekomendacja: jeśli Krok 3 domyka się w grudniu — soft-launch do listy w grudniu (test rur), **publiczne pchnięcie 2–8 stycznia 2027**. Poślizg Kroku 3 o 2 tyg. jest wtedy… korzystny. Nie planuj launchu na listopad kosztem jakości — styczniowe okno wybacza poślizg, ale nie wybacza zgubionej serii (S10!).
@@ -28,7 +28,7 @@
 1. **Poślizg <2 tyg.:** nic nie robisz, od tego jest bufor.
 2. **Poślizg 2–4 tyg. w bloku:** tniesz ZAKRES bloku, nie jakość rdzenia — gotowe cięcia: Krok 2 → odłóż OAuth Google (email+hasło wystarczy na start); Krok 3 → odłóż ochronę passy i ekran trial-countdown (kłódka + limity to minimum sensowne); Krok 4 → wersja 🟡 z concierge (np. bez push — skrzynka+e-mail na start; push jako fast-follow).
 3. **Poślizg >4 tyg. łącznie:** przesuwasz launch na następne okno (styczeń → ew. marzec „wiosenna forma"), NIE kompresujesz S10/testów. Zasada z wizji: płacący user nie wybacza zgubionej serii.
-4. **Nigdy nie tnij:** S10 (offline correctness), audytu RLS przy Kroku 2/4, double opt-in, testów wielokontowych podów.
+4. **Nigdy nie tnij:** S10 (offline correctness), audytu RLS przy Kroku 2/4, double opt-in, testów wielokontowych ekip.
 
 ## 3. Budżet tygodniowy po launchu (przypomnienie z planu dystrybucji)
 

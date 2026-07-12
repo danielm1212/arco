@@ -37,13 +37,13 @@
 | `checkout_started` / `subscription_activated` / `subscription_churned` | `plan` (monthly/yearly) | MRR-lejek, churn premium |
 | `guidance_shown` | `kind` (progression/balance/staleness/deload), `plan` (free/coach) | paliwo fali 1 |
 
-### Faza 3 — pody (wire w Kroku 4)
+### Faza 3 — ekipy (wire w Kroku 4)
 | Event | Właściwości | Metryka |
 |---|---|---|
-| `pod_created` / `pod_joined` | `pod_size` | **% aktywnych w podzie (B3)** |
+| `pod_created` / `pod_joined` | `pod_size` | **% aktywnych w ekipie (B3)** |
 | `pod_invite_sent` / `pod_invite_accepted` | — | **współczynnik zaproszeń ≥1,15 (B3)** |
 | `nudge_sent` / `nudge_delivered` | `channel` (push/inbox/email) | **nudge delivery rate per kanał** |
-| `reaction_sent` | — | żywotność podów |
+| `reaction_sent` | — | żywotność ekip |
 
 Konwencja: nowe eventy TYLKO przez rozszerzenie unii w `lib/analytics.ts` (type-safe, jedna lista prawdy) + wiersz w tej tabeli.
 
@@ -66,7 +66,7 @@ Konwencja: nowe eventy TYLKO przez rozszerzenie unii w `lib/analytics.ts` (type-
 
 **Faza 1 (S11 / launch gate):** decyzja narzędzia → `npm i posthog-js` → adapter w `AppChrome`/`layout` (init z `NEXT_PUBLIC_POSTHOG_KEY`, EU host, cookieless) → wpięcie eventów Fazy 1 w punkty z mapy §5 → dashboard „Pulpit B1–B4" w PostHog.
 
-**Faza 2/3:** eventy monetyzacji i podów wchodzą RAZEM z tymi feature'ami (nie osobno).
+**Faza 2/3:** eventy monetyzacji i ekip wchodzą RAZEM z tymi feature'ami (nie osobno).
 
 ## 5. Mapa punktów wpięcia (Faza 1)
 

@@ -27,7 +27,7 @@ Pomiar: Lighthouse (DevTools, tryb mobile + throttling) przy każdej bramce; **w
 5. **Każda lista, która rośnie z czasem, ma paginację/limit OD RAZU** (historia — dług S9-cz.2; nowe: inbox, activity_events z limitem w schemacie od 1. migracji).
 6. **Optymistyczny UI dla akcji loggera** (jest — utrzymać przy S10): tap nie czeka na sieć, outbox godzi później.
 7. **Ciężkie i rzadkie = dynamic import** (heatmapa na /progress — kandydat; przyszłe: generator karty recap, wykresy premium).
-8. **Indeks razem z zapytaniem:** nowe query po nowej kolumnie = indeks w tej samej migracji (wzorzec zachowany dotąd: 13 indeksów, gin na muscles ✓); przy podach obowiązkowo: `activity_events (user_id, occurred_on)`, `inbox_items (user_id, read_at)`.
+8. **Indeks razem z zapytaniem:** nowe query po nowej kolumnie = indeks w tej samej migracji (wzorzec zachowany dotąd: 13 indeksów, gin na muscles ✓); przy ekipach obowiązkowo: `activity_events (user_id, occurred_on)`, `inbox_items (user_id, read_at)`.
 9. **`force-dynamic` tylko dla danych usera** (obecne użycie poprawne); treści seedowe (detal ćwiczenia!) mogą być cache'owane — kandydat S9-cz.2.
 10. **Regres budżetu = stop-the-line:** Lighthouse przy bramce spada poniżej progu → naprawa przed nową funkcją.
 

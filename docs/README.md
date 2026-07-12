@@ -6,7 +6,7 @@
 
 | Plik | Co trzyma |
 |---|---|
-| `wizja-i-plan-produktu-v2.md` | **Kanon nadrzędny** (2026-07-08): wizja, model biznesowy Z1–Z3, pody, sekwencja Kroków 0–5, bramki B1–B4, art direction |
+| `wizja-i-plan-produktu-v2.md` | **Kanon nadrzędny** (2026-07-08): wizja, model biznesowy Z1–Z3, ekipy, sekwencja Kroków 0–5, bramki B1–B4, art direction |
 | `build-brief-v0.3-addendum.md` → `build-brief-apka-treningowa-v0.2.md` | specyfikacja bazowa (addendum nadpisuje brief) |
 | `roadmap.md` | horyzonty + backlog feature'ów (recap, retro typo) — zrewidowany pod wizję v2 |
 | `paleta-arco-warm.md` | tokeny kolorów (źródło prawdy dla N3+) |
@@ -44,7 +44,8 @@
 | Plik | Co trzyma |
 |---|---|
 | `scenariusz-h2.md` | kompletny skrypt sesji testowych (70 min/os., progi B1) |
-| `concierge-test-podow.md` | ręczny test tezy Radka PRZED budową Kroku 4 |
+| `concierge-test-ekip.md` | ręczny test tezy Radka PRZED budową Kroku 4 |
+| `ekipa-koncepcja.md` | **ekipa w całości** (2026-07-12): audyt decyzji, konkurencja (Duolingo/Ladder/WHOOP…), mechanika (rytm tygodniowy, nudge, cykl życia), IA + UI pod Warm; decyzje [Ty] §8 |
 
 ## 📣 Marka i marketing
 
@@ -70,7 +71,7 @@
 | Plik | Co trzyma |
 |---|---|
 | `inspiracje/wnioski-dla-arco.md` | **SYNTEZA obu transkrypcji**: co bierzemy (z miejscami naniesienia) / co świadomie odrzucamy / co zaparkowane — czytaj to zamiast surowych transkrypcji |
-| `inspiracje/transkrypcja-enrico-notifications.md` | inżynieria powiadomień (specyficzność, loss aversion, timing 23,5 h) — surowiec do nudge/podów (Krok 4) |
+| `inspiracje/transkrypcja-enrico-notifications.md` | inżynieria powiadomień (specyficzność, loss aversion, timing 23,5 h) — surowiec do nudge/ekip (Krok 4) |
 | `inspiracje/transkrypcja-mobbin-paywalls.md` | 2850 paywalli: flow nie ekran, trial-timeline, „cancel anytime", anty-wzorce — surowiec do paywalla Kroku 3 |
 
 ## 🗄️ `archive/` — skonsumowane (nie czytaj, chyba że szukasz historii)

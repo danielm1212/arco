@@ -1,6 +1,6 @@
 # Bezpieczeństwo Arco — zasady systemowe + wynik przeglądu
 
-> **Data:** 2026-07-08 · **Zakres:** (1) zasady obowiązujące od dziś, (2) przegląd obecnego stanu (kod/konfig/RLS — wykonany na repo), (3) checklisty per etap. Uzupełnia: `audyt-kodu-zaleznosci.md` (deps), bramkę kont+RODO w `roadmap.md`, `projekt-schematu-subs-consents-pods.md` §5 (RLS podów).
+> **Data:** 2026-07-08 · **Zakres:** (1) zasady obowiązujące od dziś, (2) przegląd obecnego stanu (kod/konfig/RLS — wykonany na repo), (3) checklisty per etap. Uzupełnia: `audyt-kodu-zaleznosci.md` (deps), bramkę kont+RODO w `roadmap.md`, `projekt-schematu-subs-consents-pods.md` §5 (RLS ekip).
 > Kontekst ryzyka: dziś single-user (ekspozycja mała), ale launch = realni userzy + płatności. Zasady pisane pod docelowy stan, checklisty rozkładają je na etapy.
 
 ---
@@ -41,14 +41,14 @@
 | **P3** | Brak CI z `npm audit`/lint gate | przy okazji pierwszego CI (nie blokuje; zasada §1.7 ręcznie) | po launchu |
 
 ### 🔮 Nowe powierzchnie z wizji (już zaprojektowane, pilnować przy budowie)
-Krok 2: Stripe webhooks (weryfikacja sygnatur!), publiczny signup (enumeracja kont, polityka haseł, weryfikacja e-mail), eksport RODO (tylko własne dane!). Krok 4: RLS podów (test wielokontowy obowiązkowy — pułapka rekursji opisana w schemacie §5), invite-code ≥12 znaków + rate limit + rotacja, push endpoints (ochrona `push_subscriptions`), e-mail (SPF/DKIM/DMARC domeny!).
+Krok 2: Stripe webhooks (weryfikacja sygnatur!), publiczny signup (enumeracja kont, polityka haseł, weryfikacja e-mail), eksport RODO (tylko własne dane!). Krok 4: RLS ekip (test wielokontowy obowiązkowy — pułapka rekursji opisana w schemacie §5), invite-code ≥12 znaków + rate limit + rotacja, push endpoints (ochrona `push_subscriptions`), e-mail (SPF/DKIM/DMARC domeny!).
 
 ## 3. Checklisty per etap
 
 **S10 (mini-gate — rozszerzony): ✅ ZROBIONE 2026-07-11.** service-role poza bundlem (re-check: 0 wystąpień poza `scripts/`, `.env*` gitignorowane, `.env.ops.local` z deployu usunięty) · RLS włączone wszędzie (re-check po migracji kuracji+batch: 11/11 tabel z politykami, 0 bez) · **CSP Report-Only wdrożone** (`next.config.mjs`, nagłówek potwierdzony na `next start` — `default-src 'self'` + dozwolone Supabase/hotlink obrazków; enforce = S11 po przeglądzie raportów w DevTools) · **offline-guardy** dla swap/add/skip (`lib/offlineGuard.ts` — sygnał zamiast cichego błędu; zweryfikowane: brak POST w sieci przy offline). Przegląd logów Supabase pod nietypowe zapytania — odłożone do S11 (mało ruchu = mało sygnału teraz).
 **S11 (launch gate):** decyzja majorów next · CSP enforce · plan backupów + test restore · `npm audit` czysty lub zaakceptowany · headers zweryfikowane na prodzie (securityheaders.com).
 **Krok 2:** wszystko z bramki roadmapy + decyzja exercise-photos + rate limiting + Stripe webhook signature + polityka haseł + audyt RLS wielokontowy (scenariusze w schemacie §5).
-**Krok 4:** test wielokontowy podów (różne pody nie widzą się; były członek traci dostęp natychmiast) + brute-force test invite + SPF/DKIM/DMARC.
+**Krok 4:** test wielokontowy ekip (różne ekipy nie widzą się; były członek traci dostęp natychmiast) + brute-force test invite + SPF/DKIM/DMARC.
 
 ## 4. Proces (solo-founder edition — krótko, żeby było wykonalne)
 

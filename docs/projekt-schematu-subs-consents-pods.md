@@ -1,7 +1,7 @@
 # Projekt schematu: subscriptions · consents · pods
 
 > **Data:** 2026-07-08 · **Status:** DESIGN DOC, zero kodu i migracji — do recenzji [Ty]. Realizacja: subscriptions+consents w **Kroku 2** (bramka kont+RODO), pods w **Kroku 4** (fast-follow).
-> **Podstawa:** `wizja-i-plan-produktu-v2.md` §2–§4 (Z1–Z3, reverse trial 21 dni, pod = check-in+passa NIE logi), `audyt-kodu-pod-wizje-v2.md` §4.5 (usunięcie konta vs integralność podów), konwencje istniejącego schematu (uuid pk, enumy, cascade po `user_id`, RLS wzorzec `programs`).
+> **Podstawa:** `wizja-i-plan-produktu-v2.md` §2–§4 (Z1–Z3, reverse trial 21 dni, ekipa = check-in+passa NIE logi), `audyt-kodu-pod-wizje-v2.md` §4.5 (usunięcie konta vs integralność ekip), konwencje istniejącego schematu (uuid pk, enumy, cascade po `user_id`, RLS wzorzec `programs`).
 > **Cel dokumentu:** zamknąć decyzje modelowe TERAZ, żeby Krok 2 nie projektował pod presją — i żeby nic, co budujemy wcześniej, nie zamykało drogi.
 
 ---
@@ -11,8 +11,8 @@
 1. **Entitlement liczy serwer, nigdy klient.** Jedna funkcja SQL = jedna prawda; server actions i RLS czytają z niej.
 2. **Trial bez karty = trial poza Stripe.** Reverse trial startuje z kontem (`auth.users.created_at + 21 dni`) — zero tabel do tego, dopóki nie ma wyjątków.
 3. **Zgody: stan + audyt osobno.** Stan zgody musi być szybki do sprawdzenia (RLS!), historia append-only do RODO-rejestru.
-4. **Pod widzi zdarzenia, nie treningi.** `activity_events` to OSOBNA tabela zasilana przy finish — RLS podów nie dotyka NIGDY `sessions`/`session_sets`. To jest techniczne serce decyzji „check-in i passa, nie logi".
-5. **Nic nie kasujemy… oprócz konta (RODO wygrywa).** Usunięcie konta = twardy cascade wszędzie, łącznie z activity_events. Pod innych przeżywa — traci tylko wpisy usuniętego.
+4. **Ekipa widzi zdarzenia, nie treningi.** `activity_events` to OSOBNA tabela zasilana przy finish — RLS ekip nie dotyka NIGDY `sessions`/`session_sets`. To jest techniczne serce decyzji „check-in i passa, nie logi".
+5. **Nic nie kasujemy… oprócz konta (RODO wygrywa).** Usunięcie konta = twardy cascade wszędzie, łącznie z activity_events. Ekipa innych przeżywa — traci tylko wpisy usuniętego.
 
 ## 2. `subscriptions` + entitlements (Krok 2)
 
@@ -98,7 +98,7 @@ create table consent_log (
 );
 ```
 
-- **Zgoda podowa** = `pod_activity_sharing` globalnie (raz, przy pierwszym dołączeniu) + członkostwo per pod w `pod_members` (wyjście z poda ≠ cofnięcie zgody globalnej). Cofnięcie globalnej → trigger/akcja usuwa członkostwa i przestaje emitować eventy. Prosto i granularnie zarazem.
+- **Zgoda ekipowa** = `pod_activity_sharing` globalnie (raz, przy pierwszym dołączeniu) + członkostwo per ekipa w `pod_members` (wyjście z ekipy ≠ cofnięcie zgody globalnej). Cofnięcie globalnej → trigger/akcja usuwa członkostwa i przestaje emitować eventy. Prosto i granularnie zarazem.
 - **Wiek 16+:** `user_settings.age_confirmed_at timestamptz` (checkbox przy signup) — bez daty urodzenia (minimalizacja danych).
 - **E-mail:** `transactional_email` (reset hasła itp. — podstawa prawna: umowa, zgoda niewymagana, wiersz dla porządku rejestru) vs `nudge_email` (wymaga zgody, osobny opt-out). `analytics` — na wypadek decyzji z konsultacji prawnej (instrumentacja §6.2).
 
@@ -109,11 +109,11 @@ create table pods (
   id          uuid primary key default gen_random_uuid(),
   name        text,                                    -- opcjonalne ("Ekipa z Melonika")
   invite_code text not null unique,                    -- patrz uwaga bezpieczeństwa niżej
-  created_by  uuid references auth.users (id) on delete set null,  -- pod przeżywa twórcę
+  created_by  uuid references auth.users (id) on delete set null,  -- ekipa przeżywa twórcę
   created_at  timestamptz not null default now()
 );
 -- BEZPIECZEŃSTWO invite_code (refinement 2026-07-08): krótki kod = enumerowalny (brute-force
--- → wbicie się do cudzego poda i podgląd check-inów). Wymogi: ≥12 znaków losowych (base58),
+-- → wbicie się do cudzej ekipy i podgląd check-inów). Wymogi: ≥12 znaków losowych (base58),
 -- join WYŁĄCZNIE przez server action z rate-limitem prób per IP/user, kod rotowany po każdym
 -- dołączeniu lub ręcznie przez twórcę. Ładny krótki link robi warstwa URL (redirect), nie kod.
 
@@ -126,7 +126,7 @@ create table pod_members (
 );
 -- limit 4 (Ty + 1–3): trigger before insert (count po pod_id) — nie da się wyrazić constraintem
 
--- CHECK-IN: jedyne, co pod widzi. Dzień, nie godzina (minimalizacja danych).
+-- CHECK-IN: jedyne, co ekipa widzi. Dzień, nie godzina (minimalizacja danych).
 create table activity_events (
   id           uuid primary key default gen_random_uuid(),
   user_id      uuid not null references auth.users (id) on delete cascade,  -- RODO: twardy cascade (§1.5)
@@ -194,11 +194,11 @@ create table push_subscriptions (                      -- web push (VAPID)
 );
 ```
 
-**Zasilanie:** `finishSession` (server action) po sukcesie emituje `activity_events` (upsert po unique) ze snapshotem passy — JEDYNY most między światem treningów a światem podów. Kierunek danych: sessions → activity_events, nigdy odwrotnie.
+**Zasilanie:** `finishSession` (server action) po sukcesie emituje `activity_events` (upsert po unique) ze snapshotem passy — JEDYNY most między światem treningów a światem ekip. Kierunek danych: sessions → activity_events, nigdy odwrotnie.
 
 ## 5. RLS — wzorzec i pułapka rekursji
 
-⚠️ **Znana pułapka Supabase:** polityka na `pod_members` odwołująca się do `pod_members` („pokaż mi członków moich podów") = nieskończona rekursja. Rozwiązanie: funkcja `security definer` omijająca RLS:
+⚠️ **Znana pułapka Supabase:** polityka na `pod_members` odwołująca się do `pod_members` („pokaż mi członków moich ekip") = nieskończona rekursja. Rozwiązanie: funkcja `security definer` omijająca RLS:
 
 ```sql
 create or replace function my_pod_ids() returns setof uuid
@@ -215,17 +215,17 @@ $$;
 
 Polityki (szkic):
 - `pods`: select gdy `id in (select my_pod_ids())`; insert authenticated (twórca); update/delete tylko `created_by`.
-- `pod_members`: select gdy `pod_id in (select my_pod_ids())`; insert = JOIN-flow przez server action (weryfikacja invite_code + zgody + limitu 4); delete własnego wiersza (wyjście z poda).
+- `pod_members`: select gdy `pod_id in (select my_pod_ids())`; insert = JOIN-flow przez server action (weryfikacja invite_code + zgody + limitu 4); delete własnego wiersza (wyjście z ekipy).
 - `activity_events`: **select gdy `user_id = auth.uid()` OR (`user_id in (select my_pod_peer_ids())` AND właściciel ma aktywną zgodę `pod_activity_sharing`)**; insert/update tylko server action (service-side).
 - `reactions`, `nudges`: select/insert w obrębie `my_pod_peer_ids()`; `inbox_items`, `push_subscriptions`: strict own.
-- Do checklisty audytu RLS (Krok 2/4): test wielokontowy — userzy z RÓŻNYCH podów nie widzą się nawzajem; były członek traci widoczność natychmiast po wyjściu.
+- Do checklisty audytu RLS (Krok 2/4): test wielokontowy — userzy z RÓŻNYCH ekip nie widzą się nawzajem; były członek traci widoczność natychmiast po wyjściu.
 
 ## 6. Decyzje do potwierdzenia [Ty]
 
 | # | Decyzja | Rekomendacja |
 |---|---|---|
-| 1 | Ile podów na usera w v1? | **1 pod/user** — upraszcza UX, RLS i copy („Twój pod"); constraint unique na `pod_members.user_id`. Multi-pod = łatwe rozszerzenie później (drop constraint) |
-| 2 | Usunięcie konta a check-iny w podzie | **twardy cascade** (jak w §1.5) — RODO czyste, pod traci wpisy usuniętego; alternatywa (anonimizacja „ktoś trenował") = więcej kodu, wątpliwa wartość przy podach 2–4 os. |
+| 1 | Ile ekip na usera w v1? | **1 ekipa/user** — upraszcza UX, RLS i copy („Twoja ekipa"); constraint unique na `pod_members.user_id`. Multi-ekipa = łatwe rozszerzenie później (drop constraint) |
+| 2 | Usunięcie konta a check-iny w ekipie | **twardy cascade** (jak w §1.5) — RODO czyste, ekipa traci wpisy usuniętego; alternatywa (anonimizacja „ktoś trenował") = więcej kodu, wątpliwa wartość przy ekipach 2–4 os. |
 | 3 | Founder's edition | jako `entitlement_overrides(kind='founder', until_at=null)` — zero specjalnych ścieżek w kodzie płatności |
 | 4 | Godzina vs dzień check-inu | **dzień** (`occurred_on date`) — minimalizacja danych; „trenował dziś" nie potrzebuje godziny |
 | 5 | Emoji reakcji | whitelist 💪🔥👏🎯 (spójna z ToV; zero moderacji). Rozszerzenie = zmiana checka |

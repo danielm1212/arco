@@ -36,7 +36,7 @@
 ## 3. Przyszłe wejścia (projektujemy furtki, nie budujemy)
 
 - **Krok 2 (konta):** signup wchodzi PRZED E0 (konto → onboarding); flaga przenosi się z localStorage do `user_settings.onboarded_v3` (multi-urządzenie!) — dopisać do checklisty bramki.
-- **Krok 4 (pod-invite):** wejście z zaproszenia = wariant E0: „**Radek Cię zaprosił** — 60 sekund i trenujecie razem" + po E5 auto-join poda. Najważniejszy onboarding w całej pętli wzrostu — furtka: E0 przyjmuje opcjonalny kontekst zaproszenia.
+- **Krok 4 (ekipa-invite):** wejście z zaproszenia = wariant E0: „**Radek Cię zaprosił** — 60 sekund i trenujecie razem" + po E5 auto-join poda. Najważniejszy onboarding w całej pętli wzrostu — furtka: E0 przyjmuje opcjonalny kontekst zaproszenia.
 - **Reverse trial (Krok 3):** timeline triala (wnioski-Mobbin P2) NIE wchodzi do onboardingu v3 (pre-launch bez paywalla); przy Kroku 3 dostanie własny ekran po E5.
 
 ## 4. Wdrożenie i test

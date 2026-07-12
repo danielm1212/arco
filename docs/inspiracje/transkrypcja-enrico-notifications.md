@@ -1,7 +1,7 @@
 # Transkrypcja: The Ridiculous Engineering Of Notifications
 
 > **Autor:** Enrico Tartarotti · **Źródło:** https://www.youtube.com/watch?v=Dx2yPk0FsGM (13:15, publ. 8 lip 2026) · pobrano 2026-07-08.
-> **Czemu w repo:** wprost zasila projekt **nudge'y i check-inów podów** (Krok 4) oraz `instrumentacja-metryk.md` — kluczowe koncepty: specyficzność > personalizacja, curiosity gap, loss aversion (passa!), timing kontekstowy (23,5 h od ostatniej sesji), warstwa AI przepisująca powiadomienia. Uwaga: to też katalog technik, których w Arco świadomie NIE nadużywamy (ToV: motywacja bez presji).
+> **Czemu w repo:** wprost zasila projekt **nudge'y i check-inów ekip** (Krok 4) oraz `instrumentacja-metryk.md` — kluczowe koncepty: specyficzność > personalizacja, curiosity gap, loss aversion (passa!), timing kontekstowy (23,5 h od ostatniej sesji), warstwa AI przepisująca powiadomienia. Uwaga: to też katalog technik, których w Arco świadomie NIE nadużywamy (ToV: motywacja bez presji).
 > Transkrypcja auto-generowana (EN) — usunięte artefakty `[music]`/`>>`; drobne błędy ASR zostawione (np. „Dualingo").
 
 ---

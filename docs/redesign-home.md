@@ -85,6 +85,6 @@ Empty-state = progressive disclosure całego home: hero → (1. trening) → +Fl
 ## 5. Ryzyka i otwarte [Ty]
 1. Redesign PRZED H2 = testujemy świeży układ bez baseline'u starego — świadomie OK (feedback #1 już orzekł o starym; szkoda palić 5 sesji na potwierdzanie znanego).
 2. Ukrycie listy dni w sheet: power-user (Ty!) traci start-z-listy jednym scrollem — mitygacja: sheet otwiera się 1 tapem, pamięta scroll; jeśli po tygodniu dogfoodingu boli, wraca jako sekcja zwinięta.
-3. Płomień dla dni minionych bez treningu — potwierdzić wygaszony neutralny (nie „przerwany"): zgodne z ToV, ale odbiera „bat"; nasz bat to pody, nie wstyd.
+3. Płomień dla dni minionych bez treningu — potwierdzić wygaszony neutralny (nie „przerwany"): zgodne z ToV, ale odbiera „bat"; nasz bat to ekipy, nie wstyd.
 4. ~~Powitanie: usunąć vs zostawić~~ → **rozstrzygnięte: zostaje** (2026-07-11).
 5. Makieta wizualna: w rozmowie (widget) — do obejrzenia przed F1; ewentualny szlif w Figmie po Twojej stronie.

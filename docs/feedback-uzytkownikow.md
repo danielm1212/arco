@@ -15,7 +15,7 @@
 
 **Analiza (Claude, 2026-07-08):**
 - Home (`app/page.tsx`, ~389 linii) niesie dziś jednocześnie: day-pills, cel tygodniowy, kartę wskazówek (guidance), program dnia / CTA treningu, mini-bar sesji w toku — dużo warstw na pierwszym ekranie nowego usera.
-- Zbieżne z wizją v2 §1.1: **beginner-friendliness = ochrona pętli podów (Z2)** — zaproszony kumpel-początkujący nie może się odbić od pierwszego ekranu. Ten feedback to dokładnie ten scenariusz, jeszcze zanim pody istnieją.
+- Zbieżne z wizją v2 §1.1: **beginner-friendliness = ochrona pętli ekip (Z2)** — zaproszony kumpel-początkujący nie może się odbić od pierwszego ekranu. Ten feedback to dokładnie ten scenariusz, jeszcze zanim ekipy istnieją.
 - Zbieżne z `usability-audit.md` (zadania sekcji C testują m.in. start) i z empty-states #1 („Zacznij od planu" — jedna akcja główna).
 - Hipoteza kierunkowa (do zwalidowania w H2, NIE do natychmiastowego kodowania): **hierarchia „jedna akcja główna"** — dziś = start treningu; reszta (cel, wskazówki, passa) niżej lub progressive disclosure; tryb „pierwsze 3 wizyty" z uproszczonym home.
 

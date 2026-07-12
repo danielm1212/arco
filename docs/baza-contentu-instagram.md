@@ -48,7 +48,7 @@
 25. „Seria = jeden tap. Reszta wypełnia się sama" — 15-sek. screen-demo loggera — T2/reel
 26. „Apka, która mówi DLACZEGO: +2,5 kg, bo dobiłeś zakres" — screen hintu — T2
 27. „Twoje dane to nie zakładnik. Eksport zawsze darmowy" — Z3 jako post — T1
-28. „Pod: Ty + 2 kumpli. Widzicie tylko: był / nie był. Zero cyrku" — zapowiedź podów — T1+clay
+28. „Ekipa: Ty + 2 kumple. Widzicie tylko: był / nie był. Zero cyrku" — zapowiedź ekip — T1+clay
 29. „»Radek przypomina Ci o treningu« — najmilszy kop w tyłek" — koncept nudge — T1
 30. „Działa offline. Piwnica-siłownia bez zasięgu? Nic nie ginie" — T2
 31. „Dark mode dla nocnych marków, jasny dla reszty — Ty wybierasz" — T2
@@ -78,16 +78,16 @@
 - R2: „Notes vs Arco" — split screen, 15 sek.
 - R3: „873 ćwiczenia → co wyleciało i czemu" — szybki cut z kuracji.
 - R4: Typo-momenty animowane (display typo + ziarno + 3 sek. loop) — brand, tanie w produkcji we Framerze.
-- R5: „Zbudowałem apkę, bo mój kumpel przestał przychodzić" — origin story podów, talking head 30 sek.
+- R5: „Zbudowałem apkę, bo mój kumpel przestał przychodzić" — origin story ekip, talking head 30 sek.
 
 ## 5. Mapowanie na fazy kampanii (strategia §5)
 
 | Faza | Dominują | Uwagi |
 |---|---|---|
 | 0 (sie–paź) | B (14,15,18) + E co tydzień | zbudować „kim jesteśmy" zanim cokolwiek sprzedamy |
-| 1 (lis–gru) | B milestone'y + P (25–32) + S6 countdown | pody teaser (28,29) dopiero tu — bliżej realu |
+| 1 (lis–gru) | B milestone'y + P (25–32) + S6 countdown | ekipy teaser (28,29) dopiero tu — bliżej realu |
 | 2 (launch sty) | P + M sezonowe (37) + R1 | E #10-typu „postanowienia" przypięte |
-| 3 (post) | E rytmicznie + UGC (38) + „druga premiera" podów | case'y userów wchodzą do B |
+| 3 (post) | E rytmicznie + UGC (38) + „druga premiera" ekip | case'y userów wchodzą do B |
 
 ## 6. Zasady wykonawcze
 

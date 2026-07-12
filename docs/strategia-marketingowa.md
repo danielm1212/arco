@@ -23,7 +23,7 @@
 | Ból | stagnacja; „dokładać czy deload?"; dane są, wnioski nie | paraliż decyzyjny: co robić, ile, czy dobrze | sam nie utrzyma rytmu; apki go nudzą |
 | Komunikat główny | **„Arco wie, kiedy dołożyć, a kiedy odpuścić — i mówi dlaczego."** | **„Nie wiesz, od czego zacząć — Arco wie. Plan od trenera i prowadzenie serię po serii."** | **„Paweł Cię widzi. Nie ciężary — tylko czy byłeś. To wystarczy."** |
 | Dowody | jawne reguły progresji/deload, trendy tonażu, PR-y on-the-fly | 8 programów od trenera, opisy ćwiczeń, logger-tap | check-in+passa, 💪, nudge; zero feedu i oceniania |
-| Moment konwersji | trigger stagnacji / koniec triala (fala 1) | limit nie dotyczy — zostaje free (i dobrze: Z2) | instaluje z zaproszenia → celebracja → własny pod |
+| Moment konwersji | trigger stagnacji / koniec triala (fala 1) | limit nie dotyczy — zostaje free (i dobrze: Z2) | instaluje z zaproszenia → celebracja → własna ekipa |
 | Gdzie go łowimy | K1 content (frazy „progresja/deload/stagnacja"), K3 społeczności | K1 (frazy „plan dla początkujących"), grupy FB, K5 trenerzy | wyłącznie pętla produktu (K2) — nie marketing |
 
 **Zasada:** każdy materiał marketingowy przed publikacją musi odpowiadać na pytanie „do której persony mówi?". Materiał „do wszystkich" = do nikogo.
@@ -49,9 +49,9 @@
 | Awareness | content K1, społeczności K3, build-in-public K4 | plan-dystrybucji | sesje landinga per źródło (UTM) |
 | Acquisition | landing → lista → (od launchu) signup | landing-plan | konwersja wejście→zapis 10–25%; `waitlist_signup` |
 | Activation | onboarding → 1. trening → celebracja → instalacja PWA | WelcomeOverlay, done-page, prompt §5 wizji | % ukończonego 1. treningu; `pwa_install_*` |
-| Retention | guidance, passa, cel tygodniowy → **pody** | rdzeń + Krok 4 | W1/W4; % w podach |
+| Retention | guidance, passa, cel tygodniowy → **ekipy** | rdzeń + Krok 4 | W1/W4; % w ekipach |
 | Revenue | fala 1 (trial+stagnacja), fala 2 (kłódka historii) | Krok 3 | konwersja_trial / konwersja_historia |
-| Referral | zaproszenia do podów + (backlog) karty recap | Krok 4, recap | k-współczynnik ≥1,15 (B3) |
+| Referral | zaproszenia do ekip + (backlog) karty recap | Krok 4, recap | k-współczynnik ≥1,15 (B3) |
 
 Wniosek strategiczny: marketing płatny nie istnieje w tym lejku — **awareness robi content i czas, mnożenie robi produkt**. Dlatego K1 startuje najwcześniej, jak się da (sierpień), a jakość aktywacji (onboarding, celebracja) jest zadaniem marketingowym, nie tylko produktowym.
 
@@ -68,7 +68,7 @@ Wniosek strategiczny: marketing płatny nie istnieje w tym lejku — **awareness
 - Kontent stycznia w K1 gotowy PRZED świętami: „Postanowienie: siłownia. Plan, który przetrwa luty" (fraza sezonowa!).
 **Cel launchu (spójny z wizją):** sygnał konwersji, nie tłum — 100–300 aktywowanych userów w styczniu, z czego mierzalny % w trialu.
 
-**Faza 3 · lut–kwi 2027 (post-launch):** rytm z plan-dystrybucji (20% czasu) + start podów jako „druga premiera" (osobny mini-launch: „przyprowadź swojego Radka") + pierwsze case'y userów w K1. B2 rozstrzyga się na danych, nie na wrażeniach.
+**Faza 3 · lut–kwi 2027 (post-launch):** rytm z plan-dystrybucji (20% czasu) + start ekip jako „druga premiera" (osobny mini-launch: „przyprowadź swojego Radka") + pierwsze case'y userów w K1. B2 rozstrzyga się na danych, nie na wrażeniach.
 
 ## 6. Kalendarz contentu K1 (pierwsze 10 artykułów — drafty piszę na hasło)
 
@@ -79,7 +79,7 @@ Wniosek strategiczny: marketing płatny nie istnieje w tym lejku — **awareness
 5. Deload: po co i jak — paź
 6. Dziennik treningowy: notes vs apka (uczciwe porównanie, w tym Hevy) — paź
 7. Push/pull balans: czego nie widzisz w lustrze — lis
-8. Jak nie odpuścić zimą (społeczna odpowiedzialność → teaser podów) — lis
+8. Jak nie odpuścić zimą (społeczna odpowiedzialność → teaser ekip) — lis
 9. Ile serii na partię naprawdę potrzebujesz — gru
 10. **Postanowienie: siłownia. Plan, który przetrwa luty — gru (sezonowy filar!)**
 
@@ -89,7 +89,7 @@ Zero: kupionych obserwujących, przeklejanych motywacyjnych grafik, „before/af
 
 ## 8. KPI strategii (przegląd co miesiąc, 30 min — razem z przeglądem kanałów)
 
-Pre-launch: lista (cel 300–500) · konwersja landinga · ruch K1 m/m. Launch+90: aktywowani userzy · W4 · konwersja_trial (próg B2: ≥25% trial→paid lub ≥1,5% całkowita) · % z listy → aktywni. Od podów: k-współczynnik, % w podach (B3). **Jedna metryka gwiazdy północnej: liczba userów z ≥4 treningami w miesiącu** — wszystko inne jej służy.
+Pre-launch: lista (cel 300–500) · konwersja landinga · ruch K1 m/m. Launch+90: aktywowani userzy · W4 · konwersja_trial (próg B2: ≥25% trial→paid lub ≥1,5% całkowita) · % z listy → aktywni. Od ekip: k-współczynnik, % w ekipach (B3). **Jedna metryka gwiazdy północnej: liczba userów z ≥4 treningami w miesiącu** — wszystko inne jej służy.
 
 ## 9. Decyzje [Ty]
 

@@ -23,7 +23,7 @@
 | P3 | **„Bez zobowiązań, anuluj kiedy chcesz"** — subtitle konsekwentnie podbija konwersję. | Wchodzi do copy pricing (landing §6 i paywall). U nas wzmocnione: „bez karty na start". | `landing-plan.md` §3, `tone-of-voice.md` §3 |
 | P4 | **Max 2 opcje cen** (yearly default — najwyższe LTV) + tabela free/premium „co tracisz". | Mamy 2 (14,99/99) ✓; roczny jako default wyróżniony; tabela porównawcza = format ekranu paywalla i sekcji landing. | `audyt-kodu` §Krok 3 |
 | P5 | **Exit-intent:** odmowa rocznego → zaproponuj miesięczny (nie rabat!). | Wzorzec dla paywalla d21: zamykasz roczny → sheet z miesięcznym. Rabaty last-minute = nie (P-odrzucone niżej). | `audyt-kodu` §Krok 3 |
-| P6 | **Friction bywa filtrem** (karta na starcie triala: −50% zapisów, +5× konwersja). | My gramy odwrotnie (bez karty = maks. baza pod pody, Z2) — świadomie. Ale wniosek stosujemy w **B2**: niska konwersja przy dużej bazie nie musi znaczyć „produkt zły", tylko „lejek szeroki" — patrzeć na obie fale osobno (już w instrumentacji). | (bez zmian — kontekst do B2) |
+| P6 | **Friction bywa filtrem** (karta na starcie triala: −50% zapisów, +5× konwersja). | My gramy odwrotnie (bez karty = maks. baza pod ekipy, Z2) — świadomie. Ale wniosek stosujemy w **B2**: niska konwersja przy dużej bazie nie musi znaczyć „produkt zły", tylko „lejek szeroki" — patrzeć na obie fale osobno (już w instrumentacji). | (bez zmian — kontekst do B2) |
 | P7 | **Testy radykalnie różnych designów > mikro-tweaki** („design tests move the needle the most"). | Plan testów paywalla po launchu: 2–3 RÓŻNE koncepty (timeline vs tabela vs long-form) przez PostHog flags, nie dłubanie w odcieniu przycisku. | `audyt-kodu` §Krok 3 |
 | P8 | **Retencja i LTV > konwersja.** „Zbuduj coś wartego płacenia." | Potwierdza gwiazdę północną (userzy ≥4 treningi/mies.) — metryka nadrzędna nad konwersją. | (bez zmian — potwierdzenie) |
 
@@ -33,10 +33,10 @@
 - **Groźba utraty passy jako copy** („nie strać passy!") — loss aversion działa (Duolingo), ale to presja/wstyd → łamie ToV. Passa zawsze komunikowana pozytywnie; lęk przed utratą adresujemy etycznie: **ochroną passy** (premium). → `tone-of-voice.md` §3 „Nigdy".
 - **Spin-the-wheel / fake urgency / odliczania** — „users stop believing it"; Apple już odrzuca mylące wzorce. → ToV ma to w dark patterns; potwierdzone źródłem.
 - **Ukryty/wieloekranowy cancel** (ClassPass: 5 ekranów subskrypcji, 17 anulowania) — u nas **zasada: anulowanie ≤ 2 tapy z ustawień**, wpisana do wytycznych Kroku 3. → `audyt-kodu` §Krok 3.
-- **Curiosity gap w nudge'ach** („ktoś z Twojego poda coś zrobił…") — skuteczne, ale kameralność = przejrzystość: zawsze kto i co. → zasada N1.
+- **Curiosity gap w nudge'ach** („ktoś z Twojej ekipy coś zrobił…") — skuteczne, ale kameralność = przejrzystość: zawsze kto i co. → zasada N1.
 
 **Zaparkowane (backlog, nie teraz):**
-- **Własne przypomnienie treningowe** (opt-in!): kontekstowy timing à la Duolingo — „przypomnij mi w porze, w której zwykle trenuję" na bazie `started_at` historii. Retencja solo zanim pody; ale to nowa powierzchnia push → po Kroku 4. → `roadmap.md` backlog.
+- **Własne przypomnienie treningowe** (opt-in!): kontekstowy timing à la Duolingo — „przypomnij mi w porze, w której zwykle trenuję" na bazie `started_at` historii. Retencja solo zanim ekipy; ale to nowa powierzchnia push → po Kroku 4. → `roadmap.md` backlog.
 - **Wideo-paywall / animowany polish** paywalla — po pierwszych danych z testów P7.
 
 ## 4. Gdzie naniesione (wykonane 2026-07-08)

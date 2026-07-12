@@ -46,18 +46,18 @@
 > „+2,5 kg, bo dobiłeś górę zakresu." „Nogi 9 dni temu — czas na trening." „Push stoi w miejscu — zrób lżejszy tydzień." Żadnej AI-magii: jawne reguły, które widzisz i możesz nadpisać. Jak kumpel, który zna się na rzeczy — nie jak algorytm, który wie lepiej.
 **(alternatywa nagłówka: „Prowadzi, nie wyręcza.")**
 
-## 5. Filar 3 — pody (teaser)
+## 5. Filar 3 — ekipy (teaser)
 
 **Badge:** `wkrótce po starcie`
 **Nagłówek:** > Ty i paru kumpli. To wystarczy.
 **Body:**
-> Pod to Ty i 1–3 znajomych. Widzicie tylko: kto dziś trenował i którą serię tygodni ciągnie. Zero porównywania ciężarów, zero komentarzy, zero feedu. 💪 i „Radek przypomina Ci o treningu" — tyle. I to działa.
+> Ekipa to Ty i 1–3 znajomych. Widzicie tylko: kto dziś trenował i którą serię tygodni ciągnie. Zero porównywania ciężarów, zero komentarzy, zero feedu. 💪 i „Radek przypomina Ci o treningu" — tyle. I to działa.
 
 ## 6. Pricing (A/B — dwa warianty ceny)
 
 **Nagłówek:** > Rdzeń za darmo. Na zawsze.
 **Body:**
-> Logowanie treningów, programy startowe i pody — za darmo, bez gwiazdek. **Arco Coach** dokłada pełne prowadzenie (deload, balans, kalibrację) i głęboką analitykę.
+> Logowanie treningów, programy startowe i ekipy — za darmo, bez gwiazdek. **Arco Coach** dokłada pełne prowadzenie (deload, balans, kalibrację) i głęboką analitykę.
 **Cena:** wariant A: **14,99 zł/mies · 99 zł/rok** · wariant B: **9,90 zł/mies · 79 zł/rok**
 **Trial:** „Pierwsze 21 dni każdy dostaje pełną wersję. Bez karty — nie ma czego zapomnieć anulować."
 **Subtitle pod CTA:** „Bez zobowiązań. Anuluj kiedy chcesz — dwa tapnięcia w ustawieniach."
@@ -67,7 +67,7 @@
 | | Free | Coach |
 |---|---|---|
 | Dziennik + logger offline | ✓ | ✓ |
-| Pody, reakcje, nudge | ✓ | ✓ |
+| Ekipy, reakcje, nudge | ✓ | ✓ |
 | Programy startowe | ✓ (2 aktywne) | ✓ bez limitu |
 | Hint progresji | podstawowy | pełny (deload, balans, staleness) |
 | Historia | 12 tygodni wstecz | całość |
