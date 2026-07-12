@@ -112,17 +112,17 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
 
         <section className="grid grid-cols-3 gap-sm">
           <div className="rounded-xl bg-card p-sm text-center shadow-sm">
-            <p className="text-xl font-bold tabular-nums">{completed.length}</p>
+            <p className="font-display text-2xl tabular-nums">{completed.length}</p>
             <p className="text-xs text-muted-foreground">serie</p>
           </div>
           <div className="rounded-xl bg-card p-sm text-center shadow-sm">
-            <p className="text-xl font-bold tabular-nums">
+            <p className="font-display text-2xl tabular-nums">
               {Math.round(volume).toLocaleString("pl-PL")}
             </p>
             <p className="text-xs text-muted-foreground">objętość {unit}</p>
           </div>
           <div className="rounded-xl bg-card p-sm text-center shadow-sm">
-            <p className="text-xl font-bold tabular-nums">
+            <p className="font-display text-2xl tabular-nums">
               {durationMin != null ? `${durationMin}'` : "—"}
             </p>
             <p className="text-xs text-muted-foreground">czas</p>

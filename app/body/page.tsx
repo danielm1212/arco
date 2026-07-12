@@ -58,7 +58,7 @@ export default async function BodyPage() {
         {latest != null && (
           <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
             <div className="flex items-baseline justify-between">
-              <span className="text-3xl font-bold tabular-nums">
+              <span className="font-display text-3xl tabular-nums">
                 {latest}
                 <span className="text-base font-normal text-muted-foreground"> {unit}</span>
               </span>
@@ -82,7 +82,7 @@ export default async function BodyPage() {
             {metrics?.map((m) => (
               <li
                 key={m.id}
-                className="flex items-center justify-between gap-sm rounded-lg bg-muted p-sm text-sm"
+                className="flex items-center justify-between gap-sm rounded-md bg-muted p-sm text-sm"
               >
                 <span className="flex min-w-0 items-center gap-sm">
                   {m.photo_path && photoUrls[m.photo_path] && (

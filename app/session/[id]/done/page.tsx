@@ -127,7 +127,7 @@ export default async function SessionDonePage({ params }: { params: { id: string
       </div>
 
       {/* Nagłówek celebracji */}
-      <p className="text-balance text-2xl font-bold leading-tight">{headline}</p>
+      <p className="text-balance text-2xl font-semibold leading-tight">{headline}</p>
 
       {/* Pasek statów */}
       <div className="flex items-center gap-md text-sm">
@@ -141,7 +141,9 @@ export default async function SessionDonePage({ params }: { params: { id: string
       {/* S13: Muscle Split — co dziś pracowało */}
       {split.length > 0 && (
         <div className="w-full rounded-xl bg-card p-md text-left shadow-sm">
-          <p className="mb-sm text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {/* W9 (audyt-wizualny): cichsza etykieta — celebracja = liczba + headline,
+              sekcje pomocnicze nie krzyczą uppercasem */}
+          <p className="mb-sm text-xs font-medium text-muted-foreground">
             Co dziś pracowało
           </p>
           <MuscleSplitBars rows={split} max={4} />

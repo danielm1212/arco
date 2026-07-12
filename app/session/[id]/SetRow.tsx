@@ -183,7 +183,7 @@ export const SetRow = memo(function SetRow({
       {/* Akcept serii: ✓ zawsze widoczny (muted) → wypełniony volt po zaliczeniu
           (wzorzec Hevy/Gymshark — czytelne, że to przycisk zatwierdzenia) */}
       {isPr && (
-        <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+        <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
           PR
         </span>
       )}

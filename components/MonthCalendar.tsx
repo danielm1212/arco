@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Flame } from "lucide-react";
 
 const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
 const MONTHS = [
@@ -72,15 +73,23 @@ export function MonthCalendar({
           c === null ? (
             <span key={`b${i}`} />
           ) : (
+            /* W2 (audyt-wizualny): dzień treningowy = TEN SAM glif ognia co FlameWeek —
+               jeden symbol od home przez historię po przyszły recap. Numer dnia niesie
+               pozycja w siatce + sr-only; „dziś" bez zmian (ring). */
             <div
               key={c.key}
               className={`flex aspect-square items-center justify-center rounded-md text-xs tabular-nums ${
-                days.has(c.key)
-                  ? "bg-volt font-semibold text-volt-foreground"
-                  : "text-muted-foreground"
+                days.has(c.key) ? "" : "text-muted-foreground"
               } ${c.key === todayKey ? "ring-1 ring-volt" : ""}`}
             >
-              {c.n}
+              {days.has(c.key) ? (
+                <>
+                  <Flame className="size-4 fill-primary text-primary" strokeWidth={0} aria-hidden />
+                  <span className="sr-only">{c.n} — trening zaliczony</span>
+                </>
+              ) : (
+                c.n
+              )}
             </div>
           ),
         )}

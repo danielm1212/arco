@@ -71,7 +71,9 @@ export function Stat({
   const d = delta == null ? null : delta >= 10 ? "up" : delta <= -10 ? "down" : "flat";
   return (
     <div className="rounded-xl bg-card p-sm text-center shadow-sm">
-      <p className="text-xl font-bold tabular-nums">{value}</p>
+      {/* Liczba-bohater (wzorzec Withings) — font-display jak na done-screen:
+          liczby-momenty mówią Gambarino w całej apce (audyt wizualny 2026-07-11) */}
+      <p className="font-display text-2xl tabular-nums">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
       {d && (
         <p
@@ -175,7 +177,7 @@ export function StrengthSection({ strength }: { strength: StrengthRow[] }) {
         {strength.map((s) => (
           <li
             key={s.id}
-            className="flex items-center gap-sm rounded-lg bg-muted p-sm text-card-foreground"
+            className="flex items-center gap-sm rounded-md bg-muted p-sm text-card-foreground"
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{s.name}</p>
@@ -231,7 +233,7 @@ export function RecordsSection({
             <li key={id}>
               <Link
                 href={`/exercise/${encodeURIComponent(id)}`}
-                className="flex items-center justify-between rounded-lg bg-muted p-sm text-sm"
+                className="flex items-center justify-between rounded-md bg-muted p-sm text-sm"
               >
                 <span className="truncate">{r.name}</span>
                 <span className="shrink-0 text-muted-foreground">

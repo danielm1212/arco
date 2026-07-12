@@ -83,7 +83,7 @@ export function ProgramEditor({
         </div>
 
         {days.map((day) => (
-          <section key={day.id} className="space-y-sm rounded-lg border bg-card p-md">
+          <section key={day.id} className="space-y-sm rounded-xl border bg-card p-md">
             <div className="flex items-center gap-sm">
               <Input
                 defaultValue={day.label}

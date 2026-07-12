@@ -62,7 +62,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
   }
 
   return (
-    <div className="space-y-sm rounded-lg border bg-card p-md">
+    <div className="space-y-sm rounded-xl border bg-card p-md">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Dodaj ćwiczenie</p>
         <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>

@@ -86,7 +86,7 @@ export function FlameWeek({
               <span
                 className={`text-[11px] ${
                   d.today
-                    ? "font-bold text-foreground"
+                    ? "font-semibold text-foreground"
                     : future
                       ? "text-muted-foreground/60"
                       : "text-muted-foreground"

@@ -31,6 +31,13 @@
 - **Wzorce wymagające natywu** (context menus z haptic, live activities itd.) — nie udajemy; PWA robi mniej, ale to co robi, robi bez lagu.
 - Prawny nawias: HIG to wytyczne Apple — stosujemy je jako dobre praktyki projektowe; nie podlegamy App Store Review (dopóki nie ma TWA w App Store).
 
+## 2b. Normy typografii i kształtu (mini-sprint „rymy", 2026-07-11)
+
+- **Waga sans: max `font-semibold` (600). `font-bold` nie istnieje w apce** — „krzyk" robi Gambarino (`font-display`), nie tłuszcz. Sweep wykonany (17 wystąpień).
+- **Liczby-momenty = `font-display`** (Gambarino, tabular-nums): liczba-bohater done-screen, Stat na /progress, podsumowanie sesji w historii, waga na /body. Nowa duża liczba? → font-display.
+- **Radiusy:** karty `rounded-xl` · wiersze-w-kartach i chipy prostokątne `rounded-md` · pigułki `rounded-full` · mikro-elementy <8 px wysokości (paski aktywności) `rounded-sm`. Innych nie używamy.
+- **Glif ognia = jeden** (lucide `Flame`): FlameWeek, kalendarz historii (dzień treningowy), przyszłe recap/streak-badge. Żadnych 🔥-emoji w UI narzędzia tam, gdzie może stać glif (emoji zostaje w copy momentów).
+
 ## 3. Checklist nowego ekranu/komponentu (do review przed merge)
 
 1. Jedna akcja główna? Co user ma zrobić najpierw — widać w 2 s?

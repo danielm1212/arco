@@ -101,7 +101,7 @@ export function RestTimer({
             Przerwa{label ? ` · ${label}` : ""}
           </p>
           <p
-            className={`font-mono text-2xl font-bold tabular-nums transition-transform ${
+            className={`font-mono text-2xl font-semibold tabular-nums transition-transform ${
               finishing ? "scale-110 text-primary" : ""
             }`}
           >

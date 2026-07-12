@@ -10,6 +10,6 @@ export const MuscleHeatmapLazy = dynamic(
   () => import("./MuscleHeatmap").then((m) => m.MuscleHeatmap),
   {
     ssr: false,
-    loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" aria-hidden />,
+    loading: () => <div className="h-64 animate-pulse rounded-xl bg-muted" aria-hidden />,
   },
 );

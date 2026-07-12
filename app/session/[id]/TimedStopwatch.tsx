@@ -96,7 +96,7 @@ export function TimedStopwatch({
     return (
       <div className="flex flex-1 items-center gap-xs">
         <span
-          className={`flex-1 text-center font-mono text-xl font-bold tabular-nums ${
+          className={`flex-1 text-center font-mono text-xl font-semibold tabular-nums ${
             finishing ? "scale-110 text-primary" : ""
           }`}
         >
