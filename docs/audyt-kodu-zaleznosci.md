@@ -11,22 +11,17 @@
   - Uwaga ops: smoke wymagają `ADMIN_PASSWORD=arco1` w env (hasło w `.env.local` jest inne — guard bootstrapu min. 8 znaków).
 - **Dedup `formatSet`/`Sparkline` z planu — nieaktualny:** obie funkcje istnieją w dokładnie jednym miejscu.
 
-## 2. Podatności npm — wszystkie wymagają Next 16 (major) → decyzja [Ty]
+## 2. Podatności npm — ✅ ROZWIĄZANE (2026-07-12, `97405b8`)
 
-`npm audit`: 5 podatności (4 high, 1 moderate) — **wszystkie w `next@14.2.35`** (moderate to postcss zbundlowany w nexcie). Fix wyłącznie przez `next@16` (breaking).
+`npm audit`: 5 podatności (4 high, 1 moderate) — **wszystkie w `next@14.2.35`** (moderate to postcss zbundlowany w nexcie). Fix wyłącznie przez `next@16` (breaking) — potwierdzone realnym `npm audit --json` (`fixAvailable` wskazywał wyłącznie `next@16.2.10`, nie 15.x).
 
-Ocena eksploatowalności **w naszym kontekście** (apka za loginem, single-user, po N1 na Vercelu):
+**Decyzja [Ty] 2026-07-12:** Next 16 + React 19 razem (React 19 nie był ściśle wymagany — Next 16 akceptuje React 18 jako peer — ale App Router i tak ciągnie kanaryjski React 19.2, więc zrobione naraz). **Tailwind 4 i TypeScript 6/7 ŚWIADOMIE ZOSTAJĄ NIETKNIĘTE** — osobne, większe decyzje (Tailwind 4 = przepisanie całego systemu tokenów „Arco Warm" na CSS-first config, ryzyko wizualne na świeżo dopracowanym systemie).
 
-| Podatność | U nas |
-|---|---|
-| DoS w Image Optimization API | nie używamy `next/image` (świadomie `<img>`) — **nie dotyczy** |
-| XSS przy CSP nonces / beforeInteractive | nie używamy CSP nonces ani beforeInteractive — **nie dotyczy** |
-| SSRF przez WebSocket upgrades | brak WS — **nie dotyczy** |
-| Middleware bypass przy i18n (Pages Router) | App Router, brak i18n — **nie dotyczy** |
-| Cache poisoning RSC / middleware redirects | **jedyne realne** — istotne na CDN (Vercel), łagodzone tym, że wszystko za auth i single-user |
-| DoS Server Components | niska istotność (osobisty ruch) |
+Realne złamania w tym repo (nie ogólnikowo z changeloga, zweryfikowane grepem): async `params`/`searchParams` (8 plików) + `cookies()` w `lib/supabase/server.ts` (→ async, ~22 call site'y z `await`) + `middleware.ts`→`proxy.ts` (bezpieczeństwo, nie kosmetyka — łatki proxy z 16 nie działają pod starą nazwą) + Turbopack domyślny (zostajemy na webpack, `--webpack` flag) + ESLint 8→9 + flat config (nie 10 — `eslint-plugin-react` bundlowany przez eslint-config-next niekompatybilny z ESLint 10 API).
 
-**Rekomendacja (bez zmian vs plan):** Next 16 + React 19 + Tailwind 4 + TS 6 robić **świadomie po N1/launchu**, jeden major na raz z pełną weryfikacją — nie teraz w środku sprintów produktowych. Ryzyko bieżące akceptowalne. Jeśli wolisz przed deployem — powiedz, wtedy najpierw sam Next 16 (największy zysk security).
+**Wynik:** 4/5 podatności (wszystkie high) usunięte. **Zostaje 1 moderate** — `postcss@8.4.31` zbundlowany WEWNĄTRZ `next@16.2.10` (`node_modules/next/node_modules/postcss`), nie nasza zależność, nie do podbicia bez `npm audit fix --force` (zdowngradowałoby `next` do `9.3.3` — katastrofalna regresja, odrzucone). Upstream-blocked, akceptowalne ryzyko (moderate, ten sam „postcss zbundlowany w Nexcie" quirk co w §1 tego audytu).
+
+Pełny opis migracji, weryfikacji i decyzji: commit `97405b8` + HANDOFF wpis 2026-07-12.
 
 ## 3. Higiena kodu — część 2 — ✅ WYKONANE (S9-cz.2, 2026-07-10)
 
@@ -39,4 +34,4 @@ Ocena eksploatowalności **w naszym kontekście** (apka za loginem, single-user,
 **Lighthouse przed→po** (mobile, symulowany throttling, prod `next start`, LH 13.4): home 94→95 · /progress 94→95 (LCP 3,1→2,9 s) · logger 95→95. Wszystko ≥90 (budżet `optymalizacja.md` §1). Zysk loggera to re-rendery (memo — niewidoczne w Lighthouse przy TBT 0 ms); zysk /progress to vendor poza initial.
 
 ## 4. Status Done S9
-Patche minor ✓ · 0 known-exploitable w naszym kontekście (ocena wyżej) ✓ · smoke czyste ✓ · decyzja majorów: **czeka [Ty]** (re-audit 2026-07-10: te same 5 vuln, wszystkie w next@14) · higiena: **część 2 = DONE** (§3).
+Patche minor ✓ · smoke czyste ✓ · higiena: **część 2 = DONE** (§3) · majory: **DONE 2026-07-12** — Next 16 + React 19, 4/5 podatności usunięte, 1 moderate upstream-blocked (§2) → **S9 KOMPLETNIE ZAMKNIĘTE, S11-domknięcie odblokowane**.

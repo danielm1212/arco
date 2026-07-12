@@ -28,7 +28,7 @@
 | 11 | **N3 — Reskin „Arco Warm"** | ✅ ZROBIONE (ec10f19) — tokeny/logo/jasny default/day-pills/elevation; logger jasny → decyzja forced-dark po teście [Ty] |
 | 12 | **S9-cz.2 (higiena)** | ✅ ZROBIONE W CAŁOŚCI 2026-07-10 (`a0fdecf` paczki 1–2 · `fcf8669` split Logger 768→249 + memo · `dbce3fa` split progress + dynamic heatmapa) — Lighthouse 95/95/95 ≥ budżetu, raport: HANDOFF wpis X; **push wstrzymany do migracji remote [Ty]** |
 | 13 | **S10 (offline+longevity)** | ✅ ZROBIONE 2026-07-11 (`43b1792`) — offline-guardy swap/add/skip, CSP Report-Only, checklista longevity 6/6 (`sprinty-szczegolowe.md`), RLS re-check 11/11 |
-| 14 | S11-domknięcie (launch) | dalej [Claude]; czeka decyzja [Ty]: majory next/React/Tailwind/TS |
+| 14 | S11-domknięcie (launch) | Next 16+React 19 ✅ ZROBIONE 2026-07-12 (`97405b8`, `docs/audyt-kodu-zaleznosci.md` §2); zostają: self-host obrazków, plan backupów+test restore, CSP enforce, PL tłumaczenia, app icon |
 
 ---
 
