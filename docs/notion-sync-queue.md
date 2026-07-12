@@ -13,15 +13,19 @@
 
 ## Oczekujące
 
-- [ ] CREATE | Rename „pody"→„Ekipa" + koncepcja ekipy (audyt, konkurencja, UX) | Wysoki | Ty+Claude | Refinement | — | Produkt | Notatka: 2026-07-12 — decyzja nazwy: docs/nazwa-grup.md (EKIPA); sweep PL po docs+CLAUDE.md+landingu wykonany (techniczne pods/pod_members zostają EN); nowy kanon funkcji: docs/ekipa-koncepcja.md — konkurencja (Duolingo Friend Streak = wzorzec nudge, Ladder/WHOOP/Motion/Sweatmates), luka: auto-check-in × mała grupa × rytm tygodniowy × zero moderacji; mechanika (nudge kontekstowy, digest niedzielny, cykl życia ekipy), IA (karta home + /ekipa), UI pod Warm. Decyzje [Ty] §8: digest w v1 (rek. TAK), awatary inicjały vs emoji, wyrzucanie przez twórcę, 4. element home, progi nudge.
-- [ ] CREATE | Kalibracja guidance na literaturze (progi potwierdzone + R1) | Wysoki | Claude | Refinement | — | Produkt | Notatka: 2026-07-11 — docs/kalibracja-guidance.md; staleness/deload/balans potwierdzone (Coleman 2024 RCT wspiera stagnation-triggered deload!), balans oznaczony jako heurystyka; R1 do decyzji [Ty]: copy progresji dla ciężarów <20 kg; kandydat volume-low po H2; mapa epistemiczna = treść pod „dlaczego" w Kroku 3.
-- [ ] CREATE | Onboarding v3 WDROŻONY (moment Gambarino, outcome-first) | Wysoki | Claude | Do testu [Ty] | — | UX | Notatka: 2026-07-11 — WelcomeOverlay v3: E0 moment, 1 decyzja/ekran, cel wg poziomu, E5 karta planu + mikro-potwierdzenie, eventy wpięte, kg/lbs w E1; flaga arco-onboarded-v3; tsc ✓; do testu: pełny flow + skipy na świeżym koncie; H2 Z1 testuje to.
+(puste)
 
-- [ ] CREATE | Audyt wizualny + mini-sprint „rymy" WYKONANY | Wysoki | Ty+Claude | Do testu [Ty] | — | UX | Notatka: 2026-07-11 — docs/audyt-wizualny.md; wdrożone W1+W2+W3+W5+W9: jeden glif ognia (FlameWeek+kalendarz historii), Gambarino na wszystkich liczbach-momentach, norma wag (0×font-bold) i radiusów (0×rounded-lg) w wytyczne-designu §2b, cichsza celebracja; tsc ✓; do testu: /history, /progress, /body, done, dark mode; commit [Ty]. Odłożone: W6 (ikony clay), W7 (login przy Kroku 2).
-- [ ] CREATE | Landing ZBUDOWANY (landing/index.html) — do recenzji i foto | Wysoki | Ty+Claude | Do testu [Ty] | — | Marketing | Notatka: 2026-07-11 — diagnoza prototypu (D1–D7) → brief → budowa przez Claude: Gambarino, ziarno tylko na momentach, mockupy wierne redesignowi, placeholdery foto art-directed, founder+FAQ dopisane, A/B cen ?v=b, form pod ESP; do zrobienia [Ty]: przegląd w przeglądarce, foto (prompt w briefie), ESP+domena+deploy (osobny Vercel static); checklist QA w landing-brief-framer.md §4.
-- [ ] CREATE | Onboarding v3: 6 ekranów, moment Gambarino, outcome-first | Wysoki | Ty+Claude | Refinement | — | UX | Notatka: 2026-07-11 — docs/onboarding-v3.md; audyt v2 (O1–O6) → v3 ≤60 s, 1 decyzja/ekran; E0 moment display-typo, E5 karta planu „Aktywuj" bez auto-startu; jednostki out (kg default); furtki: signup przed E0, ekipa-invite, trial-ekran; ~1,5 wieczora; czeka akcept [Ty]. + Review wdrożenia home+logger: 9/10.
-- [ ] CREATE | Audyt UX loggera: karta ⋯, jedno „poprzednio", finish-sheet | Wysoki | Ty+Claude | Do testu [Ty] | — | UX | Notatka: 2026-07-11 — docs/audyt-loggera.md, sprint „logger polish" KOMPLETNY: R1+R2 (menu ⋯ per karta + ⋯ sesji, jedno „poprzednio") → R6a+R6b (przerwa świadoma supersetu + „Połącz w superset" kierunko-agnostyczne) → R7 (reorder ⋯ wyżej/niżej, grupa SS jako jednostka) → R3 (targety 44px) → R4 (finish-sheet) → R5 (copy/affordance). Commity: 0301394, 275e431, 416cb98, 6bfb98a, f696a1c, 441f261. Do testu w Z2 scenariusza H2.
-- [ ] CREATE | Redesign home: FlameWeek + hero + guidance-chip | Wysoki | Ty+Claude | Do testu [Ty] | — | UX | Notatka: 2026-07-11 — docs/redesign-home.md, F1+F2 KOMPLETNE (e9596b5, 5550739): 7 bloków → 3 sekcje, hero V4 (biały kafel, jedyne rust-CTA), FlameWeek (day-pills → płomienie, ukryty do 1. treningu), GuidanceChip. Flaga [Ty]: pusty stan wariant A (§3.6, hero z konkretnym programem po onboardingu) NIE wdrożony — wymaga persystencji poziom/środowisko z WelcomeOverlay do user_settings, poza zakresem tej paczki; „Ułóż własny" pominięty (brak route'a). Do testu w Z0 scenariusza H2.
+## Ostatni flush: 2026-07-12
+
+Wykonane (7 CREATE; 8 wpisów kolejki zmapowanych na 7 kart — dwa wpisy o Onboardingu v3 scalone w jedną kartę, wg tej samej zasady co flush 2026-07-10):
+- „Rename „pody"→„Ekipa" + koncepcja ekipy" (Refinement, Feature).
+- „Kalibracja guidance na literaturze" (Refinement, Feature).
+- „Onboarding v3: 6 ekranów... — WDROŻONY" (Do testu [Ty], UX/flow) — scalone z projektu-DO-AKCEPTACJI i wdrożenia w jedną kartę.
+- „Audyt wizualny + mini-sprint „rymy" WYKONANY" (Do testu [Ty], UX/flow).
+- „Landing ZBUDOWANY" (Do testu [Ty], Biznes/strategia).
+- „Audyt UX loggera" (Do testu [Ty], UX/flow).
+- „Redesign home: FlameWeek + hero + guidance-chip" (Do testu [Ty], UX/flow).
+- Mapowanie „Kto wykonuje": Ty+Claude→Wspólnie, Claude→Claude Code (nazwy selectów w bazie). Kategoria: Produkt→Feature, UX→UX / flow, Marketing→Biznes / strategia (najbliższe istniejące selecty, schemat NIE ruszany).
 
 ## Ostatni flush: 2026-07-10
 
