@@ -9,8 +9,9 @@ import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 
 export const dynamic = "force-dynamic";
 
-export default async function SessionDetailPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function SessionDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const [{ data: session }, { data: settings }] = await Promise.all([
     supabase

@@ -22,14 +22,13 @@ function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
 
 export const dynamic = "force-dynamic";
 
-export default async function ExercisePage({
-  params,
-  searchParams,
-}: {
-  params: { id: string };
-  searchParams: { m?: string };
+export default async function ExercisePage(props: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ m?: string }>;
 }) {
-  const supabase = createClient();
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const exerciseId = decodeURIComponent(params.id);
 
   const [{ data: exercise }, { data: settings }] = await Promise.all([

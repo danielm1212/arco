@@ -23,12 +23,9 @@ export const dynamic = "force-dynamic";
  * /progress — S9-cz.2 paczka 4: orkiestracja po splicie (dane → ./stats.ts,
  * sekcje → ./sections.tsx, heatmapa vendor przez next/dynamic poza initial JS).
  */
-export default async function ProgressPage({
-  searchParams,
-}: {
-  searchParams: { okres?: string };
-}) {
-  const supabase = createClient();
+export default async function ProgressPage(props: { searchParams: Promise<{ okres?: string }> }) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const period = PERIODS.find((p) => p.key === searchParams.okres) ?? PERIODS[0];
 
   const [{ data: settings }, { count: totalSessions }] = await Promise.all([

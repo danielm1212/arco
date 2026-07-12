@@ -10,12 +10,9 @@ export const dynamic = "force-dynamic";
 /** S9-cz.2 paczka 2: strona listy — kursor po started_at (optymalizacja.md §2.5). */
 const PAGE_SIZE = 20;
 
-export default async function HistoryPage({
-  searchParams,
-}: {
-  searchParams: { before?: string };
-}) {
-  const supabase = createClient();
+export default async function HistoryPage(props: { searchParams: Promise<{ before?: string }> }) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const before = searchParams.before;
 
   // Kalendarz + passa liczone z OSOBNEGO, lekkiego zapytania (same daty ukończonych sesji) —

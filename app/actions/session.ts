@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { localDayKey } from "@/lib/week";
 
 async function requireUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

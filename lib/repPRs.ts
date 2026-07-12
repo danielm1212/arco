@@ -11,7 +11,7 @@ export type RepPRMap = Record<string, Record<number, number>>;
  * `excludeSessionId` — bieżąca sesja nie zawyża własnych rekordów „do pobicia".
  */
 export async function getRepPRs(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   exerciseIds: string[],
   excludeSessionId?: string,
 ): Promise<RepPRMap> {

@@ -27,8 +27,9 @@ const HEADLINES = {
 
 const pick = (pool: readonly string[]) => pool[Math.floor(Math.random() * pool.length)];
 
-export default async function SessionDonePage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function SessionDonePage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const [{ data: session }, { data: settings }, { data: allFinished }] = await Promise.all([
     supabase

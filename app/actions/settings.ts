@@ -11,7 +11,7 @@ export async function updateSettings(values: {
   weekly_goal?: number;
   display_name?: string | null;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

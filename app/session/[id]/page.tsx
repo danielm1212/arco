@@ -5,8 +5,9 @@ import { Logger, type LoggerExercise } from "./Logger";
 
 export const dynamic = "force-dynamic";
 
-export default async function SessionPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function SessionPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const sessionId = params.id;
 
   const { data: session } = await supabase

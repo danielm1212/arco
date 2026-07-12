@@ -14,7 +14,7 @@ export const PERIODS = [
   { key: "all", label: "Wszystko", days: null as number | null },
 ];
 
-type Supabase = ReturnType<typeof createClient>;
+type Supabase = Awaited<ReturnType<typeof createClient>>;
 
 export interface PeriodStats {
   sessionCount: number;

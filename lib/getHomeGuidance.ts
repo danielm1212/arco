@@ -37,7 +37,7 @@ const weekStartMs = (d: Date): number => {
  * Okno: 90 dni (staleness), bieżący tydzień (balans). Liczone z serii roboczych zaliczonych.
  */
 export async function getHomeGuidance(): Promise<GuidanceItem[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: sessions } = await supabase
     .from("sessions")

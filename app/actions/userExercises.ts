@@ -61,7 +61,7 @@ export interface CreateUserExerciseResult {
 export async function createUserExercise(
   formData: FormData,
 ): Promise<CreateUserExerciseResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Brak sesji." };
 
@@ -124,7 +124,7 @@ export async function createUserExercise(
  * lub w programie — odmowa (integralność danych > sprzątanie).
  */
 export async function deleteUserExercise(exerciseId: string): Promise<{ error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Brak sesji." };
 

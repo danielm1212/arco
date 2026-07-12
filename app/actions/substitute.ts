@@ -31,7 +31,7 @@ const overlap = (a: string[] | null, b: string[] | null) => {
 export async function getSubstitutes(
   sessionExerciseId: string,
 ): Promise<SubstituteResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: se } = await supabase
     .from("session_exercises")
@@ -120,7 +120,7 @@ export async function swapExercise(
   sessionExerciseId: string,
   newExerciseId: string,
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase
     .from("session_exercises")
     .update({ exercise_id: newExerciseId })
