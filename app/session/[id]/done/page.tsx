@@ -11,17 +11,16 @@ export const dynamic = "force-dynamic";
 // Rotujące nagłówki (logika Duolingo) — losowy z puli per stan, żeby nie spowszedniało.
 const HEADLINES = {
   pr: [
-    "Nowy rekord. Stara wersja Ciebie właśnie przegrała.",
-    "PR zbity. Liczby nie kłamią.",
+    "Nowy rekord. Dobra robota.",
+    "Poszło więcej. Rekord zapisany.",
   ],
-  comeback: ["Wróciłeś. Ciało pamięta — zaczynamy odbudowę."],
-  streak: ["{n} tydzień z rzędu. Konsekwencja > motywacja."],
-  short: ["Krótko i konkretnie. Liczy się, że było."],
+  comeback: ["Dobrze, że jesteś z powrotem."],
+  streak: ["{n}. tydzień z rzędu. Rytm trzyma."],
+  short: ["Krótki trening też się liczy."],
   standard: [
-    "Zrobione. Reszta świata dalej planuje.",
-    "Sztanga odłożona. Ego podniesione.",
-    "I po robocie. Forma rośnie w ciszy.",
-    "Tyle. Bez owijania — dobra robota.",
+    "Trening zapisany. Dobra robota.",
+    "Gotowe. Teraz czas na odpoczynek.",
+    "Plan wykonany. Możesz odhaczyć ten dzień.",
   ],
 } as const;
 
@@ -59,6 +58,8 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
   const allSets = exercises.flatMap((e) => e.session_sets);
   const completed = allSets.filter((s) => s.completed);
   const volume = completed.reduce((n, s) => n + (s.weight ?? 0) * (s.reps ?? 0), 0);
+  const totalReps = completed.reduce((n, s) => n + (s.reps ?? 0), 0);
+  const totalSeconds = completed.reduce((n, s) => n + (s.duration_seconds ?? 0), 0);
   const exCount = exercises.filter((e) =>
     e.session_sets.some((s) => s.completed),
   ).length;
@@ -113,6 +114,11 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
           : pick(HEADLINES.standard);
 
   const goalLeft = Math.max(0, goal - weeklyCount);
+  const hero = volume > 0
+    ? { value: Math.round(volume).toLocaleString("pl-PL"), unit, label: "tyle dziś uniosłeś" }
+    : totalReps > 0
+      ? { value: totalReps.toLocaleString("pl-PL"), unit: "powt.", label: "tyle powtórzeń zrobiłeś" }
+      : { value: totalSeconds.toLocaleString("pl-PL"), unit: "s", label: "tyle czasu pracowałeś" };
 
   return (
     <div className="bg-brand text-brand-foreground">
@@ -121,10 +127,10 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
           z 3 ekranów testowych z roadmap.md (celebracja/kłódka premium/recap) */}
       <div>
         <p className="font-display text-6xl leading-none tabular-nums text-primary">
-          {Math.round(volume).toLocaleString("pl-PL")}
-          <span className="text-2xl font-semibold"> {unit}</span>
+          {hero.value}
+          <span className="text-2xl font-semibold"> {hero.unit}</span>
         </p>
-        <p className="mt-sm text-muted-foreground">tyle dziś uniosłeś</p>
+        <p className="mt-sm text-brand-muted">{hero.label}</p>
       </div>
 
       {/* Nagłówek celebracji */}
@@ -156,18 +162,18 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
         <Button asChild size="lg" className="w-full">
           {/* F2 (redesign-home.md §3.6): ?trained=1 odpala zapłon flame'a
               dzisiejszego dnia na home, raz, po powrocie z celebracji */}
-          <Link href="/?trained=1">Zamknij i odpoczywaj</Link>
+          <Link href="/?trained=1">Wróć na ekran główny</Link>
         </Button>
         {goalLeft > 0 && (
           <Button asChild variant="outline" size="lg" className="w-full">
             <Link href="/">
-              {weeklyCount} z {goal} w tym tygodniu — jeszcze jeden
+              {weeklyCount} z {goal} w tym tygodniu. {goalLeft === 1 ? "Został jeden" : `Zostały ${goalLeft}`}
             </Link>
           </Button>
         )}
         {goalLeft === 0 && (
           <p className="text-sm font-medium text-primary">
-            🎯 Cel tygodnia zrobiony ({weeklyCount}/{goal})
+            🎯 Cel tygodniowy wykonany: {weeklyCount}/{goal}
           </p>
         )}
       </div>
@@ -180,7 +186,7 @@ function Stat({ value, label }: { value: string; label: string }) {
   return (
     <span className="flex flex-col">
       <span className="text-lg font-semibold tabular-nums">{value}</span>
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-xs text-brand-muted">{label}</span>
     </span>
   );
 }

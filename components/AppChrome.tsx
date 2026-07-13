@@ -13,7 +13,7 @@ export function AppChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
       <OfflineBanner />
-      <div className={hide ? "" : "pb-28"}>{children}</div>
+      <div className={hide ? "" : "pb-36"}>{children}</div>
       {!hide && <SessionMiniBar />}
       {!hide && <BottomNav />}
     </>

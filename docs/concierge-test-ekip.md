@@ -1,5 +1,6 @@
 # Concierge-test ekip — ręczna walidacja tezy Radka przed Krokiem 4
 
+> **❌ ODWOŁANY — decyzja [Ty] 2026-07-12:** test na WhatsAppie nie zostanie przeprowadzony (brak realnej możliwości organizacyjnej). Walidacja tezy Radka przenosi się do: (1) **H2 moduł C** (pytania C1–C3 zostają — koncept-test na żywych rozmowach), (2) **dogfooding od dnia 1 Kroku 4** — pierwsza ekipa = Daniel + własny krąg na realnym produkcie, (3) **bramka B3 bez zmian** (≥30% aktywnych w ekipie, k ≥1,15). Kryteria 🟢🟡🔴 z §3 tego doku NIE przepadają — stają się ramą oceny dogfoodingu po 3 tyg. używania. Dokument zostaje jako spec kryteriów; nie planować wg §1–2.
 > **Data:** 2026-07-08 · **Po co:** Krok 4 to 6–8 tygodni budowy (schema, RLS, push, e-mail, UI). Teza pod spodem — „kameralna widoczność check-inów + nudge utrzymuje ludzi w treningu" — jest niezweryfikowana. Ten test sprawdza ją **za darmo, w 3 tygodnie, na WhatsAppie**, zanim napiszemy pierwszą linijkę. Wzorzec: concierge MVP — udajemy produkt ręcznie.
 > **Kiedy:** po sesjach H2 (rekrutacja stamtąd), równolegle z Krokiem 2 — wynik ma być na stole PRZED startem budowy Kroku 4.
 

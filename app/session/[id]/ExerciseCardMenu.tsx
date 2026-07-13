@@ -175,7 +175,7 @@ export function ExerciseCardMenu({
               <button
                 aria-label="krótsza przerwa"
                 onClick={() => onAdjustRest(-15)}
-                className="flex h-9 w-9 items-center justify-center rounded-md border border-input"
+                className="flex size-11 items-center justify-center rounded-md border border-input focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 −
               </button>
@@ -183,7 +183,7 @@ export function ExerciseCardMenu({
               <button
                 aria-label="dłuższa przerwa"
                 onClick={() => onAdjustRest(15)}
-                className="flex h-9 w-9 items-center justify-center rounded-md border border-input"
+                className="flex size-11 items-center justify-center rounded-md border border-input focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 +
               </button>

@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { deleteBodyMetric } from "@/app/actions/body";
 import { BodyForm } from "./BodyForm";
+import { DeleteBodyMetricButton } from "./DeleteBodyMetricButton";
+import { BodyPhotoButton } from "./BodyPhotoButton";
 import { Sparkline } from "@/components/Sparkline";
 
 export const dynamic = "force-dynamic";
@@ -44,12 +44,8 @@ export default async function BodyPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="text-xs text-muted-foreground">
-          ← Trening
-        </Link>
-        <span className="font-semibold">Ciało</span>
-        <span className="w-12" />
+      <header className="border-b px-md py-md text-center">
+        <h1 className="font-semibold">Ciało</h1>
       </header>
 
       <main className="flex-1 space-y-lg p-md">
@@ -76,7 +72,7 @@ export default async function BodyPage() {
         <section className="space-y-sm">
           <h2 className="text-base font-semibold">Historia pomiarów</h2>
           {(!metrics || metrics.length === 0) && (
-            <p className="text-sm text-muted-foreground">Zważ się raz w tygodniu — po kilku wpisach zobaczysz trend, nie pojedyncze liczby.</p>
+            <p className="text-sm text-muted-foreground">Dodawaj pomiar mniej więcej raz w tygodniu. Po kilku wpisach zobaczysz trend.</p>
           )}
           <ul className="space-y-2xs">
             {metrics?.map((m) => (
@@ -85,20 +81,7 @@ export default async function BodyPage() {
                 className="flex items-center justify-between gap-sm rounded-md bg-muted p-sm text-sm"
               >
                 <span className="flex min-w-0 items-center gap-sm">
-                  {m.photo_path && photoUrls[m.photo_path] && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <a href={photoUrls[m.photo_path]} target="_blank" rel="noreferrer">
-                      <img
-                        src={photoUrls[m.photo_path]}
-                        alt="zdjęcie postępu"
-                        loading="lazy"
-                        decoding="async"
-                        width={80}
-                        height={80}
-                        className="size-10 shrink-0 rounded-md border object-cover"
-                      />
-                    </a>
-                  )}
+                  {m.photo_path && photoUrls[m.photo_path] && <BodyPhotoButton src={photoUrls[m.photo_path]} date={new Date(m.date).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" })} />}
                   <span className="truncate text-muted-foreground">
                     {new Date(m.date).toLocaleDateString("pl-PL", { day: "numeric", month: "short", year: "numeric" })}
                   </span>
@@ -106,11 +89,7 @@ export default async function BodyPage() {
                 <span className="flex items-center gap-sm">
                   {m.weight != null && <span className="font-medium">{m.weight} {unit}</span>}
                   {m.body_fat != null && <span className="text-muted-foreground">{m.body_fat}%</span>}
-                  <form action={deleteBodyMetric.bind(null, m.id)}>
-                    <button className="text-muted-foreground hover:text-danger" aria-label="Usuń">
-                      ✕
-                    </button>
-                  </form>
+                  <DeleteBodyMetricButton id={m.id} />
                 </span>
               </li>
             ))}

@@ -127,7 +127,7 @@ export const ExerciseCard = memo(function ExerciseCard({
               <button
                 type="button"
                 aria-label="Jak wykonać"
-                className="flex h-8 w-8 shrink-0 items-center justify-center text-muted-foreground"
+                className="flex size-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Info className="size-3.5" aria-hidden />
               </button>
@@ -197,7 +197,7 @@ export const ExerciseCard = memo(function ExerciseCard({
         // R5 (F9): copy odświeżone pod R1 — akcja żyje teraz w ⋯, nie na karcie;
         // zniknęły też zagnieżdżone cudzysłowy z poprzedniej wersji
         <p className="text-xs italic text-muted-foreground">
-          Pominięte w tej sesji — przywróć przez ⋯.
+          Pominięte w tej sesji. Możesz je przywrócić w menu ⋯.
         </p>
       ) : (
         <>
@@ -209,7 +209,7 @@ export const ExerciseCard = memo(function ExerciseCard({
               autoFocus={!!noteOpen}
               placeholder="Notatka do ćwiczenia…"
               onBlur={(e) => onPersistNotes(ex.sessionExerciseId, e.target.value)}
-              className="w-full rounded-md border border-input bg-background px-sm py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="min-h-11 w-full rounded-md border border-input bg-background px-sm text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           )}
 
@@ -223,7 +223,7 @@ export const ExerciseCard = memo(function ExerciseCard({
           })()}
 
           {ex.sets.length > 0 && (
-            <div className="flex items-center gap-xs px-px text-[10px] uppercase tracking-wide text-muted-foreground">
+            <div className="flex items-center gap-xs px-px text-xs uppercase tracking-wide text-muted-foreground">
               <span className="w-9 shrink-0 text-center">#</span>
               {ex.type === "timed" ? (
                 <span className="flex-1 text-center">czas</span>

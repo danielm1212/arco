@@ -10,11 +10,16 @@ import { localDayKey } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
 import { GuidanceChip } from "./GuidanceChip";
 import { FlameWeek } from "./FlameWeek";
+import { TeamHomeCard } from "@/components/TeamHomeCard";
+import { MomentIcon3D } from "@/components/MomentIcon3D";
+import type { ProgramCandidate, TrainingEnvironment } from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const supabase = await createClient();
+  const historySince = new Date();
+  historySince.setDate(historySince.getDate() - 120);
 
   const [
     { data: programs },
@@ -24,11 +29,12 @@ export default async function HomePage() {
     { data: settings },
     { count: sessionCount },
     guidance,
+    { data: teams },
   ] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, name, days_per_week, program_days(id, label, position)")
-      .order("days_per_week"),
+      .select("id, slug, name, cycle_days, environment, level_min, level_max, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position)")
+      .order("cycle_days"),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
     supabase
       .from("sessions")
@@ -41,13 +47,21 @@ export default async function HomePage() {
       .from("sessions")
       .select("started_at")
       .not("finished_at", "is", null)
-      .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString()),
+      .gte("started_at", historySince.toISOString()),
     supabase.from("user_settings").select("unit_system, weekly_goal, display_name").maybeSingle(),
     supabase.from("sessions").select("id", { count: "exact", head: true }),
     getHomeGuidance(),
+    supabase.from("pods").select("id, name").order("created_at").limit(1),
   ]);
 
+  const homeTeam = teams?.[0] ?? null;
+  const { data: homeTeamMembers } = homeTeam
+    ? await supabase.rpc("get_pod_members", { p_pod_id: homeTeam.id })
+    : { data: [] };
+
   const activeId = active?.program_id ?? null;
+  const teamActivityWindowStart = new Date();
+  teamActivityWindowStart.setHours(teamActivityWindowStart.getHours() - 48);
   const activeProgram = (programs ?? []).find((p) => p.id === activeId) ?? null;
   const activeDays = activeProgram
     ? ((activeProgram.program_days as { id: string; label: string; position: number }[]) ?? [])
@@ -147,9 +161,21 @@ export default async function HomePage() {
         eligible={(sessionCount ?? 0) === 0}
         unit={settings?.unit_system ?? "kg"}
         weeklyGoal={settings?.weekly_goal ?? 2}
-        programs={((programs ?? []) as { id: string; name: string; days_per_week: number }[]).map(
-          (p) => ({ id: p.id, name: p.name, days_per_week: p.days_per_week }),
-        )}
+        programs={(programs ?? []).map((p): ProgramCandidate => ({
+          id: p.id,
+          slug: p.slug,
+          name: p.name,
+          cycle_days: p.cycle_days,
+          environment: p.environment as TrainingEnvironment | null,
+          level_min: p.level_min,
+          level_max: p.level_max,
+          frequency_min: p.frequency_min,
+          frequency_max: p.frequency_max,
+          estimated_minutes_min: p.estimated_minutes_min,
+          estimated_minutes_max: p.estimated_minutes_max,
+          required_equipment: p.required_equipment,
+          optional_equipment: p.optional_equipment,
+        }))}
       />
       <header className="flex items-center justify-between border-b px-sm py-sm">
         <span className="pl-2xs">
@@ -203,7 +229,7 @@ export default async function HomePage() {
                     {activeProgram?.name}
                   </span>
                   <span className="shrink-0 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    Start →
+                    Zacznij →
                   </span>
                 </div>
                 <p className="mt-sm text-2xl font-semibold leading-tight">
@@ -226,16 +252,16 @@ export default async function HomePage() {
             </form>
             {/* F1 (§3.2): stopka hero przejmuje WSZYSTKIE alternatywy jako ciche
                 tekst-linki — koniec z trzema równorzędnymi drogami startu */}
-            <div className="flex items-center gap-md border-t px-md py-2 text-xs font-semibold text-primary">
-              <Link href={`/programs/${activeId}`} className="underline-offset-2 hover:underline">
+            <div className="flex items-center gap-sm border-t px-md text-xs font-semibold text-primary">
+              <Link href={`/programs/${activeId}`} className="flex min-h-11 items-center underline-offset-2 hover:underline">
                 Zobacz ćwiczenia
               </Link>
               {activeDays.length > 1 && (
                 <DayPickerSheet programName={activeProgram!.name} days={activeDays} />
               )}
-              <form action={startFreestyle}>
-                <button type="submit" className="underline-offset-2 hover:underline">
-                  Freestyle
+              <form action={startFreestyle} className="ml-auto">
+                <button type="submit" className="min-h-11 underline-offset-2 hover:underline">
+                  Bez planu
                 </button>
               </form>
             </div>
@@ -245,10 +271,11 @@ export default async function HomePage() {
              sugestii z onboardingu; wariant A wymaga persystencji poziom/
              środowisko z WelcomeOverlay, nie w tym zakresie, patrz HANDOFF) */
           <div className="space-y-sm">
-            <div className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-md">
+            <div className="space-y-sm rounded-xl bg-card p-md text-center text-card-foreground shadow-md">
+              <MomentIcon3D name="gym" className="mx-auto -my-xs" priority />
               <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
-              <p className="text-sm text-muted-foreground">
-                8 programów od trenera — wybierz swój, a apka poprowadzi Cię serię po serii.
+              <p className="mx-auto max-w-sm text-sm text-muted-foreground">
+                Wybierz jeden z 8 planów. Arco poprowadzi Cię przez trening serię po serii.
               </p>
               <Button asChild className="w-full">
                 <Link href="/programs">Wybierz program →</Link>
@@ -259,9 +286,9 @@ export default async function HomePage() {
                 type="submit"
                 className="block w-full rounded-xl bg-card p-md text-left text-sm font-medium shadow-sm"
               >
-                Freestyle
+                Bez planu
                 <span className="block text-xs font-normal text-muted-foreground">
-                  Zacznij bez planu — dodawaj ćwiczenia w trakcie
+                  Zacznij bez planu i dodawaj ćwiczenia w trakcie
                 </span>
               </button>
             </form>
@@ -269,6 +296,15 @@ export default async function HomePage() {
         )}
 
         <GuidanceChip items={guidance} />
+        <TeamHomeCard
+          name={homeTeam?.name ?? null}
+          members={(homeTeamMembers ?? []).map((member) => ({
+            id: member.member_id,
+            name: member.display_name,
+            avatar: member.avatar,
+            active: member.last_workout != null && new Date(member.last_workout).getTime() >= teamActivityWindowStart.getTime(),
+          }))}
+        />
       </main>
     </div>
   );

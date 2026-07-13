@@ -34,7 +34,7 @@
 
 | Filar 1: Loguje się samo | Filar 2: Prowadzi | Filar 3: Pilnuje z kumplem |
 |---|---|---|
-| „Sesja wypełnia się sama. Seria = jeden tap." | „Wie, kiedy dołożyć, kiedy odpuścić — i mówi dlaczego." | „1–3 znajomych widzi tylko: byłeś i ile tygodni ciągniesz." |
+| „Sesja wypełnia się sama. Seria = jeden tap." | „Wie, kiedy dołożyć, kiedy odpuścić — i mówi dlaczego." | „Twoja ekipa widzi tylko: byłeś i ile tygodni ciągniesz." |
 | Dowody: pre-fill, offline, PR-y same | Dowody: jawne reguły (nie AI), deload, balans push/pull | Dowody: zero feedu/komentarzy, 💪 + nudge, darmowe na zawsze |
 | Kontra: „w Hevy wpisujesz wszystko od zera" | Kontra: „księga vs kumpel-trener" | Kontra: „social bez cyrku porównywania" |
 

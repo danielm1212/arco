@@ -1,4 +1,4 @@
-# Advanced · Siłownia · Push / Pull / Legs 6×
+# Advanced · Siłownia · Push / Pull / Legs · cykl 6 dni
 
 > **Poziom:** zaawansowany · **Środowisko:** pełna siłownia · **Sesje:** 6× / tydz. (Push A · Pull A · Legs A · Push B · Pull B · Legs B) · **Częstotliwość / partia:** 2× · **RIR:** 0–2 · **Progresja:** double progression + periodyzacja + deload
 >
@@ -39,6 +39,7 @@
 | 4 | Lying Leg Curl | `isolation:hamstring` | 4 × 10–15 | 1:30 | Seated Leg Curl |
 | 5 | Standing Calf Raise | `calf` | 4 × 8–12 | 1:00 | Leg Press Calf |
 | 6 | Seated Calf Raise | `calf` | 3 × 15–20 | 1:00 | Standing Calf Raise |
+| 7 | Ab Wheel Rollout | `core:anti_extension` | 3 × 8–12 | 1:00 | Cable Crunch |
 
 ## Push B · objętość
 
@@ -71,12 +72,13 @@
 | 4 | Seated Leg Curl | `isolation:hamstring` | 4 × 12–15 | 1:30 | Lying Leg Curl |
 | 5 | Hip Thrust | `isolation:glute` | 3 × 8–12 | 2:00 | Cable Pull-Through |
 | 6 | Calf Press | `calf` | 4 × 12–15 | 1:00 | Standing Calf Raise |
+| 7 | Hanging Leg Raise | `core:flexion` | 3 × 10–15 | 1:00 | Lying Leg Raise |
 
 ---
 
 ## Notatki
 
-- **Bilans tygodniowy:** klatka ~17 · plecy ~18 · barki boczne ~16 · quady ~18 · hams ~15 · łydki ~15 · biceps ~15 · triceps ~15. Wszystko blisko górnego pułapu 14–20 — dalej nie idziemy bez deloadu.
+- **Bilans tygodniowy:** klatka ~17 · plecy ~18 · barki boczne ~16 · quady ~18 · hams ~15 · łydki ~15 · biceps ~15 · triceps ~15 · core 6. Wszystko blisko górnego pułapu 14–20 — dalej nie idziemy bez deloadu.
 - **Periodyzacja:** dni A ciężkie (intensywność), B objętościowe. Ten podział sam w sobie robi undulating periodization w skali tygodnia.
 - **Deload obowiązkowy:** co 6–8 tyg. tydzień –40% serii (lub –10% ciężaru). Przy 6 sesjach i objętości u sufitu deload to nie opcja, to część planu.
 - **6 dni to zobowiązanie.** Jeśli user nie dowozi 6 sesji regularnie → cofnij go na `intermediate-gym-upper-lower` (4×). Lepszy ukończony UL niż rozdłubany PPL.

@@ -12,7 +12,7 @@ export async function login(_prev: unknown, formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: "Nieprawidłowy email lub hasło." };
+    return { error: "E-mail lub hasło się nie zgadzają." };
   }
 
   revalidatePath("/", "layout");

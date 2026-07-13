@@ -1,6 +1,6 @@
 # ARCO — Starter Programs
 
-Kuratorowany zestaw programów na start dla ARCO. Filozofia: **curated-premium**, nie sprawl. Sześć flagowych, sprawdzonych struktur pokrywających realne segmenty userów (poziom × środowisko), zamiast 26 pozycji do przewijania. Każdy program jest gotowy do wrzucenia do content-systemu apki.
+Kuratorowany zestaw programów na start dla ARCO. Filozofia: **curated-premium**, nie sprawl. Dziewięć flagowych struktur pokrywa grid poziom × środowisko bez mnożenia kosmetycznych wariantów. Razem z dwoma planami FBW 2-dniowymi biblioteka aplikacji zawiera 11 presetów.
 
 Wszystkie parametry oparte na meta-analizach objętości/częstotliwości (Schoenfeld i in.) i na kanonie sprawdzonych programów (Starting Strength / StrongLifts / GZCLP dla base, Upper/Lower i PPL wyżej).
 
@@ -11,14 +11,14 @@ Wszystkie parametry oparte na meta-analizach objętości/częstotliwości (Schoe
 | | 🏋️ Siłownia | 🏠 Dom z hantlami | 🤸 Masa ciała |
 |---|---|---|---|
 | **Beginner** | `beginner-gym-fbw3` | `beginner-dumbbell-fbw3` | `beginner-bodyweight-fbw3` |
-| **Intermediate** | `intermediate-gym-upper-lower` | `intermediate-dumbbell-upper-lower` | → variant (patrz niżej) |
-| **Advanced** | `advanced-gym-ppl` | → stretch (patrz niżej) | → defer |
+| **Intermediate** | `intermediate-gym-upper-lower` | `intermediate-dumbbell-upper-lower` | `intermediate-bodyweight-fbw3` |
+| **Advanced** | `advanced-gym-ppl` | `advanced-home-upper-lower4` | `advanced-bodyweight-upper-lower4` |
 
-**6 flagowych bespoke.** Reszta gridu obsłużona świadomie, nie zaniedbana:
+**9 flagowych programów.** P3 zamknął trzy luki, których nie dało się już uczciwie obsłużyć samą notą fallbacku:
 
-- **Intermediate · masa ciała** → uruchom `beginner-bodyweight-fbw3` z twardszą progresją leverage (pistol, archer push-up, weighted plecak). Load ceiling robi z tego wariant, nie osobny byt.
-- **Advanced · hantle** → uruchom `advanced-gym-ppl` ze swapami DB. Uczciwie: obciążenie kończy się szybko na dolnych partiach — kompensuj unilateralem, tempem i wyższymi zakresami. To sufit, nie pełnoprawna klatka.
-- **Advanced · masa ciała** → **deferred na start.** Zaawansowany bodyweight to kalistenika/skill (planche, front lever), inna dyscyplina niż progressive overload. Osobny scope, jeśli w ogóle.
+- **Intermediate · masa ciała:** trzydniowe FBW z drążkiem, progresją leverage i opcjonalnym czwartym dniem jako kontynuacją cyklu.
+- **Advanced · hantle:** Upper/Lower 4-dniowy, który obchodzi load ceiling unilateralem, tempem i trudniejszymi wariantami.
+- **Advanced · masa ciała:** Upper/Lower 4-dniowy skupiony na sile i hipertrofii. Skille statyczne typu planche/front lever nadal pozostają poza zakresem.
 
 ---
 
@@ -61,7 +61,7 @@ Compound ciężki 2:30–3:00 · compound pomocniczy 2:00 · izolacja 1:00–1:3
 
 | Parametr | Beginner | Intermediate | Advanced |
 |---|---|---|---|
-| Sesje / tydz. | 3 | 4 | 6 |
+| Sesje / tydz. | 2–3 | 2–4 | 3–6 zależnie od środowiska |
 | Częstotliwość / partia | 3× | 2× | 2× |
 | Hard sets / partia / tydz. | 6–10 | 10–15 | 14–20 |
 | Główny zakres powt. | 5–8 (compound) | 6–12 | 4–15 (falami) |

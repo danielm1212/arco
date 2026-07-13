@@ -48,16 +48,16 @@ Plan mówił „podzbiór ~150–250". Po skanie rekomenduję **łagodniejszą, 
 
 > Uzupełnienie audytu S8 o warstwę **treściową** (co powinno być w bazie, a czego nie ma / co jest przestarzałe). Zaakceptowane: flaga hidden, ~30–40 nowych, seed+SQL, Stopień 1 wdrożony.
 
-### 5.1 Dodane: 31 ćwiczeń (współczesny kanon, brakowały w upstream)
+### 5.1 Dodane: 34 ćwiczenia (współczesny kanon, brakowały w upstream)
 
-`scripts/data/exercises.json` (873 → **904**), pełny schemat + instrukcje EN, `images = ["/exercise-placeholder.svg"]` (lokalny placeholder w palecie Warm — docelowe zdjęcia to osobny tor assetów [Ty]).
+`scripts/data/exercises.json` (873 → **907**), pełny schemat + instrukcje EN, `images = ["/exercise-placeholder.svg"]` (lokalny placeholder w palecie Warm — docelowe zdjęcia to osobny tor assetów [Ty]).
 
-- **Nogi/pośladki:** Bulgarian Split Squat, Nordic Hamstring Curl, Reverse Nordic Curl, Spanish Squat, Curtsy Lunge, Dumbbell Hip Thrust, Single-Leg Hip Thrust, Frog Pump, Cable Pull-Through, Machine Hip Abduction, Tibialis Raise, Wall Sit
-- **Plecy:** Pendlay Row, Seal Row, Chest-Supported Dumbbell Row, Meadows Row
+- **Nogi/pośladki:** Bulgarian Split Squat, Nordic Hamstring Curl, Reverse Nordic Curl, Spanish Squat, Curtsy Lunge, Dumbbell Hip Thrust, Single-Leg Hip Thrust, Frog Pump, Cable Pull-Through, Machine Hip Abduction, Tibialis Raise, Wall Sit, **Single-Leg Calf Raise**
+- **Plecy:** Pendlay Row, Seal Row, Chest-Supported Dumbbell Row, Meadows Row, **Band Lat Pulldown**
 - **Barki/ramiona:** Z Press, Landmine Press, Machine Lateral Raise, Prone Y Raise, Bayesian Cable Curl, Overhead Cable Triceps Extension
 - **Core/carry/balistyka:** Copenhagen Plank, Bird Dog, Hollow Body Hold, Toes-To-Bar, L-Sit Hold, Hanging Knee Raise, Ab Wheel Rollout, Suitcase Carry, **Kettlebell Swing** (dwuręczny — upstream miał tylko jednoręczny!)
 
-Nowe wpisy mają nadpisania w `seed.ts` tam, gdzie heurystyka by się myliła (`TYPE_OVERRIDES`: Ab Wheel/Spanish Squat → bodyweight; `PATTERN_OVERRIDES`: Wall Sit/Reverse Nordic → squat, holdy → core, Prone Y → pull).
+Nowe wpisy mają nadpisania w `seed.ts` tam, gdzie heurystyka by się myliła (`TYPE_OVERRIDES`: Ab Wheel/Spanish Squat → bodyweight; `PATTERN_OVERRIDES`: Wall Sit/Reverse Nordic → squat, holdy → core, Prone Y/Band Lat Pulldown → pull).
 
 ### 5.2 Ukryte: flaga `exercises.hidden` (140 wpisów)
 
@@ -77,8 +77,16 @@ Nowe wpisy mają nadpisania w `seed.ts` tam, gdzie heurystyka by się myliła (`
 
 Hip thrusty (Barbell/Dumbbell/Single-Leg), Frog Pump, Cable Pull-Through, KB Swings (jedno- i dwuręczny) → **hinge** (heurystyka `press/raise → push` dawała bez sensu np. wyciskania jako swap dla hip thrustu).
 
-### 5.5 Do zrobienia [Ty]
+### 5.5 Status po Sprincie P1 (2026-07-13)
 
-1. `supabase db push` / `migration up` + `npm run seed` (upsert 904 + hidden).
-2. Test w Preview: picker (chipy bez szumu, search znajduje np. „stretch"), swap dla Hip Thrust (powinien proponować hinge, nie pressy).
-3. Docelowe zdjęcia dla 31 nowych (placeholder → asset pipeline; self-host obrazków = S11 bez zmian).
+1. ✅ Lokalny `npm run seed`: 907 ćwiczeń + 8 programów / 173 sloty; bezpieczny sync zachował ID i aktywny program.
+2. ✅ `npm run validate:training`: 0 błędów typów, wzorców, sprzętu i integralności presetów.
+3. ⏳ [Ty] QA na telefonie: zmienione presety + podmiany bridge/machine.
+4. ⏳ Docelowe zdjęcia dla 34 nowych (placeholder → asset pipeline; self-host obrazków = S11 bez zmian).
+
+### 5.6 Status po Sprincie P3 (2026-07-13)
+
+1. ✅ 11 programów / 246 slotów / 88 unikalnych ćwiczeń w presetach; nowe plany: Intermediate Bodyweight, Advanced Home i Advanced Bodyweight.
+2. ✅ Walidator sprawdza również unikalność/stabilność slugów oraz zakresy poziomu, częstotliwości i czasu.
+3. ✅ Ruchy bez ciężaru użyte w nowych planach (`Decline_Push-Up`, `Inverted_Row`, `Scapular_Pull-Up`) mają poprawny typ `bodyweight`.
+4. ⚠️ 43 użycia placeholdera dotyczą 16 unikalnych ćwiczeń; to dług assetowy, nie błąd integralności programu.

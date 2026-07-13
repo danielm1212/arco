@@ -52,12 +52,12 @@ export function RestTimer({
   useEffect(() => {
     firedRef.current = false;
     lastBeepRef.current = null;
-    setDone(false);
-    tick();
+    const kickoff = window.setTimeout(tick, 0);
     const id = window.setInterval(tick, 250);
     const onVis = () => document.visibilityState === "visible" && tick();
     document.addEventListener("visibilitychange", onVis);
     return () => {
+      window.clearTimeout(kickoff);
       window.clearInterval(id);
       document.removeEventListener("visibilitychange", onVis);
     };
@@ -79,7 +79,7 @@ export function RestTimer({
       <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-volt pb-[env(safe-area-inset-bottom)] text-volt-foreground">
         <div className="mx-auto flex max-w-md items-center gap-sm p-md">
           <p className="flex-1 text-base font-semibold">
-            Przerwa skończona — czas na serię! 💪
+            Koniec przerwy. Czas na serię! 💪
           </p>
           <Button variant="secondary" size="sm" onClick={onDone}>
             OK

@@ -23,7 +23,7 @@ Dojrzały (od ~2019), cross-platform (iOS/Android/web), logger siłowy z **pełn
    - **Decyzja:** start od prostych reguł (progresja/braki/staleness/deload). „Prowadzenie za rękę" dla początkujących = późniejsza warstwa na tych regułach + większej bibliotece presetów. Nie wchodzimy od razu w „coacha".
 
 **Social — TAK, ale NASZ (różny od Hevy):**
-3. **Prywatne „ekipy" 1–3 znajomych** zamiast publicznego feedu — wzajemna accountability, widzicie swoje check-iny. **Omija problem sieci** (wystarczy 2–3 osoby, nie miliony).
+3. **Prywatne „ekipy" do 6 osób** zamiast publicznego feedu — wzajemna accountability, widzicie swoje check-iny. **Omija problem sieci** (wystarczy 2–3 osoby, nie miliony).
 4. **Reakcje + nudge à la Duolingo, BEZ komentarzy** — „cheers" + „Radek przypomina Ci o treningu". Świadomie anty-toksyczny, niski-nacisk. To różnica *filozofii*, nie funkcji.
    - To wciąż jest social (nadal chcemy być social!) — tylko kameralny i pozytywny, nie broadcast/vanity.
 
@@ -35,14 +35,14 @@ Dojrzały (od ~2019), cross-platform (iOS/Android/web), logger siłowy z **pełn
 | Wyróżnik | Moat? | Hevy skopiuje? | Wymaga sieci? |
 |---|---|---|---|
 | Frictionless + rule-based guidance | 🟢 rdzeń | Nie (sprzeczne z DNA) | Nie |
-| Prywatne ekipy (1–3) | 🟢 **rdzeń strategii wzrostu** (awans z 🟢-przyszłość — fast-follow po launchu) | Nie chcą | **Nie** |
+| Prywatne ekipy (do 6 osób) | 🟢 **rdzeń strategii wzrostu** (awans z 🟢-przyszłość — fast-follow po launchu) | Nie chcą | **Nie** |
 | Reakcje + nudge, zero komentarzy | 🟢 filozofia | Trudno | Częściowo |
 | Marka/celebracja | 🟡 retencja | Łatwo | Nie |
 | ~~Dane bez limitów~~ → „nic nigdy nie kasujemy" | 🟡 uczciwość komunikacji | Częściowo | Nie |
 
 ## Wpływ na roadmapę
 - **Guidance + frictionless = rdzeń wyróżnika → podciągnąć wcześniej** (obszar Sprint 4–5), nie Horyzont 5. ✅ zrobione.
-- **Ekipy (1–3 + reakcje + nudge)** — 🔄 awans (2026-07-08): **fast-follow 4–8 tyg. po launchu** jako silnik wzrostu (wizja v2 §4/§6), nie Horyzont 5. Nudge bez natywu: push PWA → skrzynka w apce → e-mail (fallback chain, wizja v2 §4). Reszta socialu (stories, UGC, tablica) zostaje w H5.
+- **Ekipy (do 6 osób + reakcje + nudge)** — 🔄 awans (2026-07-08): **fast-follow 4–8 tyg. po launchu** jako silnik wzrostu (wizja v2 §4/§6), nie Horyzont 5. Nudge bez natywu: push PWA → skrzynka w apce → e-mail (fallback chain, wizja v2 §4). Reszta socialu (stories, UGC, tablica) zostaje w H5.
 - **Nie ścigaj Hevy na funkcje.** Wygrywamy filozofią (prowadzi/kameralny/motywuje) i niszą — pozycjonowanie „dla kogo Hevy jest za duże, za obce i za angielskie" (wizja v2 §1).
 - ⚠️ **Weryfikacja 2026-07-08: Hevy MA polską lokalizację** (polski App Store, polskie recenzje). Filar „za angielskie" w pozycjonowaniu jest **słabszy niż zakładał kanon** — przetłumaczony interfejs ≠ PL-first (copy z charakterem, polskie realia siłowni, PL support/faktury zostają nasze), ale w komunikacji landing/marketing NIE opierać klina na języku. Klin = prowadzenie + kameralne ekipy + charakter. Do naniesienia w wizji przy najbliższej rewizji.
 

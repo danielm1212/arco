@@ -10,10 +10,20 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
+    "test:unit": "tsx --test tests/*.test.ts",
     "seed": "tsx scripts/seed.ts",
+    "validate:training": "tsx scripts/validate-training-content.ts",
+    "validate:recommendations": "node --import tsx scripts/validate-program-recommendations.ts",
+    "upload:exercise-images": "node --import tsx scripts/upload-exercise-images.ts",
+    "sync:exercise-content": "node --import tsx scripts/sync-exercise-content.ts",
+    "backup:database": "sh scripts/backup-database.sh",
+    "backup:storage": "node --import tsx scripts/backup-storage.ts",
+    "test:restore": "sh scripts/test-database-restore.sh",
     "bootstrap:user": "tsx scripts/bootstrap-user.ts",
+    "bootstrap:test-user": "tsx scripts/bootstrap-test-user.ts",
     "smoke": "tsx scripts/smoke-phase1.ts",
     "smoke:phase2": "tsx scripts/smoke-phase2.ts",
+    "smoke:team": "tsx scripts/smoke-team.ts",
     "smoke:offline": "tsx scripts/smoke-offline.ts"
   },
   "dependencies": {
@@ -50,6 +60,9 @@
   },
   "overrides": {
     "@types/react": "19.2.17",
-    "@types/react-dom": "19.2.3"
+    "@types/react-dom": "19.2.3",
+    "next": {
+      "postcss": "8.5.19"
+    }
   }
 }

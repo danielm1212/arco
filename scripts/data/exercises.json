@@ -23405,5 +23405,52 @@
       "/exercise-placeholder.svg"
     ],
     "id": "Pike_Push-Up"
+  },
+  {
+    "name": "Band Lat Pulldown",
+    "force": "pull",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "bands",
+    "primaryMuscles": [
+      "lats"
+    ],
+    "secondaryMuscles": [
+      "biceps",
+      "middle back"
+    ],
+    "instructions": [
+      "Anchor a resistance band securely above head height and kneel or sit facing the anchor.",
+      "Grip the band slightly wider than shoulder width, brace the torso and keep the ribs down.",
+      "Drive the elbows down toward the sides until the hands reach upper-chest level.",
+      "Return slowly until the arms are straight and the lats are lengthened; do not shrug."
+    ],
+    "category": "strength",
+    "images": [
+      "/exercise-placeholder.svg"
+    ],
+    "id": "Band_Lat_Pulldown"
+  },
+  {
+    "name": "Single-Leg Calf Raise",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "isolation",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "calves"
+    ],
+    "secondaryMuscles": [],
+    "instructions": [
+      "Stand on one leg near a wall or stable support, keeping the working knee straight but not locked.",
+      "Lower the heel under control until you feel a stretch in the calf.",
+      "Press through the ball of the foot and rise as high as possible without rolling the ankle outward.",
+      "Pause briefly at the top, complete all repetitions, then switch legs."
+    ],
+    "category": "strength",
+    "images": [
+      "/exercise-placeholder.svg"
+    ],
+    "id": "Single_Leg_Calf_Raise"
   }
 ]

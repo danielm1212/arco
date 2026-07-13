@@ -46,7 +46,7 @@ export function MonthCalendar({
         <button
           onClick={() => step(-1)}
           aria-label="poprzedni miesiąc"
-          className="h-7 w-7 rounded-md text-muted-foreground hover:bg-muted"
+          className="size-11 rounded-md text-lg text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           ‹
         </button>
@@ -56,13 +56,13 @@ export function MonthCalendar({
         <button
           onClick={() => step(1)}
           aria-label="następny miesiąc"
-          className="h-7 w-7 rounded-md text-muted-foreground hover:bg-muted"
+          className="size-11 rounded-md text-lg text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           ›
         </button>
       </div>
 
-      <div className="mb-1 grid grid-cols-7 gap-1 text-center text-[10px] uppercase tracking-wide text-muted-foreground">
+      <div className="mb-1 grid grid-cols-7 gap-1 text-center text-xs uppercase tracking-wide text-muted-foreground">
         {DOW.map((d) => (
           <span key={d}>{d}</span>
         ))}
@@ -85,7 +85,7 @@ export function MonthCalendar({
               {days.has(c.key) ? (
                 <>
                   <Flame className="size-4 fill-primary text-primary" strokeWidth={0} aria-hidden />
-                  <span className="sr-only">{c.n} — trening zaliczony</span>
+                  <span className="sr-only">{c.n}, trening zaliczony</span>
                 </>
               ) : (
                 c.n

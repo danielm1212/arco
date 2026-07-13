@@ -28,7 +28,7 @@
 
 Światło i kadr (spójność zestawu): jedno miękkie światło z góry-lewa + delikatne wypełnienie; kąt izometryczny ~15–25°; miękki cień pod obiektem (albo bez cienia — decyzja raz, dla wszystkich); zaokrąglenia przesadzone („nadmuchana glina" — echo zaokrągleń logotypu).
 
-Eksport: PNG przezroczyste **1024×1024** (+ @2x jeśli trzeba), obiekt ~80% kadru, nazewnictwo `icon-3d-{nazwa}-{light|dark}.png` → `public/icons-3d/`.
+Eksport źródłowy: PNG przezroczyste **1024×1024**, obiekt ~80% kadru, nazewnictwo `icon-3d-{nazwa}-{light|dark}.png` → `assets-source/icons-3d/` poza katalogiem publicznym. Do aplikacji trafiają wyłącznie zoptymalizowane WebP 320×320 px w `public/icons-3d/production/`.
 
 ## 3. PROMPT — rekolor ikon z 3dicons (edytor online / Figma / Blender)
 
@@ -44,7 +44,7 @@ Zadanie: przemaluj ikonę 3D z 3dicons.co pod system „Arco Warm clay".
 5. Światło: jedno soft key top-left + fill; tło transparentne; miękki cień pod spodem.
 6. Kąt: zostaw domyślny izometryczny 3dicons (spójność setu).
 7. Wygeneruj drugi wariant z podmianą #C63F21 → #DC6B45 (dark mode).
-8. Eksport: PNG 1024×1024 transparent, nazwa icon-3d-{nazwa}-{light|dark}.png.
+8. Eksport źródłowy: PNG 1024×1024 transparent do `assets-source/icons-3d/`; wariant runtime przygotuj osobno jako WebP 320×320 px w `public/icons-3d/production/`.
 ```
 
 ## 4. PROMPT — generowanie gym-setu AI (master + 4 ikony)

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Flame } from "lucide-react";
 import { Sparkline } from "@/components/Sparkline";
 import { MuscleHeatmapLazy } from "@/components/MuscleHeatmapLazy";
 import type { UnitSystem } from "@/lib/types";
@@ -21,19 +22,19 @@ export function ActivitySection({
     <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold">Aktywność</h2>
-        <span className="text-sm font-medium text-primary">
-          🔥 {streak} {streak === 1 ? "tydzień" : "tyg."} z rzędu
+        <span className="flex items-center gap-1 text-sm font-medium text-primary">
+          <Flame className="size-4 fill-current" aria-hidden /> {streak} {streak === 1 ? "tydzień" : "tyg."} z rzędu
         </span>
       </div>
       <div className="flex gap-px">
         {strip.map((d, i) => (
           <div key={`${d.key}-${i}`} className="flex flex-1 flex-col items-center gap-0.5">
             <div className={`h-6 w-full rounded-sm ${d.on ? "bg-primary" : "bg-muted"}`} />
-            <span className="text-[9px] text-muted-foreground">{d.dow}</span>
+            <span className="text-xs text-muted-foreground">{d.dow}</span>
           </div>
         ))}
       </div>
-      <p className="text-[10px] text-muted-foreground">Ostatnie 14 dni</p>
+      <p className="text-xs text-muted-foreground">Ostatnie 14 dni</p>
     </section>
   );
 }
@@ -45,7 +46,8 @@ export function PeriodTabs({ activeKey }: { activeKey: string }) {
         <Link
           key={p.key}
           href={p.key === "7" ? "/progress" : `/progress?okres=${p.key}`}
-          className={`flex-1 rounded-md border px-2 py-1 text-center text-xs ${
+          aria-current={p.key === activeKey ? "page" : undefined}
+          className={`flex min-h-11 flex-1 items-center justify-center rounded-md border px-2 text-center text-sm ${
             p.key === activeKey
               ? "border-primary bg-primary/10 font-medium text-primary"
               : "border-input text-muted-foreground"
@@ -77,7 +79,7 @@ export function Stat({
       <p className="text-xs text-muted-foreground">{label}</p>
       {d && (
         <p
-          className={`mt-0.5 text-[11px] font-medium tabular-nums ${
+          className={`mt-0.5 text-xs font-medium tabular-nums ${
             d === "up" ? "text-primary" : "text-muted-foreground"
           }`}
         >
@@ -117,7 +119,7 @@ export function BalanceSection({
               Po 2 treningach zobaczysz tu trend siły i bilans partii.
             </p>
             <p className="text-xs text-muted-foreground">
-              Heatmapa sylwetki zapali się po pierwszym treningu.
+              Mapa sylwetki wypełni się po pierwszym treningu.
             </p>
             <Button asChild size="sm">
               <Link href="/">Zacznij trening</Link>
@@ -127,11 +129,11 @@ export function BalanceSection({
           /* S14 #3b: pusty OKRES przy starszych danych — pokaż wyjście */
           <div className="flex items-center justify-between gap-sm rounded-xl bg-card p-md shadow-sm">
             <p className="text-sm text-muted-foreground">
-              W tych {periodDays} dniach pusto — Twoje dane są w szerszym zakresie.
+              Brak treningów z ostatnich {periodDays} dni. Starsze dane nadal są dostępne.
             </p>
             <Link
               href="/progress?okres=all"
-              className="shrink-0 rounded-md border border-primary bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
+              className="flex min-h-11 shrink-0 items-center rounded-md border border-primary bg-primary/10 px-3 text-sm font-medium text-primary"
             >
               Pokaż wszystko
             </Link>
@@ -161,8 +163,8 @@ export function BalanceSection({
           </ul>
         </>
       )}
-      <p className="text-[10px] text-muted-foreground">
-        Liczba serii roboczych na partię — pilnuj równowagi (np. push vs pull).
+      <p className="text-xs text-muted-foreground">
+        Liczba serii roboczych na partię pomaga ocenić równowagę treningu.
       </p>
     </section>
   );
@@ -224,8 +226,7 @@ export function RecordsSection({
       <h2 className="text-base font-semibold">Rekordy</h2>
       {prRows.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          Rekordy wpadną same — wystarczy zaliczać serie ✓. Pierwszy PR to zawsze
-          najlepszy dzień na siłowni.
+          Rekordy pojawią się po zaliczeniu pierwszych serii roboczych.
         </p>
       ) : (
         <ul className="space-y-2xs">
@@ -238,7 +239,7 @@ export function RecordsSection({
                 <span className="truncate">{r.name}</span>
                 <span className="shrink-0 text-muted-foreground">
                   {r.e1rm ? `e1RM ${r.e1rm}${unit}` : ""}
-                  {r.maxWeight ? ` · max ${r.maxWeight}${unit}` : ""}
+                  {r.maxWeight ? ` · maks. ${r.maxWeight}${unit}` : ""}
                 </span>
               </Link>
             </li>

@@ -21,15 +21,15 @@ export function Switch({
       aria-label={ariaLabel}
       disabled={disabled}
       onClick={() => onCheckedChange(!checked)}
-      className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${
-        checked ? "bg-primary" : "bg-muted"
-      }`}
+      className="relative inline-flex h-11 w-14 shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
     >
       <span
-        className={`inline-block h-5 w-5 transform rounded-full bg-background shadow-sm transition-transform ${
-          checked ? "translate-x-6" : "translate-x-1"
-        }`}
-      />
+        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${checked ? "bg-primary" : "bg-muted"}`}
+      >
+        <span
+          className={`inline-block h-5 w-5 transform rounded-full bg-background shadow-sm transition-transform ${checked ? "translate-x-6" : "translate-x-1"}`}
+        />
+      </span>
     </button>
   );
 }

@@ -19,12 +19,12 @@ export async function handleFinish(args: {
 }) {
   const { sessionId, online, flush } = args;
   if (!online) {
-    toast.error("Jesteś offline. Serie są zapisane lokalnie — zakończ, gdy wróci sieć.");
+    toast.error("Brak internetu. Serie są zapisane na tym urządzeniu. Zakończ trening po powrocie sieci.");
     return;
   }
   await flush(); // dosynchronizuj zaległe serie, żeby PR-y liczyły się z kompletu
   if (pendingCount() > 0) {
-    toast.error("Trwa synchronizacja serii — spróbuj za chwilę.");
+    toast.error("Serie nadal się synchronizują. Spróbuj za chwilę.");
     return;
   }
   try {
@@ -32,19 +32,20 @@ export async function handleFinish(args: {
   } catch (e) {
     // NEXT_REDIRECT to nie błąd
     if (e instanceof Error && e.message.includes("NEXT_REDIRECT")) throw e;
-    toast.error("Nie udało się zakończyć — sprawdź połączenie.");
+    toast.error("Nie udało się zakończyć treningu. Sprawdź internet.");
   }
 }
 
-export function handleDeleteSession(args: { sessionId: string; online: boolean }) {
+export async function handleDeleteSession(args: { sessionId: string; online: boolean }) {
   const { sessionId, online } = args;
-  if (!confirm("Usunąć całą sesję? Tej operacji nie cofniesz.")) return;
   if (!online) {
-    toast.error("Jesteś offline — usuwanie sesji wymaga sieci.");
+    toast.error("Do usunięcia sesji potrzebny jest internet.");
     return;
   }
-  deleteSession(sessionId).catch((e) => {
+  try {
+    await deleteSession(sessionId);
+  } catch (e) {
     if (e instanceof Error && e.message.includes("NEXT_REDIRECT")) throw e;
     toast.error("Nie udało się usunąć sesji.");
-  });
+  }
 }

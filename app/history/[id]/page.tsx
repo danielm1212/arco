@@ -30,7 +30,7 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
   const day = session.program_days as unknown as
     | { label: string; programs: { name: string } | null }
     | null;
-  const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Freestyle";
+  const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Bez planu";
 
   const exercises = (
     (session.session_exercises as unknown as {
@@ -92,10 +92,10 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/history" className="text-xs text-muted-foreground">
+        <Link href="/history" className="flex min-h-11 items-center text-sm text-muted-foreground">
           ← Historia
         </Link>
-        <span className="truncate px-sm font-semibold">{title}</span>
+        <h1 className="truncate px-sm font-semibold">{title}</h1>
         <Button size="sm" variant="outline" asChild>
           <Link href={`/session/${session.id}`}>Otwórz</Link>
         </Button>
@@ -124,7 +124,7 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
           </div>
           <div className="rounded-xl bg-card p-sm text-center shadow-sm">
             <p className="font-display text-2xl tabular-nums">
-              {durationMin != null ? `${durationMin}'` : "—"}
+              {durationMin != null ? `${durationMin}'` : "Brak"}
             </p>
             <p className="text-xs text-muted-foreground">czas</p>
           </div>
@@ -132,7 +132,7 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
 
         {split.length > 0 && (
           <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
-            <h2 className="text-sm font-semibold text-muted-foreground">Muscle Split</h2>
+            <h2 className="text-sm font-semibold text-muted-foreground">Pracujące partie</h2>
             <MuscleSplitBars rows={split} />
           </section>
         )}
@@ -184,7 +184,7 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
                     <span className="font-medium">
                       {formatSet(ex.exercises.exercise_type, s, unit)}
                     </span>
-                    <span>{s.completed ? "✓" : "—"}</span>
+                    <span>{s.completed ? "✓" : "○"}</span>
                   </li>
                 ))}
             </ul>

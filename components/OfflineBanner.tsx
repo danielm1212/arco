@@ -18,7 +18,7 @@ export function OfflineBanner() {
   return (
     // fixed → ignoruje pt-safe na <body>; potrzebuje własnego safe-area (notch PWA)
     <div className="fixed inset-x-0 top-0 z-50 bg-warning/95 px-md pb-1.5 pt-[calc(0.375rem+env(safe-area-inset-top))] text-center text-xs font-medium text-black">
-      Jesteś offline — serie zapisują się lokalnie i zsynchronizują po powrocie sieci.
+      Brak internetu. Serie zapisują się na tym urządzeniu i wyślą się po powrocie sieci.
     </div>
   );
 }

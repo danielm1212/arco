@@ -26,27 +26,35 @@ export function SwapPanel({
   onClose: () => void;
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [loose, setLoose] = useState(false);
-  const [candidates, setCandidates] = useState<BrowserHit[]>([]);
+  const [result, setResult] = useState<{
+    sessionExerciseId: string;
+    loose: boolean;
+    candidates: BrowserHit[];
+  } | null>(null);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
-    setLoading(true);
     getSubstitutes(sessionExerciseId).then((res) => {
       if (cancelled) return;
-      setLoose(res.loose);
-      setCandidates(
-        res.items.map((c) => ({ id: c.id, name: c.name, equipment: c.equipment, image: c.image })),
-      );
-      setLoading(false);
+      setResult({
+        sessionExerciseId,
+        loose: res.loose,
+        candidates: res.items.map((c) => ({
+          id: c.id,
+          name: c.name,
+          equipment: c.equipment,
+          image: c.image,
+        })),
+      });
     });
     return () => {
       cancelled = true;
     };
   }, [open, sessionExerciseId]);
+
+  const loaded = result?.sessionExerciseId === sessionExerciseId;
 
   function pick(id: string) {
     if (!ensureOnline("podmiana ćwiczenia")) return; // S10: offline-guard
@@ -71,11 +79,11 @@ export function SwapPanel({
       <ExerciseBrowser
         onPick={pick}
         pending={pending}
-        defaultItems={candidates}
-        defaultLoading={loading}
+        defaultItems={loaded ? result.candidates : []}
+        defaultLoading={open && !loaded}
         defaultNote={
-          loose
-            ? "Brak ścisłego dopasowania — pokazuję najbliższe z dostępnym sprzętem."
+          loaded && result.loose
+            ? "Nie ma dokładnego dopasowania. Pokazuję podobne ćwiczenia na dostępnym sprzęcie."
             : null
         }
       />

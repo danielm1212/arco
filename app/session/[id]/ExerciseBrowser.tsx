@@ -107,14 +107,10 @@ export function ExerciseBrowser({
 
   // Zapytanie odpala się przy zmianie wyszukiwarki/filtrów (debounce na tekst).
   useEffect(() => {
-    if (!filtersActive) {
-      setHits([]);
-      setLoading(false);
-      return;
-    }
+    if (!filtersActive) return;
     let cancelled = false;
-    setLoading(true);
     const t = window.setTimeout(async () => {
+      setLoading(true);
       const supabase = createClient();
       let req = supabase
         .from("exercises")
@@ -203,7 +199,7 @@ export function ExerciseBrowser({
         <p className="text-xs text-warning">{defaultNote}</p>
       )}
       {showDefault && wantRecent && items.length > 0 && (
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Ostatnio używane
         </p>
       )}
@@ -212,10 +208,10 @@ export function ExerciseBrowser({
         <p className="text-sm text-muted-foreground">
           {filtersActive
             ? queryTerm.length >= 2
-              ? `Nie ma „${queryTerm}" w bazie? Dodaj jako własne ćwiczenie — z opisem i zdjęciem.`
+              ? `Nie ma ćwiczenia „${queryTerm}". Możesz dodać je z własnym opisem i zdjęciem.`
               : "Brak wyników dla tych filtrów."
             : wantRecent
-              ? "Szukaj albo filtruj chipami powyżej."
+              ? "Szukaj albo użyj filtrów powyżej."
               : "Brak kandydatów."}
         </p>
       )}
@@ -246,23 +242,23 @@ export function ExerciseBrowser({
               type="button"
               disabled={pending}
               onClick={() => (multi ? toggleSelect(h.id) : onPick(h.id))}
-              className="min-w-0 flex-1 text-left disabled:opacity-50"
+              className="min-h-11 min-w-0 flex-1 text-left disabled:opacity-50"
             >
               <p className="truncate text-sm">
                 {h.name}
                 {h.isCustom && (
-                  <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                  <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-xs font-medium text-primary">
                     własne
                   </span>
                 )}
               </p>
-              <p className="truncate text-xs text-muted-foreground">{h.equipment ?? "—"}</p>
+              <p className="truncate text-xs text-muted-foreground">{h.equipment ?? "Brak danych"}</p>
             </button>
             {/* S13: skok do progresu ćwiczenia */}
             <a
               href={`/exercise/${encodeURIComponent(h.id)}`}
               aria-label="Progres ćwiczenia"
-              className="shrink-0 rounded-full border border-input px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+              className="grid size-11 shrink-0 place-items-center rounded-full border border-input text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <LineChart className="size-4" />
             </a>
@@ -270,7 +266,7 @@ export function ExerciseBrowser({
               <button
                 type="button"
                 aria-label="Podgląd ćwiczenia"
-                className="shrink-0 rounded-full border border-input px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+                className="grid size-11 shrink-0 place-items-center rounded-full border border-input text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Info className="size-4" />
               </button>
@@ -288,9 +284,9 @@ export function ExerciseBrowser({
               onPickMany?.(selected);
               setSelected([]);
             }}
-            className="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+            className="min-h-11 w-full rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
-            {pending ? "Dodaję…" : `Dodaj ${selected.length} ćw.`}
+            {pending ? "Dodaję…" : `Dodaj wybrane: ${selected.length}`}
           </button>
         </div>
       )}
@@ -312,11 +308,11 @@ export function ExerciseBrowser({
           className={
             /* S14 #6: przy pustym wyniku CTA awansuje na primary */
             !busy && items.length === 0 && filtersActive
-              ? "w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground"
-              : "w-full rounded-md border border-dashed border-input py-1.5 text-xs text-muted-foreground hover:text-foreground"
+              ? "min-h-11 w-full rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground"
+              : "min-h-11 w-full rounded-md border border-dashed border-input px-3 text-sm text-muted-foreground hover:text-foreground"
           }
         >
-          + Własne ćwiczenie{queryTerm.length >= 2 ? ` („${queryTerm}")` : ""}
+          + Dodaj własne ćwiczenie{queryTerm.length >= 2 ? ` („${queryTerm}")` : ""}
         </button>
       )}
     </div>
@@ -341,7 +337,7 @@ function Chip({
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+      className={`min-h-11 shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
         active
           ? "border-primary bg-primary text-primary-foreground"
           : "border-input text-muted-foreground hover:text-foreground"

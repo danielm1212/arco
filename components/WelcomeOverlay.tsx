@@ -1,13 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check } from "lucide-react";
+import { toast } from "sonner";
 import { updateSettings } from "@/app/actions/settings";
-import { setActiveProgram } from "@/app/actions/session";
+import { saveActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { track } from "@/lib/analytics";
+import {
+  EQUIPMENT_BY_ENVIRONMENT,
+  formatEstimatedMinutes,
+  formatFrequency,
+  recommendProgram,
+  type ProgramCandidate,
+  type TrainingEnvironment,
+  type TrainingLevel,
+} from "@/lib/programRecommendation";
 import type { UnitSystem } from "@/lib/types";
 
 // Onboarding v3 (docs/onboarding-v3.md, akcept [Ty] 2026-07-11):
@@ -17,55 +27,21 @@ import type { UnitSystem } from "@/lib/types";
 // Na sand: teksty wtórne w brand-muted (stone), NIE muted-foreground (O5).
 const FLAG = "arco-onboarded-v3";
 
-type Level = "beginner" | "intermediate" | "advanced";
-type Env = "gym" | "home" | "bodyweight";
-
-const LEVELS: { id: Level; label: string; hint: string }[] = [
-  { id: "beginner", label: "Zaczynam", hint: "pierwsze miesiące albo powrót po przerwie" },
-  { id: "intermediate", label: "Trenuję regularnie", hint: "rok+ systematycznych treningów" },
-  { id: "advanced", label: "Zaawansowany", hint: "kilka lat, znam swoje liczby" },
+const LEVELS: { id: TrainingLevel; label: string; hint: string }[] = [
+  { id: "beginner", label: "Zaczynam", hint: "Dopiero zaczynam albo wracam po przerwie." },
+  { id: "intermediate", label: "Trenuję regularnie", hint: "Mam co najmniej rok regularnych treningów." },
+  { id: "advanced", label: "Mam doświadczenie", hint: "Trenuję od kilku lat i znam swoje wyniki." },
 ];
 
-const ENVS: { id: Env; label: string; hint: string }[] = [
-  { id: "gym", label: "Siłownia", hint: "pełny sprzęt" },
-  { id: "home", label: "Dom z hantlami", hint: "regulowane hantle + ławka" },
-  { id: "bodyweight", label: "Masa ciała", hint: "bez sprzętu / drążek" },
+const ENVS: { id: TrainingEnvironment; label: string; hint: string }[] = [
+  { id: "gym", label: "Siłownia", hint: "Mam dostęp do pełnego sprzętu." },
+  { id: "home", label: "Dom z hantlami", hint: "Mam hantle i ławkę." },
+  { id: "bodyweight", label: "Masa ciała", hint: "Mam drążek i ćwiczę głównie masą ciała." },
 ];
 
 /** Default celu tygodniowego wg poziomu (onboarding-v3 §E4). */
-const GOAL_DEFAULT: Record<Level, number> = { beginner: 2, intermediate: 3, advanced: 4 };
-
-/**
- * Mapowanie poziom×środowisko → nazwa programu z seedu (grid docs/trainings/).
- * Braki gridu wg README trainings: adv×home → PPL ze swapami DB;
- * (intermediate|advanced)×bodyweight → beginner-bodyweight z twardszą progresją.
- */
-const GRID: Record<Level, Record<Env, { name: string; note?: string }>> = {
-  beginner: {
-    gym: { name: "Beginner · Siłownia · Full Body 3×" },
-    home: { name: "Beginner · Dom z hantlami · Full Body 3×" },
-    bodyweight: { name: "Beginner · Masa ciała · Full Body 3×" },
-  },
-  intermediate: {
-    gym: { name: "Intermediate · Siłownia · Upper / Lower 4×" },
-    home: { name: "Intermediate · Dom z hantlami · Upper / Lower 4×" },
-    bodyweight: {
-      name: "Beginner · Masa ciała · Full Body 3×",
-      note: "Ten sam szkielet — celuj w trudniejsze wariacje (drabinki w opisie programu).",
-    },
-  },
-  advanced: {
-    gym: { name: "Advanced · Siłownia · Push / Pull / Legs 6×" },
-    home: {
-      name: "Advanced · Siłownia · Push / Pull / Legs 6×",
-      note: "Wersja hantlowa: podmieniaj na warianty DB (⇄ w loggerze); unilateral + tempo, gdy zabraknie ciężaru.",
-    },
-    bodyweight: {
-      name: "Beginner · Masa ciała · Full Body 3×",
-      note: "Zaawansowana kalistenika to osobna dyscyplina — startuj z najtrudniejszych wariacji.",
-    },
-  },
-};
+const GOAL_DEFAULT: Record<TrainingLevel, number> = { beginner: 2, intermediate: 3, advanced: 4 };
+const subscribeToNothing = () => () => {};
 
 export function WelcomeOverlay({
   eligible,
@@ -76,61 +52,78 @@ export function WelcomeOverlay({
   eligible: boolean;
   unit: UnitSystem;
   weeklyGoal: number;
-  programs: { id: string; name: string; days_per_week: number }[];
+  programs: ProgramCandidate[];
 }) {
   const router = useRouter();
-  const [show, setShow] = useState(false);
+  const eligibleToShow = useSyncExternalStore(
+    subscribeToNothing,
+    () => eligible && !localStorage.getItem(FLAG),
+    () => false,
+  );
+  const [dismissed, setDismissed] = useState(false);
   // 0=E0 moment · 1=E1 ty · 2=E2 gdzie · 3=E3 poziom · 4=E4 cel · 5=E5 plan · 6=potwierdzenie
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [u, setU] = useState<UnitSystem>(unit);
-  const [level, setLevel] = useState<Level | null>(null);
-  const [env, setEnv] = useState<Env | null>(null);
+  const [level, setLevel] = useState<TrainingLevel | null>(null);
+  const [env, setEnv] = useState<TrainingEnvironment | null>(null);
   const [goal, setGoal] = useState(weeklyGoal);
   const [goalTouched, setGoalTouched] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (eligible && !localStorage.getItem(FLAG)) setShow(true);
-  }, [eligible]);
-
-  // E4: default celu wg poziomu — dopóki user sam nie dotknął wyboru
-  useEffect(() => {
-    if (level && !goalTouched) setGoal(GOAL_DEFAULT[level]);
-  }, [level, goalTouched]);
+  // E4: default celu wg poziomu — dopóki user sam nie dotknął wyboru.
+  const effectiveGoal = level && !goalTouched ? GOAL_DEFAULT[level] : goal;
 
   const suggestion = useMemo(() => {
     if (!level || !env) return null;
-    const g = GRID[level][env];
-    const program = programs.find((p) => p.name === g.name) ?? null;
-    return program ? { ...g, id: program.id, daysPerWeek: program.days_per_week } : null;
-  }, [level, env, programs]);
+    return recommendProgram({
+      programs,
+      level,
+      environment: env,
+      weeklyGoal: effectiveGoal,
+      availableEquipment: EQUIPMENT_BY_ENVIRONMENT[env],
+    });
+  }, [level, env, effectiveGoal, programs]);
 
-  if (!show) return null;
+  if (!eligibleToShow || dismissed) return null;
 
   function finish() {
     localStorage.setItem(FLAG, "1");
-    setShow(false);
+    setDismissed(true);
     router.refresh();
   }
 
   async function saveProfile(activate: boolean) {
     setSaving(true);
     try {
-      await updateSettings({
+      const profileSettings = {
         unit_system: u,
-        weekly_goal: goal,
+        weekly_goal: effectiveGoal,
         display_name: name.trim() || null,
-      });
-      if (activate && suggestion) await setActiveProgram(suggestion.id);
+        ...(env ? { available_equipment: EQUIPMENT_BY_ENVIRONMENT[env] } : {}),
+      };
+      await updateSettings(profileSettings);
+      if (activate && suggestion) {
+        await saveActiveProgram(suggestion.program.id);
+        if (suggestion.program.slug) {
+          track({
+            name: "program_activated",
+            props: { program_slug: suggestion.program.slug, source: "onboarding" },
+          });
+        }
+      }
     } catch {
-      /* preferencje można ustawić później w Ustawieniach */
+      toast.error("Nie udało się zapisać ustawień. Sprawdź połączenie i spróbuj ponownie.");
+      setSaving(false);
+      return;
     }
     track({
       name: "onboarding_completed",
       props: {
         level: level ?? "skip",
         env: env ?? "skip",
+        weekly_goal: effectiveGoal,
+        recommendation_kind: suggestion ? (suggestion.exact ? "exact" : "fallback") : "none",
+        program_slug: suggestion?.program.slug ?? null,
         suggested_program_accepted: activate && !!suggestion,
       },
     });
@@ -154,12 +147,12 @@ export function WelcomeOverlay({
   return (
     // fixed → poza pt-safe z <body>; własny safe-area (notch PWA, ekran pełnoekranowy)
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] text-brand-foreground">
-      <div className="flex min-h-9 items-center justify-between">
+      <div className="flex min-h-11 items-center justify-between">
         {step >= 1 && step <= 5 ? (
           <button
             onClick={() => setStep(step - 1)}
             aria-label="Wstecz"
-            className="-ml-1 flex h-9 w-9 items-center justify-center text-brand-muted"
+            className="-ml-1 flex size-11 items-center justify-center rounded-full text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <ArrowLeft className="size-5" />
           </button>
@@ -167,7 +160,7 @@ export function WelcomeOverlay({
           <span />
         )}
         {step <= 5 && (
-          <button onClick={skipAll} className="text-sm text-brand-muted">
+          <button onClick={skipAll} className="min-h-11 px-2 text-sm text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             Pomiń
           </button>
         )}
@@ -182,16 +175,16 @@ export function WelcomeOverlay({
               <br />
               Zapisuj.
               <br />
-              Nie odpuszczaj.
+              Rób postęp.
             </h1>
-            <p className="text-lg text-brand-muted">60 sekund i masz plan od trenera.</p>
+            <p className="text-lg text-brand-muted">Minuta i masz plan na pierwszy trening.</p>
           </div>
         )}
 
         {/* E1 · TY — imię (opcjonalne) + jednostki (glance-confirm, kg default) */}
         {step === 1 && (
           <div className="space-y-md">
-            <h1 className="text-2xl font-semibold tracking-tight">Jak mamy na Ciebie wołać?</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Jak masz na imię?</h1>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -246,7 +239,7 @@ export function WelcomeOverlay({
         {/* E3 · POZIOM — auto-advance */}
         {step === 3 && (
           <div className="space-y-md">
-            <h1 className="text-2xl font-semibold tracking-tight">Twoje doświadczenie?</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Jak długo trenujesz?</h1>
             <div className="space-y-xs">
               {LEVELS.map((l) => (
                 <button
@@ -277,7 +270,7 @@ export function WelcomeOverlay({
               {[2, 3, 4, 5].map((n) => (
                 <Button
                   key={n}
-                  variant={goal === n ? "default" : "outline"}
+                  variant={effectiveGoal === n ? "default" : "outline"}
                   className="flex-1"
                   onClick={() => {
                     setGoal(n);
@@ -289,10 +282,27 @@ export function WelcomeOverlay({
               ))}
             </div>
             <p className="text-sm text-brand-muted">
-              Ustaw życiowo, nie ambitnie — passa liczy się tygodniami, a cel podniesiesz jednym
-              tapem w Ustawieniach.
+              Wybierz liczbę, którą spokojnie utrzymasz. Cel możesz zmienić w ustawieniach.
             </p>
-            <Button size="lg" className="w-full" onClick={() => setStep(5)}>
+            <Button
+              size="lg"
+              className="w-full"
+              onClick={() => {
+                if (suggestion?.program.slug && level && env) {
+                  track({
+                    name: "program_recommended",
+                    props: {
+                      program_slug: suggestion.program.slug,
+                      level,
+                      env,
+                      weekly_goal: effectiveGoal,
+                      match: suggestion.exact ? "exact" : "fallback",
+                    },
+                  });
+                }
+                setStep(5);
+              }}
+            >
               Dalej
             </Button>
           </div>
@@ -303,12 +313,21 @@ export function WelcomeOverlay({
           <div className="space-y-md">
             {suggestion ? (
               <>
-                <p className="text-sm text-brand-muted">Twój plan, dopasowany:</p>
+                <p className="text-sm text-brand-muted">
+                  {suggestion.exact ? "Dopasowany plan" : "Najbliższy plan w bibliotece"}
+                </p>
                 <div className="rounded-xl bg-card p-md text-card-foreground shadow-md">
-                  <p className="text-xl font-semibold leading-tight">{suggestion.name}</p>
+                  <p className="text-xl font-semibold leading-tight">{suggestion.program.name}</p>
                   <p className="mt-2xs text-xs text-muted-foreground">
-                    plan od trenera · {suggestion.daysPerWeek}{" "}
-                    {suggestion.daysPerWeek === 1 ? "dzień" : "dni"}/tydz.
+                    Plan od trenera · cykl {suggestion.program.cycle_days} dni · {formatFrequency(suggestion.program.frequency_min!, suggestion.program.frequency_max!)}
+                    {formatEstimatedMinutes(
+                      suggestion.program.estimated_minutes_min,
+                      suggestion.program.estimated_minutes_max,
+                    ) &&
+                      ` · ${formatEstimatedMinutes(
+                        suggestion.program.estimated_minutes_min,
+                        suggestion.program.estimated_minutes_max,
+                      )}/trening`}
                   </p>
                   {suggestion.note && (
                     <p className="mt-xs text-xs text-muted-foreground">{suggestion.note}</p>
@@ -329,14 +348,14 @@ export function WelcomeOverlay({
                   disabled={saving}
                   onClick={() => saveProfile(false).then(() => router.push("/programs"))}
                 >
-                  Inny program
+                  Wybierz inny program
                 </Button>
               </>
             ) : (
               <>
                 <h1 className="text-2xl font-semibold tracking-tight">Prawie gotowe</h1>
                 <p className="text-sm text-brand-muted">
-                  Wybierz program w bibliotece — 8 planów od trenera czeka.
+                  W bibliotece czeka {programs.filter((program) => program.slug).length} gotowych programów. Wybierz ten, który pasuje do Ciebie.
                 </p>
                 <Button
                   size="lg"
@@ -359,7 +378,7 @@ export function WelcomeOverlay({
             </span>
             <p className="text-lg font-semibold">Plan gotowy</p>
             <p className="text-sm text-brand-muted">
-              Czeka na ekranie głównym — wystartujesz jednym tapem.
+              Czeka na ekranie głównym. Możesz od razu zacząć trening.
             </p>
           </div>
         )}

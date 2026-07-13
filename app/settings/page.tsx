@@ -16,10 +16,10 @@ export default async function SettingsPage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="text-xs text-muted-foreground">
+        <Link href="/" className="flex min-h-11 items-center text-sm text-muted-foreground">
           ← Trening
         </Link>
-        <span className="font-semibold">Ustawienia</span>
+        <h1 className="font-semibold">Ustawienia</h1>
         <span className="w-12" />
       </header>
       <main className="flex-1 p-md">

@@ -1,4 +1,4 @@
-# Beginner · Masa ciała · Full Body 3×
+# Beginner · Masa ciała · Full Body · cykl 3 dni
 
 > **Poziom:** początkujący · **Środowisko:** masa ciała — **default: drążek do podciągania** · **Sesje:** 3× / tydz. (A → B → C) · **Częstotliwość / partia:** ~3× · **RIR:** 2–3 · **Progresja:** double progression (reps → leverage)
 >
@@ -30,7 +30,7 @@
 
 | # | Ćwiczenie | `movement_pattern` | Serie × powt. | Przerwa | Swap (0 sprzętu) |
 |---|---|---|---|---|---|
-| 1 | Bulgarian Split Squat | `lunge` | 3 × 10–15 / noga | 1:30 | — |
+| 1 | Split Squat | `lunge` | 3 × 10–15 / noga | 1:30 | Bulgarian Split Squat (plecak) |
 | 2 | Chin-up (drążek) | `vertical_pull` | 3 × 5–10 | 2:00 | **Backpack Row (podchwyt)** · Towel Row |
 | 3 | Archer / Pseudo-Planche Push-up | `horizontal_push` | 3 × 6–12 | 1:30 | — |
 | 4 | Single-Leg Calf Raise | `calf` | 3 × 12–20 / noga | 1:00 | — |

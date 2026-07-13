@@ -103,10 +103,10 @@ export async function getPeriodOverview(
   const volInsight =
     prev && volPct != null
       ? volPct >= 10
-        ? `Objętość ↑${volPct}% vs poprzednie ${period.days} dni — progresja działa.`
+        ? `Objętość wzrosła o ${volPct}% w porównaniu z poprzednimi ${period.days} dniami.`
         : volPct <= -10
-          ? `Objętość ↓${Math.abs(volPct)}% vs poprzednie ${period.days} dni — lżejszy okres.`
-          : `Objętość stabilna vs poprzednie ${period.days} dni (${volPct >= 0 ? "+" : ""}${volPct}%).`
+          ? `Objętość spadła o ${Math.abs(volPct)}% w porównaniu z poprzednimi ${period.days} dniami.`
+          : `Objętość jest podobna do poprzednich ${period.days} dni (${volPct >= 0 ? "+" : ""}${volPct}%).`
       : null;
   const balanceInsight = (() => {
     const { push, pull } = cur;
@@ -114,9 +114,9 @@ export async function getPeriodOverview(
     if (strong < GUIDANCE.balanceMinSets) return null;
     if (Math.min(push, pull) < strong * GUIDANCE.balanceRatio) {
       const lack = push < pull ? "push" : "pull";
-      return `${lack === "push" ? "Push" : "Pull"} odstaje w tym okresie (push ${push} / pull ${pull} serii).`;
+      return `${lack === "push" ? "Ruchów wypychających" : "Ruchów przyciągających"} jest w tym okresie mniej. Wypychające: ${push}, przyciągające: ${pull} serii.`;
     }
-    return `Push i pull w równowadze (${push}/${pull} serii).`;
+    return `Ruchy wypychające i przyciągające są w równowadze (${push}/${pull} serii).`;
   })();
 
   const deltas = prev

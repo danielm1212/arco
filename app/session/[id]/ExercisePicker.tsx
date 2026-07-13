@@ -14,7 +14,7 @@ import { ExerciseBrowser } from "./ExerciseBrowser";
 function maybeShowReorderHint() {
   if (getReorderHintSeen()) return;
   setReorderHintSeen(true);
-  toast("Dodane na końcu — przenieś ⋯, jeśli chcesz wcześniej");
+  toast("Ćwiczenie dodane na końcu. Możesz je przenieść w menu ⋯.");
 }
 
 export function ExercisePicker({ sessionId }: { sessionId: string }) {
@@ -42,7 +42,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
     startTransition(async () => {
       try {
         for (const id of ids) await addSessionExercise(sessionId, id);
-        toast.success(`Dodano ${ids.length} ćw.`);
+        toast.success(`Dodano ćwiczenia: ${ids.length}.`);
         setOpen(false);
         router.refresh();
         maybeShowReorderHint();

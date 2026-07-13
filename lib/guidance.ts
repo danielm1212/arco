@@ -54,10 +54,17 @@ export const MUSCLE_CATEGORY: Record<string, MuscleCategory> = {
 };
 
 const CATEGORY_LABEL: Record<MuscleCategory, string> = {
-  push: "push",
-  pull: "pull",
-  legs: "nogi",
-  core: "core",
+  push: "Ruchy wypychające",
+  pull: "Ruchy przyciągające",
+  legs: "Nogi",
+  core: "Brzuch",
+};
+
+const CATEGORY_LABEL_GENITIVE: Record<MuscleCategory, string> = {
+  push: "ruchów wypychających",
+  pull: "ruchów przyciągających",
+  legs: "nóg",
+  core: "brzucha",
 };
 
 /**
@@ -133,7 +140,7 @@ export function progressionHint(input: {
   if (!prev) {
     // Bez „poprzednio" (np. dawno nietrenowane) rep-PR sam w sobie daje cel
     return type === "weighted" && repPR
-      ? `Rekord przy ${repPR.reps} powt.: ${repPR.weight}${unit} — spróbuj pobić`
+      ? `Rekord dla ${repPR.reps} powtórzeń to ${repPR.weight}${unit}. Spróbuj go pobić.`
       : null;
   }
 
@@ -173,7 +180,7 @@ export function balanceFlags(setsByCategory: Partial<Record<MuscleCategory, numb
       id: `balance-${lacking}`,
       kind: "balance",
       severity: "warn",
-      message: `Mało ${CATEGORY_LABEL[lacking as MuscleCategory]} w tym tygodniu (push ${push} / pull ${pull} serii)`,
+      message: `Mało ${CATEGORY_LABEL_GENITIVE[lacking as MuscleCategory]} w tym tygodniu. Wypychające: ${push}, przyciągające: ${pull} serii.`,
     },
   ];
 }
@@ -189,7 +196,7 @@ export function stalenessFlags(
       id: `stale-${cat}`,
       kind: "staleness" as const,
       severity: "info" as const,
-      message: `${cap(CATEGORY_LABEL[cat])}: ${days} dni temu — czas na trening`,
+      message: `${CATEGORY_LABEL[cat]}: ostatni trening ${days} dni temu. Warto wrócić do tej partii.`,
     }));
 }
 
@@ -216,7 +223,7 @@ export function deloadFlags(items: { name: string; series: number[] }[]): Guidan
       id: `deload-${w.name}`,
       kind: "deload",
       severity: "warn",
-      message: `${w.name}: ${n} sesje bez postępu → rozważ lżejszy tydzień`,
+      message: `${w.name}: ${n} sesje bez postępu. Rozważ lżejszy tydzień.`,
     },
   ];
 }
@@ -228,5 +235,3 @@ export function homeGuidance(items: GuidanceItem[]): GuidanceItem[] {
     .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind))
     .slice(0, GUIDANCE.maxHomeFlags);
 }
-
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);

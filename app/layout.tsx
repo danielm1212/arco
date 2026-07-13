@@ -29,10 +29,11 @@ const gambarino = localFont({
 
 export const metadata: Metadata = {
   title: "Arco",
-  description: "Osobista apka treningowa — trening siłowy, FBW, podmiana ćwiczeń.",
+  description: "Osobista aplikacja do treningu siłowego, planów i śledzenia postępów.",
   applicationName: "Arco",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Arco" },
+  other: { "apple-mobile-web-app-capable": "yes" },
   icons: {
     icon: "/icon.svg",
     apple: "/apple-touch-icon.png",

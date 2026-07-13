@@ -1,11 +1,15 @@
 {
   "name": "Arco",
   "short_name": "Arco",
-  "description": "Osobista apka treningowa — trening siłowy, FBW, podmiana ćwiczeń.",
+  "id": "/",
+  "lang": "pl",
+  "dir": "ltr",
+  "description": "Osobista aplikacja do treningu siłowego, planów i śledzenia postępów.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
+  "categories": ["fitness", "health"],
   "background_color": "#F6F2ED",
   "theme_color": "#F6F2ED",
   "icons": [

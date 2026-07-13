@@ -7,7 +7,7 @@ import { toast } from "sonner";
  */
 export function ensureOnline(what: string): boolean {
   if (typeof navigator !== "undefined" && !navigator.onLine) {
-    toast.error(`Jesteś offline — ${what} wymaga sieci. Serie możesz zapisywać dalej.`);
+    toast.error(`${what.charAt(0).toUpperCase()}${what.slice(1)} wymaga internetu. Serie możesz zapisywać dalej.`);
     return false;
   }
   return true;

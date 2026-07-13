@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { login } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,7 @@ function SubmitButton() {
 }
 
 export default function LoginPage() {
-  const [state, formAction] = useFormState(login, null);
+  const [state, formAction] = useActionState(login, null);
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-md">
@@ -27,13 +28,13 @@ export default function LoginPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-10 w-auto dark:block" />
           </h1>
-          <p className="text-sm text-muted-foreground">Zaloguj się, żeby trenować.</p>
+          <p className="text-sm text-muted-foreground">Wróć do swoich treningów.</p>
         </div>
 
         <form action={formAction} className="space-y-md">
           <div className="space-y-xs">
             <label htmlFor="email" className="text-sm font-medium">
-              Email
+              E-mail
             </label>
             <Input
               id="email"

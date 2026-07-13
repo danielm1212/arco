@@ -3,16 +3,23 @@ import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
+import { formatFrequency } from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
 
 type Prog = {
   id: string;
   name: string;
-  days_per_week: number;
+  cycle_days: number;
   user_id: string | null;
   goal: string | null;
   level: string | null;
+  level_min: number | null;
+  environment: string | null;
+  frequency_min: number | null;
+  frequency_max: number | null;
+  estimated_minutes_min: number | null;
+  estimated_minutes_max: number | null;
   program_days: { id: string }[];
 };
 
@@ -25,13 +32,27 @@ export default async function ProgramsPage() {
   const [{ data: programs }, { data: active }] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, name, days_per_week, user_id, goal, level, program_days(id)")
+      .select("id, name, cycle_days, user_id, goal, level, level_min, environment, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
   ]);
   const activeId = active?.program_id ?? null;
   const own = ((programs as Prog[]) ?? []).filter((p) => p.user_id === user?.id);
-  const presets = ((programs as Prog[]) ?? []).filter((p) => p.user_id === null);
+  const presets = ((programs as Prog[]) ?? [])
+    .filter((p) => p.user_id === null)
+    .sort((a, b) => {
+      const environmentOrder = { gym: 0, home: 1, bodyweight: 2 } as Record<string, number>;
+      return (
+        (a.level_min ?? 9) - (b.level_min ?? 9) ||
+        (environmentOrder[a.environment ?? ""] ?? 9) - (environmentOrder[b.environment ?? ""] ?? 9) ||
+        (a.frequency_min ?? 9) - (b.frequency_min ?? 9)
+      );
+    });
+  const presetGroups = [
+    { rank: 1, label: "Początkujący" },
+    { rank: 2, label: "Średniozaawansowani" },
+    { rank: 3, label: "Zaawansowani" },
+  ].map((group) => ({ ...group, programs: presets.filter((program) => program.level_min === group.rank) }));
 
   function Row({ p, kind }: { p: Prog; kind: "own" | "preset" }) {
     const isActive = p.id === activeId;
@@ -42,16 +63,25 @@ export default async function ProgramsPage() {
           <p className="break-words font-medium">{p.name}</p>
           <div className="mt-2xs flex flex-wrap items-center gap-2xs text-xs text-muted-foreground">
             {kind === "preset" ? (
-              [p.goal, p.level, `${p.days_per_week}×/tydz.`].filter(Boolean).map((t) => (
+              [
+                p.goal,
+                `cykl: ${p.cycle_days} dni`,
+                p.frequency_min !== null && p.frequency_max !== null
+                  ? formatFrequency(p.frequency_min, p.frequency_max)
+                  : null,
+                p.estimated_minutes_min !== null && p.estimated_minutes_max !== null
+                  ? `od ${p.estimated_minutes_min} do ${p.estimated_minutes_max} min`
+                  : null,
+              ].filter(Boolean).map((t) => (
                 <span
                   key={t as string}
-                  className="rounded-full bg-secondary px-2 py-0.5 capitalize text-secondary-foreground"
+                  className="rounded-full bg-secondary px-2 py-0.5 text-secondary-foreground"
                 >
                   {t}
                 </span>
               ))
             ) : (
-              <span>{p.program_days.length} dni · edytuj →</span>
+              <span>{p.cycle_days} dni w cyklu · edytuj →</span>
             )}
           </div>
         </Link>
@@ -62,7 +92,7 @@ export default async function ProgramsPage() {
             </span>
           ) : (
             <form action={setActiveProgram.bind(null, p.id)}>
-              <Button variant="outline" size="sm" type="submit">
+              <Button variant="outline" type="submit">
                 Ustaw
               </Button>
             </form>
@@ -75,20 +105,14 @@ export default async function ProgramsPage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="text-xs text-muted-foreground">
+        <Link href="/" className="flex min-h-11 items-center text-sm text-muted-foreground">
           ← Trening
         </Link>
-        <span className="font-semibold">Programy</span>
+        <h1 className="font-semibold">Programy</h1>
         <span className="w-12" />
       </header>
 
       <main className="flex-1 space-y-lg p-md">
-        <form action={createProgram}>
-          <Button type="submit" className="w-full">
-            + Nowy program
-          </Button>
-        </form>
-
         {own.length > 0 && (
           <section className="space-y-sm">
             <h2 className="text-base font-semibold">Moje programy</h2>
@@ -100,9 +124,23 @@ export default async function ProgramsPage() {
 
         <section className="space-y-sm">
           <h2 className="text-base font-semibold">Biblioteka programów</h2>
-          {presets.map((p) => (
-            <Row key={p.id} p={p} kind="preset" />
+          {presetGroups.map((group) => (
+            <div key={group.rank} className="space-y-sm">
+              <h3 className="pt-xs text-sm font-medium text-muted-foreground">{group.label}</h3>
+              {group.programs.map((p) => (
+                <Row key={p.id} p={p} kind="preset" />
+              ))}
+            </div>
           ))}
+        </section>
+
+        <section className="space-y-xs border-t pt-md">
+          <p className="text-sm text-muted-foreground">Masz własny plan?</p>
+          <form action={createProgram}>
+            <Button type="submit" variant="outline" className="w-full">
+              Utwórz własny program
+            </Button>
+          </form>
         </section>
       </main>
     </div>

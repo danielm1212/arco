@@ -11,15 +11,16 @@ import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
 
 const num = (v: string) => (v.trim() === "" ? null : Number(v.replace(",", ".")));
+const decimalInput = (value: string) => value.replace(/[^0-9,.]/g, "").replace(/([,.].*)[,.]/g, "$1");
 
-/** Skaluje zdjęcie do max 1280px i koduje JPEG q0.8 (mniejszy upload, normalizuje HEIC). */
+/** Skaluje formaty obsługiwane przez przeglądarkę do max 1280px i koduje JPEG q0.8. */
 async function compress(file: File): Promise<Blob> {
   const url = URL.createObjectURL(file);
   try {
     const img = await new Promise<HTMLImageElement>((res, rej) => {
       const i = new Image();
       i.onload = () => res(i);
-      i.onerror = rej;
+      i.onerror = () => rej(new Error("UNSUPPORTED_IMAGE"));
       i.src = url;
     });
     const max = 1280;
@@ -79,8 +80,8 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
         reset();
         router.refresh();
         toast.success("Zapisano pomiar.");
-      } catch {
-        toast.error("Nie zapisano — spróbuj ponownie.");
+      } catch (error) {
+        toast.error(error instanceof Error && error.message === "UNSUPPORTED_IMAGE" ? "Ten format zdjęcia nie jest obsługiwany. Wybierz JPG, PNG albo WebP." : "Nie udało się zapisać pomiaru. Spróbuj ponownie.");
       }
     });
   }
@@ -89,27 +90,25 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
     <div className="space-y-sm rounded-xl bg-card p-md shadow-sm">
       <div className="grid grid-cols-2 gap-sm">
         <div className="space-y-xs">
-          <label className="text-xs text-muted-foreground">Waga ({unit})</label>
+          <label htmlFor="body-weight" className="text-xs text-muted-foreground">Waga ({unit})</label>
           <Input
-            type="number"
+            id="body-weight"
+            type="text"
             inputMode="decimal"
-            step="0.1"
-            min={0}
-            max={LIMITS.bodyWeight}
+            autoComplete="off"
             value={weight}
-            onChange={(e) => setWeight(e.target.value)}
+            onChange={(e) => setWeight(decimalInput(e.target.value))}
           />
         </div>
         <div className="space-y-xs">
-          <label className="text-xs text-muted-foreground">% tkanki (opcjonalnie)</label>
+          <label htmlFor="body-fat" className="text-xs text-muted-foreground">Tkanka tłuszczowa % (opcjonalnie)</label>
           <Input
-            type="number"
+            id="body-fat"
+            type="text"
             inputMode="decimal"
-            step="0.1"
-            min={0}
-            max={LIMITS.bodyFat}
+            autoComplete="off"
             value={fat}
-            onChange={(e) => setFat(e.target.value)}
+            onChange={(e) => setFat(decimalInput(e.target.value))}
           />
         </div>
       </div>
@@ -129,7 +128,8 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
               setFile(null);
               if (fileRef.current) fileRef.current.value = "";
             }}
-            className="text-xs text-danger"
+            aria-label="Usuń wybrane zdjęcie"
+            className="min-h-11 rounded-md px-3 text-sm text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             usuń
           </button>

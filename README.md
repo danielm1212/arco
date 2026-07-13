@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Arco
 
-## Getting Started
+[![Jakość](https://github.com/danielm1212/arco/actions/workflows/quality.yml/badge.svg)](https://github.com/danielm1212/arco/actions/workflows/quality.yml)
 
-First, run the development server:
+Arco to mobilna aplikacja treningowa do szybkiego zapisywania serii, śledzenia postępów i otrzymywania prostych, opartych na regułach wskazówek. Moduł Ekipa pozwala małym, prywatnym grupom wspierać się bez udostępniania szczegółów treningu.
+
+## Uruchomienie lokalne
+
+Wymagane są Node.js 22, npm oraz lokalny Supabase. Uzupełnij `.env.local`, a następnie uruchom:
 
 ```bash
+npm ci
+supabase start
+npm run seed
+npm run bootstrap:user
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aplikacja będzie dostępna pod adresem [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Kontrola jakości
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Podstawowy zestaw przed wysłaniem zmian:
 
-## Learn More
+```bash
+npm run lint
+npm run test:unit
+npm run validate:training
+npm run validate:recommendations
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Pełna bramka na GitHubie dodatkowo uruchamia świeżą lokalną bazę oraz cztery testy integracyjne: główny przepływ, rekordy i zamiany, zapis offline oraz prywatność Ekipy.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Dokumentacja
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Aktualny stan i kolejność prac znajdują się w `docs/HANDOFF.md` oraz `docs/plan-sprintow-2026-07.md`. Mapa pozostałych dokumentów jest w `docs/README.md`.

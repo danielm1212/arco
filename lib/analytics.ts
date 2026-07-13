@@ -12,8 +12,28 @@
 // ── Taksonomia (jedna lista prawdy — rozszerzaj razem z dokiem) ──────────────
 export type AnalyticsEvent =
   // Faza 1 — aktywacja i retencja
-  | { name: "onboarding_completed"; props: { level: string; env: string; suggested_program_accepted: boolean } }
+  | {
+      name: "onboarding_completed";
+      props: {
+        level: string;
+        env: string;
+        weekly_goal: number;
+        recommendation_kind: "exact" | "fallback" | "none";
+        program_slug: string | null;
+        suggested_program_accepted: boolean;
+      };
+    }
   | { name: "onboarding_skipped"; props: { step: number } }
+  | {
+      name: "program_recommended";
+      props: {
+        program_slug: string;
+        level: string;
+        env: string;
+        weekly_goal: number;
+        match: "exact" | "fallback";
+      };
+    }
   | { name: "program_activated"; props: { program_slug: string; source: "onboarding" | "library" } }
   | { name: "session_started"; props: { source: "program" | "freestyle" } }
   | { name: "session_finished"; props: { duration_min: number; sets_completed: number; is_first: boolean } }
@@ -58,7 +78,6 @@ export function track(event: AnalyticsEvent): void {
     if (adapter) {
       adapter(event.name, event.props);
     } else if (process.env.NODE_ENV === "development") {
-      // eslint-disable-next-line no-console
       console.debug("[analytics]", event.name, event.props);
     }
   } catch {

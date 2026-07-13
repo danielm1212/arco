@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { MonthCalendar } from "@/components/MonthCalendar";
 import { weekStart, computeStreak, localDayKey } from "@/lib/week";
 import { DeleteSessionButton } from "./DeleteSessionButton";
+import { MomentIcon3D } from "@/components/MomentIcon3D";
 
 export const dynamic = "force-dynamic";
 
@@ -45,12 +46,8 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="text-xs text-muted-foreground">
-          ← Trening
-        </Link>
-        <span className="font-semibold">Historia</span>
-        <span className="w-12" />
+      <header className="border-b px-md py-md text-center">
+        <h1 className="font-semibold">Historia</h1>
       </header>
 
       <main className="flex-1 space-y-md p-md">
@@ -58,12 +55,13 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
 
         {sessions.length === 0 && !before && (
           /* S14 #2: kalendarz zostaje, pustka = obietnica + jeden krok */
-          <div className="space-y-sm pt-lg text-center">
-            <p className="text-base font-semibold">Tu zamieszka Twoja historia</p>
-            <p className="text-sm text-muted-foreground">
-              Każdy zakończony trening zapisze się w kalendarzu, a passa zacznie rosnąć 🔥
+          <div className="flex flex-col items-center pt-sm text-center">
+            <MomentIcon3D name="history" className="size-20" />
+            <p className="text-base font-semibold">Tu pojawi się historia treningów</p>
+            <p className="mt-xs text-sm text-muted-foreground">
+              Każdy zakończony trening zapisze się w kalendarzu i na liście poniżej.
             </p>
-            <Button asChild className="mx-auto">
+            <Button asChild className="mt-sm">
               <Link href="/">Zacznij pierwszy trening</Link>
             </Button>
           </div>
@@ -71,7 +69,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
 
         {sessions.length === 0 && before && (
           <p className="pt-lg text-center text-sm text-muted-foreground">
-            To już wszystko — starszych treningów nie ma.
+            To już wszystkie zapisane treningi.
           </p>
         )}
 
@@ -79,7 +77,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
           const day = s.program_days as unknown as
             | { label: string; programs: { name: string } | null }
             | null;
-          const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Freestyle";
+          const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Bez planu";
           const exs = (s.session_exercises as unknown as {
             session_sets: { completed: boolean }[];
           }[]) ?? [];

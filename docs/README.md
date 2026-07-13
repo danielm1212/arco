@@ -1,6 +1,6 @@
 # Mapa dokumentacji Arco
 
-> Aktualizacja: 2026-07-08. Porządek czytania dla nowej sesji: `CLAUDE.md` (root) → `HANDOFF.md` → kanon poniżej wg potrzeby. Skonsumowane/historyczne doki żyją w `archive/` — nie kasujemy, archiwizujemy.
+> Aktualizacja: 2026-07-13. Porządek czytania dla nowej sesji: `CLAUDE.md` (root) → `HANDOFF.md` → kanon poniżej wg potrzeby. Skonsumowane/historyczne doki żyją w `archive/` — nie kasujemy, archiwizujemy.
 
 ## 🥇 Kanon (źródła prawdy — kolejność obowiązywania)
 
@@ -24,6 +24,7 @@
 | `kalendarz-wykonawczy.md` | daty Kroków 0–4 z buforem; **launch: okno 2–8 sty 2027**; reguły poślizgu |
 | `notion-sync-queue.md` | kolejka wpisów do Notion (flush na żądanie) |
 | `feedback-uzytkownikow.md` | log surowego feedbacku (#1: przeładowany home) |
+| `plan-floating-nav-i-ikony-3d.md` | zaplanowana pływająca nawigacja i mały system ikon clay 3D; zależność od audytu UI/UX |
 
 ## 🔬 Audyty i projekty techniczne
 
@@ -44,7 +45,7 @@
 | Plik | Co trzyma |
 |---|---|
 | `scenariusz-h2.md` | kompletny skrypt sesji testowych (70 min/os., progi B1) |
-| `concierge-test-ekip.md` | ręczny test tezy Radka PRZED budową Kroku 4 |
+| `concierge-test-ekip.md` | ❌ ODWOŁANY (2026-07-12); zostaje jako spec kryteriów 🟢🟡🔴 do oceny dogfoodingu |
 | `ekipa-koncepcja.md` | **ekipa w całości** (2026-07-12): audyt decyzji, konkurencja (Duolingo/Ladder/WHOOP…), mechanika (rytm tygodniowy, nudge, cykl życia), IA + UI pod Warm; decyzje [Ty] §8 |
 
 ## 📣 Marka i marketing

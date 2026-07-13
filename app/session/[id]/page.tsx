@@ -91,11 +91,17 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
 
   // „Arco Warm": logger podąża za motywem apki (forced-dark ZAWIESZONY decyzją
   // 2026-07-04 — właściciel oceni jasną wersję na telefonie; ew. powrót jako opcja).
+  // Przy zmianach struktury po router.refresh() remountujemy logger. Dzięki temu
+  // lokalny stan nigdy nie synchronizuje się w efekcie podczas renderowania.
+  const loggerKey = model
+    .map((exercise) => `${exercise.sessionExerciseId}:${exercise.exerciseId}:${exercise.supersetGroup ?? ""}:${exercise.skipped}`)
+    .join("|");
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <Logger
+        key={loggerKey}
         sessionId={session.id}
-        title={dayMeta?.label ?? "Freestyle"}
+        title={dayMeta?.label ?? "Bez planu"}
         programName={dayMeta?.programs?.name ?? null}
         isFinished={!!session.finished_at}
         startedAt={session.started_at}

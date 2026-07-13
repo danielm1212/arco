@@ -17,8 +17,9 @@
 ### Faza 1 — aktywacja i retencja (wire przy S11/launch gate)
 | Event | Właściwości | Metryka pulpitu |
 |---|---|---|
-| `onboarding_completed` | `level`, `env`, `suggested_program_accepted` | lejek aktywacji |
+| `onboarding_completed` | `level`, `env`, `weekly_goal`, `recommendation_kind` (exact/fallback/none), `program_slug`, `suggested_program_accepted` | lejek aktywacji + jakość dopasowania |
 | `onboarding_skipped` | `step` (na którym kroku) | wyciek na starcie (feedback #1!) |
+| `program_recommended` | `program_slug`, `level`, `env`, `weekly_goal`, `match` (exact/fallback) | pokrycie biblioteki i przejście rekomendacja→aktywacja |
 | `program_activated` | `program_slug` (seedowe; custom = `"custom"`), `source` (onboarding/library) | lejek |
 | `session_started` | `source` (program/freestyle) | lejek |
 | `session_finished` | `duration_min` (bucket), `sets_completed` (bucket), `is_first` (liczy serwer — done page zna liczbę sesji) | **% userów z ukończonym 1. treningiem**; baza W1/W4 |
@@ -73,6 +74,7 @@ Konwencja: nowe eventy TYLKO przez rozszerzenie unii w `lib/analytics.ts` (type-
 | Event | Plik / miejsce |
 |---|---|
 | `onboarding_completed` / `onboarding_skipped` | `components/WelcomeOverlay.tsx` — submit kroku końcowego / handler „Pomiń" (z numerem kroku) |
+| `program_recommended` | `components/WelcomeOverlay.tsx` — przejście E4→E5 po wyliczeniu wyniku |
 | `program_activated` | wywołania `setActiveProgram` (`app/actions/session.ts:18`) — po stronie klienta w `/programs` |
 | `session_started` | klienckie wywołania `startSession`/`startFreestyle` (home / programy) |
 | `session_finished` | mały klient-komponent na `app/session/[id]/done/page.tsx` — server component przekazuje mu propsy (`duration_min`, `sets_completed`, `is_first` z count sesji, który i tak liczy do celu tygodniowego). NIE w `Logger.handleFinish` — done page ma dane policzone serwerowo i odpala się dokładnie raz |

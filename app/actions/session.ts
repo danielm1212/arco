@@ -14,14 +14,19 @@ async function requireUser() {
   return { supabase, user };
 }
 
-/** Ustaw aktywny program użytkownika. */
-export async function setActiveProgram(programId: string) {
+/** Zapisz aktywny program bez wymuszania nawigacji (np. onboarding). */
+export async function saveActiveProgram(programId: string) {
   const { supabase, user } = await requireUser();
   const { error } = await supabase
     .from("user_active_program")
     .upsert({ user_id: user.id, program_id: programId }, { onConflict: "user_id" });
   if (error) throw new Error(error.message);
   revalidatePath("/");
+}
+
+/** Ustaw aktywny program i wróć do ekranu Trening. */
+export async function setActiveProgram(programId: string) {
+  await saveActiveProgram(programId);
   redirect("/");
 }
 
@@ -31,7 +36,7 @@ export async function startSession(programDayId: string) {
 
   const { data: slots, error: slotsErr } = await supabase
     .from("program_day_slots")
-    .select("id, default_exercise_id, position, superset_group")
+    .select("id, default_exercise_id, position, superset_group, target_sets")
     .eq("program_day_id", programDayId)
     .order("position");
   if (slotsErr) throw new Error(slotsErr.message);
@@ -52,8 +57,28 @@ export async function startSession(programDayId: string) {
       position: s.position,
       superset_group: s.superset_group,
     }));
-    const { error: seErr } = await supabase.from("session_exercises").insert(rows);
-    if (seErr) throw new Error(seErr.message);
+    const { data: createdExercises, error: seErr } = await supabase
+      .from("session_exercises")
+      .insert(rows)
+      .select("id, slot_id");
+    if (seErr || !createdExercises) {
+      await supabase.from("sessions").delete().eq("id", session.id);
+      throw new Error(seErr?.message ?? "Nie udało się przygotować ćwiczeń");
+    }
+
+    const sets = createdExercises.flatMap((exercise) => {
+      const slot = slots.find((item) => item.id === exercise.slot_id);
+      return Array.from({ length: Math.max(1, slot?.target_sets ?? 1) }, (_, setIndex) => ({
+        session_exercise_id: exercise.id,
+        set_index: setIndex,
+        set_type: "working" as const,
+      }));
+    });
+    const { error: setsErr } = await supabase.from("session_sets").insert(sets);
+    if (setsErr) {
+      await supabase.from("sessions").delete().eq("id", session.id);
+      throw new Error(setsErr.message);
+    }
   }
 
   redirect(`/session/${session.id}`);
@@ -74,15 +99,25 @@ export async function startFreestyle() {
 /** Zakończ sesję (ustaw finished_at). */
 export async function finishSession(sessionId: string) {
   const { supabase } = await requireUser();
-  const { error } = await supabase
+  const { data: session, error } = await supabase
     .from("sessions")
     .update({ finished_at: new Date().toISOString() })
-    .eq("id", sessionId);
-  if (error) throw new Error(error.message);
+    .eq("id", sessionId)
+    .select("date")
+    .single();
+  if (error || !session) throw new Error(error?.message ?? "Nie udało się zakończyć treningu.");
+  // Jedyny most trening → Ekipa. Funkcja sprawdza członkostwo+zgodę, emituje
+  // tylko dzień (nigdy log) i oblicza snapshot passy po stronie serwera.
+  const { error: activityError } = await supabase.rpc("emit_workout_activity", {
+    p_session_id: sessionId,
+  });
+  if (activityError) throw new Error(activityError.message);
   // Przelicz PR z zera (Decyzja 2 — PR nigdy nie kłamie)
   await supabase.rpc("recompute_personal_records");
   revalidatePath("/history");
   revalidatePath("/progress");
+  revalidatePath("/");
+  revalidatePath("/ekipa");
   redirect(`/session/${sessionId}/done`); // ekran celebracji
 }
 
@@ -107,7 +142,7 @@ export async function updateSessionDate(
   if (Number.isNaN(+newStart)) return { error: "Nieprawidłowa data." };
   if (+newStart > Date.now()) return { error: "Data nie może być w przyszłości." };
   if (+newStart < Date.now() - 366 * 86_400_000)
-    return { error: "Data starsza niż rok — sprawdź, czy się nie pomyliłeś." };
+    return { error: "Ta data jest starsza niż rok. Sprawdź, czy jest poprawna." };
 
   const { data: s } = await supabase
     .from("sessions")

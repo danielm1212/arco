@@ -33,7 +33,7 @@ async function main() {
   const userId = auth.user!.id;
   ok(`login jako ${EMAIL}`);
 
-  // 1. Przełączanie programu (S8/S9: nowy zestaw seedów — bierzemy 3-dniowy beginner gym)
+  // 1. Przełączanie programu — stabilny slug, bo user-facing nazwa nie jest identyfikatorem.
   const { data: prevActive } = await sb
     .from("user_active_program")
     .select("program_id")
@@ -41,12 +41,12 @@ async function main() {
   const { data: prog3 } = await sb
     .from("programs")
     .select("id")
-    .eq("name", "Beginner · Siłownia · Full Body 3×")
+    .eq("slug", "beginner-gym-fbw3")
     .is("user_id", null)
     .single();
-  if (!prog3) fail("brak programu Beginner · Siłownia · Full Body 3×");
+  if (!prog3) fail("brak programu beginner-gym-fbw3");
   await sb.from("user_active_program").upsert({ user_id: userId, program_id: prog3!.id });
-  ok("ustawiono aktywny program (beginner gym 3×)");
+  ok("ustawiono aktywny program (beginner gym, cykl 3 dni)");
 
   // 2. Start sesji z dnia A → session_exercises ze slotów (mimika startSession)
   const { data: dayA } = await sb
@@ -58,7 +58,7 @@ async function main() {
     .single();
   const { data: slots } = await sb
     .from("program_day_slots")
-    .select("id, default_exercise_id, position, rest_seconds")
+    .select("id, default_exercise_id, position, rest_seconds, target_sets")
     .eq("program_day_id", dayA!.id)
     .order("position");
   if (!slots?.length) fail("brak slotów dnia A");
@@ -76,18 +76,25 @@ async function main() {
   }));
   const { data: insertedSe } = await sb.from("session_exercises").insert(se1).select("id, slot_id, exercise_id, position");
   if ((insertedSe?.length ?? 0) !== slots!.length) fail("start sesji nie utworzył wszystkich ćwiczeń ze slotów");
-  ok(`start sesji 1 → ${insertedSe!.length} ćwiczeń ze slotów`);
+  const plannedSets = insertedSe!.flatMap((exercise) => {
+    const slot = slots!.find((item) => item.id === exercise.slot_id)!;
+    return Array.from({ length: slot.target_sets }, (_, setIndex) => ({
+      session_exercise_id: exercise.id,
+      set_index: setIndex,
+      set_type: "working" as const,
+    }));
+  });
+  const { data: insertedSets } = await sb
+    .from("session_sets")
+    .insert(plannedSets)
+    .select("id, session_exercise_id, set_index");
+  if ((insertedSets?.length ?? 0) !== plannedSets.length) fail("start sesji nie przygotował serii z planu");
+  ok(`start sesji 1 → ${insertedSe!.length} ćwiczeń i ${insertedSets!.length} gotowych serii`);
 
   // 3. Log working seta na pierwszym ćwiczeniu (Barbell Squat)
   const squatSe = insertedSe!.find((x) => x.position === 0)!;
-  await sb.from("session_sets").insert({
-    session_exercise_id: squatSe.id,
-    set_index: 0,
-    set_type: "working",
-    weight: 100,
-    reps: 8,
-    completed: true,
-  });
+  const squatFirstSet = insertedSets!.find((set) => set.session_exercise_id === squatSe.id && set.set_index === 0)!;
+  await sb.from("session_sets").update({ weight: 100, reps: 8, completed: true }).eq("id", squatFirstSet.id);
   ok("zalogowano working set 100kg × 8 (zaliczony)");
 
   // 4. Druga sesja tego samego dnia → previous_working_set ma zwrócić poprzedni wynik
@@ -107,19 +114,15 @@ async function main() {
   ok(`"poprzedni wynik" RPC zwraca ${pr.weight}kg × ${pr.reps}`);
 
   // 5. Edycja i usuwanie seta
-  const { data: editSet } = await sb
-    .from("session_sets")
-    .insert({ session_exercise_id: squatSe.id, set_index: 1, set_type: "working", weight: 80, reps: 10 })
-    .select("id")
-    .single();
-  await sb.from("session_sets").update({ weight: 82.5 }).eq("id", editSet!.id);
-  const { data: afterEdit } = await sb.from("session_sets").select("weight").eq("id", editSet!.id).single();
+  const editSet = insertedSets!.find((set) => set.session_exercise_id === squatSe.id && set.set_index === 1)!;
+  await sb.from("session_sets").update({ weight: 82.5, reps: 10 }).eq("id", editSet.id);
+  const { data: afterEdit } = await sb.from("session_sets").select("weight").eq("id", editSet.id).single();
   if (Number(afterEdit!.weight) !== 82.5) fail("edycja seta nie zadziałała");
-  await sb.from("session_sets").delete().eq("id", editSet!.id);
+  await sb.from("session_sets").delete().eq("id", editSet.id);
   const { count: afterDel } = await sb
     .from("session_sets")
     .select("*", { count: "exact", head: true })
-    .eq("id", editSet!.id);
+    .eq("id", editSet.id);
   if (afterDel) fail("usuwanie seta nie zadziałało");
   ok("edycja (82.5kg) i usuwanie seta działają");
 

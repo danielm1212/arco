@@ -87,7 +87,7 @@ export function TimedStopwatch({
   if (completed && !running) {
     return (
       <span className="flex-1 text-center font-medium tabular-nums">
-        {value != null ? `${value} s` : "—"}
+        {value != null ? `${value} s` : "Brak wyniku"}
       </span>
     );
   }
@@ -123,7 +123,7 @@ export function TimedStopwatch({
           setTarget(v === "" ? null : clampNum(Number(v), { min: 0, max: LIMITS.duration }));
         }}
         onBlur={() => onManualPersist(target)}
-        className="h-9 w-16 text-center font-medium tabular-nums"
+        className="h-11 w-16 text-center font-medium tabular-nums"
       />
       <Button
         type="button"

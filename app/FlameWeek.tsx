@@ -32,7 +32,7 @@ export function FlameWeek({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [ignite, setIgnite] = useState(false);
+  const [ignite] = useState(() => searchParams.get("trained") === "1");
   const cleaned = useRef(false);
   const todayKey = week.find((d) => d.today)?.key ?? "";
 
@@ -40,7 +40,6 @@ export function FlameWeek({
     if (cleaned.current) return;
     if (searchParams.get("trained") === "1") {
       cleaned.current = true;
-      setIgnite(true);
       router.replace("/", { scroll: false });
     }
   }, [searchParams, router]);
@@ -84,7 +83,7 @@ export function FlameWeek({
                 aria-hidden
               />
               <span
-                className={`text-[11px] ${
+                className={`text-xs ${
                   d.today
                     ? "font-semibold text-foreground"
                     : future

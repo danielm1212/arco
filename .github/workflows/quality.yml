@@ -1,0 +1,113 @@
+name: Jakość
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  static-quality:
+    name: Kod i treść
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
+    steps:
+      - name: Pobierz kod
+        uses: actions/checkout@v5
+
+      - name: Ustaw Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Zainstaluj zależności
+        run: npm ci
+
+      - name: Sprawdź podatności produkcyjnych zależności
+        run: npm audit --omit=dev
+
+      - name: Sprawdź lint
+        run: npm run lint
+
+      - name: Uruchom testy reguł produktu
+        run: npm run test:unit
+
+      - name: Sprawdź plany i bazę ćwiczeń
+        run: npm run validate:training
+
+      - name: Sprawdź rekomendacje z onboardingu
+        run: npm run validate:recommendations
+
+      - name: Zbuduj wersję produkcyjną
+        run: npm run build
+
+  integration-quality:
+    name: Baza, offline i Ekipa
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ADMIN_EMAIL: ci-admin@arco.local
+      ADMIN_PASSWORD: arco-ci-password-2026
+      TEAM_TEST_PASSWORD: arco-team-ci-password-2026
+    steps:
+      - name: Pobierz kod
+        uses: actions/checkout@v5
+
+      - name: Ustaw Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Zainstaluj zależności
+        run: npm ci
+
+      - name: Ustaw Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: 2.109.1
+
+      - name: Uruchom odizolowany Supabase
+        run: supabase start
+
+      - name: Zapisz lokalną konfigurację testową
+        run: >-
+          supabase status -o env
+          --override-name api.url=NEXT_PUBLIC_SUPABASE_URL
+          --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY
+          --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY
+          > .env.local
+
+      - name: Wypełnij bazę danymi testowymi
+        run: npm run seed
+
+      - name: Utwórz konto testowe
+        run: npm run bootstrap:user
+
+      - name: Sprawdź główny przepływ danych
+        run: npm run smoke
+
+      - name: Sprawdź rekordy i zamiany ćwiczeń
+        run: npm run smoke:phase2
+
+      - name: Sprawdź odtwarzanie zapisu offline
+        run: npm run smoke:offline
+
+      - name: Sprawdź prywatność i RLS Ekipy
+        run: npm run smoke:team
+
+      - name: Zatrzymaj środowisko testowe
+        if: always()
+        run: supabase stop --no-backup

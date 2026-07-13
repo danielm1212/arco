@@ -1,4 +1,4 @@
-# Intermediate · Dom z hantlami · Upper / Lower 4×
+# Intermediate · Dom z hantlami · Upper / Lower · cykl 4 dni
 
 > **Poziom:** średniozaawansowany · **Środowisko:** regulowane hantle + ławka + drążek (lub guma) · **Sesje:** 4× / tydz. (Upper A · Lower A · Upper B · Lower B) · **Częstotliwość / partia:** 2× · **RIR:** 1–2 · **Progresja:** double progression
 >

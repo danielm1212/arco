@@ -67,6 +67,60 @@ export type Database = {
         }
         Relationships: []
       }
+      inbox_items: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          payload: Json
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          payload: Json
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          payload?: Json
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      activity_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          occurred_on: string
+          streak_weeks: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string
+          occurred_on: string
+          streak_weeks?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          occurred_on?: string
+          streak_weeks?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       exercises: {
         Row: {
           category: string | null
@@ -175,6 +229,75 @@ export type Database = {
           },
         ]
       }
+      pod_members: {
+        Row: {
+          consented_at: string
+          joined_at: string
+          pod_id: string
+          user_id: string
+        }
+        Insert: {
+          consented_at?: string
+          joined_at?: string
+          pod_id: string
+          user_id: string
+        }
+        Update: {
+          consented_at?: string
+          joined_at?: string
+          pod_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pods: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          invite_code: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invite_code: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invite_code?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
+      reactions: {
+        Row: {
+          activity_event_id: string
+          created_at: string
+          emoji: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activity_event_id: string
+          created_at?: string
+          emoji: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          activity_event_id?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       program_day_slots: {
         Row: {
           default_exercise_id: string
@@ -260,33 +383,72 @@ export type Database = {
       }
       programs: {
         Row: {
+          content_version: number
+          cycle_days: number
           days_per_week: number
           description: string | null
+          environment: string | null
+          estimated_minutes_max: number | null
+          estimated_minutes_min: number | null
+          frequency_max: number | null
+          frequency_min: number | null
           goal: string | null
+          goal_key: string | null
           id: string
           is_default: boolean
           level: string | null
+          level_max: number | null
+          level_min: number | null
           name: string
+          optional_equipment: string[]
+          required_equipment: string[]
+          slug: string | null
           user_id: string | null
         }
         Insert: {
+          content_version?: number
+          cycle_days?: number
           days_per_week: number
           description?: string | null
+          environment?: string | null
+          estimated_minutes_max?: number | null
+          estimated_minutes_min?: number | null
+          frequency_max?: number | null
+          frequency_min?: number | null
           goal?: string | null
+          goal_key?: string | null
           id?: string
           is_default?: boolean
           level?: string | null
+          level_max?: number | null
+          level_min?: number | null
           name: string
+          optional_equipment?: string[]
+          required_equipment?: string[]
+          slug?: string | null
           user_id?: string | null
         }
         Update: {
+          content_version?: number
+          cycle_days?: number
           days_per_week?: number
           description?: string | null
+          environment?: string | null
+          estimated_minutes_max?: number | null
+          estimated_minutes_min?: number | null
+          frequency_max?: number | null
+          frequency_min?: number | null
           goal?: string | null
+          goal_key?: string | null
           id?: string
           is_default?: boolean
           level?: string | null
+          level_max?: number | null
+          level_min?: number | null
           name?: string
+          optional_equipment?: string[]
+          required_equipment?: string[]
+          slug?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -431,6 +593,54 @@ export type Database = {
           },
         ]
       }
+      team_profiles: {
+        Row: {
+          avatar: string
+          display_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar: string
+          display_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar?: string
+          display_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      nudges: {
+        Row: {
+          created_at: string
+          from_user_id: string
+          id: string
+          pod_id: string
+          sent_on: string
+          to_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_user_id: string
+          id?: string
+          pod_id: string
+          sent_on?: string
+          to_user_id: string
+        }
+        Update: {
+          created_at?: string
+          from_user_id?: string
+          id?: string
+          pod_id?: string
+          sent_on?: string
+          to_user_id?: string
+        }
+        Relationships: []
+      }
       user_active_program: {
         Row: {
           program_id: string
@@ -498,6 +708,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_pod: {
+        Args: { p_avatar: string; p_confirmed: boolean; p_display_name: string; p_name: string }
+        Returns: { invite_code: string; pod_id: string }[]
+      }
+      emit_workout_activity: { Args: { p_session_id: string }; Returns: undefined }
+      get_pod_members: {
+        Args: { p_pod_id: string }
+        Returns: {
+          avatar: string
+          can_nudge: boolean
+          display_name: string
+          joined_at: string
+          last_workout: string | null
+          latest_event_id: string | null
+          member_id: string
+          my_reaction: string | null
+          reaction_count: number
+          streak_weeks: number
+          weekly_done: number
+          weekly_goal: number
+        }[]
+      }
+      join_pod_by_invite: {
+        Args: { p_avatar: string; p_confirmed: boolean; p_display_name: string; p_invite_code: string }
+        Returns: string
+      }
       previous_session_sets: {
         Args: { p_exercise: string; p_session: string; p_slot: string }
         Returns: {
@@ -529,6 +765,9 @@ export type Database = {
         }[]
       }
       recompute_personal_records: { Args: never; Returns: undefined }
+      remove_pod_member: { Args: { p_pod_id: string; p_user_id: string }; Returns: undefined }
+      rename_pod: { Args: { p_name: string; p_pod_id: string }; Returns: undefined }
+      send_pod_nudge: { Args: { p_pod_id: string; p_to_user_id: string }; Returns: undefined }
     }
     Enums: {
       exercise_type: "weighted" | "bodyweight" | "timed"
@@ -691,4 +930,3 @@ export const Constants = {
     },
   },
 } as const
-

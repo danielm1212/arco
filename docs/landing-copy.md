@@ -51,7 +51,7 @@
 **Badge:** `wkrótce po starcie`
 **Nagłówek:** > Ty i paru kumpli. To wystarczy.
 **Body:**
-> Ekipa to Ty i 1–3 znajomych. Widzicie tylko: kto dziś trenował i którą serię tygodni ciągnie. Zero porównywania ciężarów, zero komentarzy, zero feedu. 💪 i „Radek przypomina Ci o treningu" — tyle. I to działa.
+> Ekipa to Ty i do 5 znajomych. Widzicie tylko: kto dziś trenował i którą serię tygodni ciągnie. Zero porównywania ciężarów, zero komentarzy, zero feedu. 💪 i „Radek przypomina Ci o treningu" — tyle. I to działa.
 
 ## 6. Pricing (A/B — dwa warianty ceny)
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { upsertSet, deleteSet } from "@/app/actions/sets";
 import {
   allOps,
@@ -16,8 +16,19 @@ import {
  * Mutacje serii lądują w outboxie i są odtwarzane gdy jest sieć.
  */
 export function useSync() {
-  const [online, setOnline] = useState(true);
-  const [pending, setPending] = useState(0);
+  const online = useSyncExternalStore(
+    (notify) => {
+      window.addEventListener("online", notify);
+      window.addEventListener("offline", notify);
+      return () => {
+        window.removeEventListener("online", notify);
+        window.removeEventListener("offline", notify);
+      };
+    },
+    () => navigator.onLine,
+    () => true,
+  );
+  const [pending, setPending] = useState(() => (typeof window === "undefined" ? 0 : pendingCount()));
   const [syncing, setSyncing] = useState(false);
   const flushing = useRef(false);
 
@@ -48,24 +59,17 @@ export function useSync() {
   }, []);
 
   useEffect(() => {
-    setOnline(navigator.onLine);
-    setPending(pendingCount());
-    void flush();
+    const kickoff = window.setTimeout(() => void flush(), 0);
 
-    const onOnline = () => {
-      setOnline(true);
-      void flush();
-    };
-    const onOffline = () => setOnline(false);
+    const onOnline = () => void flush();
     window.addEventListener("online", onOnline);
-    window.addEventListener("offline", onOffline);
     const iv = window.setInterval(() => {
       if (navigator.onLine && pendingCount() > 0) void flush();
     }, 15000);
 
     return () => {
+      window.clearTimeout(kickoff);
       window.removeEventListener("online", onOnline);
-      window.removeEventListener("offline", onOffline);
       window.clearInterval(iv);
     };
   }, [flush]);

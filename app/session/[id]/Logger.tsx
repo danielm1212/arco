@@ -79,15 +79,11 @@ export function Logger({
 }) {
   const router = useRouter();
   const [exercises, setExercises] = useState(initialExercises);
-  // Re-sync z serwera po router.refresh() (podmiana / dodanie / usunięcie ćwiczenia).
-  // Prop zmienia referencję tylko przy odświeżeniu server-componentu, więc nie
-  // kasuje optymistycznych edycji serii między odświeżeniami.
-  useEffect(() => {
-    setExercises(initialExercises);
-  }, [initialExercises]);
   // Najświeższy stan dostępny w handlerach (do złożenia pełnego wiersza przy zapisie)
   const exercisesRef = useRef(exercises);
-  exercisesRef.current = exercises;
+  useEffect(() => {
+    exercisesRef.current = exercises;
+  }, [exercises]);
 
   const { rest, restFor, startRest, adjustRest, dismissRest, extendRest } =
     useRestTimer(defaultRest);
@@ -127,7 +123,7 @@ export function Logger({
     if (!ensureOnline("zmiana kolejności ćwiczeń")) return;
     reorderExercise(sessionId, seId, direction)
       .then(() => router.refresh())
-      .catch(() => toast.error("Nie zapisano — sprawdź połączenie i spróbuj ponownie."));
+      .catch(() => toast.error("Nie udało się zapisać. Sprawdź internet i spróbuj ponownie."));
   }
 
   // RPE domyślnie ukryte (opcjonalne) — odsłaniane per ćwiczenie na czas sesji
@@ -139,6 +135,7 @@ export function Logger({
   // R1 (audyt-loggera.md): ⋯ sesji w headerze — dziś tylko "Usuń sesję",
   // docelowo edycja daty/reorder trafią tu też
   const [sessionMenuOpen, setSessionMenuOpen] = useState(false);
+  const [deletingSession, setDeletingSession] = useState(false);
   // R4: finish-sheet zamiast confirm() — otwierany tylko gdy są niezaliczone serie
   const [finishSheetOpen, setFinishSheetOpen] = useState(false);
   // Blokada wygaszania ekranu na czas aktywnego treningu (jeśli włączona w ustawieniach)
@@ -209,7 +206,7 @@ export function Logger({
                 }`}
                 title={
                   !online
-                    ? "Offline — zmiany zapiszą się po powrocie sieci"
+                    ? "Brak internetu. Zmiany zapiszą się po powrocie sieci"
                     : `${pending} zmian(y) do synchronizacji`
                 }
               >
@@ -303,20 +300,26 @@ export function Logger({
       <BottomSheet
         open={sessionMenuOpen}
         onOpenChange={setSessionMenuOpen}
-        title="Sesja"
-        description="Akcje dla całej sesji"
+        title="Usunąć sesję?"
+        description="Potwierdzenie trwałego usunięcia sesji"
       >
-        <button
-          type="button"
-          onClick={() => {
-            setSessionMenuOpen(false);
-            handleDeleteSession({ sessionId, online });
-          }}
-          className="flex h-11 w-full items-center gap-sm px-0 text-left text-sm text-danger"
-        >
-          <Trash2 className="size-4" aria-hidden />
-          Usuń sesję
-        </button>
+        <div className="space-y-md">
+          <p className="text-sm text-muted-foreground">Trening i wszystkie zapisane w nim serie zostaną trwale usunięte.</p>
+          <Button
+            variant="destructive"
+            className="w-full"
+            disabled={deletingSession}
+            onClick={async () => {
+              setDeletingSession(true);
+              await handleDeleteSession({ sessionId, online });
+              setDeletingSession(false);
+            }}
+          >
+            <Trash2 className="size-4" aria-hidden />
+            {deletingSession ? "Usuwam…" : "Usuń sesję"}
+          </Button>
+          <Button variant="ghost" className="w-full" disabled={deletingSession} onClick={() => setSessionMenuOpen(false)}>Anuluj</Button>
+        </div>
       </BottomSheet>
 
       <FinishSheet
@@ -330,6 +333,7 @@ export function Logger({
 
       {rest && (
         <RestTimer
+          key={rest.endAt}
           endAt={rest.endAt}
           label={rest.label}
           onDone={dismissRest}

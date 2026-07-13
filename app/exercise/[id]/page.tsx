@@ -125,10 +125,10 @@ export default async function ExercisePage(props: {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/progress" className="text-xs text-muted-foreground">
+        <Link href="/progress" className="flex min-h-11 items-center text-sm text-muted-foreground">
           ← Postępy
         </Link>
-        <span className="truncate px-sm font-semibold">{exercise.name}</span>
+        <h1 className="truncate px-sm font-semibold">{exercise.name}</h1>
         <span className="w-12" />
       </header>
 
@@ -195,7 +195,8 @@ export default async function ExercisePage(props: {
                         ? `/exercise/${encodeURIComponent(exerciseId)}`
                         : `/exercise/${encodeURIComponent(exerciseId)}?m=${t.key}`
                     }
-                    className={`flex-1 rounded-md border px-2 py-1 text-center text-xs ${
+                    aria-current={t.key === sel ? "page" : undefined}
+                    className={`flex min-h-11 flex-1 items-center justify-center rounded-md border px-2 text-center text-sm ${
                       t.key === sel
                         ? "border-primary bg-primary/10 font-medium text-primary"
                         : "border-input text-muted-foreground"
@@ -210,7 +211,7 @@ export default async function ExercisePage(props: {
               <Sparkline values={trend} />
             ) : (
               <p className="text-sm text-muted-foreground">
-                Drugi trening odblokuje trend — zobaczysz, czy siła idzie w górę.
+                Po drugim treningu zobaczysz pierwszy trend.
               </p>
             )}
           </section>
@@ -219,12 +220,12 @@ export default async function ExercisePage(props: {
         {/* S12: rekordy per liczba powtórzeń (wzorzec Hevy „Set Records") */}
         {isWeighted && repRows.length === 0 && (
           <p className="text-xs text-muted-foreground">
-            Rekordy per powtórzenia pojawią się po pierwszych seriach roboczych.
+            Rekordy dla różnych zakresów powtórzeń pojawią się po pierwszych seriach roboczych.
           </p>
         )}
         {isWeighted && repRows.length > 0 && (
           <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
-            <h2 className="text-base font-semibold">Rekordy per powtórzenia</h2>
+            <h2 className="text-base font-semibold">Rekordy dla liczby powtórzeń</h2>
             <ul className="space-y-px text-sm">
               {repRows.map((r) => (
                 <li key={r.reps} className="flex items-center justify-between">
@@ -235,8 +236,8 @@ export default async function ExercisePage(props: {
                 </li>
               ))}
             </ul>
-            <p className="text-[10px] text-muted-foreground">
-              Najlepszy ciężar przy danej liczbie powtórzeń (serie robocze). Zasila hint progresji w loggerze.
+            <p className="text-xs text-muted-foreground">
+              Najlepszy ciężar dla danej liczby powtórzeń. Na tej podstawie Arco podpowiada kolejny cel.
             </p>
           </section>
         )}

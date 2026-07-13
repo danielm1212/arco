@@ -13,7 +13,7 @@ Trening ma być przyjemnością, a narzędzie — motywatorem, nie obciążeniem
 
 1. **Frictionless** — sesja pre-wypełniona, seria zaliczona tapem, działa offline, nic nie ginie. Logowanie nie może kosztować uwagi, która należy się sztandze.
 2. **Prowadzenie** — jawne, nadpisywalne reguły mówią, kiedy dołożyć, kiedy odpuścić, i co robić, gdy utkniesz. Pewność w momencie zwątpienia — nie AI-magia.
-3. **Kameralna odpowiedzialność (ekipa)** — 1–3 znajomych widzi Twoje check-iny i passę. Nie ciężary, nie feed, nie komentarze. „Radek trenował dziś, 4. tydzień z rzędu" + cheers + nudge. Zero vanity, zero toksyczności.
+3. **Kameralna odpowiedzialność (ekipa)** — 1–5 znajomych widzi Twoje check-iny i passę. Nie ciężary, nie feed, nie komentarze. „Radek trenował dziś, 4. tydzień z rzędu" + cheers + nudge. Zero vanity, zero toksyczności.
 
 Anty-wizja (czym Arco nie jest): publicznym feedem, AI auto-programmingiem, apką dietetyczną, narzędziem trenera (na razie — patrz §9), klonem Hevy z innym kolorem.
 
@@ -91,7 +91,7 @@ Reklamy (nie przed etapem ekspansji, jeśli w ogóle), lifetime jako model głó
 
 ## 4. Ekipa — specyfikacja koncepcyjna
 
-**Definicja:** prywatna grupa 1–3 znajomych + Ty. Zaproszenie linkiem/kodem. Brak feedu publicznego, brak komentarzy, brak DM.
+**Definicja:** prywatna grupa 1–5 znajomych + Ty (**max 6 osób**; decyzja [Ty] 2026-07-12 — było 1–3). User może należeć do **max 3 ekip od v1** (decyzja [Ty] 2026-07-12 — osobne kręgi życia: partnerka / siłka / praca). Zaproszenie linkiem/kodem. Brak feedu publicznego, brak komentarzy, brak DM.
 
 **Co widzi kumpel z ekipy (decyzja właściciela 2026-07-08):** check-in („Daniel trenował dziś") + passa („4. tydzień z rzędu") + reakcje. **Nie widzi:** ćwiczeń, ciężarów, programów, logów, danych ciała. Konsekwencje tej decyzji:
 - RODO: minimalna powierzchnia udostępniania danych między userami; zgoda przy dołączeniu do ekipy obejmuje wyłącznie status aktywności i passę.

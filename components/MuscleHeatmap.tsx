@@ -30,7 +30,7 @@ export function MuscleHeatmap({
             highlightedColors={highlightedColors}
             svgStyle={svgStyle}
           />
-          <figcaption className="mt-xs text-[10px] text-muted-foreground">Przód</figcaption>
+          <figcaption className="mt-xs text-xs text-muted-foreground">Przód</figcaption>
         </figure>
         <figure className="flex w-1/2 max-w-[150px] flex-col items-center">
           <Model
@@ -40,11 +40,11 @@ export function MuscleHeatmap({
             highlightedColors={highlightedColors}
             svgStyle={svgStyle}
           />
-          <figcaption className="mt-xs text-[10px] text-muted-foreground">Tył</figcaption>
+          <figcaption className="mt-xs text-xs text-muted-foreground">Tył</figcaption>
         </figure>
       </div>
 
-      <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground">
+      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <span>mniej</span>
         <span className="h-2 w-6 rounded-full bg-volt/45" />
         <span className="h-2 w-6 rounded-full bg-volt/70" />

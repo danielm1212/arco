@@ -38,6 +38,15 @@
 - **Radiusy:** karty `rounded-xl` · wiersze-w-kartach i chipy prostokątne `rounded-md` · pigułki `rounded-full` · mikro-elementy <8 px wysokości (paski aktywności) `rounded-sm`. Innych nie używamy.
 - **Glif ognia = jeden** (lucide `Flame`): FlameWeek, kalendarz historii (dzień treningowy), przyszłe recap/streak-badge. Żadnych 🔥-emoji w UI narzędzia tam, gdzie może stać glif (emoji zostaje w copy momentów).
 
+## 2c. Motion (dodane 2026-07-12, decyzja [Ty]: „animacje dopisać")
+
+- **Animacje żyją w momentach, nie w narzędziu** (architektura dwuwarstwowa): zapłon płomienia po treningu (0,6 s ease-overshoot — już w spec redesign-home), mikro-celebracja PR, done-screen, przyszłe recap/wrap. Logger = zero animacji dekoracyjnych (ręce w magnezji, nie w teatrze).
+- **UI-transitions: 150–300 ms**, ease-out; sheety/drawery wg domyślnych vaul. Nic nie „pływa" dłużej niż 300 ms w warstwie narzędzia.
+- **`prefers-reduced-motion` respektowane wszędzie** — momenty degradują się do zmiany stanu bez ruchu (WCAG).
+- **Jedna animacja spoczynkowa na ekran max** (dziś: puls dzisiejszego płomienia na home — i to wszystko).
+- Feedback akcji (tap ✓, zapis serii) to nie animacja, tylko natychmiastowa zmiana stanu (<100 ms, pkt 5 checklisty) — ewentualny ruch jest ozdobą po fakcie, nigdy opóźnieniem.
+- Narzędziowo: CSS transitions/keyframes + sporadycznie WAAPI; **bez bibliotek animacji** (framer-motion = +40 kB na coś, co robi CSS), chyba że przyszły moment tego realnie wymaga.
+
 ## 3. Checklist nowego ekranu/komponentu (do review przed merge)
 
 1. Jedna akcja główna? Co user ma zrobić najpierw — widać w 2 s?

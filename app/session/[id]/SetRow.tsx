@@ -94,8 +94,8 @@ export const SetRow = memo(function SetRow({
         <button
           type="button"
           onClick={fillPrev}
-          title="Tap — skopiuj poprzedni wynik"
-          className="w-full text-left text-[11px] text-muted-foreground hover:text-foreground"
+          title="Dotknij, aby skopiować poprzedni wynik"
+          className="flex min-h-11 w-full items-center text-left text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           ↺ {prevText}
         </button>
@@ -109,13 +109,13 @@ export const SetRow = memo(function SetRow({
           onPatch({ set_type: next });
           onPersist({ set_type: next });
         }}
-        className={`h-11 w-9 shrink-0 rounded-md border text-xs font-medium tabular-nums ${
+        className={`size-11 shrink-0 rounded-md border text-xs font-medium tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           isWarmup
             ? "border-warning bg-warning/15 text-warning"
             : "border-input text-muted-foreground"
         }`}
-        aria-label={isWarmup ? "rozgrzewkowa (tap → robocza)" : "robocza (tap → rozgrzewkowa)"}
-        title={isWarmup ? "rozgrzewkowa (tap → robocza)" : "robocza (tap → rozgrzewkowa)"}
+        aria-label={isWarmup ? "Seria rozgrzewkowa. Dotknij, aby zmienić na roboczą" : "Seria robocza. Dotknij, aby zmienić na rozgrzewkową"}
+        title={isWarmup ? "Zmień na serię roboczą" : "Zmień na serię rozgrzewkową"}
       >
         {isWarmup ? "W" : index}
       </button>
@@ -174,7 +174,7 @@ export const SetRow = memo(function SetRow({
           step="0.5"
           grow={false}
           max={LIMITS.rpe}
-          placeholder="—"
+          placeholder="RPE"
           onPatch={(n) => onPatch({ rpe: n })}
           onPersist={(n) => onPersist({ rpe: n })}
         />
@@ -183,7 +183,7 @@ export const SetRow = memo(function SetRow({
       {/* Akcept serii: ✓ zawsze widoczny (muted) → wypełniony volt po zaliczeniu
           (wzorzec Hevy/Gymshark — czytelne, że to przycisk zatwierdzenia) */}
       {isPr && (
-        <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+        <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground">
           PR
         </span>
       )}

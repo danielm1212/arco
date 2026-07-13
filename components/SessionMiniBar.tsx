@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { deleteSession } from "@/app/actions/session";
 import { Play, X } from "lucide-react";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Button } from "@/components/ui/button";
 
 interface OpenSession {
   id: string;
@@ -27,6 +29,7 @@ export function SessionMiniBar() {
   const [open, setOpen] = useState<OpenSession | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   // Odpytanie przy każdej zmianie trasy — sesja mogła zostać zakończona/porzucona
   useEffect(() => {
@@ -70,11 +73,11 @@ export function SessionMiniBar() {
 
   function discard() {
     if (!open) return;
-    if (!confirm("Porzucić trening w toku? Zapisane serie zostaną usunięte.")) return;
     setBusy(true);
     deleteSession(open.id)
       .then(() => {
         setOpen(null);
+        setConfirmOpen(false);
         router.refresh();
       })
       .catch((e) => {
@@ -88,24 +91,33 @@ export function SessionMiniBar() {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-[calc(3.25rem+env(safe-area-inset-bottom))] z-40">
-      <div className="mx-auto flex max-w-md items-center gap-sm border-t bg-volt px-md py-2 text-volt-foreground">
-        <Link href={`/session/${open.id}`} className="min-w-0 flex-1">
+    <>
+    <div className="fixed inset-x-3 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[424px]">
+      <div className="flex items-center gap-sm rounded-xl bg-volt px-sm py-1.5 text-volt-foreground shadow-lg">
+        <Link href={`/session/${open.id}`} className="flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-md px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt-foreground">
           <p className="flex items-center gap-1 truncate text-sm font-semibold">
             <Play className="size-3.5 shrink-0 fill-current" /> Trening w toku
             {open.label ? ` · ${open.label}` : ""}
           </p>
-          <p className="text-xs tabular-nums text-volt-foreground/70">{mmss(elapsed)} — wróć</p>
+          <p className="text-xs tabular-nums text-volt-foreground/70">{mmss(elapsed)} · Wróć</p>
         </Link>
         <button
-          onClick={discard}
+          onClick={() => setConfirmOpen(true)}
           disabled={busy}
-          className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-volt-foreground/80 hover:text-volt-foreground disabled:opacity-50"
+          className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-md px-3 text-xs font-medium text-volt-foreground/80 hover:bg-black/10 hover:text-volt-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt-foreground disabled:opacity-50"
           aria-label="Porzuć trening"
         >
           <X className="size-3.5" /> Porzuć
         </button>
       </div>
     </div>
+    <BottomSheet open={confirmOpen} onOpenChange={setConfirmOpen} title="Porzucić trening?" description="Usunie trening w toku i zapisane w nim serie">
+      <div className="space-y-md">
+        <p className="text-sm text-muted-foreground">Trening w toku i zapisane w nim serie zostaną trwale usunięte.</p>
+        <Button className="w-full" variant="destructive" disabled={busy} onClick={discard}>{busy ? "Usuwam…" : "Porzuć trening"}</Button>
+        <Button className="w-full" variant="ghost" disabled={busy} onClick={() => setConfirmOpen(false)}>Wróć do treningu</Button>
+      </div>
+    </BottomSheet>
+    </>
   );
 }

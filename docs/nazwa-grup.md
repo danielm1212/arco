@@ -32,7 +32,7 @@ Polskie lub naturalnie spolszczone · deklinacja bez bólu we WSZYSTKICH kluczow
 Jedyny kandydat bez żadnej pułapki: język, którym trenujący MÓWIĄ („moja ekipa", „ekipa z siłki"), perfekcyjna odmiana, działa u obu person i w każdym copy:
 - Zaproszenie: „**Radek zaprasza Cię do swojej ekipy** — trenujcie razem, pilnujcie się nawzajem."
 - Check-in: „Radek z Twojej ekipy trenował dziś — 6. tydzień 🔥"
-- Pusty stan: „**Zbierz ekipę.** 1–3 znajomych. Widzicie tylko: kto był i kto ciągnie serię."
+- Pusty stan: „**Zbierz ekipę.** Paru znajomych. Widzicie tylko: kto był i kto ciągnie serię." *(aktualizacja 2026-07-12: było „1–3" — limit zmieniony decyzją [Ty] na max 6 osób, kopia sprzedaje kameralność bez liczb)*
 - Landing (sekcja podów → ekipy): „Ty i paru kumpli. To wystarczy." — zostaje, tylko nagłówek karty „Twoja ekipa".
 - Metafora-wsparcie w copy głębszym: asekuracja/spotter („ekipa Cię asekuruje").
 

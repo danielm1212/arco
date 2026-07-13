@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
+import { MomentIcon3D } from "@/components/MomentIcon3D";
 import type { UnitSystem } from "@/lib/types";
 import {
   PERIODS,
@@ -46,15 +48,20 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="text-xs text-muted-foreground">
-          ← Trening
-        </Link>
-        <span className="font-semibold">Postępy</span>
-        <span className="w-12" />
+      <header className="border-b px-md py-md text-center">
+        <h1 className="font-semibold">Postępy</h1>
       </header>
 
       <main className="flex-1 space-y-lg p-md">
+        {fresh ? (
+          <section className="flex min-h-[60dvh] flex-col items-center justify-center text-center">
+            <MomentIcon3D name="target" className="size-32" priority />
+            <h2 className="mt-sm text-xl font-semibold">Twój postęp zaczyna się od pierwszego treningu</h2>
+            <p className="mt-xs max-w-xs text-sm leading-relaxed text-muted-foreground">Po dwóch sesjach pokażemy trend siły, regularność i bilans trenowanych partii.</p>
+            <Button asChild size="lg" className="mt-md"><Link href="/">Zacznij trening</Link></Button>
+          </section>
+        ) : (
+        <>
         <ActivitySection strip={strip} streak={streak} />
 
         <PeriodTabs activeKey={period.key} />
@@ -85,6 +92,8 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
         <StrengthSection strength={strength} />
 
         <RecordsSection prRows={prRows} unit={unit} />
+        </>
+        )}
       </main>
     </div>
   );

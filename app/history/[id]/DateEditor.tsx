@@ -25,7 +25,7 @@ export function DateEditor({ sessionId, startedAt }: { sessionId: string; starte
         {new Date(startedAt).toLocaleString("pl-PL")}
         <button
           onClick={() => setEditing(true)}
-          className="ml-2 text-xs underline-offset-2 hover:underline"
+          className="ml-1 inline-flex min-h-11 items-center rounded-md px-2 text-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           zmień
         </button>
@@ -57,12 +57,12 @@ export function DateEditor({ sessionId, startedAt }: { sessionId: string; starte
         value={value}
         max={toLocalInput(new Date().toISOString())}
         onChange={(e) => setValue(e.target.value)}
-        className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+        className="h-11 rounded-md border border-input bg-background px-2 text-sm"
       />
-      <Button size="sm" disabled={pending} onClick={save}>
+      <Button disabled={pending} onClick={save}>
         {pending ? "Zapisuję…" : "Zapisz"}
       </Button>
-      <Button size="sm" variant="ghost" disabled={pending} onClick={() => setEditing(false)}>
+      <Button variant="ghost" disabled={pending} onClick={() => setEditing(false)}>
         Anuluj
       </Button>
     </div>

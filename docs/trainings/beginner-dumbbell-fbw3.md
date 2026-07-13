@@ -1,4 +1,4 @@
-# Beginner · Dom z hantlami · Full Body 3×
+# Beginner · Dom z hantlami · Full Body · cykl 3 dni
 
 > **Poziom:** początkujący · **Środowisko:** regulowane hantle + ławka (opcj. kettlebell, guma, drążek) · **Sesje:** 3× / tydz. (A → B → C) · **Częstotliwość / partia:** ~3× · **RIR:** 2–3 · **Progresja:** double progression
 >

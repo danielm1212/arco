@@ -15,7 +15,7 @@ import { vibrate } from "@/lib/feedback";
 import { uuid } from "@/lib/uuid";
 import type { LoggerExercise } from "./Logger";
 
-const SAVE_ERR = "Nie zapisano — sprawdź połączenie i spróbuj ponownie.";
+const SAVE_ERR = "Nie udało się zapisać. Sprawdź internet i spróbuj ponownie.";
 
 /**
  * Handlery mutacji sesji (serie / notatki / pomiń / superset) — S9-cz.2 paczka 3:

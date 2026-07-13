@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ChevronDown, ChevronUp, Plus, Trash2, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
   updateProgramName,
@@ -18,6 +19,7 @@ import {
   moveSlot,
 } from "@/app/actions/program";
 import { Button } from "@/components/ui/button";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Input } from "@/components/ui/input";
 
 export interface EditorSlot {
@@ -38,8 +40,15 @@ export interface EditorDay {
   slots: EditorSlot[];
 }
 
-const ERR = "Nie zapisano — spróbuj ponownie.";
+const ERR = "Nie udało się zapisać. Spróbuj ponownie.";
 const numOrNull = (v: string) => (v.trim() === "" ? null : Number(v));
+
+interface DeleteRequest {
+  title: string;
+  description: string;
+  confirmLabel: string;
+  action: () => void;
+}
 
 export function ProgramEditor({
   programId,
@@ -52,6 +61,7 @@ export function ProgramEditor({
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
+  const [deleteRequest, setDeleteRequest] = useState<DeleteRequest | null>(null);
 
   const run = (fn: () => Promise<unknown>, refresh = false) =>
     startTransition(async () => {
@@ -66,10 +76,10 @@ export function ProgramEditor({
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/programs" className="text-xs text-muted-foreground">
+        <Link href="/programs" className="flex min-h-11 items-center text-sm text-muted-foreground">
           ← Programy
         </Link>
-        <span className="font-semibold">Edytor</span>
+        <h1 className="font-semibold">Edytor</h1>
         <span className="w-12" />
       </header>
 
@@ -88,28 +98,48 @@ export function ProgramEditor({
               <Input
                 defaultValue={day.label}
                 onBlur={(e) => run(() => updateDayLabel(programId, day.id, e.target.value))}
-                className="h-9 font-medium"
+                className="min-w-0 font-medium"
               />
-              <button
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => run(() => moveDay(programId, day.id, "up"), true)}
-                className="shrink-0 px-1 text-muted-foreground hover:text-foreground"
+                className="shrink-0 text-muted-foreground"
                 aria-label="Dzień wyżej"
               >
-                ↑
-              </button>
-              <button
+                <ChevronUp />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => run(() => moveDay(programId, day.id, "down"), true)}
-                className="shrink-0 px-1 text-muted-foreground hover:text-foreground"
+                className="shrink-0 text-muted-foreground"
                 aria-label="Dzień niżej"
               >
-                ↓
-              </button>
-              <button
-                onClick={() => run(() => deleteDay(programId, day.id), true)}
-                className="shrink-0 text-xs text-muted-foreground hover:text-danger"
+                <ChevronDown />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  setDeleteRequest({
+                    title: `Usunąć „${day.label}”?`,
+                    description: "Dzień i wszystkie przypisane do niego ćwiczenia znikną z programu.",
+                    confirmLabel: "Usuń dzień",
+                    action: () => {
+                      setDeleteRequest(null);
+                      run(() => deleteDay(programId, day.id), true);
+                    },
+                  })
+                }
+                className="shrink-0 text-muted-foreground hover:text-danger"
+                aria-label={`Usuń ${day.label}`}
               >
-                Usuń
-              </button>
+                <Trash2 />
+              </Button>
             </div>
 
             <ul className="space-y-xs">
@@ -118,7 +148,17 @@ export function ProgramEditor({
                   key={slot.id}
                   slot={slot}
                   onUpdate={(v) => run(() => updateSlot(programId, slot.id, v))}
-                  onDelete={() => run(() => deleteSlot(programId, slot.id), true)}
+                  onDelete={() =>
+                    setDeleteRequest({
+                      title: `Usunąć „${slot.exerciseName}”?`,
+                      description: "Ćwiczenie zostanie usunięte tylko z tego dnia programu.",
+                      confirmLabel: "Usuń ćwiczenie",
+                      action: () => {
+                        setDeleteRequest(null);
+                        run(() => deleteSlot(programId, slot.id), true);
+                      },
+                    })
+                  }
                   onMoveUp={() => run(() => moveSlot(programId, slot.id, "up"), true)}
                   onMoveDown={() => run(() => moveSlot(programId, slot.id, "down"), true)}
                 />
@@ -136,18 +176,47 @@ export function ProgramEditor({
         </Button>
 
         <p className="text-center text-xs text-muted-foreground">
-          Aby trenować wg tego programu — ustaw go jako aktywny na ekranie głównym.
+          Aby trenować według tego programu, ustaw go jako aktywny na ekranie głównym.
         </p>
 
-        <button
-          onClick={() => {
-            if (confirm("Usunąć cały program?")) run(() => deleteProgram(programId));
-          }}
-          className="w-full py-sm text-sm text-danger"
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() =>
+            setDeleteRequest({
+              title: `Usunąć program „${name}”?`,
+              description: "Tej operacji nie można cofnąć. Historia wykonanych treningów pozostanie bez zmian.",
+              confirmLabel: "Usuń program",
+              action: () => run(() => deleteProgram(programId)),
+            })
+          }
+          className="w-full text-danger hover:bg-danger/10 hover:text-danger"
         >
+          <Trash2 />
           Usuń program
-        </button>
+        </Button>
       </main>
+
+      <BottomSheet
+        open={deleteRequest != null}
+        onOpenChange={(open) => !open && setDeleteRequest(null)}
+        title={deleteRequest?.title ?? "Potwierdź usunięcie"}
+        description="Sprawdź, co zostanie usunięte"
+      >
+        <div className="space-y-md">
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {deleteRequest?.description}
+          </p>
+          <div className="grid grid-cols-2 gap-sm">
+            <Button variant="outline" onClick={() => setDeleteRequest(null)}>
+              Anuluj
+            </Button>
+            <Button variant="destructive" onClick={() => deleteRequest?.action()}>
+              {deleteRequest?.confirmLabel ?? "Usuń"}
+            </Button>
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   );
 }
@@ -174,21 +243,21 @@ function SlotRow({
     <li className="space-y-2xs rounded-md border p-sm">
       <div className="flex items-center justify-between gap-xs">
         <span className="min-w-0 flex-1 truncate text-sm font-medium">{slot.exerciseName}</span>
-        <button onClick={onMoveUp} className="shrink-0 px-1 text-muted-foreground hover:text-foreground" aria-label="Wyżej">
-          ↑
-        </button>
-        <button onClick={onMoveDown} className="shrink-0 px-1 text-muted-foreground hover:text-foreground" aria-label="Niżej">
-          ↓
-        </button>
-        <button onClick={onDelete} className="shrink-0 text-xs text-muted-foreground hover:text-danger" aria-label="Usuń">
-          ✕
-        </button>
+        <Button type="button" variant="ghost" size="icon" onClick={onMoveUp} className="shrink-0 text-muted-foreground" aria-label="Ćwiczenie wyżej">
+          <ChevronUp />
+        </Button>
+        <Button type="button" variant="ghost" size="icon" onClick={onMoveDown} className="shrink-0 text-muted-foreground" aria-label="Ćwiczenie niżej">
+          <ChevronDown />
+        </Button>
+        <Button type="button" variant="ghost" size="icon" onClick={onDelete} className="shrink-0 text-muted-foreground hover:text-danger" aria-label={`Usuń ${slot.exerciseName}`}>
+          <Trash2 />
+        </Button>
       </div>
       <div className="flex items-center gap-xs text-xs text-muted-foreground">
         <Mini label="serie" def={slot.targetSets} onBlur={(n) => onUpdate({ target_sets: n ?? 3 })} />
         <Mini label="od" def={slot.repsMin} onBlur={(n) => onUpdate({ target_reps_min: n })} />
         <Mini label="do" def={slot.repsMax} onBlur={(n) => onUpdate({ target_reps_max: n })} />
-        <Mini label="rest s" def={slot.rest} onBlur={(n) => onUpdate({ rest_seconds: n ?? 120 })} />
+        <Mini label="przerwa s" def={slot.rest} onBlur={(n) => onUpdate({ rest_seconds: n ?? 120 })} />
       </div>
     </li>
   );
@@ -210,7 +279,7 @@ function Mini({
         inputMode="numeric"
         defaultValue={def ?? ""}
         onBlur={(e) => onBlur(numOrNull(e.target.value))}
-        className="w-full rounded border border-input bg-background px-1 py-1 text-center text-sm"
+        className="h-11 w-full rounded border border-input bg-background px-1 text-center text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       <span>{label}</span>
     </label>
@@ -237,17 +306,18 @@ function AddSlot({ onPick }: { onPick: (exerciseId: string) => void }) {
 
   if (!open)
     return (
-      <Button variant="ghost" size="sm" className="w-full" onClick={() => setOpen(true)}>
-        + ćwiczenie
+      <Button variant="ghost" className="w-full" onClick={() => setOpen(true)}>
+        <Plus />
+        Dodaj ćwiczenie
       </Button>
     );
 
   return (
     <div className="space-y-2xs rounded-md border p-sm">
       <div className="flex items-center gap-xs">
-        <Input autoFocus value={q} onChange={(e) => search(e.target.value)} placeholder="Szukaj…" className="h-9" />
-        <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
-          Anuluj
+        <Input autoFocus value={q} onChange={(e) => search(e.target.value)} placeholder="Szukaj ćwiczenia…" />
+        <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Anuluj dodawanie ćwiczenia">
+          <X />
         </Button>
       </div>
       <ul className="max-h-56 space-y-px overflow-y-auto">
@@ -260,10 +330,10 @@ function AddSlot({ onPick }: { onPick: (exerciseId: string) => void }) {
                 setQ("");
                 setHits([]);
               }}
-              className="flex w-full items-center justify-between rounded px-sm py-xs text-left text-sm hover:bg-accent"
+              className="flex min-h-11 w-full items-center justify-between gap-sm rounded px-sm py-xs text-left text-sm hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <span>{h.name}</span>
-              <span className="text-xs text-muted-foreground">{h.equipment ?? "—"}</span>
+              <span className="text-xs text-muted-foreground">{h.equipment ?? "Brak danych"}</span>
             </button>
           </li>
         ))}

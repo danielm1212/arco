@@ -27,7 +27,7 @@ export function FinishSheet({
       open={open}
       onOpenChange={onOpenChange}
       title="Zakończyć trening?"
-      description="Podsumowanie przed zakończeniem sesji"
+      description="Sprawdź podsumowanie treningu"
     >
       <p className="text-sm text-muted-foreground">
         ✓ {doneSets} serii · {incompleteSets} niezaliczonych · {minutes} min

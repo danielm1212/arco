@@ -26,7 +26,7 @@ export function GuidanceChip({ items }: { items: GuidanceItem[] }) {
 
   if (items.length === 0) {
     return (
-      <p className="px-2xs text-sm text-muted-foreground">Wszystko na torze 💪</p>
+      <p className="px-2xs text-sm text-muted-foreground">Na dziś wszystko gra 💪</p>
     );
   }
 
@@ -39,7 +39,7 @@ export function GuidanceChip({ items }: { items: GuidanceItem[] }) {
       trigger={
         <button
           type="button"
-          className="flex w-full items-start gap-sm px-2xs text-left text-sm"
+          className="flex min-h-11 w-full items-center gap-sm rounded-md px-2xs text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <span className="mt-0.5 shrink-0 text-muted-foreground">
             <GuidanceIcon kind={top.kind} />
@@ -51,7 +51,7 @@ export function GuidanceChip({ items }: { items: GuidanceItem[] }) {
         </button>
       }
       title="Wskazówki"
-      description="Pełna lista podpowiedzi z Twoich danych"
+      description="Podpowiedzi na podstawie Twoich treningów"
     >
       <ul className="space-y-sm">
         {items.map((g) => (
@@ -63,10 +63,10 @@ export function GuidanceChip({ items }: { items: GuidanceItem[] }) {
           </li>
         ))}
       </ul>
-      <p className="mt-md text-[10px] text-muted-foreground">
-        Podpowiedzi z Twoich danych — sugestia, nie nakaz. Pełny bilans na{" "}
+      <p className="mt-md text-xs text-muted-foreground">
+        To sugestie, nie sztywne zasady. Pełny bilans znajdziesz w zakładce{" "}
         <Link href="/progress" className="underline" onClick={() => setOpen(false)}>
-          Postępach
+          Postępy
         </Link>
         .
       </p>

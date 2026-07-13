@@ -82,7 +82,7 @@ Pokaż kartę „Wskazówki" na home (przygotuj dane demo tak, żeby była ≥1 
 **C1 · Radek (pytanie z wizji, dosłownie):** „**Z kim trenujesz albo kto miałby Cię pilnować, żebyś nie odpuszczał(a)?** Konkretna osoba — kto to jest?" 📏 **ma Radka: tak/nie** (liczy się do B1) + kim jest (partner/kumpel/siostra…).
 
 **C2 · Koncept (przeczytaj, bez pokazywania UI):**
-> „Wyobraź sobie: Ty i 1–3 znajomych widzicie nawzajem tylko tyle: »Radek trenował dziś, 4. tydzień z rzędu«. Możecie przybić 💪 i szturchnąć: »Ania przypomina Ci o treningu«. Żadnych ciężarów, wyników, komentarzy, feedu."
+> „Wyobraź sobie: Ty i paru znajomych (max 6 osób w ekipie) widzicie nawzajem tylko tyle: »Radek trenował dziś, 4. tydzień z rzędu«. Możecie przybić 💪 i szturchnąć: »Ania przypomina Ci o treningu«. Żadnych ciężarów, wyników, komentarzy, feedu."
 Pytania: „Kogo byś zaprosił(a)? Wyślesz takie szturchnięcie? A jak Ty je dostaniesz w słabym tygodniu — motywacja czy wyrzut?" 📏 reakcja na kameralność (czy pyta „a czemu nie widać ciężarów?" = uwaga, vanity-persona).
 
 **C3 · Kontr-pytanie:** „Czego by musiało NIE być w takiej funkcji, żebyś jej nie wyłączył(a)?"

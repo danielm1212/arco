@@ -63,7 +63,7 @@ export async function createUserExercise(
 ): Promise<CreateUserExerciseResult> {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { error: "Brak sesji." };
+  if (!auth.user) return { error: "Sesja wygasła. Zaloguj się ponownie." };
 
   const name = String(formData.get("name") ?? "").trim();
   const exerciseType = String(formData.get("exercise_type") ?? "");
@@ -74,7 +74,7 @@ export async function createUserExercise(
   const photo = formData.get("photo");
 
   if (name.length < 2 || name.length > 80)
-    return { error: "Nazwa: 2–80 znaków." };
+    return { error: "Nazwa musi mieć od 2 do 80 znaków." };
   if (!TYPE_VALUES.includes(exerciseType as ExerciseType))
     return { error: "Nieprawidłowy typ ćwiczenia." };
   if (!(EQUIPMENT_VALUES as readonly string[]).includes(equipment))
@@ -87,14 +87,14 @@ export async function createUserExercise(
   // Zdjęcie (opcjonalne)
   const images: string[] = [];
   if (photo instanceof File && photo.size > 0) {
-    if (photo.size > MAX_PHOTO_BYTES) return { error: "Zdjęcie: max 5 MB." };
+    if (photo.size > MAX_PHOTO_BYTES) return { error: "Zdjęcie może mieć maksymalnie 5 MB." };
     if (!photo.type.startsWith("image/")) return { error: "Plik nie jest obrazkiem." };
     const ext = photo.type === "image/png" ? "png" : photo.type === "image/webp" ? "webp" : "jpg";
     const path = `${auth.user.id}/${randomUUID()}.${ext}`;
     const { error: upErr } = await supabase.storage
       .from("exercise-photos")
       .upload(path, photo, { contentType: photo.type });
-    if (upErr) return { error: `Upload zdjęcia: ${upErr.message}` };
+    if (upErr) return { error: "Nie udało się przesłać zdjęcia. Spróbuj ponownie." };
     const { data: pub } = supabase.storage.from("exercise-photos").getPublicUrl(path);
     images.push(pub.publicUrl);
   }
@@ -126,7 +126,7 @@ export async function createUserExercise(
 export async function deleteUserExercise(exerciseId: string): Promise<{ error?: string }> {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { error: "Brak sesji." };
+  if (!auth.user) return { error: "Sesja wygasła. Zaloguj się ponownie." };
 
   const { data: ex } = await supabase
     .from("exercises")
@@ -141,14 +141,14 @@ export async function deleteUserExercise(exerciseId: string): Promise<{ error?: 
     .select("id", { count: "exact", head: true })
     .eq("exercise_id", exerciseId);
   if (used && used > 0)
-    return { error: "Ćwiczenie użyte w historii treningów — nie można usunąć." };
+    return { error: "Nie można usunąć ćwiczenia zapisanego w historii treningów." };
 
   const { count: inProgram } = await supabase
     .from("program_day_slots")
     .select("id", { count: "exact", head: true })
     .eq("default_exercise_id", exerciseId);
   if (inProgram && inProgram > 0)
-    return { error: "Ćwiczenie użyte w programie — najpierw usuń je z programu." };
+    return { error: "Najpierw usuń to ćwiczenie z programu." };
 
   // Zdjęcie ze Storage (ścieżka = część URL po nazwie bucketa)
   for (const url of ex.images ?? []) {

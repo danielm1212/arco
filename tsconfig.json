@@ -38,6 +38,7 @@
   "exclude": [
     "node_modules",
     "app/sw.ts",
+    "app/ekipa/TeamPanel 2.tsx",
     "public/sw.js",
     "scripts"
   ]

@@ -35,6 +35,7 @@ Zasada kciuka: **im bliżej sztangi, tym mniej gadania.** W loggerze user ma rę
 - Obietnica wartości zamiast komunikatu o braku („Po 2 treningach zobaczysz trend" ✅, „Brak danych" ❌).
 - Liczby konkretne, nie przymiotniki („4. tydzień z rzędu" ✅, „świetna passa!" ❌... chyba że celebracja — tam wolno 😉).
 - Błędy: co się stało + co zrobić, bez przepraszania na kolanach („Nie zapisało się — spróbuj ponownie, dane masz lokalnie").
+- Naturalna interpunkcja. W copy produktowym nie używamy długich myślników do łączenia zdań. Zamiast nich stawiamy kropkę, przecinek lub dwukropek.
 
 **Nigdy:**
 - Wykrzykniki na siłę, CAPS LOCK poza display-typografią momentów.
@@ -75,7 +76,7 @@ Zasady twarde:
    bezpieczne; premium sięga głębiej". Zero straszenia, zero dark patterns.
 5. CTA = czasownik akcji. Empty state = obietnica wartości, nie komunikat o braku.
 6. Bez: wykrzykników na siłę, CAPS poza display-momentami, żargonu influencerskiego,
-   obietnic zdrowotnych/sylwetkowych.
+   obietnic zdrowotnych/sylwetkowych i długich myślników łączących zdania.
 
 Kontekst marki: retro-analog Warm (terracotta/krem/ciepła czerń), kameralność zamiast
 publicznego feedu, „logger który prowadzi, loguje się sam i pilnuje Cię razem z kumplem".

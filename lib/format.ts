@@ -29,7 +29,7 @@ interface SetLike {
 
 /** Sformatuj serię do odczytu wg typu ćwiczenia (np. "60kg × 8", "12 powt. +5kg", "45s"). */
 export function formatSet(type: ExerciseType, s: SetLike, unit: UnitSystem): string {
-  if (type === "timed") return s.duration_seconds != null ? `${s.duration_seconds}s` : "—";
+  if (type === "timed") return s.duration_seconds != null ? `${s.duration_seconds}s` : "Brak wyniku";
   if (type === "bodyweight")
     return (
       [
@@ -37,7 +37,7 @@ export function formatSet(type: ExerciseType, s: SetLike, unit: UnitSystem): str
         s.added_weight ? `+${s.added_weight}${unit}` : null,
       ]
         .filter(Boolean)
-        .join(" ") || "—"
+        .join(" ") || "Brak wyniku"
     );
-  return s.weight != null && s.reps != null ? `${s.weight}${unit} × ${s.reps}` : "—";
+  return s.weight != null && s.reps != null ? `${s.weight}${unit} × ${s.reps}` : "Brak wyniku";
 }

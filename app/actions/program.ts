@@ -13,7 +13,7 @@ async function ctx() {
   return { supabase, user };
 }
 
-async function syncDaysPerWeek(programId: string) {
+async function syncCycleDays(programId: string) {
   const { supabase } = await ctx();
   const { count } = await supabase
     .from("program_days")
@@ -21,7 +21,11 @@ async function syncDaysPerWeek(programId: string) {
     .eq("program_id", programId);
   await supabase
     .from("programs")
-    .update({ days_per_week: Math.min(7, Math.max(1, count ?? 1)) })
+    .update({
+      cycle_days: Math.min(7, Math.max(1, count ?? 1)),
+      // Legacy mirror until all old consumers stop reading this field.
+      days_per_week: Math.min(7, Math.max(1, count ?? 1)),
+    })
     .eq("id", programId);
 }
 
@@ -30,7 +34,7 @@ export async function createProgram() {
   const { supabase, user } = await ctx();
   const { data: prog, error } = await supabase
     .from("programs")
-    .insert({ name: "Mój program", days_per_week: 1, is_default: false, user_id: user.id })
+    .insert({ name: "Mój program", cycle_days: 1, days_per_week: 1, is_default: false, user_id: user.id })
     .select("id")
     .single();
   if (error || !prog) throw new Error(error?.message ?? "Nie udało się utworzyć programu");
@@ -46,7 +50,7 @@ export async function duplicateProgram(sourceId: string) {
 
   const { data: src } = await supabase
     .from("programs")
-    .select("name, days_per_week, program_days(id, label, position)")
+    .select("name, cycle_days, days_per_week, program_days(id, label, position)")
     .eq("id", sourceId)
     .single();
   if (!src) throw new Error("Nie znaleziono programu źródłowego");
@@ -55,6 +59,7 @@ export async function duplicateProgram(sourceId: string) {
     .from("programs")
     .insert({
       name: `${src.name} (kopia)`,
+      cycle_days: src.cycle_days,
       days_per_week: src.days_per_week,
       is_default: false,
       user_id: user.id,
@@ -108,7 +113,7 @@ export async function addDay(programId: string) {
     .from("program_days")
     .insert({ program_id: programId, label: `Dzień ${(count ?? 0) + 1}`, position: count ?? 0 });
   if (error) throw new Error(error.message);
-  await syncDaysPerWeek(programId);
+  await syncCycleDays(programId);
   revalidatePath(`/programs/${programId}`);
 }
 
@@ -123,7 +128,7 @@ export async function deleteDay(programId: string, dayId: string) {
   const { supabase } = await ctx();
   const { error } = await supabase.from("program_days").delete().eq("id", dayId);
   if (error) throw new Error(error.message);
-  await syncDaysPerWeek(programId);
+  await syncCycleDays(programId);
   revalidatePath(`/programs/${programId}`);
 }
 

@@ -15,7 +15,7 @@
 - **Horyzont zwrotu:** 4–8 mies. — dlatego startuje RAZEM z landingiem, nie z launchem. To najtańsza rzecz, która procentuje w dniu premiery.
 
 ### K2 · Pętla produktu (po launchu — silnik z wizji)
-- Zaproszenia do ekip + prompt instalacji na celebracji + (backlog) karty recap do udostępnienia. Mierzone k-współczynnikiem z B3. To jest silnik — ale silnik nie zapala się sam: K1/K3 dostarczają pierwszych 100 userów, pętla ich mnoży (albo nie — patrz `concierge-test-ekip.md` ZANIM zbudujemy).
+- Zaproszenia do ekip + prompt instalacji na celebracji + (backlog) karty recap do udostępnienia. Mierzone k-współczynnikiem z B3. To jest silnik — ale silnik nie zapala się sam: K1/K3 dostarczają pierwszych 100 userów, pętla ich mnoży (albo nie — concierge-test ODWOŁANY 2026-07-12; tezę sprawdzają H2 moduł C + dogfooding w Kroku 4 + B3).
 
 ### K3 · Społeczności PL (ręczne, taktowne)
 - **Gdzie:** subreddity PL fitness, forum SFD, grupy FB („trening siłowy", „siłownia dla początkujących", grupy kobiece — kierunek inkluzywny), Wykop (#silownia).

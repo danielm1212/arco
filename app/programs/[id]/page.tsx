@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { ProgramEditor, type EditorDay } from "./ProgramEditor";
+import { formatFrequency } from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
   const { data: program } = await supabase
     .from("programs")
     .select(
-      "id, name, user_id, description, goal, level, days_per_week, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
+      "id, name, user_id, description, goal, level, cycle_days, frequency_min, frequency_max, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -73,21 +74,28 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/programs" className="text-xs text-muted-foreground">
+        <Link href="/programs" className="flex min-h-11 items-center text-sm text-muted-foreground">
           ← Biblioteka
         </Link>
-        <span className="truncate px-sm font-semibold">{program.name}</span>
+        <h1 className="truncate px-sm font-semibold">{program.name}</h1>
         <span className="w-12" />
       </header>
 
       <main className="flex-1 space-y-md p-md">
         <div className="flex flex-wrap gap-2xs">
-          {[program.goal, program.level, `${program.days_per_week}× / tydz.`]
+          {[
+            program.goal,
+            program.level,
+            `cykl: ${program.cycle_days} dni`,
+            program.frequency_min !== null && program.frequency_max !== null
+              ? formatFrequency(program.frequency_min, program.frequency_max)
+              : null,
+          ]
             .filter(Boolean)
             .map((tag) => (
               <span
                 key={tag as string}
-                className="rounded-full bg-secondary px-2 py-0.5 text-xs capitalize text-secondary-foreground"
+                className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
               >
                 {tag}
               </span>
@@ -97,7 +105,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           <p className="text-sm text-muted-foreground">{program.description}</p>
         )}
 
-        <div className="grid grid-cols-2 gap-sm">
+        <div className="flex flex-col gap-sm">
           <form action={setActiveProgram.bind(null, program.id)}>
             <Button type="submit" className="w-full">
               Ustaw jako aktywny
@@ -120,8 +128,8 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
                   <ExerciseInfoSheet exerciseId={s.exerciseId}>
                     <button
                       type="button"
-                      className="min-w-0 truncate text-left underline-offset-2 hover:underline"
-                      title="Jak wykonać"
+                      className="flex min-h-11 min-w-0 items-center text-left underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      aria-label={`Jak wykonać: ${s.exerciseName}`}
                     >
                       {s.exerciseName}{" "}
                       <Info className="inline size-3.5 align-[-2px] text-muted-foreground" />
@@ -133,7 +141,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
                       ? s.repsMax && s.repsMax !== s.repsMin
                         ? `${s.repsMin}-${s.repsMax}`
                         : s.repsMin
-                      : s.notes ?? "—"}
+                      : s.notes ?? "Brak zakresu"}
                   </span>
                 </li>
               ))}

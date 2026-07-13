@@ -32,6 +32,75 @@
 
 ---
 
+## Decyzja właściciela 2026-07-13 — kolejność po przeglądzie repo
+
+> **Wiążąca sekwencja:** najpierw jakość i ochrona danych, potem test z ludźmi, a następnie publiczny fundament kont/RODO. **Ekipa wchodzi jako Krok 4 — fast-follow po launchu**, nie jako samotna funkcja dla obecnego single-account. To zachowuje kanon `wizja-i-plan-produktu-v2.md` i nie buduje socialu bez bezpiecznego multi-user.
+
+| Kolejność | Pakiet | Wynik / bramka |
+|---|---|---|
+| 1 | **Higiena React 19** | Usunąć 12 błędów lint i 3 ostrzeżenia; zachować zachowanie loggera, timerów i offline. `npm run lint` oraz build mają przechodzić. |
+| 2 | **Automatyczna jakość** | ✅ GOTOWE LOKALNIE 2026-07-13. CI sprawdza lint, testy jednostkowe, bazę treningową, rekomendacje i build. Drugi tor uruchamia odizolowany Supabase oraz testuje główny przepływ, rekordy, zapis offline i RLS Ekipy. Workflow ruszy na GitHubie po wysłaniu zmian. |
+| 3 | **Domknięcie S11** | Backup produkcyjny + realny test restore, CSP z Report-Only do enforce po sprawdzeniu, decyzja/wykonanie self-hostu obrazków oraz pozostałe drobne elementy launch gate. |
+| 4 | **H2 — testy 3–5 osób** | Przeprowadzić scenariusz z `scenariusz-h2.md`, w tym moduł WTP i moduł „czy masz swojego Radka?”. Zsyntetyzować findings i przejść bramkę B1 przed kosztowną rozbudową. |
+| 5 | **Krok 2 — konta, RODO i multi-user** | Publiczny signup/weryfikacja/reset, eksport i usunięcie danych, polityki/regulamin, limity nadużyć, audyt RLS na dwóch kontach oraz zgoda na udostępnianie aktywności w Ekipie. To twardy prerekwizyt Ekipy. |
+| 6 | **Krok 3 — cichy launch freemium** | Wypuścić pełny, uczciwy model freemium; zebrać pierwsze dane o aktywacji i konwersji bez budowania dodatkowego socialu za wcześnie. |
+| 7 | **Krok 4 — Ekipa** | Zbudować i dogfoodować moduł wg planu niżej; po trzech tygodniach ocenić pętlę metrykami B3. |
+
+### Sprint „Automatyczna jakość” ✅ gotowy lokalnie 2026-07-13
+
+- Workflow `.github/workflows/quality.yml` działa na pushach i pull requestach do `main`, a starsze uruchomienie dla tej samej gałęzi jest automatycznie anulowane.
+- Tor statyczny obejmuje lint, 8 testów krytycznych reguł guidance, walidację 907 ćwiczeń i 8 planów, macierz 36 profili rekomendacji oraz build produkcyjny.
+- Tor integracyjny uruchamia świeży, odizolowany Supabase i wykonuje smoke testy głównego przepływu, rekordów i zamian, kolejki offline oraz prywatności i RLS Ekipy.
+- Testy integracyjne używają wyłącznie kont i danych tworzonych na czas testu. Nie łączą się z produkcją.
+- Lokalnie cały zestaw smoke przeszedł poprawnie. Pierwsze wykonanie na infrastrukturze GitHub pozostaje bramką po wysłaniu zmian do repozytorium.
+
+### Krok 4 — zakres implementacji „Ekipy”
+
+1. **Fundament danych i prywatności:** migracje `pods`/`pod_members`/`activity_events`/reakcji/nudge, zgody oraz RLS z testami wielokontowymi. Nie odczytujemy `sessions` między użytkownikami.
+2. **Rdzeń pętli:** utworzenie ekipy, zaproszenie i dołączanie, limit 6 osób/3 ekipy, automatyczny prywatny check-in po ukończeniu treningu oraz karta Ekipy na home.
+3. **Miejsce w aplikacji:** ekran `/ekipa`, przełącznik ekip, emoji-awatary, czytelne stany puste/martwe i zarządzanie członkostwem zgodne z `ekipa-koncepcja.md`.
+4. **Wsparcie od znajomych:** reakcje 💪🔥👏🎯 i kontekstowy nudge z limitami antyspamowymi; najpierw skrzynka w apce, później push/e-mail zgodnie ze zgodami i quiet hours.
+5. **Dogfooding i decyzja:** pierwsza ekipa Daniela od dnia wdrożenia, trzy tygodnie obserwacji oraz ocena zaproszeń, aktywności i nudge'y względem B3. Bez feedu, czatu, komentarzy, porównań ciężarów ani zdjęć.
+
+Szczegóły produktu: `ekipa-koncepcja.md`; schemat, zgody i RLS: `projekt-schematu-subs-consents-pods.md`; walidacja: `scenariusz-h2.md` i `concierge-test-ekip.md`.
+
+### Wyjątek developerski 2026-07-13 — Ekipa przed Krokiem 2
+
+Na polecenie właściciela zbudowano **dev-v0 Ekipy dla istniejących kont testowych**, bez otwierania rejestracji. Obejmuje: prywatne grupy, kody zaproszeń, limit 6 osób/3 ekip, jawny profil emoji i zgodę, check-in po ukończeniu treningu, reakcje, ograniczony nudge ze skrzynką odbiorcy, ekran `/ekipa`, kartę home oraz zarządzanie członkostwem. Migracje są zastosowane **wyłącznie lokalnie**. `npm run smoke:team` potwierdza lokalnie na trzech tymczasowych kontach RLS, brak odczytu `sessions`, blokadę ręcznego check-inu i natychmiastową utratę dostępu po wyjściu. Nie zmienia to sekwencji publicznej: przed deployem wieloużytkownikowym nadal trzeba dostarczyć pełne konta/RODO, rejestr zgód, rate limiting, audyt RLS na prawdziwych kontach oraz kanały dostarczania nudge.
+
+### Sprint P1 — jakość planów i bazy ćwiczeń ✅ lokalnie 2026-07-13
+
+- Poprawność bazy: glute bridge nie uruchamia timera; `machine` nie wpada w pull przez substring `chin`; wszystkie 767 widocznych ćwiczeń mają movement pattern.
+- Poprawność presetów: sprzęt zgodny ze środowiskiem, brak fixed reps blokujących double progression, realny vertical pull w Home, wersje bodyweight bez rekordów hantlowych, core w Advanced PPL.
+- Home FBW 2×: 20+20 serii zamiast 28+27, zakresy powtórzeń i realniejszy czas 45–60 min.
+- Guard: `npm run validate:training` — 0 błędów, placeholdery jako jawne ostrzeżenia; lint celowany i build ✓.
+- Bezpieczeństwo danych: `npm run seed` synchronizuje po istniejących pozycjach, zachowuje ID oraz aktywny program; nie wykonuje automatycznych DELETE i zatrzymuje się przy nadmiarowych dniach/slotach.
+- Status: zastosowane lokalnie (907 ćwiczeń, 8 programów, 173 sloty); remote świadomie nietknięty. Następny pakiet produktowy = P2 recommendation engine po QA P1 na telefonie.
+
+### Sprint P2 — silnik rekomendacji i metadane programów ✅ lokalnie 2026-07-13
+
+- Model: `cycle_days` oddzielone od `frequency_min/max`; zachowane legacy `days_per_week` do stopniowej migracji konsumentów. Systemowe presety mają stabilne slugi, wersję treści, środowisko, poziom 1–3, czas i sprzęt.
+- Copy/UI: nazwa opisuje cykl zamiast fałszywej recepty „N×”; biblioteka pokazuje cykl, zakres dni/tydz. oraz czas. Onboarding pokazuje „Dopasowany plan” albo uczciwe „Najbliższy plan w bibliotece”.
+- Scoring: twarda zgodność środowiska; poziom + cel 2–5 + wymagany sprzęt; plan wymagający większej liczby dni niż deklarowany cel dostaje mocniejszą karę niż krótszy wariant.
+- Profil: onboarding zapisuje `available_equipment` z wybranego środowiska wraz z jednostką, celem i imieniem.
+- Instrumentacja: `program_recommended`, exact/fallback, `weekly_goal`, `program_slug`; aktywacja z onboardingu jest jawnie mierzona. Adapter nadal no-op poza dev do decyzji o PostHog.
+- Guard: `npm run validate:recommendations` sprawdza 36 kombinacji poziom × środowisko × cel. Wynik 36/36; żaden domowy profil nie dostaje planu z siłowni, a advanced 4–5 dni nie dostaje PPL 6×.
+- Weryfikacja: migracje `20260713170000` i `20260713171000` + bezpieczny seed lokalnie; 907 ćwiczeń / 8 programów / 173 sloty, aktywny program zachowany; training 0 błędów (20 znanych placeholderów), lint ✓, build ✓, główny smoke ✓, mobilny podgląd `/programs` ✓, błędy konsoli 0, konto testowe sprzątnięte. Remote nietknięty.
+
+### Sprint P3 — domknięcie gridu programów ✅ lokalnie 2026-07-13
+
+- Dodane 3 kuratorowane presety: Intermediate Bodyweight FBW (cykl 3 dni, 3–4×/tydz.), Advanced Home Upper/Lower (cykl 4 dni, 4–5×/tydz.) i Advanced Bodyweight Upper/Lower (cykl 4 dni, 3–4×/tydz.).
+- Biblioteka: 8→11 programów, 173→246 slotów, 76→88 unikalnych ćwiczeń w presetach. UI grupuje karty na Początkujących / Średniozaawansowanych / Zaawansowanych.
+- Programowanie: 21–27 serii na sesję, zakresy double progression, RIR 1–2; home obchodzi load ceiling unilateralem/tempo/pauzą, bodyweight progresuje leverage. Zaawansowane skille planche/front lever świadomie poza zakresem.
+- Scoring: 6 nowych exact-match — intermediate bodyweight 3/4, advanced home 4/5, advanced bodyweight 3/4. Kara za plan wymagający więcej dni wzrosła, więc cel 2 dni wybiera bezpieczniejszy dostępny fallback.
+- Semantyka: Decline Push-up, Inverted Row i Scapular Pull-up są logowane jako bodyweight, nie ćwiczenia z kilogramami. Detal planu pokazuje `cykl N dni` i niezależne `X–Y dni/tydz.`.
+- Sprzęt: wybór „Masa ciała” w onboardingu jawnie zakłada drążek, zapisuje `pull-up bar`, a presety bodyweight wymagają go w metadanych; ustawienia dostały osobną pozycję „Drążek”.
+- Dokumentacja źródłowa: 3 nowe pliki w `docs/trainings/`; README gridu zaktualizowany z 6 do 9 flagowych planów (11 łącznie z FBW 2-dniowymi).
+- Weryfikacja lokalna: 907 ćwiczeń / 11 programów / 246 slotów / 88 ćwiczeń użytych; training 0 błędów, 43 wystąpienia placeholdera obejmujące 16 ćwiczeń; rekomendacje 36/36; lint ✓, build ✓, smoke ✓, mobilny Preview biblioteki i detalu ✓, świeży log konsoli 0 błędów. Seed zachował ID i aktywny program. Nowa migracja niepotrzebna; remote nietknięty.
+- Do QA [Ty]: realność trudności Handstand Push-up, Nordic i One-Arm Push-up; komunikat o drążku; 3- vs 4-dniowe rolowanie cyklu bodyweight.
+
+---
+
 ## Sprint N1 — Deploy-lite (HTTPS teraz, pełny launch później)
 
 **Cel:** apka chodzi na HTTPS (Vercel + Supabase cloud), żeby odblokować wake lock, wibracje, instalację PWA i testy poza LAN. To NIE jest pełny Sprint 11 — launch gate (checklista longevity, self-host obrazków, PL tłumaczenia, app icon) zostaje w S11.

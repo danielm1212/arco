@@ -14,8 +14,8 @@ const TABS = [
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
-      <div className="mx-auto flex max-w-md">
+    <nav aria-label="Główna nawigacja" className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[424px] rounded-full border border-border/70 bg-card p-1.5 shadow-lg">
+      <div className="flex">
         {TABS.map((t) => {
           const Icon = t.icon;
           const on = t.match(pathname);
@@ -23,11 +23,12 @@ export function BottomNav() {
             <Link
               key={t.href}
               href={t.href}
-              className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium ${
-                on ? "text-primary" : "text-muted-foreground"
+              aria-current={on ? "page" : undefined}
+              className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                on ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
               }`}
             >
-              <Icon className="size-5" />
+              <Icon className="size-5" aria-hidden />
               {t.label}
             </Link>
           );

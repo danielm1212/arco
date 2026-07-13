@@ -124,7 +124,8 @@ create table pod_members (
   consented_at timestamptz not null,                   -- potwierdzenie zgody w flow dołączenia
   primary key (pod_id, user_id)
 );
--- limit 4 (Ty + 1–3): trigger before insert (count po pod_id) — nie da się wyrazić constraintem
+-- limit 6 osób (Ty + 1–5; decyzja [Ty] 2026-07-12, było 4): trigger before insert (count po pod_id)
+-- limit 3 ekip na usera (decyzja [Ty] 2026-07-12): trigger before insert (count po user_id) — decyzja #1 (unique constraint 1-ekipa/user) UCHYLONA
 
 -- CHECK-IN: jedyne, co ekipa widzi. Dzień, nie godzina (minimalizacja danych).
 create table activity_events (
@@ -224,7 +225,7 @@ Polityki (szkic):
 
 | # | Decyzja | Rekomendacja |
 |---|---|---|
-| 1 | Ile ekip na usera w v1? | **1 ekipa/user** — upraszcza UX, RLS i copy („Twoja ekipa"); constraint unique na `pod_members.user_id`. Multi-ekipa = łatwe rozszerzenie później (drop constraint) |
+| 1 | Ile ekip na usera w v1? | ✅ **DECYZJA [Ty] 2026-07-12: max 3 ekipy/user od v1** (osobne kręgi życia) + **ekipa max 6 osób**. Bez unique constraintu; limity = triggery count (≤3 po user_id, ≤6 po pod_id). UI: switcher w /ekipa, agregat na home (ekipa-koncepcja §2/§4) |
 | 2 | Usunięcie konta a check-iny w ekipie | **twardy cascade** (jak w §1.5) — RODO czyste, ekipa traci wpisy usuniętego; alternatywa (anonimizacja „ktoś trenował") = więcej kodu, wątpliwa wartość przy ekipach 2–4 os. |
 | 3 | Founder's edition | jako `entitlement_overrides(kind='founder', until_at=null)` — zero specjalnych ścieżek w kodzie płatności |
 | 4 | Godzina vs dzień check-inu | **dzień** (`occurred_on date`) — minimalizacja danych; „trenował dziś" nie potrzebuje godziny |

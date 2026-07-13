@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useSyncExternalStore, useTransition } from "react";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import { updateSettings } from "@/app/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -17,19 +18,21 @@ const THEMES = [
 ] as const;
 
 const EQUIPMENT = [
-  "barbell",
-  "dumbbell",
-  "kettlebells",
-  "cable",
-  "machine",
-  "body only",
-  "bands",
-  "medicine ball",
-  "exercise ball",
-  "e-z curl bar",
-  "foam roll",
-  "other",
-];
+  ["barbell", "Sztanga"],
+  ["dumbbell", "Hantle"],
+  ["kettlebells", "Kettlebell"],
+  ["cable", "Wyciąg"],
+  ["machine", "Maszyny"],
+  ["body only", "Masa ciała"],
+  ["bands", "Gumy"],
+  ["pull-up bar", "Drążek"],
+  ["medicine ball", "Piłka lekarska"],
+  ["exercise ball", "Piłka gimnastyczna"],
+  ["e-z curl bar", "Gryf łamany"],
+  ["foam roll", "Roller"],
+  ["other", "Inne"],
+] as const;
+const subscribeToNothing = () => () => {};
 
 export function SettingsForm({
   unit,
@@ -52,15 +55,7 @@ export function SettingsForm({
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  // Preferencje urządzenia (localStorage) — wczytywane po stronie klienta
-  const [autoRest, setAutoRestState] = useState(true);
-  const [keepAwake, setKeepAwakeState] = useState(true);
-  useEffect(() => {
-    setMounted(true);
-    setAutoRestState(getAutoRest());
-    setKeepAwakeState(getKeepAwake());
-  }, []);
+  const mounted = useSyncExternalStore(subscribeToNothing, () => true, () => false);
 
   function toggle(item: string) {
     setEq((prev) =>
@@ -71,14 +66,19 @@ export function SettingsForm({
   function save() {
     setSaved(false);
     startTransition(async () => {
-      await updateSettings({
-        unit_system: u,
-        default_rest_seconds: r,
-        available_equipment: eq,
-        weekly_goal: goal,
-        display_name: name.trim() || null,
-      });
-      setSaved(true);
+      try {
+        await updateSettings({
+          unit_system: u,
+          default_rest_seconds: r,
+          available_equipment: eq,
+          weekly_goal: goal,
+          display_name: name.trim() || null,
+        });
+        setSaved(true);
+        toast.success("Ustawienia zapisane.");
+      } catch {
+        toast.error("Nie udało się zapisać ustawień. Spróbuj ponownie.");
+      }
     });
   }
 
@@ -102,7 +102,7 @@ export function SettingsForm({
             <Button
               key={opt.value}
               variant={mounted && theme === opt.value ? "default" : "outline"}
-              size="sm"
+              aria-pressed={mounted && theme === opt.value}
               onClick={() => setTheme(opt.value)}
               suppressHydrationWarning
             >
@@ -111,7 +111,7 @@ export function SettingsForm({
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          Logger zostaje ciemny niezależnie od wyboru (tryb skupienia).
+          Motyw zmienia się od razu. Pozostałe ustawienia zatwierdź przyciskiem Zapisz.
         </p>
       </section>
 
@@ -122,7 +122,7 @@ export function SettingsForm({
             <Button
               key={opt}
               variant={u === opt ? "default" : "outline"}
-              size="sm"
+              aria-pressed={u === opt}
               onClick={() => setU(opt)}
             >
               {opt}
@@ -132,7 +132,7 @@ export function SettingsForm({
       </section>
 
       <section className="space-y-xs">
-        <h2 className="text-sm font-medium text-muted-foreground">Domyślny rest (s)</h2>
+        <h2 className="text-sm font-medium text-muted-foreground">Domyślna przerwa (sekundy)</h2>
         <Input
           type="number"
           inputMode="numeric"
@@ -145,42 +145,19 @@ export function SettingsForm({
 
       <section className="space-y-sm">
         <h2 className="text-sm font-medium text-muted-foreground">Trening</h2>
-        <div className="flex items-center justify-between">
-          <span className="text-sm">Auto-przerwa po zaliczeniu serii</span>
-          <Switch
-            checked={mounted ? autoRest : true}
-            disabled={!mounted}
-            aria-label="Auto-przerwa po zaliczeniu serii"
-            onCheckedChange={(v) => {
-              setAutoRest(v);
-              setAutoRestState(v);
-            }}
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm">Nie wygaszaj ekranu w treningu</span>
-          <Switch
-            checked={mounted ? keepAwake : true}
-            disabled={!mounted}
-            aria-label="Nie wygaszaj ekranu w treningu"
-            onCheckedChange={(v) => {
-              setKeepAwake(v);
-              setKeepAwakeState(v);
-            }}
-          />
-        </div>
+        {mounted ? <DevicePreferences /> : <DevicePreferences disabled />}
       </section>
 
       <section className="space-y-sm">
         <h2 className="text-sm font-medium text-muted-foreground">
-          Cel — treningi w tygodniu
+          Cel tygodniowy
         </h2>
         <div className="flex gap-xs">
           {[2, 3, 4, 5].map((n) => (
             <Button
               key={n}
               variant={goal === n ? "default" : "outline"}
-              size="sm"
+              aria-pressed={goal === n}
               onClick={() => setGoal(n)}
             >
               {n}
@@ -191,22 +168,24 @@ export function SettingsForm({
 
       <section className="space-y-sm">
         <h2 className="text-sm font-medium text-muted-foreground">
-          Dostępny sprzęt (filtr podmiany)
+          Sprzęt dostępny do zamian
         </h2>
         <div className="flex flex-wrap gap-2xs">
-          {EQUIPMENT.map((item) => {
-            const on = eq.includes(item);
+          {EQUIPMENT.map(([value, label]) => {
+            const on = eq.includes(value);
             return (
               <button
-                key={item}
-                onClick={() => toggle(item)}
-                className={`rounded-full border px-3 py-1 text-xs ${
+                key={value}
+                type="button"
+                aria-pressed={on}
+                onClick={() => toggle(value)}
+                className={`min-h-11 rounded-full border px-4 py-2 text-sm ${
                   on
                     ? "border-primary bg-primary/15 text-primary"
                     : "border-input text-muted-foreground"
                 }`}
               >
-                {item}
+                {label}
               </button>
             );
           })}
@@ -220,5 +199,39 @@ export function SettingsForm({
         {saved && <span className="text-sm text-success">Zapisano ✓</span>}
       </div>
     </div>
+  );
+}
+
+function DevicePreferences({ disabled = false }: { disabled?: boolean }) {
+  const [autoRest, setAutoRestState] = useState(() => (disabled ? true : getAutoRest()));
+  const [keepAwake, setKeepAwakeState] = useState(() => (disabled ? true : getKeepAwake()));
+
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <span className="text-sm">Automatyczna przerwa po serii</span>
+        <Switch
+          checked={autoRest}
+          disabled={disabled}
+          aria-label="Automatyczna przerwa po serii"
+          onCheckedChange={(value) => {
+            setAutoRest(value);
+            setAutoRestState(value);
+          }}
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-sm">Nie wygaszaj ekranu w treningu</span>
+        <Switch
+          checked={keepAwake}
+          disabled={disabled}
+          aria-label="Nie wygaszaj ekranu w treningu"
+          onCheckedChange={(value) => {
+            setKeepAwake(value);
+            setKeepAwakeState(value);
+          }}
+        />
+      </div>
+    </>
   );
 }

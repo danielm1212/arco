@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState, useTransition, type ReactNode } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { deleteUserExercise } from "@/app/actions/userExercises";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 
 interface Detail {
   name: string;
@@ -26,40 +28,76 @@ export function ExerciseInfoSheet({
   exerciseId: string;
   children: ReactNode;
 }) {
-  const [detail, setDetail] = useState<Detail | null>(null);
+  const [cachedDetail, setCachedDetail] = useState<{ exerciseId: string; detail: Detail } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
-  // Po podmianie ćwiczenia (exerciseId się zmienia) unieważnij cache — inaczej
-  // arkusz pokazuje opis poprzedniego ćwiczenia (bug ze swapem).
-  useEffect(() => {
-    setDetail(null);
-  }, [exerciseId]);
+  // Po podmianie ćwiczenia cache poprzedniego ID jest ignorowany — arkusz nie
+  // pokaże opisu starego ćwiczenia, ale nie wymaga synchronizacji stanu w efekcie.
+  const detail = cachedDetail?.exerciseId === exerciseId ? cachedDetail.detail : null;
 
   async function load() {
     if (detail || loading) return;
     setLoading(true);
+    setLoadError(false);
     const sb = createClient();
-    const { data } = await sb
+    const { data, error } = await sb
       .from("exercises")
       .select(
         "name, images, instructions, primary_muscles, secondary_muscles, equipment, level, user_id",
       )
       .eq("id", exerciseId)
       .maybeSingle();
-    if (data) setDetail(data as Detail);
+    if (data) setCachedDetail({ exerciseId, detail: data as Detail });
+    if (error || !data) setLoadError(true);
     setLoading(false);
+  }
+
+  function removeExercise() {
+    startTransition(async () => {
+      try {
+        const res = await deleteUserExercise(exerciseId);
+        if (res.error) {
+          toast.error(res.error);
+          return;
+        }
+        toast.success("Usunięto własne ćwiczenie.");
+        setCachedDetail(null);
+        setConfirmingDelete(false);
+        setOpen(false);
+        router.refresh();
+      } catch {
+        toast.error("Nie udało się usunąć.");
+      }
+    });
   }
 
   return (
     <BottomSheet
+      open={open}
       trigger={children}
-      onOpenChange={(open) => open && load()}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (nextOpen) load();
+        else setConfirmingDelete(false);
+      }}
       title={detail?.name ?? "Ćwiczenie"}
       description="Instrukcja wykonania ćwiczenia"
     >
       {loading && !detail && <p className="text-sm text-muted-foreground">Wczytuję…</p>}
+
+      {loadError && !detail && (
+        <div className="space-y-sm rounded-lg border border-danger/20 bg-danger/5 p-md">
+          <p className="text-sm">Nie udało się wczytać opisu ćwiczenia.</p>
+          <Button variant="outline" className="w-full" onClick={load}>
+            Spróbuj ponownie
+          </Button>
+        </div>
+      )}
 
       {detail && (
         <div className="space-y-md">
@@ -98,30 +136,33 @@ export function ExerciseInfoSheet({
 
           {/* Własne ćwiczenie — usuwanie (guard historii/programu w akcji serwera) */}
           {detail.user_id != null && (
-            <button
-              type="button"
-              disabled={pending}
-              onClick={() => {
-                if (!confirm(`Usunąć własne ćwiczenie „${detail.name}"?`)) return;
-                startTransition(async () => {
-                  try {
-                    const res = await deleteUserExercise(exerciseId);
-                    if (res.error) {
-                      toast.error(res.error);
-                      return;
-                    }
-                    toast.success("Usunięto własne ćwiczenie.");
-                    setDetail(null);
-                    router.refresh();
-                  } catch {
-                    toast.error("Nie udało się usunąć.");
-                  }
-                });
-              }}
-              className="text-xs text-muted-foreground hover:text-danger disabled:opacity-50"
-            >
-              {pending ? "Usuwam…" : "Usuń własne ćwiczenie"}
-            </button>
+            confirmingDelete ? (
+              <div className="space-y-sm rounded-lg border border-danger/20 bg-danger/5 p-md">
+                <p className="text-sm font-medium">Usunąć „{detail.name}”?</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Tej operacji nie można cofnąć. Ćwiczenia używanego w historii lub programie nie da się usunąć.
+                </p>
+                <div className="grid grid-cols-2 gap-sm">
+                  <Button variant="outline" disabled={pending} onClick={() => setConfirmingDelete(false)}>
+                    Anuluj
+                  </Button>
+                  <Button variant="destructive" disabled={pending} onClick={removeExercise}>
+                    {pending ? "Usuwam…" : "Usuń"}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={pending}
+                onClick={() => setConfirmingDelete(true)}
+                className="w-full text-danger hover:bg-danger/10 hover:text-danger"
+              >
+                <Trash2 />
+                Usuń własne ćwiczenie
+              </Button>
+            )
           )}
         </div>
       )}
