@@ -219,7 +219,11 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
-enable_signup = false
+# UWAGA: to jest przełącznik PROVIDERA e-mail, nie tylko signupu. Ustawienie na
+# `false` wyłącza także LOGOWANIE e-mailem ("Email logins are disabled") — istniejące
+# konta (nawet z bootstrapu) nie mogą się zalogować. Publiczną rejestrację blokuje już
+# globalnie [auth] enable_signup = false, więc tu MUSI zostać true, żeby login działał.
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
