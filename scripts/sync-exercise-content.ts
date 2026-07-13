@@ -33,6 +33,7 @@ const updates = (rawExercises as SourceExercise[]).map((exercise) => ({
   values: {
     images: (exercise.images ?? []).map((image) =>
       image.startsWith("http") || image.startsWith("/") ? image : `${imageBase}${image}`,
+    ),
     ...(instructionMap[exercise.id] ? { instructions: instructionMap[exercise.id] } : {}),
   },
 }));
