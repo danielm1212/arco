@@ -52,6 +52,7 @@ for (const imagePath of imagePaths) {
 
 async function main() {
   await access(sourceRoot);
+  console.log(`Cel uploadu: ${host} · bucket "${bucket}" · źródło ${sourceRoot}`);
   const client = createClient(url!, serviceRole!, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
@@ -89,6 +90,25 @@ async function main() {
   }
 
   await Promise.all(Array.from({ length: concurrency }, () => worker()));
+
+  // Guard (po incydencie 2026-07-13): potwierdź, że pliki są REALNIE serwowalne
+  // przez publiczny URL bucketa — łapie upload do złego projektu, brak flagi
+  // public i rozjazd ścieżek obiekt↔URL-w-bazie. Ścieżka surowa, bez enkodowania,
+  // żeby dokładnie odwzorować URL-e budowane przez seed (IMG_PREFIX + img).
+  const step = Math.max(1, Math.floor(imagePaths.length / 5));
+  const sample = imagePaths.filter((_, i) => i % step === 0).slice(0, 5);
+  const publicBase = `${url!.replace(/\/+$/, "")}/storage/v1/object/public/${bucket}/`;
+  const unreachable: string[] = [];
+  for (const rel of sample) {
+    const res = await fetch(publicBase + rel);
+    if (!res.ok) unreachable.push(`${rel} → HTTP ${res.status}`);
+  }
+  if (unreachable.length > 0) {
+    throw new Error(
+      `Pliki wgrane, ale niedostępne publicznie (bucket nie serwuje):\n${unreachable.join("\n")}`,
+    );
+  }
+  console.log(`✓ weryfikacja: ${sample.length}/${sample.length} próbek serwowanych publicznie (HTTP 200)`);
   console.log(`✅ Własny hosting zdjęć gotowy: ${uploaded} plików w ${bucket}.`);
 }
 
