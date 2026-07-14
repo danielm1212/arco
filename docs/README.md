@@ -1,81 +1,65 @@
-# Mapa dokumentacji Arco
+# Dokumentacja Arco
 
-> Aktualizacja: 2026-07-13. Porządek czytania dla nowej sesji: `CLAUDE.md` (root) → `HANDOFF.md` → kanon poniżej wg potrzeby. Skonsumowane/historyczne doki żyją w `archive/` — nie kasujemy, archiwizujemy.
+**Aktualizacja:** 2026-07-14
 
-## 🥇 Kanon (źródła prawdy — kolejność obowiązywania)
+## Zacznij tutaj
 
-| Plik | Co trzyma |
-|---|---|
-| `wizja-i-plan-produktu-v2.md` | **Kanon nadrzędny** (2026-07-08): wizja, model biznesowy Z1–Z3, ekipy, sekwencja Kroków 0–5, bramki B1–B4, art direction |
-| `build-brief-v0.3-addendum.md` → `build-brief-apka-treningowa-v0.2.md` | specyfikacja bazowa (addendum nadpisuje brief) |
-| `roadmap.md` | horyzonty + backlog feature'ów (recap, retro typo) — zrewidowany pod wizję v2 |
-| `paleta-arco-warm.md` | tokeny kolorów (źródło prawdy dla N3+) |
-| `wytyczne-designu.md` | HIG adaptowane pod PWA: zasady twarde, czego nie kopiujemy, **checklist ekranu (w DoD)** |
-| `monetyzacja.md` | benchmarki i matematyka rynku (model → nadpisany przez wizję v2, bannery w pliku) |
-| `konkurencja-hevy.md` | audyt Hevy + moaty (rewizja 2026-07-08: Hevy MA polski) |
+- `HANDOFF.md` — co działa, co jest na produkcji i jakie są aktualne ryzyka.
+- `plan-sprintow-2026-07.md` — aktywny backlog i kolejność następnych sprintów.
+- `roadmap.md` — horyzonty rozwoju i bramki decyzyjne.
+- `wizja-i-plan-produktu-v2.md` — kanon produktu, marki i modelu.
 
-## 📋 Stan i plany (żywe)
+Te cztery pliki są jedynymi dokumentami sterującymi bieżącą pracą. Gdy starszy dokument im przeczy, obowiązuje powyższa kolejność.
 
-| Plik | Co trzyma |
-|---|---|
-| `HANDOFF.md` | gdzie jesteśmy, co dalej — czytaj po CLAUDE.md |
-| `plan-sprintow-2026-07.md` | kolejność sprintów + statusy (nadpisuje kolejność z `sprinty-szczegolowe.md`) |
-| `sprinty-szczegolowe.md` | zakresy sprintów + tor assetów |
-| `kalendarz-wykonawczy.md` | daty Kroków 0–4 z buforem; **launch: okno 2–8 sty 2027**; reguły poślizgu |
-| `notion-sync-queue.md` | kolejka wpisów do Notion (flush na żądanie) |
-| `feedback-uzytkownikow.md` | log surowego feedbacku (#1: przeładowany home) |
-| `plan-floating-nav-i-ikony-3d.md` | zaplanowana pływająca nawigacja i mały system ikon clay 3D; zależność od audytu UI/UX |
-| `sprint-ux-mobile-ia-2026-07.md` | **najbliższy sprint UX:** safe-area iOS, floating nav, bottom sheety, biblioteka programów, pomiary 2× zdjęcie + notatki oraz benchmark IA |
+## Trwałe referencje
 
-## 🔬 Audyty i projekty techniczne
+### Produkt i badania
 
-| Plik | Co trzyma |
-|---|---|
-| `audyt-kodu-pod-wizje-v2.md` | wpływ wizji na kod + wycena 13–20 tyg. + decyzje §4 |
-| `projekt-schematu-subs-consents-pods.md` | design schematu pod Kroki 2–4 (7 decyzji [Ty] w §6) |
-| `instrumentacja-metryk.md` | taksonomia eventów pod B1–B4 + rekomendacja PostHog EU (kod: `lib/analytics.ts`) |
-| `audyt-bazy-cwiczen.md` | baza ćwiczeń: audyt S8 + kuracja trenerska §5 (2026-07-08) |
-| `audyt-kodu-zaleznosci.md` | zależności/higiena (wejście do S9-cz.2) |
-| `bezpieczenstwo.md` | **zasady twarde + przegląd 2026-07-08** (RLS 11/11 ✓, headers załatane, findings P1–P3) + checklisty S10/S11/Krok 2/4 + proces incydentów |
-| `optymalizacja.md` | **budżety wydajności** (LCP/INP/JS per trasa, sprzęt odniesienia: średni Android) + zasady twarde + przegląd (80% długu = S9-cz.2) + checklist |
-| `audyt-technologiczny-2026-07.md` | werdykty stacku + wyzwalacze zmiany |
-| `usability-audit.md` | heurystyki + zadania §C + checklista P0/P1 (prerekwizyt H2!) |
+- `scenariusz-h2.md` — scenariusz testów z użytkownikami.
+- `feedback-uzytkownikow.md` — dziennik obserwacji i decyzji.
+- `usability-audit.md` — audyt użyteczności i stan ustaleń.
+- `konkurencja-hevy.md` oraz `archive/konkurencja-hevy-ux.md` — benchmark konkurencyjny.
+- `monetyzacja.md` — wcześniejsza analiza; wizja v2 rozstrzyga konflikty.
 
-## 🧪 Walidacja (przed launchem)
+### Design i komunikacja
 
-| Plik | Co trzyma |
-|---|---|
-| `scenariusz-h2.md` | kompletny skrypt sesji testowych (70 min/os., progi B1) |
-| `concierge-test-ekip.md` | ❌ ODWOŁANY (2026-07-12); zostaje jako spec kryteriów 🟢🟡🔴 do oceny dogfoodingu |
-| `ekipa-koncepcja.md` | **ekipa w całości** (2026-07-12): audyt decyzji, konkurencja (Duolingo/Ladder/WHOOP…), mechanika (rytm tygodniowy, nudge, cykl życia), IA + UI pod Warm; decyzje [Ty] §8 |
+- `paleta-arco-warm.md` — kolory i semantyka.
+- `wytyczne-designu.md` — zasady interfejsu i dostępności.
+- `tone-of-voice.md` — język produktu.
+- `prompt-ikony-3d-clay.md` — zasady małego zestawu ikon 3D.
+- `strategia-marketingowa.md`, `landing-plan.md`, `plan-dystrybucji.md`, `baza-contentu-instagram.md` — materiały na etap launchu.
 
-## 📣 Marka i marketing
+### Technologia i operacje
 
-| Plik | Co trzyma |
-|---|---|
-| `tone-of-voice.md` | głos marki + prompt do sesji copy |
-| `strategia-marketingowa.md` | pozycjonowanie, persony, messaging, kampania launchowa |
-| `plan-dystrybucji.md` | kanały K1–K5, kadencje, pomiar (taktyka pod strategią) |
-| `landing-plan.md` | landing we Framerze + lista oczekujących + test cenowy A/B |
-| `baza-contentu-instagram.md` | bank ~6 mies. contentu IG (38 postów, 7 rubryk stories) |
-| `prompt-ikony-3d-clay.md` | ikony 3D: 3dicons.co + AI-clay, system materiałów |
+- `setup-local.md` — uruchomienie lokalne.
+- `bezpieczenstwo.md` — zasady i bramki bezpieczeństwa.
+- `optymalizacja.md` — budżety wydajności.
+- `instrumentacja-metryk.md` — architektura pomiaru.
+- `kalendarz-wykonawczy.md` — orientacyjny harmonogram.
+- `notion-sync-queue.md` — kolejka zmian do ręcznej synchronizacji na żądanie.
 
-## 📚 Treść produktu i ops
+### Ekipy i dane
 
-| Plik | Co trzyma |
-|---|---|
-| `trainings/` | źródłowe programy trenera (6 plików + README) — programy w seedzie odtwarzają je 1:1 po kuracji |
-| `seed-prompt-fbw.md` | historyczna specyfikacja seedu |
-| `setup-local.md` | uruchomienie lokalne / ops |
+- `ekipa-koncepcja.md` — założenia produktu.
+- `ekipa-blueprint-wdrozeniowy.md` — referencja techniczna; baseline v0 jest już wdrożony dla kont testowych.
+- `projekt-schematu-subs-consents-pods.md` — projekt docelowego multi-user, zgód i subskrypcji; nie opisuje w całości obecnej produkcji.
 
-## 💡 `inspiracje/` — surowe materiały zewnętrzne (transkrypcje, researche)
+### Historyczne fundamenty
 
-| Plik | Co trzyma |
-|---|---|
-| `inspiracje/wnioski-dla-arco.md` | **SYNTEZA obu transkrypcji**: co bierzemy (z miejscami naniesienia) / co świadomie odrzucamy / co zaparkowane — czytaj to zamiast surowych transkrypcji |
-| `inspiracje/transkrypcja-enrico-notifications.md` | inżynieria powiadomień (specyficzność, loss aversion, timing 23,5 h) — surowiec do nudge/ekip (Krok 4) |
-| `inspiracje/transkrypcja-mobbin-paywalls.md` | 2850 paywalli: flow nie ekran, trial-timeline, „cancel anytime", anty-wzorce — surowiec do paywalla Kroku 3 |
+- `build-brief-apka-treningowa-v0.2.md`
+- `build-brief-v0.3-addendum.md`
 
-## 🗄️ `archive/` — skonsumowane (nie czytaj, chyba że szukasz historii)
+Briefy pomagają zrozumieć decyzje i model danych, ale nie są aktywnym planem wykonawczym.
 
-M.in.: `audyt-biznesowy-2026-07-08.md` (geneza wizji v2), `brief-audyt-biznesowy.md`, `empty-states-copy.md` (wdrożone w S14), `start-z-claude-code.md` (bootstrap z początków), starsze audyty/plany (pełna lista w folderze).
+## Archiwum
+
+`archive/` zawiera wybrane audyty i decyzje, do których nadal warto wracać. Zakończone plany wykonawcze, które tylko dublowały historię Git, zostały usunięte zamiast utrzymywania ich jako równoległe źródła prawdy.
+
+## Zasady utrzymania
+
+- Po zmianie stanu aktualizujemy `HANDOFF.md`.
+- Po zmianie priorytetu aktualizujemy `plan-sprintow-2026-07.md`.
+- Roadmapę zmieniamy tylko wtedy, gdy zmienia się kolejność horyzontów lub bramka.
+- Dokument zakończonego sprintu usuwamy, gdy jego wiedza jest już w kodzie, testach i historii Git.
+- Trwałą decyzję, benchmark lub wymaganie prawne zachowujemy jako referencję.
+- Notion synchronizujemy wyłącznie na prośbę właściciela.

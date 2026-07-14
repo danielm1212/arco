@@ -1,5 +1,7 @@
 # Audyt kodu i zależności (S9) — raport
 
+> **Raport historyczny.** Zadania wykonane i wersje paczek należy weryfikować w `package.json`, CI oraz `HANDOFF.md`. Dokument zachowuje uzasadnienie wcześniejszych decyzji.
+
 > Data: 2026-07-04. Część bezpieczna wykonana; refaktory = część 2 (osobna tura); majory = decyzja [Ty] (§2).
 
 ## 1. Zrobione teraz

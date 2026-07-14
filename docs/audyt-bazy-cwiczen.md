@@ -1,5 +1,7 @@
 # Audyt bazy ćwiczeń (S8) — wynik skanu + propozycja kuracji
 
+> **Raport historyczny.** Aktualną poprawność i liczby rekordów potwierdza `npm run validate:training`; roadmapa i backlog nie są utrzymywane w tym pliku.
+
 > Data: 2026-07-04. Skan `scripts/data/exercises.json` (873 wpisy z free-exercise-db) + weryfikacja obrazków + użycie w apce. Kuracja = **propozycja do akceptacji [Ty]** (§3); nic nie ukrywam bez zgody.
 
 ## 1. Wynik skanu — baza zdrowsza, niż zakładał plan

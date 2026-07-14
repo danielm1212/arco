@@ -54,7 +54,7 @@ Po ~50k zł MRR z etapów 1–2: consumer globalnie (walka z Hevy — trudna) vs
 
 **R5 — Warstwa trenerska nie istnieje w kanonie.** Żaden dok jej nie przewidywał. Architektonicznie sprzyja nam brief v0.2 („schema i auth od początku pod multi-user / white-label") i model `programs.user_id`. Do przemyślenia przy decyzjach architektonicznych (pamięć `proactive-architecture-review`): relacja trener↔podopieczny, udostępnianie programu innemu userowi, widoczność danych podopiecznego (RODO: zgoda!). **Nie budować teraz — nie zamykać drogi.**
 
-**R6 — Rot dokumentacji: ✅ SPRZĄTNIĘTE (2026-07-06).** Kickboxing usunięty z briefu v0.2; plate calc oznaczony jako descoped w briefie i `setup-local.md`; volt/Athletic oznaczony jako porzucony w `roadmap.md` (H3 + analiza konkurencji) i w torze assetów `sprinty-szczegolowe.md` (prompty do przepisania pod Warm przed użyciem).
+**R6 — Rot dokumentacji: ✅ SPRZĄTNIĘTE.** Historyczne kierunki i zakończone plany wykonawcze nie są już aktywnymi źródłami prawdy. Aktualna kolejność jest w `plan-sprintow-2026-07.md`, a zasady assetów w `prompt-ikony-3d-clay.md`.
 
 ## 6. Co to zmienia TERAZ (a czego nie)
 

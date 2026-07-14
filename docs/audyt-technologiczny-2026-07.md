@@ -1,5 +1,7 @@
 # Arco — audyt technologiczny przed deployem (2026-07-03)
 
+> **Audyt historyczny sprzed aktualizacji frameworka.** Stan Next.js 14/React 18 opisany niżej nie jest aktualnym stackiem. Obecnie obowiązują `HANDOFF.md` i `package.json`; dokument zachowujemy ze względu na argumentację i wcześniejsze decyzje migracyjne.
+
 > Rola: architekt infrastruktury. Pytanie właściciela: „czy na pewno wybraliśmy najlepsze rozwiązanie — zanim zrobimy deploy?"
 > Metoda: wymagania (§1) → każda warstwa stacku vs realne alternatywy → werdykt + **wyzwalacz zmiany** (kiedy decyzję trzeba będzie zrewidować). Oceniam pod NASZE wymagania, nie „co jest modne".
 > Stan faktyczny zbadany w repo: Next 14.2.35 · React 18 · Tailwind 3.4 · Serwist 9.5 · @supabase/ssr 0.12 · supabase-js 2.108 · offline = własny outbox (`lib/outbox.ts` 66 linii + `lib/useSync.ts` 92 linie, localStorage, koalescencja per seria) · `smoke:offline` istnieje.

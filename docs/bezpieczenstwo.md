@@ -1,58 +1,66 @@
-# Bezpieczeństwo Arco — zasady systemowe + wynik przeglądu
+# Bezpieczeństwo Arco
 
-> **Data:** 2026-07-08 · **Zakres:** (1) zasady obowiązujące od dziś, (2) przegląd obecnego stanu (kod/konfig/RLS — wykonany na repo), (3) checklisty per etap. Uzupełnia: `audyt-kodu-zaleznosci.md` (deps), bramkę kont+RODO w `roadmap.md`, `projekt-schematu-subs-consents-pods.md` §5 (RLS ekip).
-> Kontekst ryzyka: dziś single-user (ekspozycja mała), ale launch = realni userzy + płatności. Zasady pisane pod docelowy stan, checklisty rozkładają je na etapy.
+**Aktualizacja:** 2026-07-14
 
----
+## Zasady twarde
 
-## 1. Zasady twarde (obowiązują KAŻDĄ zmianę od dziś)
+1. Każda tabela z danymi użytkownika dostaje RLS i test wielokontowy w tej samej migracji.
+2. Service role nie występuje w kodzie klienta. Używamy go wyłącznie w skryptach i kontrolowanym kodzie serwerowym.
+3. Sekrety nie trafiają do repo, treści komend, dokumentacji ani logów.
+4. Każda akcja serwerowa sprawdza użytkownika, własność zasobu, wejście i limity.
+5. Nie wykonujemy hurtowego kasowania danych użytkownika. Operacja ryzykowna wymaga backupu i jawnego zakresu.
+6. Treści użytkownika renderujemy jako tekst. Nie używamy `eval` ani `dangerouslySetInnerHTML` dla danych wejściowych.
+7. Upload ma limit rozmiaru, kontrolę MIME, bezpieczną nazwę i właściwe polityki Storage.
+8. Zbieramy wyłącznie potrzebne dane i nie wysyłamy PII do analityki.
+9. Nowy webhook, signup, upload, e-mail, push lub zaproszenie przechodzi analizę nadużyć i rate limiting.
+10. Incydenty opisujemy, zatrzymujemy ich skutki i obsługujemy zgodnie z RODO.
 
-1. **RLS na każdej nowej tabeli z danymi usera, w tej samej migracji co tabela.** Test wielokontowy przy każdej zmianie polityk (dwóch userów nie widzi się nawzajem). Seed (`user_id=null`) zawsze read-only.
-2. **Service-role nigdy w kodzie aplikacji** — tylko `scripts/` (seed/bootstrap/smoke) i przyszłe webhooki (route handlers server-only). Każdy PR dotykający auth/DB sprawdza to grepem.
-3. **Sekrety:** nigdy w repo, nigdy w literałach komend (precedens: `.env.ops.local` gitignorowany, kasowany po użyciu — N1). Rotacja przy podejrzeniu wycieku, bez dyskusji. Prod-hasła generowane, nigdy dev-owe (`arco1` = wyłącznie lokalnie).
-4. **Server action = pełny guard:** auth (`getUser`), własność zasobu (`user_id`), walidacja wejścia (whitelisty enum jak w `userExercises`), limity rozmiaru/typu uploadów. Klient NIGDY nie decyduje o uprawnieniach ani planie (entitlements liczy serwer — schemat §2).
-5. **Dane usera są święte:** żadnych hurtowych DELETE poza seedem `user_id=null` (incydent 2026-07-02 = pamięć instytucjonalna); backup przed każdą ryzykowną operacją na prodzie; RODO-kasowanie tylko przez zaprojektowany cascade.
-6. **Zero wykonywalnego wejścia:** brak `dangerouslySetInnerHTML`/`eval` (stan: czysto — utrzymać); treści od userów renderowane jako tekst; URL-e obrazków tylko z naszych bucketów/whitelisty `remotePatterns`.
-7. **Zależności:** `npm audit` przy każdym sprincie + przegląd przy dodaniu paczki (czy utrzymywana, czy potrzebna); krytyczne vulny = stop-the-line. Vendorowanie zamiast zaufania w znikające paczki (precedens: react-body-highlighter).
-8. **Minimalizacja danych** (RODO by design): nie zbieramy, czego nie potrzebujemy (wzorce już przyjęte: wiek bez daty urodzenia, check-in dzień-nie-godzina, zero PII w analityce).
-9. **Nowa powierzchnia = przegląd przed merge:** upload, webhook, cron, push, e-mail — każde przechodzi przez pytania: kto może wywołać? co najgorszego może wysłać? co się stanie przy 1000×/min?
-10. **Uczciwość = bezpieczeństwo marki:** żadnych ciemnych wzorców także w bezpieczeństwie (nie ukrywamy incydentów przed userami — przy realnym wycieku: powiadomienie + UODO wg RODO, patrz §4).
+## Stan potwierdzony
 
-## 2. Wynik przeglądu (2026-07-08, na repo)
+- Next.js 16 i React 19 są wdrożone.
+- Bazowe security headers działają na produkcji.
+- CSP jest egzekwowane, a nie tylko raportowane.
+- CI istnieje i obejmuje testy statyczne oraz integracyjne.
+- RLS chroni dane użytkownika i baseline Ekipy; test wielokontowy jest częścią smoke.
+- `body-photos` jest prywatnym bucketem z dostępem użytkownika do własnego folderu.
+- Obrazy ćwiczeń są niezależne od GitHuba i hostowane w Supabase Storage/CDN.
+- Publiczna rejestracja pozostaje wyłączona.
 
-### ✅ Potwierdzone dobre (utrzymać)
-- **RLS: 11/11 tabel** objętych (`enable row level security` + polityki per tabela; wzorzec `programs` z ownership).
-- **Storage `body-photos`: prywatny** + polityki po folderze `user_id` (select/insert/delete own).
-- **Auth-guard we wszystkich server actions** (`getUser` + ownership check; akcje zwracają `{error}`, nie throw).
-- **Middleware chroni wszystkie trasy** (redirect na /login; poprawny wzorzec @supabase/ssr bez logiki między createServerClient a getUser).
-- **Zero service-role poza scripts/, zero dangerouslySetInnerHTML/eval, `.env*` w gitignore** (żaden .env nie jest śledzony).
-- **Upload zdjęć:** limit 5 MB + kontrola `image/*` + rozszerzenie z MIME + ścieżka `{uid}/{uuid}`.
-- Ops-precedensy: sekrety przez gitignorowany plik jednorazowy, świeże `ADMIN_PASSWORD` na prod.
+## Otwarte bramki przed publicznymi kontami
 
-### ⚠️ Findings (priorytet · co · kiedy)
-| P | Finding | Akcja | Etap |
-|---|---|---|---|
-| **P1** | **Brak security headers** (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy; HSTS dokłada Vercel) | ✅ **załatane 2026-07-08** — `headers()` w `next.config.mjs` (zestaw bazowy, bez CSP). Weryfikacja przy najbliższym buildzie [Ty] | teraz |
-| **P1** | **CSP brak** — z Next wymaga pracy (inline/nonce) | wdrożyć jako **Report-Only** przy S10, egzekwować przed launchem | S10→S11 |
-| **P2** | **Bucket `exercise-photos` publiczny** (świadoma decyzja S6; URL nieodgadywalny UUID, ale bez auth) | przy multi-user: prywatny + signed URLs albo świadome pozostawienie z zapisem w polityce prywatności (zdjęcia własnych ćwiczeń mogą być widoczne dla posiadacza linku) — **decyzja [Ty] w Kroku 2** | Krok 2 |
-| **P2** | **Brak rate limitingu** naszych akcji (Supabase auth ma własne limity, akcje nie) | limity na: signup, join-pod (invite brute-force — schemat już wymaga), upload, nudge (unique-index już projektowany) | Krok 2/4 |
-| **P2** | **5 vuln w next@14** (audyt S9; wszystkie w next, fix = major) | decyzja majorów [Ty] przed launchem — do checklisty S11 | S11 |
-| **P3** | Backupy: darmowy tier Supabase = ograniczona retencja, brak PITR | przed launchem: plan backupów (min. cotygodniowy dump poza Supabase) + test odtworzenia | S11/Krok 2 |
-| **P3** | Brak CI z `npm audit`/lint gate | przy okazji pierwszego CI (nie blokuje; zasada §1.7 ręcznie) | po launchu |
+| Priorytet | Ryzyko | Wymagana akcja |
+|---|---|---|
+| P0 | Brak potwierdzonego restore | Backup bazy i Storage oraz realne odtworzenie do izolowanego środowiska |
+| P1 | Publiczny `exercise-photos` | Zdecydować, czy bucket zostaje publiczny, czy przechodzi na signed URLs |
+| P1 | Brak pełnej ochrony nadużyć | Rate limiting dla signup, resetu, uploadu, kodów Ekipy, reakcji i nudge |
+| P1 | Publiczne konta | Weryfikacja e-mail, polityka haseł, eksport/usunięcie danych i wersjonowane zgody |
+| P1 | Ekipy | Zgoda na udostępnianie aktywności, ochrona 8-znakowych kodów i rotacja zaproszeń |
+| P2 | CSP | Po usunięciu dawnego źródła zdjęć sprawdzić i usunąć zbędne `raw.githubusercontent.com` z allowlisty |
+| P2 | Operacje | Udokumentować rollback aplikacji, migracji i Storage |
 
-### 🔮 Nowe powierzchnie z wizji (już zaprojektowane, pilnować przy budowie)
-Krok 2: Stripe webhooks (weryfikacja sygnatur!), publiczny signup (enumeracja kont, polityka haseł, weryfikacja e-mail), eksport RODO (tylko własne dane!). Krok 4: RLS ekip (test wielokontowy obowiązkowy — pułapka rekursji opisana w schemacie §5), invite-code ≥12 znaków + rate limit + rotacja, push endpoints (ochrona `push_subscriptions`), e-mail (SPF/DKIM/DMARC domeny!).
+## Gate Sprintu 16
 
-## 3. Checklisty per etap
+- [ ] Backup bazy wykonany.
+- [ ] Backup Storage wykonany.
+- [ ] Restore do izolowanego środowiska zakończony sukcesem.
+- [ ] Krytyczne ekrany i liczby rekordów sprawdzone po restore.
+- [ ] Nagłówki i CSP sprawdzone na produkcji.
+- [ ] `npm audit` przejrzany, a ryzyka zapisane lub usunięte.
+- [ ] Checklistę rollbacku da się wykonać bez wiedzy z tej rozmowy.
 
-**S10 (mini-gate — rozszerzony): ✅ ZROBIONE 2026-07-11.** service-role poza bundlem (re-check: 0 wystąpień poza `scripts/`, `.env*` gitignorowane, `.env.ops.local` z deployu usunięty) · RLS włączone wszędzie (re-check po migracji kuracji+batch: 11/11 tabel z politykami, 0 bez) · **CSP Report-Only wdrożone** (`next.config.mjs`, nagłówek potwierdzony na `next start` — `default-src 'self'` + dozwolone Supabase/hotlink obrazków; enforce = S11 po przeglądzie raportów w DevTools) · **offline-guardy** dla swap/add/skip (`lib/offlineGuard.ts` — sygnał zamiast cichego błędu; zweryfikowane: brak POST w sieci przy offline). Przegląd logów Supabase pod nietypowe zapytania — odłożone do S11 (mało ruchu = mało sygnału teraz).
-**S11 (launch gate):** decyzja majorów next · CSP enforce · plan backupów + test restore · `npm audit` czysty lub zaakceptowany · headers zweryfikowane na prodzie (securityheaders.com).
-**Krok 2:** wszystko z bramki roadmapy + decyzja exercise-photos + rate limiting + Stripe webhook signature + polityka haseł + audyt RLS wielokontowy (scenariusze w schemacie §5).
-**Krok 4:** test wielokontowy ekip (różne ekipy nie widzą się; były członek traci dostęp natychmiast) + brute-force test invite + SPF/DKIM/DMARC.
+## Gate publicznych kont i Ekipy
 
-## 4. Proces (solo-founder edition — krótko, żeby było wykonalne)
+- Dwóch użytkowników nie widzi swoich sesji, zdjęć, ustawień ani prywatnych eventów.
+- Były członek Ekipy natychmiast traci dostęp.
+- Kod zaproszenia jest limitowany, rotowalny i odporny na masowe zgadywanie.
+- Eksport zawiera wyłącznie dane właściciela, a usunięcie konta ma kontrolowany zakres.
+- Webhooki weryfikują sygnatury i są idempotentne.
+- SPF, DKIM i DMARC są skonfigurowane przed wysyłką e-maili z domeny.
 
-- **Incydent** (wyciek/utrata danych/przejęcie konta): (1) zatrzymaj krwawienie (rotacja kluczy, wyłączenie endpointu), (2) snapshot stanu do analizy, (3) zapisz timeline w `docs/incydenty/`, (4) jeśli dane osobowe realnych userów → obowiązek RODO: ocena, ew. zgłoszenie UODO ≤72 h + powiadomienie userów (szablon przy Kroku 2 z konsultacją prawną), (5) post-mortem = wpis do tego pliku (jak incydent 2026-07-02).
-- **Dostępy:** wszystko na Twoich kontach z 2FA (GitHub, Supabase, Vercel, Stripe, ESP — włącz wszędzie, jeśli gdzieś brak). Żadnych współdzielonych haseł. Claude dostaje sekrety tylko przez pliki jednorazowe.
-- **Zgłoszenia z zewnątrz:** od launchu adres security@ (alias) w stopce polityki prywatności; odpowiedź ≤7 dni, bez bug bounty (uczciwie: solo).
-- **Przegląd tego pliku:** przy każdej bramce (S11, Krok 2, Krok 4) — checklisty §3 odhaczane w HANDOFF.
+## Incydent
+
+1. Ogranicz skutki: wyłącz endpoint, rotuj klucz lub cofnij wdrożenie.
+2. Zachowaj dowody i zapisz oś czasu w `docs/incydenty/`.
+3. Oceń zakres danych i użytkowników.
+4. Dla danych osobowych wykonaj ocenę obowiązku zgłoszenia; wymagany termin RODO może wynosić 72 godziny.
+5. Po incydencie dodaj test lub zabezpieczenie, które zapobiega powtórce.

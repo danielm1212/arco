@@ -57,4 +57,35 @@
 
 ---
 
+## #3 — 2026-07-14 · właściciel (dogfooding) · mobilne flow i PWA
+
+**Feedback (parafraza wierna):**
+
+- biblioteka programów była trudna do odnalezienia,
+- sticky header i toasty nachodziły na systemowy obszar iOS,
+- ekran skakał przy otwieraniu bottom sheetu,
+- floating nav był za wysoko i miał nierówne marginesy,
+- elementy pod sheetem pozostawały klikalne i przewijalne,
+- po naprawie blokady tła scroll wewnątrz sheetu nadal poruszał stroną pod spodem,
+- brakowało gestu swipe w dół,
+- porzucenie treningu z home prowadziło do niewłaściwego widoku,
+- trening po fakcie i korekta błędnego ciężaru były zbyt słabo odkrywalne,
+- pomiar można było zapisać bez wagi, a notatka nie była później widoczna.
+
+**Wprowadzone zmiany:**
+
+- [x] jawne wejście do biblioteki i filtry w bottom sheecie,
+- [x] safe area sticky headerów, toastów i nawigacji,
+- [x] floating nav z marginesem 12 px,
+- [x] stabilny scroll lock, overlay bez click-through i scroll treści bez ruchu tła,
+- [x] swipe w dół zamyka bottom sheet,
+- [x] poprawny flow porzucenia sesji,
+- [x] jawny „trening po fakcie” z datą, czasem i programem,
+- [x] edycja zakończonego treningu,
+- [x] wymagana waga, widoczna notatka i maksymalnie dwa zdjęcia.
+
+**Status:** zachowanie dotykowe właściciel potwierdził po iteracjach. Otwarte pozostają pełna regresja wszystkich sheetów oraz focus trap i zwrot fokusu dla klawiatury. To zakres Sprintu 15.
+
+---
+
 *(kolejne wpisy dopisuj powyżej tej linii w formacie: numer, data, źródło, wersja, cytat/parafraza, analiza, akcja)*

@@ -1,5 +1,7 @@
 # Build Brief v0.2: Osobista apka treningowa (web · PWA)
 
+> **Dokument historyczno-referencyjny.** Opisuje fundament projektu, a nie aktualny stack ani kolejność prac. Obowiązują `HANDOFF.md`, `plan-sprintow-2026-07.md` i `roadmap.md`. Aktualnie aplikacja używa Next.js 16, React 19 i własnego hostingu zdjęć ćwiczeń.
+
 **Dla:** Claude Code  ·  **Wersja:** 0.2  ·  **Zmiany vs 0.1:** naprawione 3 blokery, poprawki schematu, jednostki, konkretny seed FBW.
 
 ---

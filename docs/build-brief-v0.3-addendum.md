@@ -1,6 +1,8 @@
 # Build Brief — Addendum v0.3 (do v0.2)
 
-**Status:** uzupełnienie, nie zastąpienie. `build-brief-apka-treningowa-v0.2.md` zostaje źródłem prawdy dla schematu, programów i faz; ten plik **nadpisuje punktowo** decyzje, które zdezaktualizowały się w realnym użyciu i audytach.
+> **Dokument historyczno-referencyjny.** Zachowuje ważne decyzje o loggerze, walidacji i zakresie, ale nie jest aktywnym backlogiem. Aktualny stan i plan są w `HANDOFF.md` oraz `plan-sprintow-2026-07.md`.
+
+**Status historyczny:** uzupełnienie v0.2. Oba briefy są dziś referencją dla decyzji, nie źródłem kolejności sprintów.
 **Data:** 2026-06-25. **Podstawa:** audyty (`usability-audit.md`, `product-audit.md`, `ux-audit-mobbin.md`) + realne sesje właściciela.
 
 > Defekt systemowy v0.2: funkcje były specyfikowane **przez mechanizm**, nie przez **kontekst użycia** (kto / kiedy / po co). To źródło tarć poniżej.

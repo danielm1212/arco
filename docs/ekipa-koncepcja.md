@@ -1,7 +1,7 @@
 # Ekipa — audyt, analiza konkurencji i koncepcja produktowa
 
 > **Data:** 2026-07-12 · **Zlecenie [Ty]:** audyt + analiza konkurencji i rozwiązań + plan „jak to powinno u nas funkcjonować, działać i wyglądać".
-> **Kontekst:** rename „pody" → **ekipa** wykonany (decyzja [Ty] 2026-07-12, `nazwa-grup.md`; sweep: docs + CLAUDE.md + landing; techniczne EN `pods`/`pod_members` w schemacie zostają).
+> **Kontekst:** nazwa **Ekipa** jest rozstrzygnięta i wdrożona. W warstwie technicznej pozostają `pods`/`pod_members`.
 > **Ten dokument NIE nadpisuje kanonu** — konsoliduje decyzje z wizji v2 §4, schematu i concierge-testu, dokłada analizę konkurencji i projektuje warstwę UX/UI, której dotąd nie było. Konflikty z kanonem: zero; nowe propozycje oznaczone „PROPOZYCJA".
 
 ---
@@ -15,7 +15,7 @@
 - **Rola strategiczna:** silnik wzrostu (Z2: w całości darmowy, na zawsze), bramka B3 (≥30% aktywnych w ekipie; k ≥1,15), fast-follow 4–8 tyg. po launchu (Krok 4).
 - **Walidacja:** ~~concierge-test na WhatsAppie~~ **ODWOŁANY (decyzja [Ty] 2026-07-12 — brak możliwości organizacyjnej).** Zastępuje go: H2 moduł C (koncept-test C1–C3) + **dogfooding od dnia 1 Kroku 4** (pierwsza ekipa = Daniel + własny krąg, oceniana kryteriami 🟢🟡🔴 z concierge-doku po 3 tyg.) + bramka B3 bez zmian.
 - **Model danych:** kompletny design (schemat §4–5) z RLS, anty-spamem, rotacją invite-code i pułapką rekursji rozbrojoną.
-- **Onboarding z zaproszenia:** wariant E0 „Radek Cię zaprosił" + auto-join po E5 (onboarding-v3, Krok 4 furtka).
+- **Onboarding z zaproszenia:** wariant „Radek Cię zaprosił" z jawną zgodą przed dołączeniem. Szczegółowy flow wraca w Sprincie 21 przed publiczną Ekipą.
 
 **Dziury (dotąd nigdzie nie zaprojektowane) — zamyka je ten dokument:**
 1. **Warstwa UX/UI:** gdzie ekipa mieszka w apce, jak wygląda ekran, karta na home, stany puste/martwe (§4–5).
@@ -97,7 +97,7 @@ Biały kafel (radius-xl, cień jak reszta): nagłówek „Ekipa" + rząd 2–4 a
 - Nagłówek z opcjonalną nazwą („Ekipa z Melonika") albo default „Twoja ekipa".
 
 ### 5.3 Stany puste i graniczne
-- **Empty (bez ekipy):** clay-ikona (dzwonek/💪 z zestawu) + copy z `nazwa-grup.md`: „**Zbierz ekipę.** Paru znajomych. Widzicie tylko: kto był i kto ciągnie serię." *(„1–3"→„paru" po decyzji max 6 — kopia sprzedaje kameralność bez liczb, spójnie z C2 w H2)* + CTA „Zaproś kumpla" (share-sheet z gotowym tekstem zaproszenia). Wariant momentu: pierwsze wejście po własnym 4+ tygodniu passy → „Masz passę. Miej świadków." (zadziora, pozytywnie).
+- **Empty (bez ekipy):** clay-ikona (dzwonek/💪 z zestawu) + copy „**Zbierz ekipę.** Paru znajomych. Widzicie tylko: kto był i kto ciągnie serię." + CTA „Zaproś kumpla". Wariant momentu: pierwsze wejście po własnym 4+ tygodniu passy → „Masz passę. Miej świadków."
 - **Martwa ekipa:** §3.3 — karta cichnie, jeden CTA.
 - **Czekający na pierwszego zaproszonego:** „Link wysłany. Gdy Radek zrobi pierwszy trening — zobaczysz to tutaj."
 
@@ -109,7 +109,7 @@ Zaproszenie (share-sheet): „Radek zaprasza Cię do swojej ekipy w Arco — tre
 
 ## 6. Etapowanie (spójne z Krokami wizji)
 
-- **v0 — walidacja bez concierge (test WhatsApp ODWOŁANY, decyzja [Ty] 2026-07-12):** H2 moduł C rozstrzyga tezę koncepcyjnie (C1 „ma Radka" liczy się do B1); **dogfooding = pierwsza ekipa Daniela na realnym produkcie od dnia 1 Kroku 4**, oceniana po 3 tyg. kryteriami 🟢🟡🔴 z `concierge-test-ekip.md` §3. Konsekwencja: digest w v1 obowiązkowo (siatka bezpieczeństwa), a ryzyka multi-6 (dyfuzja odpowiedzialności) pilnujemy metryką `nudge_sent` per rozmiar ekipy zamiast pre-testu.
+- **v0 — walidacja:** H2 moduł C sprawdza zrozumienie i atrakcyjność koncepcji. Publiczną Ekipę dogfoodujemy przez trzy tygodnie na realnych małych grupach. Ocenimy aktywność w trzecim tygodniu względem pierwszego, spontaniczne reakcje i nudge, powroty po nudge oraz deklarację „brakowałoby mi tego". Digest pozostaje siatką bezpieczeństwa, a ryzyko rozmycia odpowiedzialności mierzymy względem rozmiaru ekipy.
 - **v1 — Krok 4 (6–8 tyg., po decyzjach 2026-07-12 bliżej górnej granicy):** schemat §4 + RLS + check-in/reakcje/nudge + karta home (agregat) + `/ekipa` ze switcherem (multi-3) + wybór ekipy w zaproszeniu + emoji-awatary + skrzynka + push/e-mail + pętla instalacji + **digest tygodniowy (✅ w v1)** + eventy fazy 3 instrumentacji.
 - **v1.x — po B3-danych:** kalibracja progu nudge, warianty copy nudge'a (wzorzec Duolingo: wariantowość utrzymuje świeżość), ochrona-passy × ekipa (komunikacja choroby/urlopu).
 - **v2 — tylko jeśli dane każą:** matchmaking obcych (WYŁĄCZNIE jeśli dane pokażą ekipy żyjące bez wcześniejszej relacji — po odwołaniu concierge tę tezę sprawdzą dopiero metryki v1), TWA gdy iOS dusi pętlę. (Multi-ekipa przeniesiona do v1 decyzją [Ty].)

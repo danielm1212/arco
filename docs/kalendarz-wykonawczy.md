@@ -1,42 +1,28 @@
-# Kalendarz wykonawczy — sekwencja z buforem (2026-07 → 2027)
+# Arco — orientacyjny kalendarz wykonawczy
 
-> **Data:** 2026-07-08 · **Powód:** wycena z audytu (~13–20 tyg. nowej pracy) wisiała bez kalendarza — a „wykonalność solo" była oceniona 6,5/10 właśnie za brak dat i buforu. Ten plik przelicza Kroki wizji na miesiące w DWÓCH scenariuszach budżetu czasu i daje reguły na poślizg. Aktualizuj przy każdym większym odchyleniu — kalendarz kłamiący jest gorszy niż żaden.
-> **Założenie bazowe [Ty — potwierdź]:** scenariusz R (realny) = **~10 h/tydz.**; scenariusz A (ambitny) = **~15 h/tydz.** Wszystkie daty niżej mają już wliczony **bufor +20%** (życie, praca, choroby, „szybkie poprawki").
+**Aktualizacja:** 2026-07-14
 
----
+Daty są prognozą dla pracy solo i mają ustępować jakości danych, testom i bramkom. Szczegółowy zakres jest w `plan-sprintow-2026-07.md`.
 
-## 1. Oś czasu
+| Okres | Plan | Warunek wyjścia |
+|---|---|---|
+| 14–19 lipca 2026 | Sprint 15: PWA, bottom sheety, dostępność, regresja | Macierz urządzeń bez blockerów |
+| 20–26 lipca 2026 | Sprint 16: backup, restore, rollback, security review | Udowodniony restore |
+| 27–31 lipca 2026 | Sprint 17: przygotowanie i pilot H2 | Powtarzalny scenariusz i czyste konta |
+| sierpień 2026 | Sprint 18: 3–5 sesji H2, poprawki i decyzja B1 | Rdzeń przechodzony samodzielnie |
+| wrzesień–październik 2026 | Sprint 19: publiczne konta i RODO | Zielona B2 |
+| listopad–grudzień 2026 | Sprint 20: pomiar, płatności i cichy launch | Stabilny lejek i rollback |
+| po stabilnym launchu | Sprint 21: publiczna Ekipa i dogfooding | Zielona B3 |
 
-| Blok | Zakres | Scenariusz R (10 h) | Scenariusz A (15 h) |
-|---|---|---|---|
-| **Krok 0** — domknięcie H1 (S9-cz.2 higiena → S10 offline → S11 launch gate) | wg planu sprintów | **lip–poł. wrz 2026** (~8–9 tyg.) | lip–sie 2026 (~6 tyg.) |
-| **Równolegle:** landing + K1 content start + prep H2 (pilot, dane demo, P0/P1) | landing-plan, scenariusz-h2 | sie 2026 | lip–sie 2026 |
-| **H2** — sesje 3–5 osób + rozstrzygnięcie B1 | scenariusz-h2 | **poł. wrz 2026** (2 tyg. z analizą) | wrz 2026 |
-| **Krok 2** — konta+RODO+Stripe (4–7 tyg. wyceny) | audyt §5, schemat | **paź–poł. lis 2026** | wrz–paź 2026 |
-| ~~**Równolegle:** concierge-test ekip~~ ODWOŁANY (decyzja [Ty] 2026-07-12) — walidacja: H2 moduł C + dogfooding w Kroku 4 | concierge-test-ekip (banner) | — | — |
-| **Krok 3** — freemium live (3–5 tyg.) | audyt §5 | **poł. lis–poł. gru 2026** | paź–lis 2026 |
-| **🚀 LAUNCH cichy** (lista → społeczności) | wizja Krok 3 | **poł. gru 2026 / sty 2027*** | pocz. gru 2026 |
-| **Krok 4** — ekipy (6–8 tyg.; JEŚLI H2 moduł C nie zapali 🔴; dogfooding od dnia 1) | audyt §5, schemat §4, ekipa-koncepcja | **sty–lut 2027** | gru 2026–sty 2027 |
-| **B2** (fala 1, 3 mies. od launchu) | wizja §7 | **~mar–kwi 2027** | ~mar 2027 |
-| **B3** (pętla ekip, 3 mies. od startu ekip) | wizja §7 | **~mai 2027** | ~kwi 2027 |
-| **B4** (próg sensu, 9–12 mies. od launchu) | wizja §7 | **~wrz–gru 2027** | ~wrz 2027 |
+## Bufor i zasady poślizgu
 
-\* **Decyzja launchowa [Ty]:** poł. grudnia to sezonowy dołek (święta), ale **sty 1–15 to najlepsze okno roku w fitness** (postanowienia). Rekomendacja: jeśli Krok 3 domyka się w grudniu — soft-launch do listy w grudniu (test rur), **publiczne pchnięcie 2–8 stycznia 2027**. Poślizg Kroku 3 o 2 tyg. jest wtedy… korzystny. Nie planuj launchu na listopad kosztem jakości — styczniowe okno wybacza poślizg, ale nie wybacza zgubionej serii (S10!).
+- Poślizg do dwóch tygodni pokrywa bufor.
+- Przy większym poślizgu tniemy zakres, nie testy, RLS, backup ani poprawność zapisu treningu.
+- Jeśli H2 ujawni blocker, publiczne konta czekają do poprawki i ponownego testu.
+- Nie wymuszamy styczniowego okna fitness kosztem bezpieczeństwa. Styczeń 2027 pozostaje dobrym terminem publicznego pchnięcia tylko wtedy, gdy B1 i B2 są zielone.
 
-## 2. Reguły poślizgu (żeby kalendarz przeżył kontakt z rzeczywistością)
+## Prace organizacyjne z wyprzedzeniem
 
-1. **Poślizg <2 tyg.:** nic nie robisz, od tego jest bufor.
-2. **Poślizg 2–4 tyg. w bloku:** tniesz ZAKRES bloku, nie jakość rdzenia — gotowe cięcia: Krok 2 → odłóż OAuth Google (email+hasło wystarczy na start); Krok 3 → odłóż ochronę passy i ekran trial-countdown (kłódka + limity to minimum sensowne); Krok 4 → wersja minimalna (bez push — skrzynka+e-mail na start; push jako fast-follow).
-3. **Poślizg >4 tyg. łącznie:** przesuwasz launch na następne okno (styczeń → ew. marzec „wiosenna forma"), NIE kompresujesz S10/testów. Zasada z wizji: płacący user nie wybacza zgubionej serii.
-4. **Nigdy nie tnij:** S10 (offline correctness), audytu RLS przy Kroku 2/4, double opt-in, testów wielokontowych ekip.
-
-## 3. Budżet tygodniowy po launchu (przypomnienie z planu dystrybucji)
-
-Od launchu stały split: **≥20% dystrybucja** (K1 artykuły + K3 społeczności + przegląd metryk), ~60% produkt (Krok 4, iteracje z feedbacku), ~20% operacje (support, dunning, sprzątanie). Kalendarz Kroku 4 w tabeli już to uwzględnia.
-
-## 4. Co może wywrócić kalendarz (nazwane wprost)
-
-- **Konsultacja prawna (Krok 2)** — lead time kancelarii bywa 2–4 tyg.; umów w SIERPNIU, dokumenty i tak przyjdą robić się same.
-- **Stripe activation + weryfikacja działalności** — załatw konto i weryfikację w Kroku 2 od pierwszego dnia, nie „jak będzie checkout".
-- **Czerwone B1 w H2** — wraca packaging wartości przed Krokiem 2 (tak mówi bramka): +3–4 tyg. Kalendarz to przeżyje (launch dalej łapie styczeń w scenariuszu A / marzec w R).
-- **Motywacja foundera** — najcięższy blok to Krok 2 (prawo+płatności = zero dopaminy). Plan: przeplatać z landingiem/contentem (widoczny postęp); „deserem" w środku bloku jest teraz content/landing, nie concierge (odwołany).
+- Konsultację prawną i dostępność kancelarii można umawiać podczas H2, bez implementowania kont przed B1.
+- Weryfikację Stripe można rozpocząć w Sprincie 19.
+- Domena, ESP i materiały marketingowe nie powinny blokować Sprintów 15–18.

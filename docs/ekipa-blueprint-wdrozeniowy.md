@@ -1,8 +1,8 @@
 # Ekipa — blueprint wdrożeniowy (dev-v0 → funkcja jakości Arco)
 
-> **Status:** dev-v0 wdrożone i lokalnie zweryfikowane 2026-07-13. Dokument pozostaje kontraktem jakości przed publicznym Krokiem 4; nie oznacza gotowości do produkcji.
+> **Status:** v0 wdrożone i zweryfikowane na produkcji dla kont testowych. Dokument pozostaje kontraktem jakości przed publicznym Sprintem 21; nie oznacza gotowości do publicznego użycia.
 >
-> **Cel dev-v0:** przejść z dwoma lokalnymi kontami cały uczciwy cykl: utworzenie → zaproszenie → dołączenie ze świadomą zgodą → trening → check-in → reakcja/nudge widoczne dla odbiorcy → wyjście. Bez publicznego signupu i bez produkcyjnego deployu.
+> **Cel v0:** przejść na kontach testowych cały uczciwy cykl: utworzenie → zaproszenie → dołączenie ze świadomą zgodą → trening → check-in → reakcja/nudge widoczne dla odbiorcy → wyjście. Publiczny signup, komunikacja zewnętrzna i zabezpieczenia nadużyć pozostają poza v0.
 
 ## 1. Zasada produktu
 
@@ -17,7 +17,7 @@ Ekipa nie jest feedem. To prywatna, mała warstwa accountability: użytkownik wi
 | Konta | ręcznie bootstrappowane konta lokalne | signup, weryfikacja e-mail, reset hasła, rate limit |
 | Prywatność | jawne potwierdzenie przy stworzeniu/dołączeniu; RLS testowane na 2 kontach | rejestr zgód, eksport/usunięcie RODO, regulamin i polityka prywatności |
 | Widoczność | dzień check-inu, postęp tygodnia, passa, emoji-reakcje, nudge w skrzynce | push/e-mail, quiet hours, digest niedzielny |
-| Zaproszenie | długi jednorazowy kod, copy + kopiowanie | share sheet, link/QR, rotacja, rate limit |
+| Zaproszenie | kod 8 znaków, copy + kopiowanie | share sheet, link/QR, rotacja, rate limit i ochrona przed zgadywaniem |
 | Administracja | opuszczenie, usunięcie przez twórcę, zmiana nazwy | pełne logowanie audytowe i obsługa konfliktów |
 
 Nudge bez widocznego odbiorcy jest „fałszywym przyciskiem”. Dev-v0 zapisuje go w skrzynce odbiorcy, zanim dojdą push i e-mail.

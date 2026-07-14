@@ -4,6 +4,8 @@
 
 Arco to mobilna aplikacja treningowa do szybkiego zapisywania serii, śledzenia postępów i otrzymywania prostych, opartych na regułach wskazówek. Moduł Ekipa pozwala małym, prywatnym grupom wspierać się bez udostępniania szczegółów treningu.
 
+Wersja produkcyjna: [arco-olive.vercel.app](https://arco-olive.vercel.app). Publiczna rejestracja jest obecnie wyłączona, a Ekipy są dostępne na kontach testowych.
+
 ## Uruchomienie lokalne
 
 Wymagane są Node.js 22, npm oraz lokalny Supabase. Uzupełnij `.env.local`, a następnie uruchom:
@@ -34,4 +36,4 @@ Pełna bramka na GitHubie dodatkowo uruchamia świeżą lokalną bazę oraz czte
 
 ## Dokumentacja
 
-Aktualny stan i kolejność prac znajdują się w `docs/HANDOFF.md` oraz `docs/plan-sprintow-2026-07.md`. Mapa pozostałych dokumentów jest w `docs/README.md`.
+Aktualny stan i kolejność prac znajdują się w [`docs/HANDOFF.md`](docs/HANDOFF.md) oraz [`docs/plan-sprintow-2026-07.md`](docs/plan-sprintow-2026-07.md). Mapa pozostałych dokumentów jest w [`docs/README.md`](docs/README.md).

@@ -29,7 +29,7 @@ Pytania otwarcia: Jak często trenujesz? Gdzie (siłownia/dom)? Czym dziś zapis
 
 ## 3. Część A — first-click + zadania rdzenia (30 min)
 
-> ⚠️ **Aktualizacja 2026-07-11:** Z0 testuje home **PO redesignie** (`redesign-home.md` — FlameWeek + hero + chip), nie stary układ. Testujemy to, co wypłynie do userów.
+> **Aktualizacja 2026-07-14:** Z0 testuje aktualny produkcyjny home. Nie pokazujemy starszych makiet ani nie tłumaczymy hierarchii przed zadaniem.
 
 ### Z0 · First-click test (feedback #1) — konto DEMO
 Wręcz telefon z apką otwartą na home konta demo. **Framing (ważne — to test IA „docodziennego" home, nie pierwszego kontaktu):** „Tak wygląda apka po kilku tygodniach używania. Widzisz ten ekran pierwszy raz. **Co byś zrobił(a) najpierw? Pokaż palcem, zanim klikniesz.**"

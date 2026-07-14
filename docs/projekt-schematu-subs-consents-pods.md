@@ -1,6 +1,6 @@
 # Projekt schematu: subscriptions · consents · pods
 
-> **Data:** 2026-07-08 · **Status:** DESIGN DOC, zero kodu i migracji — do recenzji [Ty]. Realizacja: subscriptions+consents w **Kroku 2** (bramka kont+RODO), pods w **Kroku 4** (fast-follow).
+> **Data:** 2026-07-08 · **Status zaktualizowany 2026-07-14:** część `pods` ma wdrożony baseline v0 dla kont testowych. `subscriptions`, docelowy rejestr zgód, publiczne konta i publiczne utwardzenie Ekipy pozostają projektem do Sprintów 19–21. W razie konfliktu obowiązują aktualne migracje i `HANDOFF.md`.
 > **Podstawa:** `wizja-i-plan-produktu-v2.md` §2–§4 (Z1–Z3, reverse trial 21 dni, ekipa = check-in+passa NIE logi), `audyt-kodu-pod-wizje-v2.md` §4.5 (usunięcie konta vs integralność ekip), konwencje istniejącego schematu (uuid pk, enumy, cascade po `user_id`, RLS wzorzec `programs`).
 > **Cel dokumentu:** zamknąć decyzje modelowe TERAZ, żeby Krok 2 nie projektował pod presją — i żeby nic, co budujemy wcześniej, nie zamykało drogi.
 

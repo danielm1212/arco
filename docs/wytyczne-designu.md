@@ -40,7 +40,7 @@
 
 ## 2c. Motion (dodane 2026-07-12, decyzja [Ty]: „animacje dopisać")
 
-- **Animacje żyją w momentach, nie w narzędziu** (architektura dwuwarstwowa): zapłon płomienia po treningu (0,6 s ease-overshoot — już w spec redesign-home), mikro-celebracja PR, done-screen, przyszłe recap/wrap. Logger = zero animacji dekoracyjnych (ręce w magnezji, nie w teatrze).
+- **Animacje żyją w momentach, nie w narzędziu** (architektura dwuwarstwowa): zapłon płomienia po treningu, mikro-celebracja PR, done-screen, przyszłe recap/wrap. Logger = zero animacji dekoracyjnych (ręce w magnezji, nie w teatrze).
 - **UI-transitions: 150–300 ms**, ease-out; sheety/drawery wg domyślnych vaul. Nic nie „pływa" dłużej niż 300 ms w warstwie narzędzia.
 - **`prefers-reduced-motion` respektowane wszędzie** — momenty degradują się do zmiany stanu bez ruchu (WCAG).
 - **Jedna animacja spoczynkowa na ekran max** (dziś: puls dzisiejszego płomienia na home — i to wszystko).
