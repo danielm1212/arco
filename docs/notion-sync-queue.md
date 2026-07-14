@@ -4,16 +4,8 @@ Synchronizujemy wyłącznie na wyraźną prośbę właściciela. Po udanym wysł
 
 ## Oczekujące
 
-- [ ] UPDATE | Automatyczna jakość | Etap→Done | Notatka: CI działa na `main`; lint, 14 testów jednostkowych, walidatory, build i izolowane integracje Supabase.
-- [ ] UPDATE | Audyt UI/UX + floating nav | Etap→Do testu [Ty] | Notatka: floating nav 12 px, safe area i mobilne warstwy wdrożone; przed zamknięciem potrzebna macierz Sprintu 15 i focus trap.
-- [ ] UPDATE | Trening po fakcie | Etap→Do testu [Ty] | Notatka: jawny przepływ z datą, godziną, czasem i właściwym wpisem w historii został wdrożony.
-- [ ] CREATE/UPDATE | Edycja zakończonego treningu | Wysoki | Etap→Do testu [Ty] | Notatka: użytkownik może poprawić błędny ciężar, powtórzenia i dane serii w przeszłości.
-- [ ] UPDATE | Pomiary ciała | Etap→Do testu [Ty] | Notatka: waga jest wymagana, notatka widoczna, limit dwóch zdjęć.
-- [ ] UPDATE | Ekipa | Etap→Do testu [Ty] | Notatka: testowe v0 działa na produkcji z kodem 8 znaków; publiczny signup, zgody, rate limiting i ochrona kodów pozostają bramką przed publicznym użyciem.
-- [ ] CREATE/UPDATE | Stabilność bottom sheetów PWA | Wysoki | Etap→Do testu [Ty] | Notatka: naprawione skoki, click-through i scroll tła; dodany swipe w dół. Sprint 15 domyka regresję oraz dostępność fokusu.
-- [ ] CREATE/UPDATE | Backup i test restore | Krytyczny | Etap→In Progress | Notatka: następny gate operacyjny przed H2/publicznymi kontami.
-- [ ] UPDATE | Kuracja programów i ćwiczeń | Etap→Do testu [Ty] | Notatka: produkcja ma aktualny seed i obrazy we własnym Supabase Storage/CDN; dokładne liczby potwierdza walidator.
+(puste)
 
 ## Ostatnia synchronizacja
 
-2026-07-12. Starsza historia operacji pozostaje w historii Git i w Notion.
+2026-07-14. Flush 9 pozycji: 5 nowych kart (Automatyczna jakość (CI) → Done; Audyt UI/UX mobilny + floating nav; Pomiary ciała: waga+notatka+zdjęcia; Stabilność bottom sheetów PWA; Backup i test restore → In Progress/Krytyczny) + 4 aktualizacje istniejących kart (Edycja daty/czasu sesji „po fakcie", Edycja zapisanego treningu → Do testu [Ty], Ekipa/rename pody→Ekipa → Do testu [Ty], Kuracja bazy ćwiczeń → Do testu [Ty]). „Trening po fakcie" i „Edycja zakończonego treningu" zmapowane na istniejące karty zamiast tworzyć duplikaty. Starsza historia operacji pozostaje w historii Git i w Notion.
