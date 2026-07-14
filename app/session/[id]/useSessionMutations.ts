@@ -32,6 +32,7 @@ export function useSessionMutations({
   saveSet,
   removeSet,
   startRest,
+  allowRest,
 }: {
   sessionId: string;
   setExercises: Dispatch<SetStateAction<LoggerExercise[]>>;
@@ -39,6 +40,8 @@ export function useSessionMutations({
   saveSet: (s: SessionSet, patch?: Partial<SessionSet>) => void;
   removeSet: (setId: string) => void;
   startRest: (ex: LoggerExercise, label?: string) => void;
+  /** W trybie edycji historii nie uruchamiamy timera przerw. */
+  allowRest: boolean;
 }) {
   // S12: serie, które pobiły rep-PR w tej sesji (badge „PR" na wierszu)
   const [prSets, setPrSets] = useState<Record<string, boolean>>({});
@@ -104,6 +107,7 @@ export function useSessionMutations({
   // metody: A→od razu B), zamiast tego mikro-hint kto teraz. Przerwa odpala się
   // dopiero po ostatnim ogniwie rundy, z labelem "Przerwa po supersecie".
   function maybeStartRest(ex: LoggerExercise) {
+    if (!allowRest) return;
     if (!getAutoRest()) return;
     if (ex.supersetGroup == null) {
       startRest(ex);

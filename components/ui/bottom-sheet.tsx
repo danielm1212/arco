@@ -33,7 +33,7 @@ export function BottomSheet({
   contentClassName?: string;
 }) {
   return (
-    <Drawer.Root open={open} onOpenChange={onOpenChange} handleOnly>
+    <Drawer.Root open={open} onOpenChange={onOpenChange} handleOnly fixed noBodyStyles>
       {trigger && <Drawer.Trigger asChild>{trigger}</Drawer.Trigger>}
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/50" />
@@ -51,7 +51,7 @@ export function BottomSheet({
             </Drawer.Close>
           </div>
           <Drawer.Description className="sr-only">{description}</Drawer.Description>
-          <div className="overflow-y-auto p-md pt-xs pb-xl">{children}</div>
+          <div className="overflow-y-auto p-md pt-xs pb-[calc(2rem+var(--safe-area-bottom))]">{children}</div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>

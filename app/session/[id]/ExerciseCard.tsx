@@ -3,25 +3,27 @@
 import { memo, useState } from "react";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { Button } from "@/components/ui/button";
-import type { SessionSet, UnitSystem } from "@/lib/types";
-import { progressionHint as guidanceProgressionHint } from "@/lib/guidance";
+import type { SessionSet, TrainingPriority, UnitSystem } from "@/lib/types";
+import { progressionTarget } from "@/lib/guidance";
 import { Lightbulb, Info, MoreHorizontal } from "lucide-react";
 import { SwapPanel } from "./SwapPanel";
 import { SetRow } from "./SetRow";
 import { ExerciseCardMenu } from "./ExerciseCardMenu";
 import type { LoggerExercise } from "./Logger";
 
-/** Hint progresji (reguła rule-based z `lib/guidance` — pełny/poniżej zakresu, timed, rep-PR). */
-function progressionHint(ex: LoggerExercise, unit: UnitSystem): string | null {
+/** Cel progresji na dzisiejszą sesję — jawny i zawsze nadpisywalny przez użytkownika. */
+function progressionGoal(ex: LoggerExercise, unit: UnitSystem, trainingPriority: TrainingPriority) {
   const top = ex.slot?.target_reps_max;
   const prWeight = top != null ? ex.repPRs[top] : undefined;
-  return guidanceProgressionHint({
+  return progressionTarget({
     type: ex.type,
     unit,
     prev: ex.previous,
+    previousSets: ex.previousSets,
     targetRepsMin: ex.slot?.target_reps_min,
     targetRepsMax: ex.slot?.target_reps_max,
     repPR: top != null && prWeight != null ? { reps: top, weight: prWeight } : null,
+    trainingPriority,
   });
 }
 
@@ -30,6 +32,7 @@ export interface ExerciseCardProps {
   index: number;
   sessionId: string;
   unit: UnitSystem;
+  trainingPriority: TrainingPriority;
   /** restFor(ex) policzone w rodzicu — prymityw, żeby memo widziało zmianę */
   restSeconds: number;
   swapOpen: boolean;
@@ -74,6 +77,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   index,
   sessionId,
   unit,
+  trainingPriority,
   restSeconds,
   swapOpen,
   noteOpen,
@@ -214,10 +218,13 @@ export const ExerciseCard = memo(function ExerciseCard({
           )}
 
           {(() => {
-            const hint = progressionHint(ex, unit);
-            return hint ? (
+            const goal = progressionGoal(ex, unit, trainingPriority);
+            return goal ? (
               <p className="flex items-start gap-1.5 rounded-md bg-success/10 px-sm py-xs text-xs text-success">
-                <Lightbulb className="mt-0.5 size-3.5 shrink-0" /> {hint}
+                <Lightbulb className="mt-0.5 size-3.5 shrink-0" />
+                <span>
+                  <strong className="font-semibold">Prowadzenie progresji:</strong> {goal.message}
+                </span>
               </p>
             ) : null;
           })()}

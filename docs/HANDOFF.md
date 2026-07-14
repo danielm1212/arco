@@ -1,10 +1,23 @@
 # Arco — stan projektu i handoff (do kontynuacji w nowej sesji)
 
 > Czytaj razem z `CLAUDE.md` (źródło prawdy) i resztą `docs/`. Ten plik mówi: gdzie jesteśmy i co dalej.
-> Aktualizacja: 2026-07-13.
+> Aktualizacja: 2026-07-14.
 
 ## ⭐ STAN NAJNOWSZY (czytaj to pierwsze)
 Pracujemy **sprintami** (`docs/sprinty-szczegolowe.md` = żywy plan z podziałem Claude/Ty). Wizja + konkurencja: `docs/roadmap.md`, `docs/konkurencja-hevy.md`. Pamięć: `proactive-architecture-review`, `arco-long-term-vision`.
+
+**W TOKU LOKALNIE 2026-07-14 — UX mobile, biblioteka i pomiary.** Plan:
+`docs/sprint-ux-mobile-ia-2026-07.md`. Wdrożono wspólny kontrakt safe-area dla PWA/iOS:
+floating nav zachowuje **12 px** z boków i od dołu (+ rzeczywisty inset systemowy), sticky
+nagłówek loggera i toasty nie wchodzą pod status bar, a wspólny BottomSheet nie wymusza już
+`position: fixed` na body i ma dolny inset dla home indicatora. Home z aktywnym planem dostał
+stałe wejście „Przeglądaj programy”, a biblioteka ma filtry miejsca, poziomu i celu w URL.
+Pomiary: nowa migracja `20260714120000_body_metric_photo_gallery.sql` tworzy prywatną galerię
+0–2 zdjęć na pomiar, przenosi legacy zdjęcie na pozycję 1, pokazuje notatkę w historii i czyści
+metadane zdjęć przy usuwaniu. Migracja zastosowana **wyłącznie lokalnie**. Weryfikacja: lint,
+build, unit 8/8, training 0 błędów, recommendation 36/36 oraz smoke z testem notatki/2 zdjęć/
+limitu/cascade ✓. Przed deployem: test fizycznego iPhone Safari/PWA (sheet, klawiatura, toast,
+logger) oraz testy zadań biblioteki z 3–5 osobami.
 
 **DECYZJA [Ty] 2026-07-13 — kolejność po przeglądzie repo:** zapisano wiążący plan w `docs/plan-sprintow-2026-07.md`: (1) naprawa lint React 19, (2) minimalne CI i regresja, (3) backup+test restore/CSP/S11, (4) H2 z 3–5 osobami, (5) konta+RODO+multi-user, (6) cichy launch freemium, (7) **Ekipa** jako fast-follow. Ekipa nie jest już tylko wizją: zakres wdrożenia = bezpieczny model danych+RLS → invite/check-in/karta home → `/ekipa` i emoji → reakcje+nudge → 3-tygodniowy dogfooding/B3. Szczegóły: `ekipa-koncepcja.md` + `projekt-schematu-subs-consents-pods.md`.
 

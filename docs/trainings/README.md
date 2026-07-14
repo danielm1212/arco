@@ -1,6 +1,6 @@
 # ARCO — Starter Programs
 
-Kuratorowany zestaw programów na start dla ARCO. Filozofia: **curated-premium**, nie sprawl. Dziewięć flagowych struktur pokrywa grid poziom × środowisko bez mnożenia kosmetycznych wariantów. Razem z dwoma planami FBW 2-dniowymi biblioteka aplikacji zawiera 11 presetów.
+Kuratorowany zestaw programów na start dla ARCO. Filozofia: **curated-premium**, nie sprawl. Dziewięć flagowych struktur pokrywa grid poziom × środowisko bez mnożenia kosmetycznych wariantów. Razem z czterema celowymi planami FBW 2-dniowymi biblioteka aplikacji zawiera 13 presetów.
 
 Wszystkie parametry oparte na meta-analizach objętości/częstotliwości (Schoenfeld i in.) i na kanonie sprawdzonych programów (Starting Strength / StrongLifts / GZCLP dla base, Upper/Lower i PPL wyżej).
 
@@ -10,15 +10,17 @@ Wszystkie parametry oparte na meta-analizach objętości/częstotliwości (Schoe
 
 | | 🏋️ Siłownia | 🏠 Dom z hantlami | 🤸 Masa ciała |
 |---|---|---|---|
-| **Beginner** | `beginner-gym-fbw3` | `beginner-dumbbell-fbw3` | `beginner-bodyweight-fbw3` |
-| **Intermediate** | `intermediate-gym-upper-lower` | `intermediate-dumbbell-upper-lower` | `intermediate-bodyweight-fbw3` |
-| **Advanced** | `advanced-gym-ppl` | `advanced-home-upper-lower4` | `advanced-bodyweight-upper-lower4` |
+| **Beginner** | `beginner-gym-fbw2` · `beginner-gym-fbw3` | `beginner-home-fbw2` · `beginner-home-fbw3` | `beginner-bodyweight-fbw3` |
+| **Intermediate** | `intermediate-gym-fbw2` · `intermediate-gym-upper-lower4` | `intermediate-home-fbw2` · `intermediate-home-upper-lower4` | `intermediate-bodyweight-fbw3` |
+| **Advanced** | `advanced-gym-ppl6` | `advanced-home-upper-lower4` | `advanced-bodyweight-upper-lower4` |
 
 **9 flagowych programów.** P3 zamknął trzy luki, których nie dało się już uczciwie obsłużyć samą notą fallbacku:
 
 - **Intermediate · masa ciała:** trzydniowe FBW z drążkiem, progresją leverage i opcjonalnym czwartym dniem jako kontynuacją cyklu.
 - **Advanced · hantle:** Upper/Lower 4-dniowy, który obchodzi load ceiling unilateralem, tempem i trudniejszymi wariantami.
 - **Advanced · masa ciała:** Upper/Lower 4-dniowy skupiony na sile i hipertrofii. Skille statyczne typu planche/front lever nadal pozostają poza zakresem.
+
+Dwa dodatkowe presety beginner (`beginner-gym-fbw2` i `beginner-home-fbw2`) obsługują dokładnie profil 2 dni. Nie są skrótem 3-dniowych cykli: każda sesja jest pełnym treningiem całego ciała, a tygodniowy bilans push/pull wynosi około 1:1.
 
 ---
 

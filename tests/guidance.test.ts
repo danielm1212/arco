@@ -7,6 +7,7 @@ import {
   deloadFlags,
   homeGuidance,
   progressionHint,
+  progressionTarget,
   stalenessFlags,
   type GuidanceItem,
 } from "../lib/guidance";
@@ -33,6 +34,81 @@ test("progresja utrzymuje ciężar poniżej dolnego zakresu", () => {
   });
 
   assert.match(hint ?? "", /utrzymaj 80kg/);
+});
+
+test("progresja wskazuje konkretny kolejny cel w środku zakresu", () => {
+  const target = progressionTarget({
+    type: "weighted",
+    unit: "kg",
+    prev: { weight: 80, reps: 8, duration_seconds: null },
+    targetRepsMin: 6,
+    targetRepsMax: 10,
+  });
+
+  assert.equal(target?.kind, "add_reps");
+  assert.match(target?.message ?? "", /80kg × 9\+/);
+});
+
+test("priorytet redukcji chroni jakość zamiast sugerować lżejszy trening", () => {
+  const target = progressionTarget({
+    type: "weighted",
+    unit: "kg",
+    prev: { weight: 80, reps: 8, duration_seconds: null },
+    targetRepsMin: 6,
+    targetRepsMax: 10,
+    trainingPriority: "fat_loss",
+  });
+
+  assert.match(target?.message ?? "", /utrzymaj jakość i ciężar/);
+});
+
+test("progresja nie zwiększa ciężaru, gdy tylko część serii osiągnęła górę zakresu", () => {
+  const target = progressionTarget({
+    type: "weighted",
+    unit: "kg",
+    prev: { weight: 80, reps: 10, duration_seconds: null },
+    previousSets: [
+      { reps: 10, duration_seconds: null },
+      { reps: 9, duration_seconds: null },
+      { reps: 10, duration_seconds: null },
+    ],
+    targetRepsMin: 6,
+    targetRepsMax: 10,
+  });
+
+  assert.equal(target?.kind, "add_reps");
+  assert.doesNotMatch(target?.message ?? "", /82\.5kg/);
+});
+
+test("progresja zwiększa ciężar dopiero po górze zakresu we wszystkich seriach", () => {
+  const target = progressionTarget({
+    type: "weighted",
+    unit: "kg",
+    prev: { weight: 80, reps: 10, duration_seconds: null },
+    previousSets: [
+      { reps: 10, duration_seconds: null },
+      { reps: 10, duration_seconds: null },
+      { reps: 10, duration_seconds: null },
+    ],
+    targetRepsMin: 6,
+    targetRepsMax: 10,
+  });
+
+  assert.equal(target?.kind, "increase_load");
+  assert.match(target?.message ?? "", /82\.5kg/);
+});
+
+test("progresja bodyweight podaje następne powtórzenie", () => {
+  const target = progressionTarget({
+    type: "bodyweight",
+    unit: "kg",
+    prev: { weight: null, reps: 11, duration_seconds: null },
+    targetRepsMin: 8,
+    targetRepsMax: 15,
+  });
+
+  assert.equal(target?.kind, "add_reps");
+  assert.match(target?.message ?? "", /12\+ powt/);
 });
 
 test("rekord może wyznaczyć cel bez poprzedniej serii", () => {
@@ -65,8 +141,16 @@ test("zaległe partie są filtrowane od progu i sortowane malejąco", () => {
 });
 
 test("deload pojawia się przy stagnacji i znika przy postępie", () => {
-  assert.equal(deloadFlags([{ name: "Przysiad", series: [100, 100, 100] }]).length, 1);
+  const flags = deloadFlags([{ name: "Przysiad", series: [100, 100, 100] }]);
+  assert.equal(flags.length, 1);
+  assert.match(flags[0].message, /10%/);
   assert.deepEqual(deloadFlags([{ name: "Przysiad", series: [100, 102.5, 105] }]), []);
+});
+
+test("deload dla masy ciała nie zaleca odejmowania ciężaru", () => {
+  const flags = deloadFlags([{ name: "Pompki", type: "bodyweight", series: [12, 12, 12] }]);
+  assert.match(flags[0].message, /jedną serię mniej/);
+  assert.doesNotMatch(flags[0].message, /10% ciężaru/);
 });
 
 test("home zachowuje priorytet podpowiedzi i limit", () => {

@@ -7,7 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { ProgramEditor, type EditorDay } from "./ProgramEditor";
-import { formatFrequency } from "@/lib/programRecommendation";
+import {
+  formatCycleStructure,
+  formatEquipment,
+  formatEstimatedMinutes,
+  formatFrequency,
+} from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +26,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
   const { data: program } = await supabase
     .from("programs")
     .select(
-      "id, name, user_id, description, goal, level, cycle_days, frequency_min, frequency_max, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
+      "id, name, user_id, description, goal, level, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -86,7 +91,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           {[
             program.goal,
             program.level,
-            `cykl: ${program.cycle_days} dni`,
+            `kolejność: ${formatCycleStructure(program.cycle_days)}`,
             program.frequency_min !== null && program.frequency_max !== null
               ? formatFrequency(program.frequency_min, program.frequency_max)
               : null,
@@ -104,6 +109,34 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
         {program.description && (
           <p className="text-sm text-muted-foreground">{program.description}</p>
         )}
+
+        <section className="grid grid-cols-2 gap-xs rounded-xl bg-card p-md text-card-foreground shadow-sm">
+          <div>
+            <p className="text-xs text-muted-foreground">Czas treningu</p>
+            <p className="mt-2xs text-sm font-medium">
+              {formatEstimatedMinutes(program.estimated_minutes_min, program.estimated_minutes_max) ?? "Według tempa"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Wymagany sprzęt</p>
+            <p className="mt-2xs text-sm font-medium">
+              {formatEquipment(program.required_equipment ?? [], 3) || "Bez dodatkowego sprzętu"}
+            </p>
+          </div>
+          {program.optional_equipment?.length > 0 && (
+            <div className="col-span-2 border-t pt-sm">
+              <p className="text-xs text-muted-foreground">Opcjonalnie</p>
+              <p className="mt-2xs text-sm">{formatEquipment(program.optional_equipment, 4)}</p>
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-xl border border-primary/20 bg-primary/5 p-md">
+          <h2 className="text-sm font-semibold">Jak robić postęp</h2>
+          <p className="mt-2xs text-sm leading-relaxed text-muted-foreground">
+            Wykonuj treningi w podanej kolejności. Gdy trafisz górę zakresu powtórzeń we wszystkich seriach przy dobrej technice, następnym razem dołóż najmniejszy ciężar. Zostaw 1–3 powtórzenia w zapasie.
+          </p>
+        </section>
 
         <div className="flex flex-col gap-sm">
           <form action={setActiveProgram.bind(null, program.id)}>

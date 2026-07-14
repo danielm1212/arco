@@ -13,7 +13,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
   const { data: session } = await supabase
     .from("sessions")
     .select(
-      "id, program_day_id, started_at, finished_at, program_days(label, programs(name))",
+      "id, program_day_id, started_at, finished_at, is_historical, recorded_duration_seconds, program_days(label, programs(name))",
     )
     .eq("id", sessionId)
     .maybeSingle();
@@ -22,7 +22,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
   const [{ data: settings }, { data: exercises }] = await Promise.all([
     supabase
       .from("user_settings")
-      .select("unit_system, default_rest_seconds")
+      .select("unit_system, default_rest_seconds, training_priority")
       .maybeSingle(),
     supabase
       .from("session_exercises")
@@ -105,8 +105,11 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
         programName={dayMeta?.programs?.name ?? null}
         isFinished={!!session.finished_at}
         startedAt={session.started_at}
+        isHistorical={session.is_historical}
+        recordedDurationSeconds={session.recorded_duration_seconds}
         unit={settings?.unit_system ?? "kg"}
         defaultRest={settings?.default_rest_seconds ?? 120}
+        trainingPriority={settings?.training_priority ?? "general_fitness"}
         initialExercises={model}
       />
     </div>

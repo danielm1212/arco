@@ -14,7 +14,7 @@ const TABS = [
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Główna nawigacja" className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[424px] rounded-full border border-border/70 bg-card p-1.5 shadow-lg">
+    <nav aria-label="Główna nawigacja" className="fixed inset-x-[var(--floating-nav-gap)] bottom-[calc(var(--floating-nav-gap)+var(--safe-area-bottom))] z-40 mx-auto max-w-[424px] rounded-full border border-border/70 bg-card p-1.5 shadow-lg">
       <div className="flex">
         {TABS.map((t) => {
           const Icon = t.icon;

@@ -30,8 +30,15 @@ export async function setActiveProgram(programId: string) {
   redirect("/");
 }
 
-/** Start sesji z dnia programu — tworzy session + session_exercises ze slotów. */
-export async function startSession(programDayId: string) {
+type NewSessionOptions = {
+  startedAt?: string;
+  date?: string;
+  isHistorical?: boolean;
+  recordedDurationSeconds?: number;
+};
+
+/** Tworzy sesję i jej ćwiczenia z dnia programu. */
+async function createProgramSession(programDayId: string, options: NewSessionOptions = {}) {
   const { supabase, user } = await requireUser();
 
   const { data: slots, error: slotsErr } = await supabase
@@ -43,7 +50,16 @@ export async function startSession(programDayId: string) {
 
   const { data: session, error: sErr } = await supabase
     .from("sessions")
-    .insert({ user_id: user.id, program_day_id: programDayId })
+    .insert({
+      user_id: user.id,
+      program_day_id: programDayId,
+      ...(options.startedAt ? { started_at: options.startedAt } : {}),
+      ...(options.date ? { date: options.date } : {}),
+      ...(options.isHistorical ? { is_historical: true } : {}),
+      ...(options.recordedDurationSeconds
+        ? { recorded_duration_seconds: options.recordedDurationSeconds }
+        : {}),
+    })
     .select("id")
     .single();
   if (sErr || !session) throw new Error(sErr?.message ?? "Nie udało się utworzyć sesji");
@@ -81,27 +97,101 @@ export async function startSession(programDayId: string) {
     }
   }
 
-  redirect(`/session/${session.id}`);
+  return session.id;
+}
+
+/** Start sesji z dnia programu — tworzy session + session_exercises ze slotów. */
+export async function startSession(programDayId: string) {
+  const sessionId = await createProgramSession(programDayId);
+  redirect(`/session/${sessionId}`);
+}
+
+async function createFreestyleSession(options: NewSessionOptions = {}) {
+  const { supabase, user } = await requireUser();
+  const { data: session, error } = await supabase
+    .from("sessions")
+    .insert({
+      user_id: user.id,
+      program_day_id: null,
+      ...(options.startedAt ? { started_at: options.startedAt } : {}),
+      ...(options.date ? { date: options.date } : {}),
+      ...(options.isHistorical ? { is_historical: true } : {}),
+      ...(options.recordedDurationSeconds
+        ? { recorded_duration_seconds: options.recordedDurationSeconds }
+        : {}),
+    })
+    .select("id")
+    .single();
+  if (error || !session) throw new Error(error?.message ?? "Nie udało się utworzyć sesji");
+  return session.id;
 }
 
 /** Start sesji freestyle (bez programu). */
 export async function startFreestyle() {
-  const { supabase, user } = await requireUser();
-  const { data: session, error } = await supabase
-    .from("sessions")
-    .insert({ user_id: user.id, program_day_id: null })
-    .select("id")
-    .single();
-  if (error || !session) throw new Error(error?.message ?? "Nie udało się utworzyć sesji");
-  redirect(`/session/${session.id}`);
+  const sessionId = await createFreestyleSession();
+  redirect(`/session/${sessionId}`);
+}
+
+export type HistoricalSessionState = { error?: string } | null;
+
+/**
+ * Rozpocznij wpisywanie treningu po fakcie. Data jest wybierana PRZED loggerem,
+ * dzięki czemu historia, PR-y i Ekipa od początku odnoszą się do właściwego dnia.
+ */
+export async function startHistoricalSession(
+  _previousState: HistoricalSessionState,
+  formData: FormData,
+): Promise<HistoricalSessionState> {
+  const occurredAt = String(formData.get("occurredAt") ?? "");
+  const occurredOn = String(formData.get("occurredOn") ?? "");
+  const programDayId = String(formData.get("programDayId") ?? "freestyle");
+  const durationMinutes = Number(formData.get("durationMinutes"));
+  const occurred = new Date(occurredAt);
+
+  if (Number.isNaN(+occurred) || !/^\d{4}-\d{2}-\d{2}$/.test(occurredOn)) {
+    return { error: "Wybierz poprawną datę i godzinę treningu." };
+  }
+  if (+occurred > Date.now()) return { error: "Data treningu nie może być w przyszłości." };
+  if (+occurred < Date.now() - 366 * 86_400_000) {
+    return { error: "Możesz dodać trening maksymalnie sprzed roku." };
+  }
+  if (!Number.isInteger(durationMinutes) || durationMinutes < 1 || durationMinutes > 480) {
+    return { error: "Podaj czas treningu od 1 do 480 minut." };
+  }
+
+  const options: NewSessionOptions = {
+    startedAt: occurred.toISOString(),
+    date: occurredOn,
+    isHistorical: true,
+    recordedDurationSeconds: durationMinutes * 60,
+  };
+  const sessionId =
+    programDayId === "freestyle"
+      ? await createFreestyleSession(options)
+      : await createProgramSession(programDayId, options);
+  redirect(`/session/${sessionId}`);
 }
 
 /** Zakończ sesję (ustaw finished_at). */
 export async function finishSession(sessionId: string) {
   const { supabase } = await requireUser();
+  const { data: existing, error: existingError } = await supabase
+    .from("sessions")
+    .select("started_at, is_historical, recorded_duration_seconds")
+    .eq("id", sessionId)
+    .maybeSingle();
+  if (existingError || !existing) {
+    throw new Error(existingError?.message ?? "Nie znaleziono sesji.");
+  }
+  const finishedAt =
+    existing.is_historical && existing.recorded_duration_seconds
+      ? new Date(
+          +new Date(existing.started_at) + existing.recorded_duration_seconds * 1_000,
+        ).toISOString()
+      : new Date().toISOString();
   const { data: session, error } = await supabase
     .from("sessions")
-    .update({ finished_at: new Date().toISOString() })
+    .update({ finished_at: finishedAt })
     .eq("id", sessionId)
     .select("date")
     .single();
@@ -146,7 +236,7 @@ export async function updateSessionDate(
 
   const { data: s } = await supabase
     .from("sessions")
-    .select("started_at, finished_at")
+    .select("date, started_at, finished_at")
     .eq("id", sessionId)
     .maybeSingle();
   if (!s) return { error: "Nie znaleziono sesji." };
@@ -161,6 +251,13 @@ export async function updateSessionDate(
 
   const { error } = await supabase.from("sessions").update(patch).eq("id", sessionId);
   if (error) return { error: error.message };
+  if (s.finished_at) {
+    const { error: activityError } = await supabase.rpc("sync_workout_activity_day", {
+      p_session_id: sessionId,
+      p_previous_day: s.date,
+    });
+    if (activityError) return { error: activityError.message };
+  }
   await supabase.rpc("recompute_personal_records"); // achieved_at PR-ów pochodzi z started_at
   revalidatePath("/history");
   revalidatePath(`/history/${sessionId}`);

@@ -67,6 +67,41 @@ export type Database = {
         }
         Relationships: []
       }
+      body_metric_photos: {
+        Row: {
+          body_metric_id: string
+          created_at: string
+          id: string
+          path: string
+          position: number
+          user_id: string
+        }
+        Insert: {
+          body_metric_id: string
+          created_at?: string
+          id?: string
+          path: string
+          position: number
+          user_id: string
+        }
+        Update: {
+          body_metric_id?: string
+          created_at?: string
+          id?: string
+          path?: string
+          position?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "body_metric_photos_metric_owner_fkey"
+            columns: ["body_metric_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "body_metrics"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
+      }
       inbox_items: {
         Row: {
           created_at: string
@@ -560,8 +595,10 @@ export type Database = {
           date: string
           finished_at: string | null
           id: string
+          is_historical: boolean
           notes: string | null
           program_day_id: string | null
+          recorded_duration_seconds: number | null
           started_at: string
           user_id: string
         }
@@ -569,8 +606,10 @@ export type Database = {
           date?: string
           finished_at?: string | null
           id?: string
+          is_historical?: boolean
           notes?: string | null
           program_day_id?: string | null
+          recorded_duration_seconds?: number | null
           started_at?: string
           user_id: string
         }
@@ -578,8 +617,10 @@ export type Database = {
           date?: string
           finished_at?: string | null
           id?: string
+          is_historical?: boolean
           notes?: string | null
           program_day_id?: string | null
+          recorded_duration_seconds?: number | null
           started_at?: string
           user_id?: string
         }
@@ -672,6 +713,7 @@ export type Database = {
           created_at: string
           default_rest_seconds: number
           display_name: string | null
+          training_priority: Database["public"]["Enums"]["training_priority"]
           unit_system: Database["public"]["Enums"]["unit_system"]
           updated_at: string
           user_id: string
@@ -684,6 +726,7 @@ export type Database = {
           created_at?: string
           default_rest_seconds?: number
           display_name?: string | null
+          training_priority?: Database["public"]["Enums"]["training_priority"]
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id: string
@@ -696,6 +739,7 @@ export type Database = {
           created_at?: string
           default_rest_seconds?: number
           display_name?: string | null
+          training_priority?: Database["public"]["Enums"]["training_priority"]
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id?: string
@@ -768,6 +812,10 @@ export type Database = {
       remove_pod_member: { Args: { p_pod_id: string; p_user_id: string }; Returns: undefined }
       rename_pod: { Args: { p_name: string; p_pod_id: string }; Returns: undefined }
       send_pod_nudge: { Args: { p_pod_id: string; p_to_user_id: string }; Returns: undefined }
+      sync_workout_activity_day: {
+        Args: { p_previous_day: string; p_session_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       exercise_type: "weighted" | "bodyweight" | "timed"
@@ -782,6 +830,7 @@ export type Database = {
         | "core"
       record_type: "max_weight" | "max_e1rm" | "max_reps" | "max_duration"
       set_type: "warmup" | "working" | "drop"
+      training_priority: "general_fitness" | "strength" | "muscle_gain" | "fat_loss"
       unit_system: "kg" | "lbs"
     }
     CompositeTypes: {

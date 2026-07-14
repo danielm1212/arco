@@ -46,8 +46,11 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="border-b px-md py-md text-center">
+      <header className="flex items-center justify-between border-b px-md py-sm">
         <h1 className="font-semibold">Historia</h1>
+        <Button size="sm" asChild>
+          <Link href="/history/add">Dodaj po fakcie</Link>
+        </Button>
       </header>
 
       <main className="flex-1 space-y-md p-md">
@@ -64,6 +67,12 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
             <Button asChild className="mt-sm">
               <Link href="/">Zacznij pierwszy trening</Link>
             </Button>
+            <Link
+              href="/history/add"
+              className="mt-xs inline-flex min-h-11 items-center text-sm font-medium text-primary underline-offset-2 hover:underline"
+            >
+              Dodaj trening z przeszłości
+            </Link>
           </div>
         )}
 

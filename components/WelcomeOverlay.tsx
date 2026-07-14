@@ -2,15 +2,18 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { updateSettings } from "@/app/actions/settings";
 import { saveActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { track } from "@/lib/analytics";
 import {
   EQUIPMENT_BY_ENVIRONMENT,
+  formatCycleStructure,
+  formatEquipment,
   formatEstimatedMinutes,
   formatFrequency,
   recommendProgram,
@@ -19,10 +22,15 @@ import {
   type TrainingLevel,
 } from "@/lib/programRecommendation";
 import type { UnitSystem } from "@/lib/types";
+import {
+  DEFAULT_TRAINING_PRIORITY,
+  TRAINING_PRIORITIES,
+  type TrainingPriority,
+} from "@/lib/trainingPriority";
 
 // Onboarding v3 (docs/onboarding-v3.md, akcept [Ty] 2026-07-11):
 // E0 moment (Gambarino) → E1 imię+jednostki → E2 gdzie → E3 poziom →
-// E4 cel (default wg poziomu) → E5 karta planu „Aktywuj" + mikro-potwierdzenie.
+// E4 priorytet → E5 rytm (default wg poziomu) → E6 karta planu + potwierdzenie.
 // Jedna decyzja na ekran · ≤60 s · wszystko skipowalne · kropki + wstecz.
 // Na sand: teksty wtórne w brand-muted (stone), NIE muted-foreground (O5).
 const FLAG = "arco-onboarded-v3";
@@ -43,6 +51,29 @@ const ENVS: { id: TrainingEnvironment; label: string; hint: string }[] = [
 const GOAL_DEFAULT: Record<TrainingLevel, number> = { beginner: 2, intermediate: 3, advanced: 4 };
 const subscribeToNothing = () => () => {};
 
+const LEVEL_REASON: Record<TrainingLevel, string> = {
+  beginner: "zaczynasz albo wracasz po przerwie",
+  intermediate: "trenujesz już regularnie",
+  advanced: "masz duże doświadczenie treningowe",
+};
+
+const ENV_REASON: Record<TrainingEnvironment, string> = {
+  gym: "trenujesz na siłowni",
+  home: "trenujesz w domu z hantlami",
+  bodyweight: "trenujesz głównie masą ciała",
+};
+
+function recommendationRhythmCopy(suggestion: ReturnType<typeof recommendProgram>) {
+  if (!suggestion) return "Pokażemy najbliższy plan dla Twojego rytmu.";
+  const rhythm = `${formatCycleStructure(suggestion.program.cycle_days)} · ${formatFrequency(
+    suggestion.program.frequency_min!,
+    suggestion.program.frequency_max!,
+  )}`;
+  return suggestion.exact
+    ? `Twój plan będzie działał w rytmie: ${rhythm}.`
+    : `Najbliższy bezpieczny plan działa w rytmie: ${rhythm}.`;
+}
+
 export function WelcomeOverlay({
   eligible,
   unit,
@@ -61,7 +92,7 @@ export function WelcomeOverlay({
     () => false,
   );
   const [dismissed, setDismissed] = useState(false);
-  // 0=E0 moment · 1=E1 ty · 2=E2 gdzie · 3=E3 poziom · 4=E4 cel · 5=E5 plan · 6=potwierdzenie
+  // 0=moment · 1=ty · 2=gdzie · 3=poziom · 4=priorytet · 5=rytm · 6=plan · 7=potwierdzenie
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [u, setU] = useState<UnitSystem>(unit);
@@ -69,6 +100,7 @@ export function WelcomeOverlay({
   const [env, setEnv] = useState<TrainingEnvironment | null>(null);
   const [goal, setGoal] = useState(weeklyGoal);
   const [goalTouched, setGoalTouched] = useState(false);
+  const [priority, setPriority] = useState<TrainingPriority>(DEFAULT_TRAINING_PRIORITY);
   const [saving, setSaving] = useState(false);
   // E4: default celu wg poziomu — dopóki user sam nie dotknął wyboru.
   const effectiveGoal = level && !goalTouched ? GOAL_DEFAULT[level] : goal;
@@ -98,6 +130,7 @@ export function WelcomeOverlay({
       const profileSettings = {
         unit_system: u,
         weekly_goal: effectiveGoal,
+        training_priority: priority,
         display_name: name.trim() || null,
         ...(env ? { available_equipment: EQUIPMENT_BY_ENVIRONMENT[env] } : {}),
       };
@@ -129,8 +162,8 @@ export function WelcomeOverlay({
     });
     setSaving(false);
     if (activate && suggestion) {
-      // E5 → mikro-potwierdzenie (0,9 s), potem home z hero „Dziś" gotowym na Start
-      setStep(6);
+      // E6 → mikro-potwierdzenie E7 (0,9 s), potem home z hero „Dziś" gotowym na Start
+      setStep(7);
       window.setTimeout(finish, 900);
     } else {
       finish();
@@ -142,13 +175,13 @@ export function WelcomeOverlay({
     finish();
   }
 
-  const dots = 5; // E1–E5
+  const dots = 6;
 
   return (
     // fixed → poza pt-safe z <body>; własny safe-area (notch PWA, ekran pełnoekranowy)
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] text-brand-foreground">
       <div className="flex min-h-11 items-center justify-between">
-        {step >= 1 && step <= 5 ? (
+        {step >= 1 && step <= 6 ? (
           <button
             onClick={() => setStep(step - 1)}
             aria-label="Wstecz"
@@ -159,7 +192,7 @@ export function WelcomeOverlay({
         ) : (
           <span />
         )}
-        {step <= 5 && (
+        {step <= 6 && (
           <button onClick={skipAll} className="min-h-11 px-2 text-sm text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             Pomiń
           </button>
@@ -262,8 +295,35 @@ export function WelcomeOverlay({
           </div>
         )}
 
-        {/* E4 · CEL — default wg poziomu, copy „życiowo, nie ambitnie" */}
+        {/* E4 · PRIORYTET — język prosty dla osoby początkującej, bez „bazy". */}
         {step === 4 && (
+          <div className="space-y-md">
+            <h1 className="text-2xl font-semibold tracking-tight">Co jest teraz najważniejsze?</h1>
+            <p className="text-sm text-brand-muted">Nie zmienia to planu. Dopasujemy do tego wskazówki w treningu.</p>
+            <div className="space-y-xs">
+              {TRAINING_PRIORITIES.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setPriority(item.id);
+                    setStep(5);
+                  }}
+                  className={`w-full rounded-xl border p-md text-left ${
+                    priority === item.id
+                      ? "border-primary bg-primary/10"
+                      : "border-input bg-card text-card-foreground"
+                  }`}
+                >
+                  <p className="font-medium">{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.hint}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* E5 · RYTM — default wg poziomu, copy „życiowo, nie ambitnie" */}
+        {step === 5 && (
           <div className="space-y-md">
             <h1 className="text-2xl font-semibold tracking-tight">Ile treningów w tygodniu?</h1>
             <div className="flex gap-xs">
@@ -284,6 +344,9 @@ export function WelcomeOverlay({
             <p className="text-sm text-brand-muted">
               Wybierz liczbę, którą spokojnie utrzymasz. Cel możesz zmienić w ustawieniach.
             </p>
+            <p className="rounded-lg bg-brand-foreground/8 px-sm py-xs text-sm font-medium text-brand-foreground">
+              {recommendationRhythmCopy(suggestion)}
+            </p>
             <Button
               size="lg"
               className="w-full"
@@ -300,7 +363,7 @@ export function WelcomeOverlay({
                     },
                   });
                 }
-                setStep(5);
+                setStep(6);
               }}
             >
               Dalej
@@ -308,8 +371,8 @@ export function WelcomeOverlay({
           </div>
         )}
 
-        {/* E5 · WYNIK (outcome-first) — karta planu; świadomie BEZ auto-startu Dnia A */}
-        {step === 5 && (
+        {/* E6 · WYNIK (outcome-first) — karta planu; świadomie BEZ auto-startu Dnia A */}
+        {step === 6 && (
           <div className="space-y-md">
             {suggestion ? (
               <>
@@ -318,16 +381,36 @@ export function WelcomeOverlay({
                 </p>
                 <div className="rounded-xl bg-card p-md text-card-foreground shadow-md">
                   <p className="text-xl font-semibold leading-tight">{suggestion.program.name}</p>
-                  <p className="mt-2xs text-xs text-muted-foreground">
-                    Plan od trenera · cykl {suggestion.program.cycle_days} dni · {formatFrequency(suggestion.program.frequency_min!, suggestion.program.frequency_max!)}
-                    {formatEstimatedMinutes(
-                      suggestion.program.estimated_minutes_min,
-                      suggestion.program.estimated_minutes_max,
-                    ) &&
-                      ` · ${formatEstimatedMinutes(
-                        suggestion.program.estimated_minutes_min,
-                        suggestion.program.estimated_minutes_max,
-                      )}/trening`}
+                  <p className="mt-2xs text-sm text-muted-foreground">
+                    Wybraliśmy go, bo {LEVEL_REASON[level!]}, {ENV_REASON[env!]} i wybierasz {effectiveGoal} treningi w tygodniu.
+                  </p>
+                  <dl className="mt-sm grid grid-cols-2 gap-xs text-xs">
+                    <div className="rounded-lg bg-secondary p-sm">
+                      <dt className="text-muted-foreground">Twój rytm</dt>
+                      <dd className="mt-2xs font-medium">{formatFrequency(suggestion.program.frequency_min!, suggestion.program.frequency_max!)}</dd>
+                    </div>
+                    <div className="rounded-lg bg-secondary p-sm">
+                      <dt className="text-muted-foreground">Kolejność</dt>
+                      <dd className="mt-2xs font-medium">{formatCycleStructure(suggestion.program.cycle_days)}</dd>
+                    </div>
+                    <div className="rounded-lg bg-secondary p-sm">
+                      <dt className="text-muted-foreground">Czas treningu</dt>
+                      <dd className="mt-2xs font-medium">
+                        {formatEstimatedMinutes(
+                          suggestion.program.estimated_minutes_min,
+                          suggestion.program.estimated_minutes_max,
+                        ) ?? "według tempa"}
+                      </dd>
+                    </div>
+                    <div className="rounded-lg bg-secondary p-sm">
+                      <dt className="text-muted-foreground">Potrzebujesz</dt>
+                      <dd className="mt-2xs font-medium">
+                        {formatEquipment(suggestion.program.required_equipment, 2) || "podstawowy sprzęt"}
+                      </dd>
+                    </div>
+                  </dl>
+                  <p className="mt-sm text-xs text-muted-foreground">
+                    Progresja: gdy wykonasz górny zakres powtórzeń we wszystkich seriach z dobrą techniką, następnym razem dołóż najmniejszy ciężar.
                   </p>
                   {suggestion.note && (
                     <p className="mt-xs text-xs text-muted-foreground">{suggestion.note}</p>
@@ -371,11 +454,9 @@ export function WelcomeOverlay({
         )}
 
         {/* Mikro-potwierdzenie po aktywacji (0,9 s) — domknięcie pętli E5 */}
-        {step === 6 && (
+        {step === 7 && (
           <div className="flex flex-col items-center gap-md text-center">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <Check className="size-7" />
-            </span>
+            <MomentIcon3D name="rocket" className="-my-sm size-24" priority />
             <p className="text-lg font-semibold">Plan gotowy</p>
             <p className="text-sm text-brand-muted">
               Czeka na ekranie głównym. Możesz od razu zacząć trening.
@@ -385,7 +466,7 @@ export function WelcomeOverlay({
       </div>
 
       <div className="space-y-md">
-        {step >= 1 && step <= 5 && (
+        {step >= 1 && step <= 6 && (
           <div className="flex justify-center gap-xs" aria-hidden>
             {Array.from({ length: dots }, (_, i) => (
               <span

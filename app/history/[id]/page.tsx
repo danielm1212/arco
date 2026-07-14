@@ -97,7 +97,7 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
         </Link>
         <h1 className="truncate px-sm font-semibold">{title}</h1>
         <Button size="sm" variant="outline" asChild>
-          <Link href={`/session/${session.id}`}>Otwórz</Link>
+          <Link href={`/session/${session.id}`}>{session.finished_at ? "Edytuj" : "Otwórz"}</Link>
         </Button>
       </header>
 

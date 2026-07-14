@@ -150,3 +150,32 @@ export function formatEstimatedMinutes(min: number | null, max: number | null) {
   if (min === null || max === null) return null;
   return min === max ? `${min} min` : `od ${min} do ${max} min`;
 }
+
+const EQUIPMENT_LABELS: Record<string, string> = {
+  barbell: "sztanga",
+  bands: "guma",
+  "body only": "masa ciała",
+  cable: "wyciągi",
+  dumbbell: "hantle",
+  "e-z curl bar": "gryf łamany",
+  "exercise ball": "piłka",
+  "foam roll": "roller",
+  kettlebells: "kettlebell",
+  machine: "maszyny",
+  "medicine ball": "piłka lekarska",
+  other: "dodatkowy sprzęt",
+  "pull-up bar": "drążek",
+};
+
+/** Krótka, zrozumiała nazwa rytmu cyklu — do kart planów i onboardingu. */
+export function formatCycleStructure(days: number) {
+  if (days === 2) return "A → B";
+  if (days === 3) return "A → B → C";
+  return `${days} treningi w cyklu`;
+}
+
+export function formatEquipment(items: string[], limit = 4) {
+  const labels = items.map((item) => EQUIPMENT_LABELS[item] ?? item).filter(Boolean);
+  if (labels.length <= limit) return labels.join(" · ");
+  return `${labels.slice(0, limit).join(" · ")} +${labels.length - limit}`;
+}

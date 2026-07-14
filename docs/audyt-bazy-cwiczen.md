@@ -90,3 +90,9 @@ Hip thrusty (Barbell/Dumbbell/Single-Leg), Frog Pump, Cable Pull-Through, KB Swi
 2. ✅ Walidator sprawdza również unikalność/stabilność slugów oraz zakresy poziomu, częstotliwości i czasu.
 3. ✅ Ruchy bez ciężaru użyte w nowych planach (`Decline_Push-Up`, `Inverted_Row`, `Scapular_Pull-Up`) mają poprawny typ `bodyweight`.
 4. ⚠️ 43 użycia placeholdera dotyczą 16 unikalnych ćwiczeń; to dług assetowy, nie błąd integralności programu.
+
+### 5.7 Uzupełnienie beginner 2 dni (2026-07-14)
+
+1. ✅ Dodane osobne cykle `beginner-gym-fbw2` i `beginner-home-fbw2`; biblioteka ma 13 programów.
+2. ✅ Profil beginner z celem 2 dni dostaje plan o dokładnie dwóch treningach zamiast cyklu 3-dniowego.
+3. ✅ Oba plany są Full Body A/B, utrzymują bilans push/pull około 1:1 i nie wymagają trzeciego dnia do domknięcia podstawowych wzorców.

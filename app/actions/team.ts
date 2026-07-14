@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { TeamAvatar } from "@/lib/team";
+import { normalizeTeamInviteCode, type TeamAvatar } from "@/lib/team";
 
 const REACTIONS = ["💪", "🔥", "👏", "🎯"] as const;
 type TeamIdentity = { displayName: string; avatar: TeamAvatar; confirmed: boolean };
@@ -51,8 +51,8 @@ export async function joinTeam(
 ): Promise<{ podId?: string; error?: string }> {
   const auth = await requireUser();
   if ("error" in auth) return auth;
-  const code = inviteCode.trim();
-  if (code.length < 12) return { error: "Wklej pełny kod zaproszenia." };
+  const code = normalizeTeamInviteCode(inviteCode);
+  if (code.length !== 8) return { error: "Wpisz pełny 8-znakowy kod zaproszenia." };
   const { data, error } = await auth.supabase.rpc("join_pod_by_invite", {
     p_invite_code: code,
     p_display_name: identity.displayName.trim(),

@@ -62,12 +62,18 @@ export default function RootLayout({
         className={cn(
           dmSans.variable,
           gambarino.variable,
-          "min-h-dvh pt-[env(safe-area-inset-top)] font-sans antialiased",
+          "min-h-dvh pt-[var(--safe-area-top)] font-sans antialiased",
         )}
       >
         <ThemeProvider>
           <AppChrome>{children}</AppChrome>
-          <Toaster position="top-center" richColors closeButton />
+          <Toaster
+            position="top-center"
+            richColors
+            closeButton
+            offset={{ top: "calc(0.75rem + var(--safe-area-top))" }}
+            mobileOffset={{ top: "calc(0.75rem + var(--safe-area-top))" }}
+          />
         </ThemeProvider>
       </body>
     </html>

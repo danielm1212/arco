@@ -3,7 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { ChevronRight, LibraryBig, Settings } from "lucide-react";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeGuidance } from "@/lib/getHomeGuidance";
 import { localDayKey } from "@/lib/week";
@@ -45,7 +45,7 @@ export default async function HomePage() {
       .maybeSingle(),
     supabase
       .from("sessions")
-      .select("started_at")
+      .select("started_at, program_day_id")
       .not("finished_at", "is", null)
       .gte("started_at", historySince.toISOString()),
     supabase.from("user_settings").select("unit_system, weekly_goal, display_name").maybeSingle(),
@@ -63,11 +63,19 @@ export default async function HomePage() {
   const teamActivityWindowStart = new Date();
   teamActivityWindowStart.setHours(teamActivityWindowStart.getHours() - 48);
   const activeProgram = (programs ?? []).find((p) => p.id === activeId) ?? null;
+  const presetCount = (programs ?? []).filter((p) => p.slug).length;
   const activeDays = activeProgram
     ? ((activeProgram.program_days as { id: string; label: string; position: number }[]) ?? [])
         .slice()
         .sort((a, b) => a.position - b.position)
     : [];
+  const activeDayIds = new Set(activeDays.map((day) => day.id));
+  // 12 sesji to ok. 4–6 tygodni dla najczęstszych rytmów 2–3×/tydz. Nie liczymy
+  // freestyle ani poprzednich programów — sugestia ma dotyczyć właśnie tego cyklu.
+  const completedSessionsInActiveProgram = (finished ?? []).filter(
+    (session) => session.program_day_id && activeDayIds.has(session.program_day_id),
+  ).length;
+  const showProgramReview = completedSessionsInActiveProgram >= 12;
 
   // Pasek tygodnia + streak
   const dayKey = localDayKey; // klucz LOKALNY (fix: ring „dziś" wskazywał sobotę w piątek)
@@ -210,6 +218,24 @@ export default async function HomePage() {
           </Suspense>
         )}
 
+        {activeProgram && showProgramReview && (
+          <section className="space-y-sm rounded-xl border border-primary/20 bg-primary/5 p-md">
+            <p className="text-xs font-medium text-primary">Kolejny krok</p>
+            <h2 className="text-lg font-semibold">Masz już {completedSessionsInActiveProgram} treningów w tym planie</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Jeśli nadal robisz postęp i treningi mieszczą się w Twoim tygodniu, zostań przy planie. Jeśli od 2–3 sesji stoisz w miejscu, zrób lżejszą sesję i porównaj kolejny poziom lub częstotliwość.
+            </p>
+            <div className="grid grid-cols-2 gap-sm">
+              <Button variant="outline" asChild>
+                <Link href={`/programs/${activeProgram.id}`}>Sprawdź plan</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/programs">Porównaj opcje</Link>
+              </Button>
+            </div>
+          </section>
+        )}
+
         {openSession ? (
           <Link
             href={`/session/${openSession.id}`}
@@ -275,7 +301,7 @@ export default async function HomePage() {
               <MomentIcon3D name="gym" className="mx-auto -my-xs" priority />
               <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-                Wybierz jeden z 8 planów. Arco poprowadzi Cię przez trening serię po serii.
+                Wybierz jeden z {presetCount} planów. Arco poprowadzi Cię przez trening serię po serii.
               </p>
               <Button asChild className="w-full">
                 <Link href="/programs">Wybierz program →</Link>
@@ -293,6 +319,24 @@ export default async function HomePage() {
               </button>
             </form>
           </div>
+        )}
+
+        {activeProgram && (
+          <Link
+            href="/programs"
+            className="flex min-h-14 items-center gap-sm rounded-xl border bg-card px-md py-sm text-card-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+              <LibraryBig className="size-5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold">Przeglądaj programy</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                Porównaj opcje albo zmień aktywny plan
+              </span>
+            </span>
+            <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+          </Link>
         )}
 
         <GuidanceChip items={guidance} />

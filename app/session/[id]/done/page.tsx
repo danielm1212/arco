@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
+import { MomentIcon3D, type MomentIconName } from "@/components/MomentIcon3D";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { weekStart, computeStreak } from "@/lib/week";
 
@@ -119,6 +120,13 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
     : totalReps > 0
       ? { value: totalReps.toLocaleString("pl-PL"), unit: "powt.", label: "tyle powtórzeń zrobiłeś" }
       : { value: totalSeconds.toLocaleString("pl-PL"), unit: "s", label: "tyle czasu pracowałeś" };
+  const celebrationIcon: MomentIconName = hasPR
+    ? "medal"
+    : goalLeft === 0
+      ? "target"
+      : streak >= 2
+        ? "fire"
+        : "tick";
 
   return (
     <div className="bg-brand text-brand-foreground">
@@ -126,6 +134,7 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
       {/* Hero — liczba-bohater. font-display (Gambarino, 2026-07-11): pierwszy
           z 3 ekranów testowych z roadmap.md (celebracja/kłódka premium/recap) */}
       <div>
+        <MomentIcon3D name={celebrationIcon} className="mx-auto -mb-sm size-24" priority />
         <p className="font-display text-6xl leading-none tabular-nums text-primary">
           {hero.value}
           <span className="text-2xl font-semibold"> {hero.unit}</span>

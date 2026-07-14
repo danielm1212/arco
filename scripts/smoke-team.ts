@@ -84,10 +84,11 @@ async function main() {
     });
     assert(!createError && created?.[0], `create_pod: ${createError?.message ?? "brak ekipy"}`);
     const pod = created[0];
-    ok("konto Alfa założyło prywatną ekipę ze świadomą zgodą");
+    assert(/^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{8}$/.test(pod.invite_code), "kod zaproszenia nie ma 8 znaków Base32");
+    ok("konto Alfa założyło prywatną ekipę z 8-znakowym kodem zaproszenia");
 
     const { data: joinedPodId, error: joinError } = await beta.client.rpc("join_pod_by_invite", {
-      p_invite_code: pod.invite_code,
+      p_invite_code: `${pod.invite_code.slice(0, 4)}-${pod.invite_code.slice(4)}`.toLowerCase(),
       p_display_name: people[1].name,
       p_avatar: people[1].avatar,
       p_confirmed: true,
@@ -111,6 +112,38 @@ async function main() {
     assert(!sessionError && session, `utworzenie ukończonej sesji: ${sessionError?.message ?? "brak sesji"}`);
     const { error: emitError } = await alfa.client.rpc("emit_workout_activity", { p_session_id: session.id });
     assert(!emitError, `emit_workout_activity: ${emitError?.message}`);
+    const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+    const { error: backdateError } = await alfa.client
+      .from("sessions")
+      .update({ date: yesterday })
+      .eq("id", session.id);
+    assert(!backdateError, `zmiana daty sesji: ${backdateError?.message}`);
+    const { error: syncDateError } = await alfa.client.rpc("sync_workout_activity_day", {
+      p_session_id: session.id,
+      p_previous_day: today,
+    });
+    assert(!syncDateError, `sync_workout_activity_day: ${syncDateError?.message}`);
+    const { data: movedEvents, error: movedEventsError } = await alfa.client
+      .from("activity_events")
+      .select("occurred_on")
+      .eq("user_id", alfa.id)
+      .eq("kind", "workout_done");
+    assert(!movedEventsError && movedEvents?.some((event) => event.occurred_on === yesterday), "check-in nie przeszedł na poprawioną datę");
+    assert(!movedEvents?.some((event) => event.occurred_on === today), "check-in pozostał na błędnej, dzisiejszej dacie");
+    ok("korekta daty treningu przenosi check-in Ekipy na właściwy dzień");
+
+    // Check-in sprzed dołączenia do Ekipy jest celowo niewidoczny dla innych.
+    // Tworzymy świeży trening po dołączeniu, aby dalej zweryfikować widoczność peerów.
+    const { data: visibleSession, error: visibleSessionError } = await alfa.client
+      .from("sessions")
+      .insert({ user_id: alfa.id, program_day_id: null, date: today, finished_at: new Date().toISOString() })
+      .select("id")
+      .single();
+    assert(!visibleSessionError && visibleSession, `utworzenie bieżącej sesji: ${visibleSessionError?.message ?? "brak sesji"}`);
+    const { error: visibleEmitError } = await alfa.client.rpc("emit_workout_activity", {
+      p_session_id: visibleSession.id,
+    });
+    assert(!visibleEmitError, `emit bieżącego check-inu: ${visibleEmitError?.message}`);
     const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
     const { error: directEventError } = await alfa.client.from("activity_events").insert({ user_id: alfa.id, kind: "workout_done", occurred_on: tomorrow, streak_weeks: 0 });
     assert(directEventError, "klient mógł dodać check-in bez ukończenia treningu");

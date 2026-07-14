@@ -46,6 +46,15 @@
 | 6 | **Krok 3 — cichy launch freemium** | Wypuścić pełny, uczciwy model freemium; zebrać pierwsze dane o aktywacji i konwersji bez budowania dodatkowego socialu za wcześnie. |
 | 7 | **Krok 4 — Ekipa** | Zbudować i dogfoodować moduł wg planu niżej; po trzech tygodniach ocenić pętlę metrykami B3. |
 
+### Najbliższy sprint UX — decyzja 2026-07-14
+
+Przed H2 wchodzi ograniczony sprint jakości rdzenia: safe-area iOS, stabilność BottomSheet i
+toastów, floating nav z równym marginesem 12 px, jasna droga do biblioteki programów oraz pomiary
+z maksymalnie dwoma zdjęciami i widocznymi notatkami. Obejmuje też bezpośrednie dodanie treningu
+po fakcie, z datą i czasem wybranymi przed loggerem oraz spójnym check-inem Ekipy. Zawiera benchmark
+IA i testy zadań; nie rozszerza publicznej Ekipy ani fundamentów kont. Pełny zakres i kryteria:
+`sprint-ux-mobile-ia-2026-07.md`.
+
 ### Sprint „Automatyczna jakość” ✅ gotowy lokalnie 2026-07-13
 
 - Workflow `.github/workflows/quality.yml` działa na pushach i pull requestach do `main`, a starsze uruchomienie dla tej samej gałęzi jest automatycznie anulowane.

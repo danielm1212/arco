@@ -6,6 +6,17 @@ import { Sparkline } from "@/components/Sparkline";
 
 export const dynamic = "force-dynamic";
 
+type MetricPhoto = { id: string; path: string; position: number };
+type Metric = {
+  id: string;
+  date: string;
+  weight: number | null;
+  body_fat: number | null;
+  notes: string | null;
+  photo_path: string | null;
+  body_metric_photos: MetricPhoto[] | null;
+};
+
 export default async function BodyPage() {
   const supabase = await createClient();
   const {
@@ -15,14 +26,19 @@ export default async function BodyPage() {
   const [{ data: metrics }, { data: settings }] = await Promise.all([
     supabase
       .from("body_metrics")
-      .select("id, date, weight, body_fat, notes, photo_path")
+      .select("id, date, weight, body_fat, notes, photo_path, body_metric_photos(id, path, position)")
       .order("date", { ascending: false }),
     supabase.from("user_settings").select("unit_system").maybeSingle(),
   ]);
   const unit = settings?.unit_system ?? "kg";
+  const metricRows = (metrics ?? []) as Metric[];
+  const pathsFor = (metric: Metric) => {
+    const gallery = (metric.body_metric_photos ?? []).slice().sort((a, b) => a.position - b.position).map((photo) => photo.path);
+    return gallery.length ? gallery : metric.photo_path ? [metric.photo_path] : [];
+  };
 
   // Podpisane URL-e do miniatur (prywatny bucket)
-  const paths = (metrics ?? []).map((m) => m.photo_path).filter((p): p is string => !!p);
+  const paths = metricRows.flatMap(pathsFor);
   const photoUrls: Record<string, string> = {};
   if (paths.length) {
     const { data: signed } = await supabase.storage
@@ -33,7 +49,7 @@ export default async function BodyPage() {
     });
   }
 
-  const withWeight = (metrics ?? []).filter((m) => m.weight != null);
+  const withWeight = metricRows.filter((m) => m.weight != null);
   const latest = withWeight[0]?.weight ?? null;
   const prev = withWeight[1]?.weight ?? null;
   const delta = latest != null && prev != null ? Math.round((latest - prev) * 10) / 10 : null;
@@ -71,19 +87,24 @@ export default async function BodyPage() {
 
         <section className="space-y-sm">
           <h2 className="text-base font-semibold">Historia pomiarów</h2>
-          {(!metrics || metrics.length === 0) && (
+          {metricRows.length === 0 && (
             <p className="text-sm text-muted-foreground">Dodawaj pomiar mniej więcej raz w tygodniu. Po kilku wpisach zobaczysz trend.</p>
           )}
           <ul className="space-y-2xs">
-            {metrics?.map((m) => (
+            {metricRows.map((m) => {
+              const date = new Date(m.date).toLocaleDateString("pl-PL", { day: "numeric", month: "short", year: "numeric" });
+              const photoPaths = pathsFor(m);
+              const photos = photoPaths.flatMap((path, index) => photoUrls[path] ? [{ src: photoUrls[path], alt: `Zdjęcie postępu ${index + 1} z ${date}` }] : []);
+              return (
               <li
                 key={m.id}
                 className="flex items-center justify-between gap-sm rounded-md bg-muted p-sm text-sm"
               >
                 <span className="flex min-w-0 items-center gap-sm">
-                  {m.photo_path && photoUrls[m.photo_path] && <BodyPhotoButton src={photoUrls[m.photo_path]} date={new Date(m.date).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" })} />}
-                  <span className="truncate text-muted-foreground">
-                    {new Date(m.date).toLocaleDateString("pl-PL", { day: "numeric", month: "short", year: "numeric" })}
+                  {photos.length > 0 && <BodyPhotoButton photos={photos} date={date} />}
+                  <span className="min-w-0">
+                    <span className="block truncate text-muted-foreground">{date}</span>
+                    {m.notes && <span className="block truncate text-xs text-muted-foreground">{m.notes}</span>}
                   </span>
                 </span>
                 <span className="flex items-center gap-sm">
@@ -92,7 +113,8 @@ export default async function BodyPage() {
                   <DeleteBodyMetricButton id={m.id} />
                 </span>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </section>
       </main>

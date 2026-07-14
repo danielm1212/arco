@@ -42,7 +42,8 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
   const [weight, setWeight] = useState("");
   const [fat, setFat] = useState("");
   const [notes, setNotes] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
 
@@ -50,33 +51,43 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
     setWeight("");
     setFat("");
     setNotes("");
-    setFile(null);
+    setFiles([]);
+    setPreviews([]);
     if (fileRef.current) fileRef.current.value = "";
   }
 
   function save() {
-    if (!weight && !fat && !file) {
+    if (!weight && !fat && files.length === 0) {
       toast.error("Podaj wagę, % tkanki albo dodaj zdjęcie.");
       return;
     }
     startTransition(async () => {
       try {
-        let photo_path: string | null = null;
-        if (file) {
-          const blob = await compress(file);
-          const path = `${userId}/${uuid()}.jpg`;
-          const { error } = await createClient()
-            .storage.from("body-photos")
-            .upload(path, blob, { contentType: "image/jpeg" });
-          if (error) throw error;
-          photo_path = path;
+        const storage = createClient().storage.from("body-photos");
+        const photoPaths: string[] = [];
+        try {
+          for (const file of files) {
+            const blob = await compress(file);
+            const path = `${userId}/${uuid()}.jpg`;
+            const { error } = await storage.upload(path, blob, { contentType: "image/jpeg" });
+            if (error) throw error;
+            photoPaths.push(path);
+          }
+        } catch (error) {
+          if (photoPaths.length) await storage.remove(photoPaths);
+          throw error;
         }
-        await logBodyMetric({
-          weight: clampNum(num(weight), { max: LIMITS.bodyWeight }),
-          body_fat: clampNum(num(fat), { max: LIMITS.bodyFat }),
-          notes: notes || null,
-          photo_path,
-        });
+        try {
+          await logBodyMetric({
+            weight: clampNum(num(weight), { max: LIMITS.bodyWeight }),
+            body_fat: clampNum(num(fat), { max: LIMITS.bodyFat }),
+            notes: notes || null,
+            photo_paths: photoPaths,
+          });
+        } catch (error) {
+          if (photoPaths.length) await storage.remove(photoPaths);
+          throw error;
+        }
         reset();
         router.refresh();
         toast.success("Zapisano pomiar.");
@@ -84,6 +95,28 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
         toast.error(error instanceof Error && error.message === "UNSUPPORTED_IMAGE" ? "Ten format zdjęcia nie jest obsługiwany. Wybierz JPG, PNG albo WebP." : "Nie udało się zapisać pomiaru. Spróbuj ponownie.");
       }
     });
+  }
+
+  async function addFiles(selected: FileList | null) {
+    if (!selected?.length) return;
+    const selectedFiles = Array.from(selected);
+    const remaining = 2 - files.length;
+    if (selectedFiles.length > remaining) toast.error("Do jednego pomiaru możesz dodać maksymalnie 2 zdjęcia.");
+    const accepted = selectedFiles.slice(0, remaining);
+    const nextPreviews = await Promise.all(
+      accepted.map(
+        (file) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result));
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(file);
+          }),
+      ),
+    );
+    setFiles((current) => [...current, ...accepted]);
+    setPreviews((current) => [...current, ...nextPreviews]);
+    if (fileRef.current) fileRef.current.value = "";
   }
 
   return (
@@ -112,36 +145,57 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
           />
         </div>
       </div>
-      <Input
-        placeholder="Notatka (opcjonalnie)"
+      <textarea
+        aria-label="Notatka do pomiaru"
+        placeholder="Notatka do pomiaru (opcjonalnie)"
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
+        rows={2}
+        className="flex min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       />
 
-      <label className="flex cursor-pointer items-center justify-between rounded-md border border-dashed border-input px-sm py-2 text-sm text-muted-foreground">
-        <span>{file ? `📷 ${file.name}` : "📷 Dodaj zdjęcie (opcjonalnie)"}</span>
-        {file && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              setFile(null);
-              if (fileRef.current) fileRef.current.value = "";
-            }}
-            aria-label="Usuń wybrane zdjęcie"
-            className="min-h-11 rounded-md px-3 text-sm text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            usuń
-          </button>
-        )}
+      <div className="space-y-xs rounded-md border border-dashed border-input p-sm">
+        <div className="flex items-center justify-between gap-sm">
+          <span className="text-sm text-muted-foreground">Zdjęcia postępu · {files.length}/2</span>
+          {files.length < 2 && (
+            <label htmlFor="body-photos" className="min-h-11 cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-primary hover:bg-primary/10 focus-within:ring-2 focus-within:ring-ring">
+              Dodaj zdjęcia
+            </label>
+          )}
+        </div>
         <input
           ref={fileRef}
+          id="body-photos"
           type="file"
           accept="image/*"
+          multiple
           className="hidden"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          onChange={(e) => {
+            void addFiles(e.target.files).catch(() => toast.error("Nie udało się odczytać zdjęcia."));
+          }}
         />
-      </label>
+        {files.length > 0 && (
+          <div className="grid grid-cols-2 gap-sm">
+            {files.map((file, index) => (
+              <div key={`${file.name}-${file.lastModified}-${index}`} className="relative overflow-hidden rounded-md bg-muted">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={previews[index]} alt={`Podgląd zdjęcia ${index + 1}`} className="aspect-[4/3] w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFiles((current) => current.filter((_, fileIndex) => fileIndex !== index));
+                    setPreviews((current) => current.filter((_, previewIndex) => previewIndex !== index));
+                  }}
+                  aria-label={`Usuń zdjęcie ${index + 1}`}
+                  className="absolute right-1 top-1 min-h-11 rounded-md bg-background/90 px-3 text-sm font-medium text-danger shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  Usuń
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <Button onClick={save} disabled={pending} className="w-full">
         {pending ? "Zapisuję…" : "Zapisz pomiar"}

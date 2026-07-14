@@ -49,6 +49,23 @@ for (const level of levels) {
         failures.push(`${profile}: plan z innego środowiska (${recommendation.program.environment})`);
       }
 
+      const expectedBeginnerTwoDaySlug =
+        level === "beginner" && weeklyGoal === 2
+          ? environment === "gym"
+            ? "beginner-gym-fbw2"
+            : environment === "home"
+              ? "beginner-home-fbw2"
+              : null
+          : null;
+      if (
+        expectedBeginnerTwoDaySlug &&
+        recommendation.program.slug !== expectedBeginnerTwoDaySlug
+      ) {
+        failures.push(
+          `${profile}: wybrano ${recommendation.program.slug}, oczekiwano ${expectedBeginnerTwoDaySlug}`,
+        );
+      }
+
       const exactExpected =
         (level === "beginner" && weeklyGoal <= 3) ||
         (level === "intermediate" && environment !== "bodyweight" && weeklyGoal <= 4) ||

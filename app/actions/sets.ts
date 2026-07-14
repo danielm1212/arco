@@ -13,6 +13,31 @@ async function db() {
   return supabase;
 }
 
+/**
+ * Zakończony trening jest edytowalnym zapisem, nie zamrożonym dokumentem.
+ * Po korekcie danych, które wpływają na wynik, odświeżamy wszystkie pochodne:
+ * rekordy, postęp, historię i wskazówki na ekranie głównym.
+ */
+async function refreshFinishedSessionDerivedData(
+  supabase: Awaited<ReturnType<typeof db>>,
+  sessionId: string,
+) {
+  const { data: session, error: sessionError } = await supabase
+    .from("sessions")
+    .select("finished_at")
+    .eq("id", sessionId)
+    .maybeSingle();
+  if (sessionError) throw new Error(sessionError.message);
+  if (!session?.finished_at) return;
+
+  const { error: recordsError } = await supabase.rpc("recompute_personal_records");
+  if (recordsError) throw new Error(recordsError.message);
+  revalidatePath("/");
+  revalidatePath("/history");
+  revalidatePath(`/history/${sessionId}`);
+  revalidatePath("/progress");
+}
+
 export interface SetValues {
   set_type?: SetType;
   weight?: number | null;
@@ -52,6 +77,7 @@ export async function addSet(
     .single();
   if (error) throw new Error(error.message);
   revalidatePath(`/session/${sessionId}`);
+  await refreshFinishedSessionDerivedData(supabase, sessionId);
   return data.id;
 }
 
@@ -74,6 +100,7 @@ export async function upsertSet(
   const supabase = await db();
   const { error } = await supabase.from("session_sets").upsert(row, { onConflict: "id" });
   if (error) throw new Error(error.message);
+  await refreshFinishedSessionDerivedData(supabase, _sessionId);
 }
 
 /** Zaktualizuj wartości serii. */
@@ -82,6 +109,7 @@ export async function updateSet(sessionId: string, setId: string, values: SetVal
   const { error } = await supabase.from("session_sets").update(values).eq("id", setId);
   if (error) throw new Error(error.message);
   revalidatePath(`/session/${sessionId}`);
+  await refreshFinishedSessionDerivedData(supabase, sessionId);
 }
 
 /** Usuń serię. */
@@ -90,6 +118,7 @@ export async function deleteSet(sessionId: string, setId: string) {
   const { error } = await supabase.from("session_sets").delete().eq("id", setId);
   if (error) throw new Error(error.message);
   revalidatePath(`/session/${sessionId}`);
+  await refreshFinishedSessionDerivedData(supabase, sessionId);
 }
 
 /** Freestyle: dodaj ćwiczenie z katalogu do sesji (position = kolejny). */
@@ -217,4 +246,5 @@ export async function deleteSessionExercise(sessionId: string, sessionExerciseId
     .eq("id", sessionExerciseId);
   if (error) throw new Error(error.message);
   revalidatePath(`/session/${sessionId}`);
+  await refreshFinishedSessionDerivedData(supabase, sessionId);
 }

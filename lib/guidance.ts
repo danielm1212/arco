@@ -1,4 +1,4 @@
-import type { ExerciseType, UnitSystem } from "@/lib/types";
+import type { ExerciseType, TrainingPriority, UnitSystem } from "@/lib/types";
 
 /**
  * Guidance rule-based (rdzeń wyróżnika „anti-Hevy") — jawne, nadpisywalne reguły.
@@ -124,46 +124,100 @@ export function categoriesForExercise(exerciseId: string, muscles: string[]): Mu
  * - poniżej dolnego zakresu → utrzymaj ciężar, dobij powtórzeń,
  * - timed → spróbuj pobić poprzedni czas.
  */
-export function progressionHint(input: {
+export type ProgressionTarget = {
+  kind: "increase_load" | "add_reps" | "hold_load" | "beat_time" | "harder_variation" | "beat_record";
+  message: string;
+};
+
+/**
+ * Konkretny cel na dzisiejszy trening. To warstwa nad planem — nie wpisuje
+ * automatycznie wyniku do serii, użytkownik zawsze może go skorygować.
+ */
+export function progressionTarget(input: {
   type: ExerciseType;
   unit: UnitSystem;
   prev: { weight: number | null; reps: number | null; duration_seconds: number | null } | null;
+  /** Wszystkie zaliczone serie robocze z poprzedniej sesji tego ćwiczenia. */
+  previousSets?: { reps: number | null; duration_seconds: number | null }[];
   targetRepsMin?: number | null;
   targetRepsMax?: number | null;
   /** S12: rekord przy docelowej liczbie powtórzeń (rep-PR) — wzbogaca hint. */
   repPR?: { reps: number; weight: number } | null;
-}): string | null {
-  const { type, unit, prev, targetRepsMin, targetRepsMax, repPR } = input;
+  trainingPriority?: TrainingPriority;
+}): ProgressionTarget | null {
+  const { type, unit, prev, previousSets, targetRepsMin, targetRepsMax, repPR, trainingPriority } = input;
+  const priorityBit = trainingPriority === "fat_loss"
+    ? " Na redukcji najpierw utrzymaj jakość i ciężar."
+    : trainingPriority === "strength"
+      ? " Daj sobie pełną przerwę przed kolejną serią."
+      : "";
   const prBit =
-    type === "weighted" && repPR ? ` · rekord przy ${repPR.reps} powt.: ${repPR.weight}${unit}` : "";
+    type === "weighted" && repPR ? ` Rekord przy ${repPR.reps} powt.: ${repPR.weight}${unit}.` : "";
 
   if (!prev) {
     // Bez „poprzednio" (np. dawno nietrenowane) rep-PR sam w sobie daje cel
     return type === "weighted" && repPR
-      ? `Rekord dla ${repPR.reps} powtórzeń to ${repPR.weight}${unit}. Spróbuj go pobić.`
+      ? {
+          kind: "beat_record",
+          message: `Cel na dziś: pobij ${repPR.weight}${unit} przy ${repPR.reps} powtórzeniach.`,
+        }
       : null;
   }
 
   if (type === "timed") {
     return prev.duration_seconds != null
-      ? `Ostatnio ${prev.duration_seconds}s → spróbuj pobić`
+      ? {
+          kind: "beat_time",
+          message: `Cel na dziś: ${prev.duration_seconds + 5}s lub więcej (ostatnio ${prev.duration_seconds}s).`,
+        }
       : null;
   }
 
   const inc = unit === "kg" ? 2.5 : 5;
+  const completedRepSets = (previousSets ?? []).filter((set) => set.reps != null);
+  const allReachedTop =
+    targetRepsMax != null &&
+    (completedRepSets.length > 0
+      ? completedRepSets.every((set) => (set.reps ?? 0) >= targetRepsMax)
+      : (prev?.reps ?? 0) >= targetRepsMax);
 
   if (type === "weighted" && prev.weight != null && prev.reps != null) {
-    if (targetRepsMax && prev.reps >= targetRepsMax)
-      return `Ostatnio pełny zakres (${prev.reps}) → spróbuj ${prev.weight + inc}${unit}${prBit}`;
+    if (targetRepsMax && allReachedTop)
+      return {
+        kind: "increase_load",
+        message: `Cel na dziś: ${prev.weight + inc}${unit} × ${targetRepsMin ?? targetRepsMax}–${targetRepsMax}. Poprzednio każda seria osiągnęła górę zakresu.${prBit}${priorityBit}`,
+      };
     if (targetRepsMin && prev.reps < targetRepsMin)
-      return `Ostatnio ${prev.reps} (poniżej zakresu) → utrzymaj ${prev.weight}${unit}, dobij powtórzeń`;
-    return null;
+      return {
+        kind: "hold_load",
+        message: `Cel na dziś: utrzymaj ${prev.weight}${unit} i zrób co najmniej ${targetRepsMin} powt. (ostatnio ${prev.reps}).${priorityBit}`,
+      };
+    const nextReps = targetRepsMax ? Math.min(prev.reps + 1, targetRepsMax) : prev.reps + 1;
+    return {
+      kind: "add_reps",
+      message: `Cel na dziś: ${prev.weight}${unit} × ${nextReps}+ powt. (ostatnio ${prev.reps}).${prBit}${priorityBit}`,
+    };
   }
 
-  if (type === "bodyweight" && prev.reps != null && targetRepsMax && prev.reps >= targetRepsMax)
-    return `Ostatnio ${prev.reps} powt. → dołóż powtórzeń lub obciążenie`;
+  if (type === "bodyweight" && prev.reps != null) {
+    if (targetRepsMax && allReachedTop) {
+      return {
+        kind: "harder_variation",
+        message: `Cel na dziś: wybierz trudniejszy wariant lub dodaj lekkie obciążenie (ostatnio ${prev.reps} powt.).`,
+      };
+    }
+    return {
+      kind: "add_reps",
+      message: `Cel na dziś: ${prev.reps + 1}+ powt. (ostatnio ${prev.reps}).`,
+    };
+  }
 
   return null;
+}
+
+/** Zachowana nakładka tekstowa dla miejsc, które potrzebują wyłącznie copy. */
+export function progressionHint(input: Parameters<typeof progressionTarget>[0]): string | null {
+  return progressionTarget(input)?.message ?? null;
 }
 
 /** Flaga balansu push vs pull w bieżącym tygodniu (serie robocze per kategoria). */
@@ -205,25 +259,35 @@ export function stalenessFlags(
  * `series` = najlepsza metryka per sesja, chronologicznie (rosnąco wg daty). Zwraca max 1
  * (najmocniejsza stagnacja) — anti-noise; deload to sygnał, nie nakaz.
  */
-export function deloadFlags(items: { name: string; series: number[] }[]): GuidanceItem[] {
+export function deloadFlags(
+  items: { name: string; series: number[]; type?: ExerciseType }[],
+): GuidanceItem[] {
   const n = GUIDANCE.deloadSessions;
   const flagged = items
     .filter((e) => e.series.length >= n)
     .map((e) => {
       const recent = e.series[e.series.length - 1];
       const past = e.series[e.series.length - n];
-      return { name: e.name, drop: past - recent, stalled: recent <= past };
+      return { name: e.name, type: e.type, drop: past - recent, stalled: recent <= past };
     })
     .filter((e) => e.stalled)
     .sort((a, b) => b.drop - a.drop);
   if (flagged.length === 0) return [];
   const w = flagged[0];
+  const action =
+    w.type === "weighted"
+      ? "W następnej sesji odejmij około 10% ciężaru albo jedną serię"
+      : w.type === "bodyweight"
+        ? "W następnej sesji zrób o jedną serię mniej i zostaw 3 powtórzenia w zapasie"
+        : w.type === "timed"
+          ? "W następnej sesji skróć czas lub liczbę serii o około 10%"
+          : "W następnej sesji odejmij około 10% ciężaru albo jedną serię";
   return [
     {
       id: `deload-${w.name}`,
       kind: "deload",
       severity: "warn",
-      message: `${w.name}: ${n} sesje bez postępu. Rozważ lżejszy tydzień.`,
+      message: `${w.name}: ${n} sesje bez postępu. ${action}; potem wróć do zwykłego planu.`,
     },
   ];
 }

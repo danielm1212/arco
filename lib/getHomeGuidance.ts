@@ -92,7 +92,10 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
   const weekByCat: Partial<Record<MuscleCategory, number>> = {};
   const lastTrainedByCat: Partial<Record<MuscleCategory, number>> = {};
   // Deload: najlepsza metryka per ćwiczenie per sesja → seria chronologiczna.
-  const bestByExSession = new Map<string, { name: string; perSession: Map<string, number> }>();
+  const bestByExSession = new Map<
+    string,
+    { name: string; type: ExerciseType; perSession: Map<string, number> }
+  >();
   (sets ?? []).forEach((s) => {
     const info = seInfo.get(s.session_exercise_id);
     if (!info) return;
@@ -106,7 +109,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
     if (v == null) return;
     let e = bestByExSession.get(info.exerciseId);
     if (!e) {
-      e = { name: info.name, perSession: new Map() };
+      e = { name: info.name, type: info.type, perSession: new Map() };
       bestByExSession.set(info.exerciseId, e);
     }
     const cur = e.perSession.get(info.sessionId);
@@ -121,6 +124,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
 
   const deloadInput = [...bestByExSession.values()].map((e) => ({
     name: e.name,
+    type: e.type,
     series: [...e.perSession.entries()]
       .sort((a, b) => (sessionDate.get(a[0])?.getTime() ?? 0) - (sessionDate.get(b[0])?.getTime() ?? 0))
       .map(([, v]) => v),

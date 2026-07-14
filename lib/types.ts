@@ -15,3 +15,4 @@ export type ExerciseType = Database["public"]["Enums"]["exercise_type"];
 export type SetType = Database["public"]["Enums"]["set_type"];
 export type MovementPattern = Database["public"]["Enums"]["movement_pattern"];
 export type UnitSystem = Database["public"]["Enums"]["unit_system"];
+export type TrainingPriority = Database["public"]["Enums"]["training_priority"];

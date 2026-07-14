@@ -14,10 +14,11 @@ import {
   removeTeamMember,
   renameTeam,
 } from "@/app/actions/team";
-import { TEAM_AVATARS } from "@/lib/team";
+import { formatTeamInviteCode, normalizeTeamInviteCode, TEAM_AVATARS } from "@/lib/team";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MomentIcon3D } from "@/components/MomentIcon3D";
 
 type Team = { id: string; name: string | null; inviteCode: string; createdBy: string | null };
 type Member = {
@@ -138,17 +139,18 @@ export function TeamPanel({
 
   async function shareInvite() {
     if (!selected) return;
-    const text = `Dołącz do mojej Ekipy w Arco. Kod zaproszenia: ${selected.inviteCode}`;
+    const code = formatTeamInviteCode(selected.inviteCode);
+    const text = `Dołącz do mojej Ekipy w Arco. Kod zaproszenia: ${code}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: selected.name ?? "Ekipa w Arco", text });
         return;
       }
-      await navigator.clipboard.writeText(selected.inviteCode);
+      await navigator.clipboard.writeText(code);
       toast.success("Kod zaproszenia skopiowany.");
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
-      toast.error(`Nie udało się udostępnić. Kod: ${selected.inviteCode}`);
+      toast.error(`Nie udało się udostępnić. Kod: ${code}`);
     }
   }
 
@@ -158,7 +160,7 @@ export function TeamPanel({
     return (
       <div className="space-y-lg">
         <section className="rounded-2xl bg-card p-lg text-center shadow-sm">
-          <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-primary/15 text-primary"><UsersRound className="size-6" aria-hidden /></span>
+          <MomentIcon3D name="rocket" className="mx-auto -my-sm size-24" priority />
           <h1 className="mt-sm text-2xl font-semibold tracking-tight">Trzymajcie wspólny rytm.</h1>
           <p className="mt-xs text-sm leading-relaxed text-muted-foreground">Prywatna grupa do wspólnego trzymania rytmu. Bez rankingów i porównywania wyników.</p>
         </section>
@@ -184,8 +186,8 @@ export function TeamPanel({
               </form>
             ) : (
               <form className="mt-md space-y-sm" onSubmit={(event) => { event.preventDefault(); run(() => joinTeam(inviteCode, { displayName, avatar, confirmed: consent }), "Jesteś w ekipie."); }}>
-                <label className="block space-y-1 text-sm font-medium"><span>Kod zaproszenia</span><Input value={inviteCode} onChange={(event) => setInviteCode(event.target.value)} placeholder="Wklej kod" minLength={12} /></label>
-                <Button size="lg" className="w-full" disabled={pending || !identityReady || inviteCode.trim().length < 12}>Dołącz do ekipy</Button>
+                <label className="block space-y-1 text-sm font-medium"><span>Kod zaproszenia</span><Input value={formatTeamInviteCode(inviteCode)} onChange={(event) => setInviteCode(normalizeTeamInviteCode(event.target.value))} placeholder="ABCD-EFGH" autoCapitalize="characters" autoCorrect="off" /></label>
+                <Button size="lg" className="w-full" disabled={pending || !identityReady || inviteCode.length !== 8}>Dołącz do ekipy</Button>
               </form>
             )}
           </section>
@@ -231,7 +233,7 @@ export function TeamPanel({
           onClick={shareInvite}
           className="mt-md flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         ><Share2 className="size-4" />Zaproś do ekipy</button>
-        <p className="mt-2 break-all text-center text-xs text-muted-foreground">Kod: {selected.inviteCode}</p>
+        <p className="mt-2 text-center font-mono text-sm font-semibold tracking-[0.14em] text-muted-foreground">{formatTeamInviteCode(selected.inviteCode)}</p>
       </section>
 
       <section className="overflow-hidden rounded-xl bg-card shadow-sm">

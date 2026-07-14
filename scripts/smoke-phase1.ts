@@ -141,7 +141,49 @@ async function main() {
   });
   ok("freestyle: sesja bez programu + ćwiczenie z katalogu");
 
-  // 7. Historia (kształt zapytania z /history)
+  // 7. Zaległy trening: data, flaga i zaplanowany czas są zapisane od początku.
+  // finishSession ustawia finished_at na started_at + recorded_duration_seconds.
+  const historicalStartedAt = "2026-07-12T15:30:00.000Z";
+  const historicalDurationSeconds = 3_600;
+  const { data: historical, error: historicalError } = await sb
+    .from("sessions")
+    .insert({
+      user_id: userId,
+      program_day_id: null,
+      date: "2026-07-12",
+      started_at: historicalStartedAt,
+      is_historical: true,
+      recorded_duration_seconds: historicalDurationSeconds,
+    })
+    .select("id, date, started_at, is_historical, recorded_duration_seconds")
+    .single();
+  if (
+    historicalError ||
+    !historical ||
+    historical.date !== "2026-07-12" ||
+    !historical.is_historical ||
+    historical.recorded_duration_seconds !== historicalDurationSeconds
+  ) {
+    return fail(`zaległy trening nie zachował metadanych: ${historicalError?.message ?? "brak rekordu"}`);
+  }
+  const historicalFinishedAt = new Date(
+    +new Date(historical.started_at) + historical.recorded_duration_seconds * 1_000,
+  ).toISOString();
+  const { data: finishedHistorical } = await sb
+    .from("sessions")
+    .update({ finished_at: historicalFinishedAt })
+    .eq("id", historical.id)
+    .select("finished_at")
+    .single();
+  if (
+    !finishedHistorical?.finished_at ||
+    +new Date(finishedHistorical.finished_at) !== +new Date(historicalFinishedAt)
+  ) {
+    return fail("zaległy trening nie zachował prawdziwego czasu trwania");
+  }
+  ok("zaległy trening: data i czas trwania zapisują się niezależnie od chwili wpisywania");
+
+  // 8. Historia (kształt zapytania z /history)
   const { data: history } = await sb
     .from("sessions")
     .select("id, started_at, program_days(label), session_exercises(session_sets(completed))")
@@ -149,8 +191,45 @@ async function main() {
   if (!history?.length) fail("historia pusta");
   ok(`historia: ${history.length} sesji`);
 
+  // 9. Pomiary: galeria do dwóch zdjęć, notatka, RLS i cascade przy usuwaniu.
+  const { data: metric, error: metricError } = await sb
+    .from("body_metrics")
+    .insert({ user_id: userId, weight: 80.5, notes: "smoke: notatka pomiaru" })
+    .select("id, notes")
+    .single();
+  if (metricError || !metric || metric.notes !== "smoke: notatka pomiaru") {
+    return fail(`pomiar z notatką nie zapisał się: ${metricError?.message ?? "brak rekordu"}`);
+  }
+  const smokePhotoPrefix = `${userId}/smoke-body-metric-${metric.id}`;
+  const { error: photosError } = await sb.from("body_metric_photos").insert([
+    { body_metric_id: metric.id, user_id: userId, path: `${smokePhotoPrefix}-1.jpg`, position: 1 },
+    { body_metric_id: metric.id, user_id: userId, path: `${smokePhotoPrefix}-2.jpg`, position: 2 },
+  ]);
+  if (photosError) return fail(`nie zapisano dwóch zdjęć pomiaru: ${photosError.message}`);
+  const { error: overLimitError } = await sb.from("body_metric_photos").insert({
+    body_metric_id: metric.id,
+    user_id: userId,
+    path: `${smokePhotoPrefix}-3.jpg`,
+    position: 3,
+  });
+  if (!overLimitError) return fail("galeria pozwoliła zapisać trzecie zdjęcie");
+  const { data: metricWithPhotos } = await sb
+    .from("body_metrics")
+    .select("id, notes, body_metric_photos(path, position)")
+    .eq("id", metric.id)
+    .single();
+  const photoCount = (metricWithPhotos?.body_metric_photos ?? []).length;
+  if (photoCount !== 2) return fail(`galeria zwróciła ${photoCount} zdjęć zamiast 2`);
+  await sb.from("body_metrics").delete().eq("id", metric.id);
+  const { count: orphanedPhotos } = await sb
+    .from("body_metric_photos")
+    .select("id", { count: "exact", head: true })
+    .eq("body_metric_id", metric.id);
+  if (orphanedPhotos) return fail("usunięty pomiar zostawił metadane zdjęć");
+  ok("pomiar: notatka + limit 2 zdjęć + cascade działają");
+
   // Sprzątanie sesji testowych
-  await sb.from("sessions").delete().in("id", [s1!.id, s2!.id, sf!.id]);
+  await sb.from("sessions").delete().in("id", [s1!.id, s2!.id, sf!.id, historical!.id]);
   if (prevActive?.program_id) {
     await sb.from("user_active_program").upsert({ user_id: userId, program_id: prevActive.program_id });
   } else {

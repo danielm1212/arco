@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
 import { getAutoRest, setAutoRest, getKeepAwake, setKeepAwake } from "@/lib/prefs";
 import type { UnitSystem } from "@/lib/types";
+import { TRAINING_PRIORITIES, type TrainingPriority } from "@/lib/trainingPriority";
 
 const THEMES = [
   { value: "light", label: "Jasny" },
@@ -40,18 +41,21 @@ export function SettingsForm({
   equipment,
   weeklyGoal,
   displayName,
+  priority,
 }: {
   unit: UnitSystem;
   rest: number;
   equipment: string[];
   weeklyGoal: number;
   displayName: string;
+  priority: TrainingPriority;
 }) {
   const [u, setU] = useState<UnitSystem>(unit);
   const [name, setName] = useState(displayName);
   const [r, setR] = useState(rest);
   const [eq, setEq] = useState<string[]>(equipment);
   const [goal, setGoal] = useState(weeklyGoal);
+  const [trainingPriority, setTrainingPriority] = useState<TrainingPriority>(priority);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -73,6 +77,7 @@ export function SettingsForm({
           available_equipment: eq,
           weekly_goal: goal,
           display_name: name.trim() || null,
+          training_priority: trainingPriority,
         });
         setSaved(true);
         toast.success("Ustawienia zapisane.");
@@ -146,6 +151,29 @@ export function SettingsForm({
       <section className="space-y-sm">
         <h2 className="text-sm font-medium text-muted-foreground">Trening</h2>
         {mounted ? <DevicePreferences /> : <DevicePreferences disabled />}
+      </section>
+
+      <section className="space-y-sm">
+        <h2 className="text-sm font-medium text-muted-foreground">Aktualny priorytet</h2>
+        <div className="space-y-xs">
+          {TRAINING_PRIORITIES.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              aria-pressed={trainingPriority === item.id}
+              onClick={() => setTrainingPriority(item.id)}
+              className={`w-full rounded-xl border p-sm text-left ${
+                trainingPriority === item.id
+                  ? "border-primary bg-primary/10"
+                  : "border-input text-muted-foreground"
+              }`}
+            >
+              <span className="block text-sm font-medium text-foreground">{item.label}</span>
+              <span className="block text-xs">{item.hint}</span>
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">Plan zostaje ten sam — zmieniamy wskazówki dotyczące progresji i regeneracji.</p>
       </section>
 
       <section className="space-y-sm">

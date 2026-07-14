@@ -25,6 +25,7 @@
 | `notion-sync-queue.md` | kolejka wpisów do Notion (flush na żądanie) |
 | `feedback-uzytkownikow.md` | log surowego feedbacku (#1: przeładowany home) |
 | `plan-floating-nav-i-ikony-3d.md` | zaplanowana pływająca nawigacja i mały system ikon clay 3D; zależność od audytu UI/UX |
+| `sprint-ux-mobile-ia-2026-07.md` | **najbliższy sprint UX:** safe-area iOS, floating nav, bottom sheety, biblioteka programów, pomiary 2× zdjęcie + notatki oraz benchmark IA |
 
 ## 🔬 Audyty i projekty techniczne
 

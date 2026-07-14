@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
+import type { ExerciseType, SessionSet, TrainingPriority, UnitSystem } from "@/lib/types";
+import { trainingPriorityMeta } from "@/lib/trainingPriority";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getKeepAwake } from "@/lib/prefs";
 import { ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
@@ -62,8 +63,11 @@ export function Logger({
   programName,
   isFinished,
   startedAt,
+  isHistorical,
+  recordedDurationSeconds,
   unit,
   defaultRest,
+  trainingPriority,
   initialExercises,
 }: {
   sessionId: string;
@@ -73,8 +77,11 @@ export function Logger({
   programName: string | null;
   isFinished: boolean;
   startedAt: string;
+  isHistorical: boolean;
+  recordedDurationSeconds: number | null;
   unit: UnitSystem;
   defaultRest: number;
+  trainingPriority: TrainingPriority;
   initialExercises: LoggerExercise[];
 }) {
   const router = useRouter();
@@ -101,7 +108,15 @@ export function Logger({
     handleSkip,
     linkWithPartner,
     unlink,
-  } = useSessionMutations({ sessionId, setExercises, exercisesRef, saveSet, removeSet, startRest });
+  } = useSessionMutations({
+    sessionId,
+    setExercises,
+    exercisesRef,
+    saveSet,
+    removeSet,
+    startRest,
+    allowRest: !isFinished,
+  });
 
   // R6b: lista nazw+grup dla pickera "Połącz w superset" w ⋯ karty. Referencyjnie
   // stabilna między toggle'ami serii (klucz = id+nazwa+grupa, nie cały `exercises`)
@@ -143,16 +158,18 @@ export function Logger({
 
   // Licznik czasu trwania sesji (na żywo)
   const [elapsed, setElapsed] = useState(() =>
-    Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)),
+    isHistorical && recordedDurationSeconds != null
+      ? recordedDurationSeconds
+      : Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)),
   );
   useEffect(() => {
-    if (isFinished) return;
+    if (isFinished || isHistorical) return;
     const id = window.setInterval(
       () => setElapsed(Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000))),
       1000,
     );
     return () => window.clearInterval(id);
-  }, [startedAt, isFinished]);
+  }, [startedAt, isFinished, isHistorical]);
 
   // Live podsumowanie z lokalnego stanu
   const doneSets = exercises.reduce((n, ex) => n + ex.sets.filter((s) => s.completed).length, 0);
@@ -178,7 +195,7 @@ export function Logger({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
-      <header className="sticky top-0 z-10 border-b bg-background/95 px-md py-sm backdrop-blur">
+      <header className="sticky top-[var(--safe-area-top)] z-10 border-b bg-background/95 px-md py-sm backdrop-blur">
         <div className="flex items-center justify-between gap-sm">
           <div className="flex min-w-0 items-center gap-2xs">
             {/* 44px pełnowymiarowy target (było: mikro-tekst "← Trening") */}
@@ -255,10 +272,24 @@ export function Logger({
             ✓ <span className="font-medium text-foreground">{doneSets}</span> serii
           </span>
         </div>
+        {isHistorical && (
+          <p className="mt-xs text-xs text-muted-foreground">
+            Wpisujesz trening z {new Date(startedAt).toLocaleDateString("pl-PL")}. Czas sesji: {Math.round(elapsed / 60)} min.
+          </p>
+        )}
+        {isFinished && (
+          <p className="mt-xs text-xs text-muted-foreground">
+            Edytujesz zapisany trening. Po zapisaniu zmiany aktualizują rekordy, postęp i wskazówki.
+          </p>
+        )}
       </header>
 
       {/* pb przy aktywnej przerwie — rest-bar (fixed bottom) nie zasłania dolnych wierszy (N2#9) */}
       <main className={`flex-1 space-y-md p-md ${rest ? "pb-28" : ""}`}>
+        <aside className="rounded-lg bg-secondary px-sm py-xs text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">{trainingPriorityMeta(trainingPriority).label}:</span>{" "}
+          {trainingPriorityMeta(trainingPriority).loggerHint}
+        </aside>
         {exercises.map((ex, i) => (
           <ExerciseCard
             key={ex.sessionExerciseId}
@@ -266,6 +297,7 @@ export function Logger({
             index={i}
             sessionId={sessionId}
             unit={unit}
+            trainingPriority={trainingPriority}
             restSeconds={restFor(ex)}
             swapOpen={!!swapOpen[ex.sessionExerciseId]}
             noteOpen={noteOpen[ex.sessionExerciseId]}
