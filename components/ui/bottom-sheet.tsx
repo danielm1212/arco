@@ -6,7 +6,9 @@ import {
   useEffect,
   useId,
   useRef,
+  useState,
   type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactElement,
   type ReactNode,
 } from "react";
@@ -47,8 +49,36 @@ export function BottomSheet({
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef<HTMLElement>(null);
+  const dragStartY = useRef<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [dragging, setDragging] = useState(false);
 
   const close = () => onOpenChange?.(false);
+
+  function beginDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    dragStartY.current = event.clientY;
+    setDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function moveDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (dragStartY.current == null) return;
+    setDragOffset(Math.max(0, event.clientY - dragStartY.current));
+  }
+
+  function endDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (dragStartY.current == null) return;
+    const offset = Math.max(0, event.clientY - dragStartY.current);
+    dragStartY.current = null;
+    setDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    setDragOffset(0);
+    // 88 px to świadome przesunięcie, ale bez wymogu przeciągania połowy ekranu.
+    if (offset >= 88) close();
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -121,9 +151,23 @@ export function BottomSheet({
               aria-labelledby={titleId}
               aria-describedby={descriptionId}
               tabIndex={-1}
+              style={{
+                transform: dragOffset ? `translate3d(0, ${dragOffset}px, 0)` : undefined,
+                transition: dragging ? undefined : "transform 180ms ease-out",
+              }}
               className={`absolute inset-x-0 bottom-0 mx-auto flex max-h-[85dvh] max-w-md touch-pan-y animate-in slide-in-from-bottom-8 flex-col rounded-t-2xl border-t bg-card text-card-foreground outline-none duration-200 ${contentClassName ?? ""}`}
             >
-              <div className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30" aria-hidden />
+              <button
+                type="button"
+                aria-label="Przeciągnij w dół, aby zamknąć"
+                onPointerDown={beginDrag}
+                onPointerMove={moveDrag}
+                onPointerUp={endDrag}
+                onPointerCancel={endDrag}
+                className="mx-auto mt-1 grid h-9 w-16 shrink-0 touch-none cursor-grab place-items-center active:cursor-grabbing"
+              >
+                <span className="h-1.5 w-10 rounded-full bg-muted-foreground/30" aria-hidden />
+              </button>
               <div className="flex shrink-0 items-center justify-between px-md pt-sm">
                 <h2 id={titleId} className="text-lg font-semibold">{title}</h2>
                 <button
