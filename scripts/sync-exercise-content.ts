@@ -44,6 +44,7 @@ async function main() {
   });
   let cursor = 0;
   let completed = 0;
+  let skipped = 0;
   const concurrency = 12;
 
   async function worker() {
@@ -56,16 +57,24 @@ async function main() {
         .is("user_id", null)
         .select("id");
       if (error) throw new Error(`${update.id}: ${error.message}`);
-      if (data?.length !== 1) throw new Error(`${update.id}: nie zaktualizowano dokładnie jednego ćwiczenia.`);
+      // id może nie istnieć na produkcji (starszy/inny zestaw seeda) — pomiń,
+      // nie przerywaj całej synchronizacji (inaczej ryzyko częściowej aktualizacji).
+      if ((data?.length ?? 0) === 0) {
+        skipped += 1;
+        continue;
+      }
       completed += 1;
-      if (completed % 100 === 0 || completed === updates.length) {
-        console.log(`✓ treść ćwiczeń: ${completed}/${updates.length}`);
+      if ((completed + skipped) % 100 === 0 || cursor === updates.length) {
+        console.log(`✓ treść ćwiczeń: ${completed} zaktualizowanych, ${skipped} pominiętych / ${updates.length}`);
       }
     }
   }
 
   await Promise.all(Array.from({ length: concurrency }, () => worker()));
-  console.log(`✅ Zdjęcia i polskie instrukcje zsynchronizowane: ${completed} ćwiczeń.`);
+  console.log(
+    `✅ Zdjęcia i polskie instrukcje zsynchronizowane: ${completed} ćwiczeń` +
+      (skipped > 0 ? ` (${skipped} pominiętych — brak na produkcji).` : "."),
+  );
 }
 
 main().catch((error: unknown) => {

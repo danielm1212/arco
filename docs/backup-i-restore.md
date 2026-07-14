@@ -18,7 +18,7 @@ Przejście dowolnego assetu z hotlinku (np. GitHub) na własny bucket Storage MU
 1. **Najpierw wgraj pliki** do bucketa produkcyjnego (`CONFIRM_REMOTE_UPLOAD=… npm run upload:exercise-images`) i potwierdź, że publiczny URL zwraca `HTTP 200`.
 2. **Dopiero potem** przepnij URL-e w bazie (migracja/seed/sync wskazujące na bucket).
 
-Odwrotna kolejność = martwe assety na produkcji: baza wskazuje na bucket, którego nikt nie zapełnił. Dokładnie to zdarzyło się 2026-07-13 — migracja `20260713180000_exercise_image_cdn` stworzyła bucket i seed przepiął URL-e, ale upload plików został pominięty (dodatkowo `sync-exercise-content.ts` miał wtedy błąd składni). Objaw: wszystkie zdjęcia ćwiczeń zwracały `HTTP 400`. Naprawa: uruchomienie uploadu (URL-e w bazie już pasowały, więc obrazy wstały bez re-deployu).
+Dokładnie to zdarzyło się 2026-07-13. Migracja `20260713180000_exercise_image_cdn` stworzyła bucket, seed w kodzie zaczął budować URL-e do bucketa, ALE na produkcję **nie poszedł ani upload plików, ani przepięcie URL-i** — prod `exercises.images` dalej wskazywały na GitHub (`raw.githubusercontent.com`), a te zaczęły się wywalać w przeglądarce (`net::ERR…` — hotlink/ORB/sieć), przy pustym buckecie. Naprawa dwuetapowa: (1) `upload-exercise-images.ts` zapełnił prod bucket, (2) `sync-exercise-content.ts` przepiął `exercises.images` z GitHuba na bucket (`CONFIRM_REMOTE_SYNC=exercise-content`). Wniosek na przyszłość ten sam: pliki najpierw, URL-e potem — i pamiętaj, że przepięcie URL-i na prod to osobny krok od zmiany logiki seeda w kodzie.
 
 Zabezpieczenie: `upload-exercise-images.ts` po wgraniu weryfikuje próbkę plików przez publiczny URL i wypisuje docelowy host na starcie — pusty/niekompletny bucket wychodzi od razu, zanim uznasz upload za zrobiony.
 
