@@ -80,11 +80,15 @@ export function BottomSheet({
       {triggerElement}
       {open &&
         createPortal(
-          <div className="fixed inset-0 z-50">
+          <div className="fixed inset-0 z-50 overscroll-none">
             <div
               aria-hidden
-              className="absolute inset-0 animate-in fade-in-0 bg-black/50 duration-200"
-              onPointerDown={close}
+              className="absolute inset-0 touch-none animate-in fade-in-0 bg-black/50 duration-200"
+              // Zamknięcie następuje dopiero po pełnym kliknięciu. `pointerdown`
+              // odmontowywał overlay za wcześnie, więc kolejny event trafiał do
+              // elementu znajdującego się pod nim.
+              onClick={close}
+              onWheel={(event) => event.preventDefault()}
             />
             <section
               ref={dialogRef}
@@ -93,7 +97,7 @@ export function BottomSheet({
               aria-labelledby={titleId}
               aria-describedby={descriptionId}
               tabIndex={-1}
-              className={`absolute inset-x-0 bottom-0 mx-auto flex max-h-[85dvh] max-w-md animate-in slide-in-from-bottom-8 flex-col rounded-t-2xl border-t bg-card text-card-foreground outline-none duration-200 ${contentClassName ?? ""}`}
+              className={`absolute inset-x-0 bottom-0 mx-auto flex max-h-[85dvh] max-w-md touch-pan-y animate-in slide-in-from-bottom-8 flex-col rounded-t-2xl border-t bg-card text-card-foreground outline-none duration-200 ${contentClassName ?? ""}`}
             >
               <div className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30" aria-hidden />
               <div className="flex shrink-0 items-center justify-between px-md pt-sm">
