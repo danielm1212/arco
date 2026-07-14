@@ -324,7 +324,7 @@ export default async function HomePage() {
         {activeProgram && (
           <Link
             href="/programs"
-            className="flex min-h-14 items-center gap-sm rounded-xl border bg-card px-md py-sm text-card-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex min-h-14 items-center gap-sm rounded-xl bg-card px-md py-sm text-card-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
               <LibraryBig className="size-5" aria-hidden />

@@ -195,7 +195,7 @@ export function Logger({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
-      <header className="sticky top-[var(--safe-area-top)] z-10 border-b bg-background/95 px-md py-sm backdrop-blur">
+      <header className="relative sticky top-[var(--safe-area-top)] z-10 border-b bg-background px-md py-sm before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-[var(--safe-area-top)] before:bg-background">
         <div className="flex items-center justify-between gap-sm">
           <div className="flex min-w-0 items-center gap-2xs">
             {/* 44px pełnowymiarowy target (było: mikro-tekst "← Trening") */}
@@ -343,7 +343,11 @@ export function Logger({
             disabled={deletingSession}
             onClick={async () => {
               setDeletingSession(true);
-              await handleDeleteSession({ sessionId, online });
+              const deleted = await handleDeleteSession({ sessionId, online });
+              if (deleted) {
+                router.replace("/");
+                return;
+              }
               setDeletingSession(false);
             }}
           >

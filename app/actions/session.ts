@@ -219,7 +219,7 @@ export async function deleteSession(sessionId: string) {
   await supabase.rpc("recompute_personal_records");
   revalidatePath("/history");
   revalidatePath("/progress");
-  redirect("/history");
+  revalidatePath("/");
 }
 
 /** S12: edycja daty/czasu sesji (logowanie po fakcie). Zachowuje czas trwania. */

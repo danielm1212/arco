@@ -36,16 +36,17 @@ export async function handleFinish(args: {
   }
 }
 
-export async function handleDeleteSession(args: { sessionId: string; online: boolean }) {
+export async function handleDeleteSession(args: { sessionId: string; online: boolean }): Promise<boolean> {
   const { sessionId, online } = args;
   if (!online) {
     toast.error("Do usunięcia sesji potrzebny jest internet.");
-    return;
+    return false;
   }
   try {
     await deleteSession(sessionId);
-  } catch (e) {
-    if (e instanceof Error && e.message.includes("NEXT_REDIRECT")) throw e;
+    return true;
+  } catch {
     toast.error("Nie udało się usunąć sesji.");
+    return false;
   }
 }

@@ -20,6 +20,9 @@ export async function logBodyMetric(values: {
   date?: string;
 }) {
   const { supabase, userId } = await uid();
+  if (values.weight == null || !Number.isFinite(values.weight) || values.weight <= 0) {
+    throw new Error("Waga jest wymagana do zapisania pomiaru");
+  }
   const photoPaths = values.photo_paths ?? [];
   if (photoPaths.length > 2 || photoPaths.some((path) => !path.startsWith(`${userId}/`))) {
     throw new Error("Nieprawidłowe zdjęcia pomiaru");

@@ -92,7 +92,7 @@ export function SessionMiniBar() {
 
   return (
     <>
-    <div className="fixed inset-x-[var(--floating-nav-gap)] bottom-[calc(var(--floating-nav-height)+var(--floating-nav-gap)+0.25rem+var(--safe-area-bottom))] z-40 mx-auto max-w-[424px]">
+    <div className="fixed inset-x-[var(--floating-nav-gap)] bottom-[calc(var(--floating-nav-height)+var(--floating-nav-gap)+0.25rem)] z-40 mx-auto max-w-[424px]">
       <div className="flex items-center gap-sm rounded-xl bg-volt px-sm py-1.5 text-volt-foreground shadow-lg">
         <Link href={`/session/${open.id}`} className="flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-md px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt-foreground">
           <p className="flex items-center gap-1 truncate text-sm font-semibold">

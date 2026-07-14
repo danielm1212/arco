@@ -136,6 +136,17 @@
     --radius:                var(--radius-md);
   }
 
+  /* W standalone iOS część webviewów zwraca 0 dla `safe-area-inset-top`,
+     mimo że status bar nadal nachodzi na treść. Minimalny inset obowiązuje
+     wyłącznie na dotykowym WebKit; poza nim pozostaje zwykłe `env()`. */
+  @supports (-webkit-touch-callout: none) {
+    @media (max-width: 640px) and (pointer: coarse) {
+      :root {
+        --safe-area-top: max(env(safe-area-inset-top, 0px), 3.25rem);
+      }
+    }
+  }
+
   .dark {
     /* ── L2 · SEMANTIC (dark) — nadpisanie referencji; primitive bez zmian ── */
     --color-bg:              var(--arco-ink-800);       /* ciepła czerń — canvas */

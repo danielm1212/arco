@@ -57,8 +57,9 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
   }
 
   function save() {
-    if (!weight && !fat && files.length === 0) {
-      toast.error("Podaj wagę, % tkanki albo dodaj zdjęcie.");
+    const normalizedWeight = clampNum(num(weight), { max: LIMITS.bodyWeight });
+    if (normalizedWeight == null || normalizedWeight <= 0) {
+      toast.error("Podaj wagę, aby zapisać pomiar.");
       return;
     }
     startTransition(async () => {
@@ -79,7 +80,7 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
         }
         try {
           await logBodyMetric({
-            weight: clampNum(num(weight), { max: LIMITS.bodyWeight }),
+            weight: normalizedWeight,
             body_fat: clampNum(num(fat), { max: LIMITS.bodyFat }),
             notes: notes || null,
             photo_paths: photoPaths,
@@ -122,8 +123,8 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
   return (
     <div className="space-y-sm rounded-xl bg-card p-md shadow-sm">
       <div className="grid grid-cols-2 gap-sm">
-        <div className="space-y-xs">
-          <label htmlFor="body-weight" className="text-xs text-muted-foreground">Waga ({unit})</label>
+        <div className="flex min-w-0 flex-col gap-xs">
+          <label htmlFor="body-weight" className="min-h-12 text-xs leading-5 text-muted-foreground">Waga ({unit}) <span className="text-foreground">*</span></label>
           <Input
             id="body-weight"
             type="text"
@@ -131,10 +132,11 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
             autoComplete="off"
             value={weight}
             onChange={(e) => setWeight(decimalInput(e.target.value))}
+            required
           />
         </div>
-        <div className="space-y-xs">
-          <label htmlFor="body-fat" className="text-xs text-muted-foreground">Tkanka tłuszczowa % (opcjonalnie)</label>
+        <div className="flex min-w-0 flex-col gap-xs">
+          <label htmlFor="body-fat" className="min-h-12 text-xs leading-5 text-muted-foreground">Tkanka tłuszczowa % <span className="block">(opcjonalnie)</span></label>
           <Input
             id="body-fat"
             type="text"

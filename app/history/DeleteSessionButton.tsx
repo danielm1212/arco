@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteSession } from "@/app/actions/session";
@@ -8,6 +9,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 
 export function DeleteSessionButton({ id }: { id: string }) {
+  const router = useRouter();
   const [pending, start] = useTransition();
   const [open, setOpen] = useState(false);
 
@@ -16,8 +18,8 @@ export function DeleteSessionButton({ id }: { id: string }) {
       try {
         await deleteSession(id);
         setOpen(false);
-      } catch (e) {
-        if (e instanceof Error && e.message.includes("NEXT_REDIRECT")) throw e;
+        router.refresh();
+      } catch {
         toast.error("Nie udało się usunąć sesji.");
       }
     });

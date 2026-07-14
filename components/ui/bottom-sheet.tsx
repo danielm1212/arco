@@ -33,7 +33,16 @@ export function BottomSheet({
   contentClassName?: string;
 }) {
   return (
-    <Drawer.Root open={open} onOpenChange={onOpenChange} handleOnly fixed noBodyStyles>
+    <Drawer.Root
+      open={open}
+      onOpenChange={onOpenChange}
+      handleOnly
+      fixed
+      // Vaul 1.1.x przewija dokument do 0 przy własnym scroll-locku, co w
+      // Chromium daje widoczny „skok” tła. iOS nadal ma osobną stabilizację
+      // pozycji przez `fixed` + body styles powyżej.
+      disablePreventScroll={false}
+    >
       {trigger && <Drawer.Trigger asChild>{trigger}</Drawer.Trigger>}
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/50" />
