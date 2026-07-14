@@ -53,6 +53,28 @@ export function BottomSheet({
   useEffect(() => {
     if (!open) return;
 
+    // iOS nie respektuje `overscroll-behavior` dla documentu. Bez fizycznego
+    // unieruchomienia body gest z krótkiego albo przewiniętego do końca sheeta
+    // przechodzi na ekran pod nim. Ujemny top zachowuje pikselową pozycję tła.
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const previousBodyStyles = {
+      position: document.body.style.position,
+      top: document.body.style.top,
+      left: document.body.style.left,
+      right: document.body.style.right,
+      width: document.body.style.width,
+      overflow: document.body.style.overflow,
+    };
+    Object.assign(document.body.style, {
+      position: "fixed",
+      top: `${-scrollY}px`,
+      left: `${-scrollX}px`,
+      right: "0",
+      width: "100%",
+      overflow: "hidden",
+    });
+
     const focusDialog = window.requestAnimationFrame(() => {
       dialogRef.current?.focus({ preventScroll: true });
     });
@@ -63,6 +85,8 @@ export function BottomSheet({
     return () => {
       window.cancelAnimationFrame(focusDialog);
       document.removeEventListener("keydown", onKeyDown);
+      Object.assign(document.body.style, previousBodyStyles);
+      window.requestAnimationFrame(() => window.scrollTo(scrollX, scrollY));
     };
   }, [open, onOpenChange]);
 
