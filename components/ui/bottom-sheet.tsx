@@ -1,20 +1,32 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { Drawer } from "vaul";
+import {
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useId,
+  useRef,
+  type MouseEvent,
+  type ReactElement,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
+type TriggerProps = {
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
+};
+
 /**
- * Bottom sheet wspólny dla całej apki (vaul).
+ * Stabilny arkusz modalny dla PWA.
  *
- * `handleOnly` + `<Drawer.Handle>`: BEZ tego cały `Drawer.Content` nasłuchuje
- * gestu przeciągnij-zamknij, co koliduje z natywnym scrollem długiej treści
- * (feedback 2026-07-11 — sheet zamykał się przy próbie scrollowania). Z
- * `handleOnly` przeciąganie działa TYLKO za uchwyt na górze, reszta arkusza to
- * zwykły, przewijalny content bez ingerencji vaul w gesty dotykowe.
+ * Vaul w trybie standalone modyfikował scroll dokumentu przy montowaniu
+ * dialogu. To powodowało widoczny skok tła. Ten komponent celowo nie dotyka
+ * `body`, `html` ani pozycji scrolla: warstwa blokująca leży nad stroną, a
+ * fokus dialogu dostaje `preventScroll`.
  */
 export function BottomSheet({
-  open,
+  open = false,
   onOpenChange,
   trigger,
   title,
@@ -24,45 +36,83 @@ export function BottomSheet({
 }: {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Pomiń, gdy sheet jest w pełni kontrolowany z zewnątrz (bez własnego triggera). */
+  /** Pomiń, gdy arkusz jest w pełni kontrolowany z zewnątrz (bez triggera). */
   trigger?: ReactNode;
   title: ReactNode;
-  /** sr-only opis dla czytników ekranu (Drawer.Description wymaga treści). */
+  /** Opis dla czytników ekranu. */
   description: string;
   children: ReactNode;
   contentClassName?: string;
 }) {
+  const titleId = useId();
+  const descriptionId = useId();
+  const dialogRef = useRef<HTMLElement>(null);
+
+  const close = () => onOpenChange?.(false);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const focusDialog = window.requestAnimationFrame(() => {
+      dialogRef.current?.focus({ preventScroll: true });
+    });
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onOpenChange?.(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusDialog);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, onOpenChange]);
+
+  const triggerElement = isValidElement<TriggerProps>(trigger)
+    ? cloneElement(trigger as ReactElement<TriggerProps>, {
+        onClick: (event: MouseEvent<HTMLElement>) => {
+          trigger.props.onClick?.(event);
+          if (!event.defaultPrevented) onOpenChange?.(true);
+        },
+      })
+    : trigger;
+
   return (
-    <Drawer.Root
-      open={open}
-      onOpenChange={onOpenChange}
-      handleOnly
-      fixed
-      // Vaul 1.1.x przewija dokument do 0 przy własnym scroll-locku, co w
-      // Chromium daje widoczny „skok” tła. iOS nadal ma osobną stabilizację
-      // pozycji przez `fixed` + body styles powyżej.
-      disablePreventScroll={false}
-    >
-      {trigger && <Drawer.Trigger asChild>{trigger}</Drawer.Trigger>}
-      <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/50" />
-        <Drawer.Content
-          className={`fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[85dvh] max-w-md flex-col rounded-t-2xl border-t bg-card text-card-foreground outline-none ${contentClassName ?? ""}`}
-        >
-          <Drawer.Handle className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30" />
-          <div className="flex shrink-0 items-center justify-between px-md pt-sm">
-            <Drawer.Title className="text-lg font-semibold">{title}</Drawer.Title>
-            <Drawer.Close
-              aria-label="Zamknij"
-              className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+    <>
+      {triggerElement}
+      {open &&
+        createPortal(
+          <div className="fixed inset-0 z-50">
+            <div
+              aria-hidden
+              className="absolute inset-0 animate-in fade-in-0 bg-black/50 duration-200"
+              onPointerDown={close}
+            />
+            <section
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              aria-describedby={descriptionId}
+              tabIndex={-1}
+              className={`absolute inset-x-0 bottom-0 mx-auto flex max-h-[85dvh] max-w-md animate-in slide-in-from-bottom-8 flex-col rounded-t-2xl border-t bg-card text-card-foreground outline-none duration-200 ${contentClassName ?? ""}`}
             >
-              <X className="size-5" />
-            </Drawer.Close>
-          </div>
-          <Drawer.Description className="sr-only">{description}</Drawer.Description>
-          <div className="overflow-y-auto p-md pt-xs pb-[calc(2rem+var(--safe-area-bottom))]">{children}</div>
-        </Drawer.Content>
-      </Drawer.Portal>
-    </Drawer.Root>
+              <div className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30" aria-hidden />
+              <div className="flex shrink-0 items-center justify-between px-md pt-sm">
+                <h2 id={titleId} className="text-lg font-semibold">{title}</h2>
+                <button
+                  type="button"
+                  aria-label="Zamknij"
+                  onClick={close}
+                  className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <X className="size-5" aria-hidden />
+                </button>
+              </div>
+              <p id={descriptionId} className="sr-only">{description}</p>
+              <div className="overflow-y-auto overscroll-contain p-md pt-xs pb-[calc(2rem+var(--safe-area-bottom))]">{children}</div>
+            </section>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
