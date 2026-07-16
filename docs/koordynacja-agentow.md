@@ -49,6 +49,18 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Claude (naprawa CI po deployu R1b — smoke vs niezmiennik sesji): ZAKOŃCZONE.**
+  CI na `9f65a6d` padło w „Sprawdź główny przepływ danych": `smoke-phase1.ts` tworzył drugą
+  otwartą sesję przy żywej pierwszej — `sessions_one_open_per_user_idx` z R1b słusznie to
+  odrzuca. Przyczyna systemowa: commity R1b nigdy nie przeszły przez CI przed pushem (ostatni
+  zielony run był na `188f025`), a lokalna weryfikacja R1b nie obejmowała `npm run smoke`.
+  Fix `05e7943`: każda sesja smoke'a jest kończona przed startem kolejnej + jawna asercja
+  odrzucenia duplikatu (23505). Weryfikacja lokalna na izolowanym stacku (user `ci-admin@`,
+  bez dotykania `.env.local` wskazującego prod): smoke ✓, phase2 ✓, offline ✓, team ✓.
+  Otwarta sesja testowa `codex-ui@arco.local` na lokalnej bazie zamknięta punktowo po ID
+  (nie skasowana) — blokowała niezmiennik. Deploy `9f65a6d` na prod NIE był dotknięty
+  (padał test, nie aplikacja). Nauka na przyszłość: przed pushem migracji zmieniającej
+  kontrakt danych uruchamiać też smoke'i, nie tylko lint/testy/build.
 - **2026-07-16 · Claude (deploy R1a+R1b na produkcję, na wyraźne polecenie [Ty]): ZAKOŃCZONE.**
   Kolejność wymuszona zależnością kodu od RPC: (1) `supabase db push` —
   `20260716213000_single_open_session` zastosowana na prod po czystym dry-runie,
