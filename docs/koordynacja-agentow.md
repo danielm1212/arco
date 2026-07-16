@@ -49,6 +49,14 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Claude (R5a przygotowanie treści — równoległość jawnie dopuszczona w planie §R5a): ZAKOŃCZONE.**
+  Zakres: WYŁĄCZNIE `docs/` — nowy `docs/r5a-slownik-pl-propozycja.md` (propozycja `name_pl`
+  dla ~205 ćwiczeń: 91 slotowych + 114 klasyki, ~55 aliasów, inwentarz 16 placeholderów/49 slotów
+  z rekomendacją „zdjęcie dla wszystkich") oraz wpisy w `docs/README.md` i `docs/notion-sync-queue.md`
+  (oba już zajęte przez tę sesję, Codex je omija). Zero kodu, migracji, seedów i danych —
+  implementacja search (R1–R3 audytu) zostaje przy wykonawcy R5a. Wszystkie id zweryfikowane
+  względem `scripts/data/exercises.json` i slotów w `scripts/seed.ts`; liczby placeholderów
+  zgodne z walidatorem (16/49). Czeka na przegląd konwencji i tłumaczeń [Ty].
 - **2026-07-16 · Codex (R1b integralność sesji i szkice): ZAKOŃCZONE TECHNICZNIE.**
   Zakres: niezmiennik jednej otwartej sesji, idempotentny start, terminalne redirecty,
   check-in po edycji, trwałe szkice/recovery, dirty guard i precyzyjny sync dwóch ćwiczeń.

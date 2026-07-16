@@ -22,6 +22,8 @@ Tych sześć plików jest dokumentami sterującymi bieżącą pracą. Gdy starsz
 - `usability-audit.md` — audyt użyteczności i stan ustaleń.
 - `audyt-wyszukiwarki-2026-07.md` — audyt wyszukiwania ćwiczeń; jego lokalne fazy R1–R6
   składają się na R5a aktywnego planu i blokują H2.
+- `r5a-slownik-pl-propozycja.md` — propozycja `name_pl` (~205 ćwiczeń), aliasów i decyzji
+  placeholderowych do przeglądu właściciela; treść wejściowa dla implementacji R5a.
 - `audyt-nawigacji-2026-07.md` — docelowy kontrakt Back/Up, bottom baru, mini-bara sesji i stosu historii.
 - `userflows-docelowe-2026-07.md` — decyzja nadrzędna wobec wcześniejszych wariantów IA z audytów.
 - `r0-5-wynik-prototypu.md` — wynik klikalnego prototypu, przetestowane flow i decyzje przed implementacją.
@@ -37,6 +39,7 @@ Tych sześć plików jest dokumentami sterującymi bieżącą pracą. Gdy starsz
 - `prompt-fotografia-warm.md` — system fotografii Warm dla biblioteki, landingu i momentów.
 - `strategia-marketingowa.md`, `landing-plan.md`, `plan-dystrybucji.md`, `baza-contentu-instagram.md` — materiały na etap launchu.
 - `audyt-paywalla-2026-07.md` — uzasadnienie modelu Coach, yearly-first i teasera stagnacji.
+- `spec-status-konta-ui.md` — karta „Twój plan" w Ustawieniach i trzy stany ekranu `/coach`.
 
 ### Technologia i operacje
 
