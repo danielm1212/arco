@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { logBodyMetric } from "@/app/actions/body";
@@ -9,9 +9,34 @@ import { uuid } from "@/lib/uuid";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { clampNum, LIMITS } from "@/lib/format";
+import { DraftRecoveryNotice } from "@/components/forms/DraftRecoveryNotice";
+import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
+import { clearFileDraft, loadFileDraft, saveFileDraft } from "@/lib/blobDrafts";
+import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
 
 const num = (v: string) => (v.trim() === "" ? null : Number(v.replace(",", ".")));
 const decimalInput = (value: string) => value.replace(/[^0-9,.]/g, "").replace(/([,.].*)[,.]/g, "$1");
+
+type BodyDraft = { weight: string; fat: string; notes: string };
+const isBodyDraft = (candidate: unknown): candidate is BodyDraft => {
+  if (!candidate || typeof candidate !== "object") return false;
+  const value = candidate as Partial<BodyDraft>;
+  return typeof value.weight === "string" && typeof value.fat === "string" && typeof value.notes === "string";
+};
+
+function readPreviews(files: File[]) {
+  return Promise.all(
+    files.map(
+      (file) =>
+        new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        }),
+    ),
+  );
+}
 
 /** Skaluje formaty obsługiwane przez przeglądarkę do max 1280px i koduje JPEG q0.8. */
 async function compress(file: File): Promise<Blob> {
@@ -46,6 +71,63 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
   const [previews, setPreviews] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, startTransition] = useTransition();
+  const [fileDraftReady, setFileDraftReady] = useState(false);
+  const [filesRecovered, setFilesRecovered] = useState(false);
+  const textDraftKey = `arco-draft-body-v1:${userId}`;
+  const fileDraftKey = `body-photos-v1:${userId}`;
+  const textDirty = weight !== "" || fat !== "" || notes !== "";
+  const dirty = textDirty || files.length > 0;
+  const { recovered: textRecovered, clearDraft: clearTextDraft } = usePersistentFormDraft({
+    storageKey: textDraftKey,
+    value: { weight, fat, notes },
+    enabled: textDirty,
+    isValid: isBodyDraft,
+    onRestore: (draft) => {
+      setWeight(draft.weight);
+      setFat(draft.fat);
+      setNotes(draft.notes);
+    },
+  });
+
+  useEffect(() => {
+    let active = true;
+    loadFileDraft(fileDraftKey)
+      .then(async (savedFiles) => {
+        if (!active || savedFiles.length === 0) return;
+        const savedPreviews = await readPreviews(savedFiles);
+        if (!active) return;
+        setFiles(savedFiles.slice(0, 2));
+        setPreviews(savedPreviews.slice(0, 2));
+        setFilesRecovered(true);
+      })
+      .catch(() => undefined)
+      .finally(() => active && setFileDraftReady(true));
+    return () => {
+      active = false;
+    };
+  }, [fileDraftKey]);
+
+  useEffect(() => {
+    if (!fileDraftReady) return;
+    const timer = window.setTimeout(() => {
+      saveFileDraft(fileDraftKey, files).catch(() =>
+        toast.error("Nie udało się zabezpieczyć zdjęć na tym urządzeniu."),
+      );
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [fileDraftKey, fileDraftReady, files]);
+
+  const clearDrafts = () => {
+    clearTextDraft();
+    void clearFileDraft(fileDraftKey).catch(() => undefined);
+    setFilesRecovered(false);
+  };
+
+  useDirtyGuard({
+    dirty,
+    onDiscard: clearDrafts,
+    message: "Pomiar i zdjęcia są zapisane lokalnie jako szkic. Odrzucenie zmian usunie je z tego urządzenia.",
+  });
 
   function reset() {
     setWeight("");
@@ -53,6 +135,7 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
     setNotes("");
     setFiles([]);
     setPreviews([]);
+    clearDrafts();
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -104,17 +187,7 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
     const remaining = 2 - files.length;
     if (selectedFiles.length > remaining) toast.error("Do jednego pomiaru możesz dodać maksymalnie 2 zdjęcia.");
     const accepted = selectedFiles.slice(0, remaining);
-    const nextPreviews = await Promise.all(
-      accepted.map(
-        (file) =>
-          new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(String(reader.result));
-            reader.onerror = () => reject(reader.error);
-            reader.readAsDataURL(file);
-          }),
-      ),
-    );
+    const nextPreviews = await readPreviews(accepted);
     setFiles((current) => [...current, ...accepted]);
     setPreviews((current) => [...current, ...nextPreviews]);
     if (fileRef.current) fileRef.current.value = "";
@@ -122,6 +195,20 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
 
   return (
     <div className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+      {(textRecovered || filesRecovered) && (
+        <DraftRecoveryNotice
+          onClear={() => {
+            setWeight("");
+            setFat("");
+            setNotes("");
+            setFiles([]);
+            setPreviews([]);
+            clearDrafts();
+          }}
+        >
+          Przywróciliśmy pola pomiaru{filesRecovered ? " oraz zdjęcia" : ""} zapisane przed przerwaniem.
+        </DraftRecoveryNotice>
+      )}
       <div className="grid grid-cols-2 gap-sm">
         <div className="flex min-w-0 flex-col gap-xs">
           <label htmlFor="body-weight" className="min-h-12 text-xs leading-5 text-muted-foreground">Waga ({unit}) <span className="text-foreground">*</span></label>

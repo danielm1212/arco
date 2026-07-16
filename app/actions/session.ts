@@ -76,7 +76,7 @@ export async function startFreestyle() {
 }
 
 export type HistoricalSessionState =
-  | { error?: string; activeSessionId?: string }
+  | { error?: string; activeSessionId?: string; sessionId?: string }
   | null;
 
 /**
@@ -117,7 +117,7 @@ export async function startHistoricalSession(
       activeSessionId: result.sessionId,
     };
   }
-  redirect(`/session/${result.sessionId}`, RedirectType.replace);
+  return { sessionId: result.sessionId };
 }
 
 /** Zakończ sesję (ustaw finished_at). */

@@ -22,6 +22,9 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
+import { DraftRecoveryNotice } from "@/components/forms/DraftRecoveryNotice";
+import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
+import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
 
 export interface EditorSlot {
   id: string;
@@ -43,6 +46,12 @@ export interface EditorDay {
 
 const ERR = "Nie udało się zapisać. Spróbuj ponownie.";
 const numOrNull = (v: string) => (v.trim() === "" ? null : Number(v));
+type SlotField = "target_sets" | "target_reps_min" | "target_reps_max" | "rest_seconds";
+type ProgramFieldDraft = Record<string, string>;
+const isProgramFieldDraft = (candidate: unknown): candidate is ProgramFieldDraft =>
+  !!candidate &&
+  typeof candidate === "object" &&
+  Object.values(candidate).every((value) => typeof value === "string");
 
 interface DeleteRequest {
   title: string;
@@ -63,11 +72,35 @@ export function ProgramEditor({
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [deleteRequest, setDeleteRequest] = useState<DeleteRequest | null>(null);
+  const [fieldDrafts, setFieldDrafts] = useState<ProgramFieldDraft>({});
+  const dirty = Object.keys(fieldDrafts).length > 0;
+  const { recovered, clearDraft } = usePersistentFormDraft({
+    storageKey: `arco-draft-program-v1:${programId}`,
+    value: fieldDrafts,
+    enabled: dirty,
+    isValid: isProgramFieldDraft,
+    onRestore: setFieldDrafts,
+  });
+  useDirtyGuard({
+    dirty,
+    onDiscard: clearDraft,
+    message: "Wpisywane pola programu są zapisane jako szkic. Odrzucenie zmian przywróci ostatnie wartości zapisane na koncie.",
+  });
 
-  const run = (fn: () => Promise<unknown>, refresh = false) =>
+  const setFieldDraft = (key: string, value: string) =>
+    setFieldDrafts((current) => ({ ...current, [key]: value }));
+  const clearFieldDraft = (key: string) =>
+    setFieldDrafts((current) => {
+      const next = { ...current };
+      delete next[key];
+      return next;
+    });
+
+  const run = (fn: () => Promise<unknown>, refresh = false, onSuccess?: () => void) =>
     startTransition(async () => {
       try {
         await fn();
+        onSuccess?.();
         if (refresh) router.refresh();
       } catch {
         toast.error(ERR);
@@ -86,11 +119,29 @@ export function ProgramEditor({
       <PageHeader title="Edytor" fallback="/programs" backLabel="Wróć do programów" sticky />
 
       <main className="flex-1 space-y-lg p-md">
+        {recovered && (
+          <DraftRecoveryNotice
+            onClear={() => {
+              setFieldDrafts({});
+              clearDraft();
+            }}
+          >
+            Przywróciliśmy pola programu, których nie udało się jeszcze zapisać na koncie.
+          </DraftRecoveryNotice>
+        )}
+
         <div className="space-y-xs">
           <label className="text-sm font-medium text-muted-foreground">Nazwa programu</label>
           <Input
-            defaultValue={name}
-            onBlur={(e) => run(() => updateProgramName(programId, e.target.value))}
+            value={fieldDrafts.name ?? name}
+            onChange={(event) => setFieldDraft("name", event.target.value)}
+            onBlur={(event) =>
+              run(
+                () => updateProgramName(programId, event.target.value),
+                false,
+                () => clearFieldDraft("name"),
+              )
+            }
           />
         </div>
 
@@ -98,8 +149,16 @@ export function ProgramEditor({
           <section key={day.id} className="space-y-sm rounded-xl border bg-card p-md">
             <div className="flex items-center gap-sm">
               <Input
-                defaultValue={day.label}
-                onBlur={(e) => run(() => updateDayLabel(programId, day.id, e.target.value))}
+                value={fieldDrafts[`day:${day.id}:label`] ?? day.label}
+                onChange={(event) => setFieldDraft(`day:${day.id}:label`, event.target.value)}
+                onBlur={(event) => {
+                  const key = `day:${day.id}:label`;
+                  run(
+                    () => updateDayLabel(programId, day.id, event.target.value),
+                    false,
+                    () => clearFieldDraft(key),
+                  );
+                }}
                 className="min-w-0 font-medium"
               />
               <Button
@@ -149,7 +208,21 @@ export function ProgramEditor({
                 <SlotRow
                   key={slot.id}
                   slot={slot}
-                  onUpdate={(v) => run(() => updateSlot(programId, slot.id, v))}
+                  valueFor={(field, fallback) =>
+                    fieldDrafts[`slot:${slot.id}:${field}`] ?? fallback
+                  }
+                  onDraft={(field, value) =>
+                    setFieldDraft(`slot:${slot.id}:${field}`, value)
+                  }
+                  onUpdate={(field, value) => {
+                    const key = `slot:${slot.id}:${field}`;
+                    const patch = { [field]: value } as Parameters<typeof updateSlot>[2];
+                    run(
+                      () => updateSlot(programId, slot.id, patch),
+                      false,
+                      () => clearFieldDraft(key),
+                    );
+                  }}
                   onDelete={() =>
                     setDeleteRequest({
                       title: `Usunąć „${slot.exerciseName}”?`,
@@ -225,18 +298,17 @@ export function ProgramEditor({
 
 function SlotRow({
   slot,
+  valueFor,
+  onDraft,
   onUpdate,
   onDelete,
   onMoveUp,
   onMoveDown,
 }: {
   slot: EditorSlot;
-  onUpdate: (v: {
-    target_sets?: number;
-    target_reps_min?: number | null;
-    target_reps_max?: number | null;
-    rest_seconds?: number;
-  }) => void;
+  valueFor: (field: SlotField, fallback: string) => string;
+  onDraft: (field: SlotField, value: string) => void;
+  onUpdate: (field: SlotField, value: number | null) => void;
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
@@ -256,10 +328,30 @@ function SlotRow({
         </Button>
       </div>
       <div className="flex items-center gap-xs text-xs text-muted-foreground">
-        <Mini label="serie" def={slot.targetSets} onBlur={(n) => onUpdate({ target_sets: n ?? 3 })} />
-        <Mini label="od" def={slot.repsMin} onBlur={(n) => onUpdate({ target_reps_min: n })} />
-        <Mini label="do" def={slot.repsMax} onBlur={(n) => onUpdate({ target_reps_max: n })} />
-        <Mini label="przerwa s" def={slot.rest} onBlur={(n) => onUpdate({ rest_seconds: n ?? 120 })} />
+        <Mini
+          label="serie"
+          value={valueFor("target_sets", String(slot.targetSets))}
+          onChange={(value) => onDraft("target_sets", value)}
+          onBlur={(n) => onUpdate("target_sets", n ?? 3)}
+        />
+        <Mini
+          label="od"
+          value={valueFor("target_reps_min", slot.repsMin == null ? "" : String(slot.repsMin))}
+          onChange={(value) => onDraft("target_reps_min", value)}
+          onBlur={(n) => onUpdate("target_reps_min", n)}
+        />
+        <Mini
+          label="do"
+          value={valueFor("target_reps_max", slot.repsMax == null ? "" : String(slot.repsMax))}
+          onChange={(value) => onDraft("target_reps_max", value)}
+          onBlur={(n) => onUpdate("target_reps_max", n)}
+        />
+        <Mini
+          label="przerwa s"
+          value={valueFor("rest_seconds", String(slot.rest))}
+          onChange={(value) => onDraft("rest_seconds", value)}
+          onBlur={(n) => onUpdate("rest_seconds", n ?? 120)}
+        />
       </div>
     </li>
   );
@@ -267,11 +359,13 @@ function SlotRow({
 
 function Mini({
   label,
-  def,
+  value,
+  onChange,
   onBlur,
 }: {
   label: string;
-  def: number | null;
+  value: string;
+  onChange: (value: string) => void;
   onBlur: (n: number | null) => void;
 }) {
   return (
@@ -279,7 +373,8 @@ function Mini({
       <input
         type="number"
         inputMode="numeric"
-        defaultValue={def ?? ""}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
         onBlur={(e) => onBlur(numOrNull(e.target.value))}
         className="h-11 w-full rounded border border-input bg-background px-1 text-center text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />

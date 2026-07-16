@@ -7,10 +7,13 @@ export const dynamic = "force-dynamic";
 
 export default async function AddHistoricalWorkoutPage() {
   const supabase = await createClient();
-  const { data: programs } = await supabase
-    .from("programs")
-    .select("id, name, program_days(id, label, position)")
-    .order("name");
+  const [{ data: programs }, { data: auth }] = await Promise.all([
+    supabase
+      .from("programs")
+      .select("id, name, program_days(id, label, position)")
+      .order("name"),
+    supabase.auth.getUser(),
+  ]);
 
   const choices: HistoricalProgram[] = (programs ?? [])
     .map((program) => ({
@@ -34,7 +37,7 @@ export default async function AddHistoricalWorkoutPage() {
             Odtwórz trening, o którym zapomniałeś. Najpierw ustawiamy jego prawdziwą datę, potem wpisujesz ćwiczenia i serie.
           </p>
         </div>
-        <HistoricalWorkoutForm programs={choices} />
+        <HistoricalWorkoutForm programs={choices} userId={auth.user?.id ?? "anonymous"} />
       </main>
     </div>
   );

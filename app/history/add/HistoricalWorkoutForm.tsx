@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useRouter } from "next/navigation";
 import { CalendarClock, Dumbbell, Timer } from "lucide-react";
 import {
   startHistoricalSession,
@@ -10,6 +11,9 @@ import {
 } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DraftRecoveryNotice } from "@/components/forms/DraftRecoveryNotice";
+import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
+import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
 
 export type HistoricalProgram = {
   id: string;
@@ -18,6 +22,21 @@ export type HistoricalProgram = {
 };
 
 const pad = (value: number) => String(value).padStart(2, "0");
+type HistoricalDraft = {
+  occurredAt: string;
+  durationMinutes: string;
+  programDayId: string;
+};
+
+const isHistoricalDraft = (candidate: unknown): candidate is HistoricalDraft => {
+  if (!candidate || typeof candidate !== "object") return false;
+  const value = candidate as Partial<HistoricalDraft>;
+  return (
+    typeof value.occurredAt === "string" &&
+    typeof value.durationMinutes === "string" &&
+    typeof value.programDayId === "string"
+  );
+};
 
 function localDateTimeInput(date: Date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
@@ -41,20 +60,71 @@ function SubmitButton() {
   );
 }
 
-export function HistoricalWorkoutForm({ programs }: { programs: HistoricalProgram[] }) {
+export function HistoricalWorkoutForm({
+  programs,
+  userId,
+}: {
+  programs: HistoricalProgram[];
+  userId: string;
+}) {
+  const router = useRouter();
   const [state, formAction] = useActionState<HistoricalSessionState, FormData>(
     startHistoricalSession,
     null,
   );
-  const [occurredAt, setOccurredAt] = useState(defaultOccurredAt);
-  const [durationMinutes, setDurationMinutes] = useState("60");
-  const [programDayId, setProgramDayId] = useState("freestyle");
+  const [initial] = useState<HistoricalDraft>(() => ({
+      occurredAt: defaultOccurredAt(),
+      durationMinutes: "60",
+      programDayId: "freestyle",
+  }));
+  const [occurredAt, setOccurredAt] = useState(initial.occurredAt);
+  const [durationMinutes, setDurationMinutes] = useState(initial.durationMinutes);
+  const [programDayId, setProgramDayId] = useState(initial.programDayId);
+  const draft = { occurredAt, durationMinutes, programDayId };
+  const dirty =
+    occurredAt !== initial.occurredAt ||
+    durationMinutes !== initial.durationMinutes ||
+    programDayId !== initial.programDayId;
+  const { recovered, clearDraft } = usePersistentFormDraft({
+    storageKey: `arco-draft-historical-workout-v1:${userId}`,
+    value: draft,
+    enabled: dirty,
+    isValid: isHistoricalDraft,
+    onRestore: (saved) => {
+      setOccurredAt(saved.occurredAt);
+      setDurationMinutes(saved.durationMinutes);
+      setProgramDayId(saved.programDayId);
+    },
+  });
+  useDirtyGuard({
+    dirty,
+    onDiscard: clearDraft,
+    message: "Data, czas i wybór treningu są zapisane jako szkic. Odrzucenie zmian usunie ten szkic z urządzenia.",
+  });
+
+  useEffect(() => {
+    if (!state?.sessionId) return;
+    clearDraft();
+    router.replace(`/session/${state.sessionId}`);
+  }, [clearDraft, router, state?.sessionId]);
   const maximum = localDateTimeInput(new Date());
   const occurred = new Date(occurredAt);
   const occurredAtIso = Number.isNaN(+occurred) ? "" : occurred.toISOString();
 
   return (
     <form action={formAction} className="space-y-lg">
+      {recovered && (
+        <DraftRecoveryNotice
+          onClear={() => {
+            setOccurredAt(initial.occurredAt);
+            setDurationMinutes(initial.durationMinutes);
+            setProgramDayId(initial.programDayId);
+            clearDraft();
+          }}
+        >
+          Wróciliśmy do daty, czasu i rodzaju treningu wybranego przed przerwaniem.
+        </DraftRecoveryNotice>
+      )}
       <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
         <div className="flex items-start gap-sm">
           <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">

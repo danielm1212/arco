@@ -12,6 +12,9 @@ import { getAutoRest, setAutoRest, getKeepAwake, setKeepAwake } from "@/lib/pref
 import type { UnitSystem } from "@/lib/types";
 import { TRAINING_PRIORITIES, type TrainingPriority } from "@/lib/trainingPriority";
 import { PROGRAM_FOCUSES, type ProgramFocus } from "@/lib/programRecommendation";
+import { DraftRecoveryNotice } from "@/components/forms/DraftRecoveryNotice";
+import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
+import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
 
 const THEMES = [
   { value: "light", label: "Jasny" },
@@ -35,6 +38,35 @@ const EQUIPMENT = [
   ["other", "Inne"],
 ] as const;
 const subscribeToNothing = () => () => {};
+type SettingsDraft = {
+  unit: UnitSystem;
+  name: string;
+  rest: number;
+  equipment: string[];
+  weeklyGoal: number;
+  priority: TrainingPriority;
+  focus: ProgramFocus;
+};
+
+const isSettingsDraft = (candidate: unknown): candidate is SettingsDraft => {
+  if (!candidate || typeof candidate !== "object") return false;
+  const value = candidate as Partial<SettingsDraft>;
+  return (
+    (value.unit === "kg" || value.unit === "lbs") &&
+    typeof value.name === "string" &&
+    typeof value.rest === "number" &&
+    Array.isArray(value.equipment) &&
+    value.equipment.every((item) => typeof item === "string") &&
+    typeof value.weeklyGoal === "number" &&
+    TRAINING_PRIORITIES.some((item) => item.id === value.priority) &&
+    PROGRAM_FOCUSES.some((item) => item.id === value.focus)
+  );
+};
+
+const normalizedSettings = (value: SettingsDraft) => ({
+  ...value,
+  equipment: [...value.equipment].sort(),
+});
 
 export function SettingsForm({
   unit,
@@ -44,6 +76,7 @@ export function SettingsForm({
   displayName,
   priority,
   focus,
+  userId,
 }: {
   unit: UnitSystem;
   rest: number;
@@ -52,6 +85,7 @@ export function SettingsForm({
   displayName: string;
   priority: TrainingPriority;
   focus: ProgramFocus;
+  userId: string;
 }) {
   const [u, setU] = useState<UnitSystem>(unit);
   const [name, setName] = useState(displayName);
@@ -64,6 +98,47 @@ export function SettingsForm({
   const [saved, setSaved] = useState(false);
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(subscribeToNothing, () => true, () => false);
+  const [baseline, setBaseline] = useState<SettingsDraft>(() => ({
+    unit,
+    name: displayName,
+    rest,
+    equipment,
+    weeklyGoal,
+    priority,
+    focus,
+  }));
+  const draft: SettingsDraft = {
+    unit: u,
+    name,
+    rest: r,
+    equipment: eq,
+    weeklyGoal: goal,
+    priority: trainingPriority,
+    focus: trainingFocus,
+  };
+  const dirty =
+    JSON.stringify(normalizedSettings(draft)) !==
+    JSON.stringify(normalizedSettings(baseline));
+  const { recovered, clearDraft } = usePersistentFormDraft({
+    storageKey: `arco-draft-settings-v1:${userId}`,
+    value: draft,
+    enabled: dirty,
+    isValid: isSettingsDraft,
+    onRestore: (value) => {
+      setU(value.unit);
+      setName(value.name);
+      setR(value.rest);
+      setEq(value.equipment);
+      setGoal(value.weeklyGoal);
+      setTrainingPriority(value.priority);
+      setTrainingFocus(value.focus);
+    },
+  });
+  useDirtyGuard({
+    dirty,
+    onDiscard: clearDraft,
+    message: "Niezapisane ustawienia są zachowane jako szkic. Odrzucenie zmian przywróci ostatnią zapisaną konfigurację.",
+  });
 
   function toggle(item: string) {
     setEq((prev) =>
@@ -84,6 +159,8 @@ export function SettingsForm({
           training_priority: trainingPriority,
           training_focus: trainingFocus,
         });
+        setBaseline(draft);
+        clearDraft();
         setSaved(true);
         toast.success("Ustawienia zapisane.");
       } catch {
@@ -94,6 +171,22 @@ export function SettingsForm({
 
   return (
     <div className="space-y-lg">
+      {recovered && (
+        <DraftRecoveryNotice
+          onClear={() => {
+            setU(baseline.unit);
+            setName(baseline.name);
+            setR(baseline.rest);
+            setEq(baseline.equipment);
+            setGoal(baseline.weeklyGoal);
+            setTrainingPriority(baseline.priority);
+            setTrainingFocus(baseline.focus);
+            clearDraft();
+          }}
+        >
+          Przywróciliśmy ustawienia zmienione przed zamknięciem aplikacji.
+        </DraftRecoveryNotice>
+      )}
       <section className="space-y-xs">
         <h2 className="text-sm font-medium text-muted-foreground">Imię</h2>
         <Input

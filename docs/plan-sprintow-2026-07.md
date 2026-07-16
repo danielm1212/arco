@@ -118,7 +118,7 @@ Aktualny gate: 23/23 testy.
 `stary Service Worker → nowy chrome` na PWA. Nie odkładamy tego ryzyka do R5b; późniejsza
 macierz nadal rozszerza test, ale pierwszy deploy nie może zakładać wyłącznie świeżego cache.
 
-### R1b: integralność sesji i bezpieczeństwo nawigacji
+### R1b: integralność sesji i bezpieczeństwo nawigacji ✅ gotowy do regresji PWA
 
 **Czas:** 2–3 dni [Claude] + test offline/PWA [Ty]
 
@@ -137,6 +137,17 @@ macierz nadal rozszerza test, ale pierwszy deploy nie może zakładać wyłączn
 
 **Done:** nie da się utworzyć dwóch otwartych sesji, a przerwanie aplikacji nie usuwa szkicu
 ważnego zadania.
+
+**Stan 2026-07-16:** wdrożono częściowy unikalny indeks i atomowy start/wznowienie sesji,
+terminalne przejścia treningu live, edycji i backfillu oraz ochronę przed drugim check-inem.
+Logger odzyskuje serie i notatki z outboxa. Wspólny dirty guard obejmuje linki wewnętrzne,
+kontrolowane przejścia, systemowe Wstecz i `beforeunload`; szkice z jawnym stanem odzyskania
+działają dla treningu po fakcie, pomiaru (w tym zdjęć przez IndexedDB), ustawień i własnego
+programu. Punktowy skrypt dwóch ćwiczeń nie uruchamia pełnego seeda i blokuje przypadkowy
+zapis zdalny. Weryfikacja lokalna: lint ✓, 25/25 testów ✓, build ✓, smoke offline ✓,
+transakcyjny test inwariantu bazy ✓ oraz regresja szkicu i systemowego Wstecz w Chromium ✓.
+Pozostaje checkpoint [Ty]: zamknięcie/ubijanie iPhone PWA, Android system Back oraz utrata
+sieci w trakcie edycji. Focus trap bottom sheetów nadal należy do R5b.
 
 ### R2: Trening, Dziś i Plany
 

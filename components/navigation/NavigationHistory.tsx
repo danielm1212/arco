@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useDirtyNavigation } from "./DirtyGuard";
 
 type NavigationMode = "push" | "replace" | "pop";
 
@@ -21,6 +22,7 @@ const NavigationHistoryContext = createContext<NavigationHistoryValue | null>(nu
 export function NavigationHistoryProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { requestNavigation } = useDirtyNavigation();
   const stack = useRef<string[]>([]);
   const nextMode = useRef<NavigationMode | null>(null);
 
@@ -63,32 +65,38 @@ export function NavigationHistoryProvider({ children }: { children: React.ReactN
 
   const replace = useCallback(
     (href: string) => {
-      const targetPathname = new URL(href, window.location.href).pathname;
-      if (targetPathname !== pathname) nextMode.current = "replace";
-      router.replace(href);
+      requestNavigation(() => {
+        const targetPathname = new URL(href, window.location.href).pathname;
+        if (targetPathname !== pathname) nextMode.current = "replace";
+        router.replace(href);
+      });
     },
-    [pathname, router],
+    [pathname, requestNavigation, router],
   );
 
   const push = useCallback(
     (href: string) => {
-      nextMode.current = "push";
-      router.push(href);
+      requestNavigation(() => {
+        nextMode.current = "push";
+        router.push(href);
+      });
     },
-    [router],
+    [requestNavigation, router],
   );
 
   const goBack = useCallback(
     (fallback: string) => {
-      if (stack.current.length > 1) {
-        nextMode.current = "pop";
-        router.back();
-        return;
-      }
-      nextMode.current = "replace";
-      router.replace(fallback);
+      requestNavigation(() => {
+        if (stack.current.length > 1) {
+          nextMode.current = "pop";
+          router.back();
+          return;
+        }
+        nextMode.current = "replace";
+        router.replace(fallback);
+      });
     },
-    [router],
+    [requestNavigation, router],
   );
 
   return (

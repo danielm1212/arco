@@ -16,6 +16,7 @@
     "validate:recommendations": "node --import tsx scripts/validate-program-recommendations.ts",
     "upload:exercise-images": "node --import tsx scripts/upload-exercise-images.ts",
     "sync:exercise-content": "node --import tsx scripts/sync-exercise-content.ts",
+    "sync:missing-exercises": "node --import tsx scripts/sync-missing-exercises.ts",
     "backup:database": "sh scripts/backup-database.sh",
     "backup:storage": "node --import tsx scripts/backup-storage.ts",
     "test:restore": "sh scripts/test-database-restore.sh",

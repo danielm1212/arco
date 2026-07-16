@@ -6,7 +6,7 @@
  * Uruchom: npm run seed   (wymaga lokalnego stacku Supabase + service-role w .env.local)
  */
 import { config } from "dotenv";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { pathToFileURL } from "node:url";
 import rawExercises from "./data/exercises.json";
 import polishInstructionOverrides from "./data/exercise-instructions-pl.json";
@@ -23,7 +23,11 @@ const IMG_PREFIX = customImageBase
 
 export const POLISH_INSTRUCTION_OVERRIDES = polishInstructionOverrides as Record<string, string[]>;
 
-type SeedClient = ReturnType<typeof createClient>;
+// Seed obejmuje kilka tabel i celowo nie korzysta z wygenerowanego schematu
+// aplikacji. Jawny klient bez schematu zachowuje dotychczasową elastyczność,
+// a jednocześnie pozwala bezpiecznie importować czyste transformatory w testach.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SeedClient = SupabaseClient<any>;
 let db: SeedClient;
 
 export type MovementPattern = "push" | "pull" | "squat" | "hinge" | "lunge" | "carry" | "core";

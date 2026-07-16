@@ -12,6 +12,7 @@ export function ReplaceLink({ onClick, ...props }: ComponentProps<typeof Link>) 
     <Link
       {...props}
       replace
+      data-navigation-mode="replace"
       onClick={(event) => {
         markNextNavigation("replace");
         onClick?.(event);
