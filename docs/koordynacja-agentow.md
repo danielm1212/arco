@@ -56,7 +56,9 @@
   Nie dotykano zajętych przez drugą sesję: `docs/HANDOFF.md`, aktywnego backlogu, strategii,
   roadmapy, kolejki Notion ani pozostałych nowych dokumentów. Wynik: 15 programów, 308 slotów,
   integralność treningów ✓, macierz rekomendacji 60/60 ✓, lint ✓, testy 14/14 ✓, build ✓.
-  Migracja i seed nie zostały wypchnięte ani uruchomione na prod; wymagają osobnego kroku deploy.
+  Schemat `20260716120000` wdrożony na prod. Z powodu braku service role treść dwóch planów
+  jest wdrażana bezpiecznym data-migration `20260716141007_lower_body_programs.sql`, zgodnym
+  z seedem i bez pobierania sekretów Vercel. Push kodu następuje dopiero po kontroli danych.
 - **2026-07-16 · Codex (audyt koordynacji i dokumentacji):** zajęty wyłącznie
   `docs/koordynacja-agentow.md` oraz ewentualnie wpis podsumowujący w `docs/HANDOFF.md`.
   Nie dotykam aktualnie zmienionych przez inną sesję plików: `CLAUDE.md`, `docs/README.md`,
