@@ -110,8 +110,9 @@ Lokalnie: lint ✓, testy 22/22 ✓, build ✓, regresja zalogowanych tras w Chr
 Pozostaje checkpoint [Ty]: iPhone PWA/Safari oraz Android system Back.
 
 **Refinement po review:** dodano widoczny przełącznik `Trening | Ciało`, działający start
-treningu z pustych Postępów oraz test start → minimalizacja → wznowienie. Home nie dubluje
-karty `Wznów` globalnym mini-barem. Aktualny gate: 23/23 testy.
+treningu z pustych Postępów oraz test start → minimalizacja → wznowienie. Globalny mini-bar
+pozostaje również na Home i jest jedynym CTA wznowienia; osobna karta `Wznów` znika.
+Aktualny gate: 23/23 testy.
 
 ### R1b: integralność sesji i bezpieczeństwo nawigacji
 
@@ -148,7 +149,7 @@ ważnego zadania.
 - aktywacja planu nie zmienia sesji w toku i terminalnie wraca do Dziś;
 - usunięcie konkurencyjnych stałych kart z Home;
 - kontekstowy, dismissowalny insight o przeglądzie planu;
-- brak duplikacji hero Wznów i globalnego mini-bara;
+- aktywną sesję obsługuje globalny mini-bar; bez osobnego hero lub karty Wznów;
 - główne CTA nie czeka na moduły poniżej folda ani sekwencyjny waterfall zapytań;
 - liczba zapytań jest wskaźnikiem diagnostycznym, nie sztucznym limitem akceptacyjnym.
 

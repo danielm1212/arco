@@ -50,8 +50,8 @@ test("bottom nav nigdy nie jest widoczny bez aktywnego taba", () => {
   }
 });
 
-test("home nie dubluje wznowienia sesji, a pozostałe huby pokazują mini-bar", () => {
-  assert.equal(resolveAppChrome("/").showSessionMiniBar, false);
+test("wszystkie huby pokazują globalny mini-bar aktywnej sesji", () => {
+  assert.equal(resolveAppChrome("/").showSessionMiniBar, true);
   assert.equal(resolveAppChrome("/progress").showSessionMiniBar, true);
   assert.equal(resolveAppChrome("/history").showSessionMiniBar, true);
   assert.equal(resolveAppChrome("/ekipa").showSessionMiniBar, true);

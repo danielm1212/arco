@@ -144,7 +144,8 @@ Podczas aktywnej sesji można przeglądać plany, ale ich zmiana dotyczy kolejne
 2. Lewy górny przycisk to ChevronDown: **Zminimalizuj trening**, nie Back.
 3. Zminimalizowanie wraca do bezpiecznego źródła, a fallbackiem jest Dziś.
 4. Na pozostałych hubach i zwykłych podstronach aktywna sesja ma mini-bar.
-5. Na Dziś hero z Wznów zastępuje mini-bar, aby nie dublować CTA.
+5. Mini-bar pozostaje także na Dziś jako spójny globalny sterownik. Główna treść nie pokazuje
+   wtedy osobnej karty ani hero Wznów, aby nie dublować tej samej akcji.
 6. Stan sesji i kolejka offline muszą przetrwać zamknięcie PWA.
 
 ### F5. Zakończenie i edycja sesji

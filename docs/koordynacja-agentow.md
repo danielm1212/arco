@@ -49,6 +49,11 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (spójność aktywnej sesji na Home): ZAKOŃCZONE.**
+  Zakres: globalny mini-bar pozostaje także na Home, a duplikująca go karta `Wznów trening`
+  znika z głównej treści. Mini-bar jest teraz jedynym globalnym CTA wznowienia, a Home nie
+  rezerwuje pustego zastępczego kafla. Kontrakt user flow i plan zostały zaktualizowane.
+  Nie zmieniono loggera, danych ani pozostałych modułów Home.
 - **2026-07-16 · Codex (R1a refinement po review właściciela): ZAKOŃCZONE.**
   Zakres: widoczna lokalna nawigacja `Trening | Ciało` w Postępach, działające CTA startu
   z pustego stanu Postępów oraz punktowe użycie istniejącej ikony 3D w pustym stanie Ciała.

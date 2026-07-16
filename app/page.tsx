@@ -242,15 +242,7 @@ export default async function HomePage() {
           </section>
         )}
 
-        {openSession ? (
-          <Link
-            href={`/session/${openSession.id}`}
-            className="block rounded-xl bg-card p-md shadow-sm ring-1 ring-inset ring-volt/40"
-          >
-            <p className="font-semibold text-primary">Wznów trening →</p>
-            <p className="text-sm text-muted-foreground">Masz niezakończoną sesję.</p>
-          </Link>
-        ) : suggested ? (
+        {openSession ? null : suggested ? (
           // F1 (redesign-home.md V4): hero = BIAŁY kafel (nie sand) — hierarchię
           // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.
           <div className="overflow-hidden rounded-xl bg-card text-card-foreground shadow-md">
