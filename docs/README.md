@@ -1,15 +1,16 @@
 # Dokumentacja Arco
 
-**Aktualizacja:** 2026-07-14
+**Aktualizacja:** 2026-07-16
 
 ## Zacznij tutaj
 
 - `HANDOFF.md` — co działa, co jest na produkcji i jakie są aktualne ryzyka.
 - `plan-sprintow-2026-07.md` — aktywny backlog i kolejność następnych sprintów.
 - `roadmap.md` — horyzonty rozwoju i bramki decyzyjne.
-- `wizja-i-plan-produktu-v2.md` — kanon produktu, marki i modelu.
+- `wizja-i-strategia-v3.md` — **kanon misji, person, modelu, strategii i języka marki (2026-07-16)**.
+- `wizja-i-plan-produktu-v2.md` — kanon zasad Z1–Z3 oraz §4–§10: ekipa, dystrybucja, sekwencja i bramki.
 
-Te cztery pliki są jedynymi dokumentami sterującymi bieżącą pracą. Gdy starszy dokument im przeczy, obowiązuje powyższa kolejność.
+Tych pięć plików jest jedynymi dokumentami sterującymi bieżącą pracą. Gdy starszy dokument im przeczy, obowiązuje powyższa kolejność.
 
 ## Trwałe referencje
 
@@ -18,6 +19,7 @@ Te cztery pliki są jedynymi dokumentami sterującymi bieżącą pracą. Gdy sta
 - `scenariusz-h2.md` — scenariusz testów z użytkownikami.
 - `feedback-uzytkownikow.md` — dziennik obserwacji i decyzji.
 - `usability-audit.md` — audyt użyteczności i stan ustaleń.
+- `audyt-wyszukiwarki-2026-07.md` — audyt wyszukiwania ćwiczeń i blocker H2 R1–R2.
 - `konkurencja-hevy.md` oraz `archive/konkurencja-hevy-ux.md` — benchmark konkurencyjny.
 - `monetyzacja.md` — wcześniejsza analiza; wizja v2 rozstrzyga konflikty.
 
@@ -27,7 +29,9 @@ Te cztery pliki są jedynymi dokumentami sterującymi bieżącą pracą. Gdy sta
 - `wytyczne-designu.md` — zasady interfejsu i dostępności.
 - `tone-of-voice.md` — język produktu.
 - `prompt-ikony-3d-clay.md` — zasady małego zestawu ikon 3D.
+- `prompt-fotografia-warm.md` — system fotografii Warm dla biblioteki, landingu i momentów.
 - `strategia-marketingowa.md`, `landing-plan.md`, `plan-dystrybucji.md`, `baza-contentu-instagram.md` — materiały na etap launchu.
+- `audyt-paywalla-2026-07.md` — uzasadnienie modelu Coach, yearly-first i teasera stagnacji.
 
 ### Technologia i operacje
 
@@ -37,6 +41,7 @@ Te cztery pliki są jedynymi dokumentami sterującymi bieżącą pracą. Gdy sta
 - `instrumentacja-metryk.md` — architektura pomiaru.
 - `kalendarz-wykonawczy.md` — orientacyjny harmonogram.
 - `notion-sync-queue.md` — kolejka zmian do ręcznej synchronizacji na żądanie.
+- `koordynacja-agentow.md` — rezerwacja obszarów i log pracy równoległych sesji.
 
 ### Ekipy i dane
 

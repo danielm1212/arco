@@ -15,7 +15,7 @@ Osobista aplikacja treningowa PWA. Aktualny stan produktu opisuje `docs/HANDOFF.
 1. `docs/HANDOFF.md` — stan techniczny i produktowy na dziś.
 2. `docs/plan-sprintow-2026-07.md` — aktywny backlog i najbliższe sprinty.
 3. `docs/roadmap.md` — horyzonty, bramki i kolejność rozwoju.
-4. `docs/wizja-i-plan-produktu-v2.md` — kanon wizji, modelu i zasad Z1–Z3.
+4. `docs/wizja-i-strategia-v3.md` — kanon wizji, person, modelu i strategii (2026-07-16); `docs/wizja-i-plan-produktu-v2.md` — §4–§10 (ekipa, sekwencja, bramki) + Z1–Z3 (§2).
 5. `docs/README.md` — mapa dokumentacji.
 
 Briefy v0.2 i v0.3 są dokumentami historyczno-referencyjnymi. Nie mogą nadpisywać aktualnego stanu ani planu sprintów.

@@ -1,5 +1,7 @@
 # Arco — wizja produktu i plan v2
 
+> ⚠️ **2026-07-16: wizja, persony i model biznesowy z §1 i §3 zostały nadpisane przez `wizja-i-strategia-v3.md`.** Zasady Z1–Z3 z §2 pozostają wiążące. Aktualne tutaj pozostają też: §4 ekipa (+ `ekipa-koncepcja.md`), §5 dystrybucja/PWA, §6 sekwencja, §7 bramki (B2 skalibrowane 2026-07-16), §8–§10.
+
 > **Data:** 2026-07-08. **Status:** kanon — nadpisuje `monetyzacja.md` w zakresie modelu, sekwencji i R3; rewiduje tabelę moatów z `konkurencja-hevy.md`; nie zmienia scope'u Horyzontu 1–2 z `roadmap.md`.
 > **Geneza:** audyt biznesowy 2026-07-08 (`audyt-biznesowy-2026-07-08.md`) + decyzje właściciela z sesji tego samego dnia: (1) warstwa trenerska **odłożona** (nie skreślona) — za duży nakład dla jednej osoby; (2) ekipa awansuje z H5 na silnik wzrostu; (3) model hybrydowy limity+wartość zatwierdzony z 5 poprawkami audytora; (4) ekipa widzi check-in i passę, nie pełne logi.
 
@@ -27,6 +29,8 @@ Anty-wizja (czym Arco nie jest): publicznym feedem, AI auto-programmingiem, apk�
 - **Początkujący (ICP wzrostowy):** wbudowane plany treningowe z opisami ćwiczeń, onboarding doświadczenie→sugestia planu (Sprint 4), guidance jako „trener-lite w kieszeni" — apka mówi, co robić, więc pierwszy trening nie przeraża. Marketingowo komunikowane wprost: „nie wiesz, od czego zacząć — Arco wie".
 
 **Dlaczego to konieczność, nie ukłon:** pętla ekipy przyprowadza osoby o różnym poziomie — zaawansowany zaprasza kumpla, który dopiero zaczyna. Jeśli apka wystrasza początkującego, pętla wyrzuca połowę zaproszonych. Beginner-friendliness = ochrona silnika wzrostu (Z2). Granica: prowadzenie za rękę realizujemy presetami, opisami i regułami guidance — **nie** osobnym „trybem początkującego" ani AI-coachem (poza zakresem bez zmian).
+
+**Trzecia rola (dopisek 2026-07-16, kierunek [Ty]): trener jako KANAŁ dystrybucji — nie klient.** Warstwa trenerska (płatny dashboard) pozostaje odłożona (§9) — ale lekka funkcja **„udostępnij plan podopiecznemu"** (trener układa program w Arco → link → podopieczny instaluje i trenuje) to trzecia rampa akwizycji obok pętli ekipy i contentu. Podopieczny wchodzi jako zwykły user (Kasia/Paweł), trener nie płaci i nie dostaje dashboardu. Własność strategiczna: ta funkcja jest jednocześnie **czujnikiem popytu** na pełną warstwę trenerską (warunek re-otwarcia (b) z §9 — „trenerzy sami piszą" — dostaje mierzalny sygnał: liczba udostępnień/trenera). Sekwencja twarda: funkcja NAJPIERW, marketing do trenerów POTEM (kanał K5) — trenerzy to jednorazowa amunicja, nie palić jej przed gotowością. Kiedy: po launchu, waga vs recap/karty do decyzji przy H5.
 
 ### 1.2 Marka i art direction (decyzja kierunkowa 2026-07-08)
 
@@ -78,7 +82,7 @@ Wejście: **reverse trial 21 dni** — pełne premium od pierwszego dnia, potem 
 
 Model ma **dwa osobne momenty konwersji** — mierzone i optymalizowane oddzielnie:
 
-- **Fala 1 — dzień ~21 (koniec triala):** niesie ją **guidance-full + analityka**. Dzień 22 musi być odczuwalnie ubożejszy od dnia 20. Dodatkowy trigger niezależny od kalendarza: **wykryta stagnacja** — apka pokazuje, że wie („stagnacja na push od 3 tyg."), pełna diagnoza i plan wyjścia w Coach. Moment konwersji = frustracja, nie rutyna.
+- **Fala 1 — dzień ~21 (koniec triala):** niesie ją **guidance-full + analityka**. Dzień 22 musi być odczuwalnie ubożejszy od dnia 20. Dodatkowy trigger niezależny od kalendarza: **wykryta stagnacja** + **teaser stagnacji (decyzja [Ty] 2026-07-16):** pierwsza wykryta stagnacja u KAŻDEGO usera (także free, także po trialu) = pełna diagnoza i plan wyjścia GRATIS, jednorazowo, z podpisem „tak działa Arco Coach" — próbka w momencie bólu; kolejne diagnozy w Coach. Moment konwersji = frustracja, nie rutyna. Cennik komunikowany **yearly-first** (99 zł/rok jako default — parytet z rocznym Hevy).
 - **Fala 2 — miesiąc ~3–4:** niesie ją **limit historii**. Zaangażowany user pierwszy raz chce sięgnąć za horyzont 12 tygodni i widzi kłódkę — z komunikatem „wszystko tu jest, bezpieczne; premium sięga głębiej".
 
 Metryki: konwersja_trial (fala 1) i konwersja_historia (fala 2) raportowane osobno. Optymalizacja fali 1 = packaging guidance; fali 2 = komunikat kłódki i moment jej pierwszego kontaktu.
@@ -154,7 +158,7 @@ Zasada nadrzędna: **nie prosimy o instalację przy pierwszym kontakcie.** Proś
 | Bramka | Kiedy | Zielone | Czerwone | Akcja przy czerwonym |
 |---|---|---|---|---|
 | B1: H2 + moduły | koniec H2 | zadania przechodzą; ≥3/5 osób wskazuje guidance lub analitykę jako „warte pieniędzy"; ≥3/5 ma „swojego Radka" | guidance odbierany jako „fajne, ale nie zapłacę" | nie ruszać ceny — wrócić do packagingu wartości przed bramką RODO |
-| B2: fala 1 | 3 mies. od launchu | trial→paid ≥25% **lub** konwersja całkowita ≥1,5% i rośnie | <1,5% po 3 mies. uczciwej iteracji | **nowy kill-gate (rewizja kanonu):** wariant C (wąska nisza home/dumbbell) **albo** świadoma akceptacja statusu zadbanego side-projectu. Oba wyjścia honorowe; „przenieś ciężar na trenerów" przestaje być wyjściem awaryjnym (§9) |
+| B2: fala 1 | 3 mies. od launchu | trial→paid **≥10%** (rewizja [Ty] 2026-07-16 — benchmark triali bez karty: 8,9–18,2%; było 25%) **lub** konwersja całkowita ≥1,5% i rośnie | <1,5% po 3 mies. uczciwej iteracji | **nowy kill-gate (rewizja kanonu):** wariant C (wąska nisza home/dumbbell) **albo** świadoma akceptacja statusu zadbanego side-projectu. Oba wyjścia honorowe; „przenieś ciężar na trenerów" przestaje być wyjściem awaryjnym (§9) |
 | B3: pętla ekipy | 3 mies. od startu ekipy | ≥30% aktywnych userów w ekipie; ≥1,15 zaproszonego-który-został na zapraszającego [ZAŁOŻENIE progu — kalibrować po pierwszych danych] | ekipa martwa mimo iteracji | ekipa spada do „nice-to-have retencyjnego"; wzrost wraca do content/społeczności — i sufit rośnie, uczciwie to odnotować |
 | B4: próg sensu | mies. 9–12 | MRR ≥ [próg właściciela — do wpisania, patrz pytanie otwarte] i rośnie | MRR znacząco poniżej | decyzja właścicielska: side-project / wariant C / re-otwarcie warstwy trenerskiej z pozycji większej darmowej bazy |
 

@@ -12,24 +12,22 @@
 4. Publiczne konta i zgodność prawna.
 5. Launch, monetyzacja i dopiero potem publiczna Ekipa.
 
-## Sprint 15 — stabilność PWA i regresja UX
+## Sprint 15 — stabilność PWA i regresja UX ✅ FUNKCJONALNIE ZAMKNIĘTE
 
 **Czas:** 1–2 dni
 
 **Cel:** domknąć zachowanie warstw mobilnych i upewnić się, że ostatnie poprawki nie wprowadziły regresji.
 
-- Przejść wszystkie bottom sheety: programy, wybór dnia, trening i pozostałe wystąpienia.
-- Sprawdzić iPhone PWA, Safari, Arc/Chromium, Android i desktop.
-- Potwierdzić: brak skoku, brak klikania pod overlayem, brak scrollowania tła, poprawny scroll treści sheetu.
-- Dodać focus trap i zwrot fokusu do elementu, który otworzył sheet.
-- Sprawdzić Escape, overlay, przycisk zamknięcia, swipe w dół i `prefers-reduced-motion`.
-- Sprawdzić sticky header treningu, toasty i floating nav z safe area.
-- Zweryfikować aktualizację PWA oraz zachowanie starego cache po deployu.
-- Uruchomić pełny gate jakości.
+- ✅ Brak skoku, klikania pod overlayem i scrollowania tła; poprawny scroll treści.
+- ✅ Escape, overlay, przycisk zamknięcia i swipe w dół.
+- ✅ Sticky header, toasty i floating nav respektują safe area.
+- ✅ Poprawki wdrożone i potwierdzone przez właściciela na PWA.
+- ⬜ Refinement dostępności: focus trap, zwrot fokusu do triggera i pełna kontrola Tab.
+- ⬜ Pełna macierz Android/desktop oraz test starego cache przy kolejnej regresji PWA.
 
-**Done:** pełna macierz przechodzi bez blockerów, a dialog jest obsługiwalny dotykiem i klawiaturą.
+**Stan:** problemy funkcjonalne zamknięte. Pozostałe punkty nie blokują H2 i wracają jako refinement dostępności/regresji.
 
-## Sprint 16 — bezpieczeństwo operacyjne
+## Sprint 16 — bezpieczeństwo operacyjne 🔄 W TOKU
 
 **Czas:** 2–4 dni
 

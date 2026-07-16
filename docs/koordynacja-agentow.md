@@ -49,6 +49,11 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (integracja docs + produkcyjny backup/restore): W TOKU.**
+  Zakres: integracja aktualnej paczki dokumentacji (`CLAUDE.md`, mapa docs, strategia v2/v3,
+  paywall, wyszukiwarka, fotografia, roadmapa, kolejka Notion), aktualizacja statusu bottom
+  sheetu oraz wykonanie backupu produkcyjnej bazy i Storage z testem restore w izolowanej
+  lokalnej bazie. Nie dotykam kodu funkcji ani duplikatów `public/icons-3d/* 2.png`.
 - **2026-07-16 · Codex (czytelny rytm programów): ZAKOŃCZONE.**
   Zakres: nazwy kuratorowanych programów, komunikacja częstotliwości i rotacji na kartach,
   w szczegółach planu oraz w onboardingu; migracja danych tylko dla nazw/opisów presetów.

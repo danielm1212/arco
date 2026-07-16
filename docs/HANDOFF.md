@@ -38,6 +38,8 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Skrócono kod Ekipy do 8 znaków.
 - Obrazy ćwiczeń przeniesiono z GitHuba do Supabase Storage/CDN.
 - CI działa dla zmian na `main` i pull requestów.
+- Dodano dwa kierunkowe plany „Pośladki i nogi" oraz doprecyzowano rytm tygodniowy i rotację wszystkich programów.
+- Odświeżono scenariusz H2 i metodologię pomiaru; onboarding v3.1 usuwa znane pułapki przed testem.
 
 ## Technologia i dane
 
@@ -45,7 +47,7 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Supabase Auth, Postgres, Storage i RLS.
 - Serwist dla PWA/offline.
 - Vercel w regionie zbliżonym do Supabase Frankfurt.
-- Walidator potwierdza 907 ćwiczeń, 767 widocznych, 13 programów i 272 sloty. Liczby zawsze weryfikuje `npm run validate:training`.
+- Walidator potwierdza 907 ćwiczeń, 767 widocznych, 15 programów i 308 slotów. Liczby zawsze weryfikuje `npm run validate:training`.
 - Publiczny signup pozostaje wyłączony. Nie traktujemy obecnej Ekipy jako funkcji gotowej do publicznego multi-user.
 
 ## Automatyczna jakość
@@ -63,7 +65,7 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 
 ## Otwarte ryzyka
 
-1. **Bottom sheet accessibility:** zachowanie dotykowe jest poprawione, ale własny dialog wymaga pełnego focus trapu i zwrotu fokusu do elementu otwierającego.
+1. **Bottom sheet accessibility — refinement:** zachowanie funkcjonalne na PWA jest domknięte; własny dialog wymaga jeszcze pełnego focus trapu i zwrotu fokusu do elementu otwierającego.
 2. **Testy urządzeń:** potrzebna jest jedna uporządkowana macierz regresji na iPhone PWA, Safari, Chromium/Arc, Android i desktop.
 3. **Backup:** brakuje udokumentowanego backupu produkcyjnej bazy i Storage oraz realnego testu odtworzenia do odizolowanego środowiska.
 4. **H2:** obecne poprawki pochodzą głównie z dogfoodingu właściciela. Potrzeba testów z 3–5 osobami.
@@ -74,7 +76,7 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 
 ## Następny krok
 
-Realizujemy Sprint 15 z `plan-sprintow-2026-07.md`: regresja PWA/bottom sheetów, dostępność dialogów, zachowanie cache po aktualizacji i pełny gate jakości. Potem bezpieczeństwo operacyjne i H2.
+Domykamy bezpieczeństwo operacyjne przez rzeczywisty backup i test restore. Następnie realizujemy R1–R2 z `audyt-wyszukiwarki-2026-07.md`, przygotowujemy dane demo i wykonujemy pilota H2.
 
 Nie dokładamy teraz dużej funkcji. Najpierw potwierdzamy, że rdzeń jest stabilny i zrozumiały dla osób spoza projektu.
 

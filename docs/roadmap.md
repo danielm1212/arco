@@ -56,6 +56,6 @@ Obecną implementację testową wzmacniamy o zgody, ochronę kodów, rate limiti
 
 ## Horyzont 5 — wzrost i rozszerzenia
 
-Po danych z launchu: recap miesięczny/roczny, karty udostępniania, dopracowanie instalacji PWA, kuracja zdjęć ćwiczeń, ewentualny wrapper sklepowy i wersja angielska.
+Po danych z launchu: recap miesięczny/roczny, karty udostępniania, okładki programów w bibliotece (foto w gradingu Warm; biblioteka = powierzchnia editorial, logger i home bez zdjęć — projekt [Ty]), dopracowanie instalacji PWA, kuracja zdjęć ćwiczeń, ewentualny wrapper sklepowy i wersja angielska.
 
 Warstwa trenerska wraca do oceny wyłącznie po sygnale z realnego użycia. Publiczny feed, komentarze, DM, marketplace, wearables i dieta pozostają poza roadmapą.

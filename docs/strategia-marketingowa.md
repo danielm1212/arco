@@ -1,5 +1,7 @@
 # Strategia marketingowa Arco
 
+> ⚠️ **2026-07-16: §1–§3 NADPISANE przez `wizja-i-strategia-v3.md`** (persony z drugim komunikatem Pawła, Trener Michał, messaging house z 4. filarem, slogany). Aktualne poniżej: §4 lejek + mapa wirali, §5 kampania launchowa, dalej kanały/kalendarz.
+
 > **Data:** 2026-07-08 · **Relacja do innych doków:** to jest warstwa STRATEGII (kto, z jakim komunikatem, dlaczego my, kiedy). Taktyka kanałów = `plan-dystrybucji.md`; głos = `tone-of-voice.md`; terminy = `kalendarz-wykonawczy.md`; landing = `landing-plan.md`. Uwzględnia korektę z 2026-07-08: **Hevy ma polską lokalizację** — klin nie stoi na języku.
 > **Budżet:** 0 zł + Twój czas (koszty stałe: domena, Framer, ESP ~150–250 zł/mies. łącznie). Wszystko niżej jest policzone pod ten budżet.
 
@@ -28,6 +30,10 @@
 
 **Zasada:** każdy materiał marketingowy przed publikacją musi odpowiadać na pytanie „do której persony mówi?". Materiał „do wszystkich" = do nikogo.
 
+**Persona-kanał (dopisek 2026-07-16): „Trener Michał" — kanał, nie klient.** Układa plany podopiecznym; Arco daje mu „udostępnij plan" (funkcja z backlogu, po launchu) → podopieczni instalują apkę jako zwykli userzy. Komunikat (dopiero gdy funkcja istnieje!): „Plan, który układasz, Twój podopieczny nosi w kieszeni — z prowadzeniem serię po serii." Gdzie: K5 (Instagram trenerski, kluby). ⚠️ Nie marketować przed wdrożeniem funkcji — trener, który się odbije, nie wraca. Miernik: udostępnienia/trenera = czujnik popytu na odłożoną warstwę trenerską (wizja §1.1/§9).
+
+**Drugi komunikat Pawła (dopisek 2026-07-16, [Ty]):** obok guidance („wie, kiedy dołożyć") — **duma z liczb**: „Twoje treningi zasługują na coś lepszego niż notes — trendy, PR-y i historia, która nigdy nie znika." Guidance konwertuje, estetyka danych przyprowadza.
+
 ## 3. Messaging house (architektura komunikatów)
 
 **Dach (main claim):** Trening ma być przyjemnością — narzędzie ma prowadzić, nie obciążać.
@@ -51,7 +57,13 @@
 | Activation | onboarding → 1. trening → celebracja → instalacja PWA | WelcomeOverlay, done-page, prompt §5 wizji | % ukończonego 1. treningu; `pwa_install_*` |
 | Retention | guidance, passa, cel tygodniowy → **ekipy** | rdzeń + Krok 4 | W1/W4; % w ekipach |
 | Revenue | fala 1 (trial+stagnacja), fala 2 (kłódka historii) | Krok 3 | konwersja_trial / konwersja_historia |
-| Referral | zaproszenia do ekip + (backlog) karty recap | Krok 4, recap | k-współczynnik ≥1,15 (B3) |
+| Referral | zaproszenia do ekip + (backlog) udostępnij plan + karty recap | Krok 4, backlog, recap | k-współczynnik ≥1,15 (B3); saves/share |
+
+**Mapa wirali (zapis 2026-07-16, [Ty]):** trzy pętle o różnych motywach, wspólny mechanizm — link niesie instalację:
+1. **Zaproszenie do ekipy** (motyw: relacja/odpowiedzialność) — „trenujcie razem" → instalacja → własna ekipa. Rdzeń, Krok 4.
+2. **Udostępnij plan** (motyw: treść; dwie twarze: user→kumpel, trener→podopieczny) — link → podgląd planu BEZ konta (mini-landing) → „Zapisz w Arco". Backlog po launchu; podwójna rola: akwizycja + czujnik popytu na warstwę trenerską.
+3. **Share-cardy / recap** (motyw: duma) — sesja/PR/„Rok w żelazie" jako obrazek na stories w warstwie retro. H5.
+Kolejność wdrażania = kolejność powyżej; każda pętla mierzona osobno (k per pętla), nie zbiorczo.
 
 Wniosek strategiczny: marketing płatny nie istnieje w tym lejku — **awareness robi content i czas, mnożenie robi produkt**. Dlatego K1 startuje najwcześniej, jak się da (sierpień), a jakość aktywacji (onboarding, celebracja) jest zadaniem marketingowym, nie tylko produktowym.
 
