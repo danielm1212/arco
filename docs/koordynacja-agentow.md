@@ -49,6 +49,18 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Claude (deploy R1a+R1b na produkcję, na wyraźne polecenie [Ty]): ZAKOŃCZONE.**
+  Kolejność wymuszona zależnością kodu od RPC: (1) `supabase db push` —
+  `20260716213000_single_open_session` zastosowana na prod po czystym dry-runie,
+  `migration list` potwierdza local == remote; (2) `git push` — `188f025..9f65a6d`
+  (6 commitów Codexa R1a/R1b + 1 docs), deployment GitHub/Vercel `9f65a6d` = success;
+  (3) weryfikacja prod w przeglądarce: login renderuje się, konsola czysta, SW aktywny,
+  przeładowanie pod kontrolą nowego SW bez błędów. Uwagi: [Ty] świadomie pominął regresję
+  urządzeniową przed publikacją — pozostaje jako pierwszy krok po deployu (wpis w HANDOFF);
+  polling curl uruchomił Vercel Security Checkpoint (403 dla klientów bez JS) — realne
+  przeglądarki przechodzą, ale nie diagnozować proda samym curl-em. Przed pushem: lint ✓,
+  testy 25/25 ✓, walidator treści ✓ (build zweryfikowany wcześniej przez Codexa na tym
+  samym drzewie kodu). Nie dotknięto duplikatów `public/icons-3d/* 2.png`.
 - **2026-07-16 · Claude (R5a przygotowanie treści — równoległość jawnie dopuszczona w planie §R5a): ZAKOŃCZONE.**
   Zakres: WYŁĄCZNIE `docs/` — nowy `docs/r5a-slownik-pl-propozycja.md` (propozycja `name_pl`
   dla ~205 ćwiczeń: 91 slotowych + 114 klasyki, ~55 aliasów, inwentarz 16 placeholderów/49 slotów

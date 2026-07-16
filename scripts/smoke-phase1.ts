@@ -97,7 +97,18 @@ async function main() {
   await sb.from("session_sets").update({ weight: 100, reps: 8, completed: true }).eq("id", squatFirstSet.id);
   ok("zalogowano working set 100kg × 8 (zaliczony)");
 
-  // 4. Druga sesja tego samego dnia → previous_working_set ma zwrócić poprzedni wynik
+  // 4. Niezmiennik R1b: druga OTWARTA sesja ma być odrzucona przez bazę,
+  //    a po zakończeniu pierwszej previous_working_set zwraca poprzedni wynik.
+  const { error: duplicateOpenError } = await sb
+    .from("sessions")
+    .insert({ user_id: userId, program_day_id: dayA!.id });
+  if (duplicateOpenError?.code !== "23505") {
+    return fail(
+      `niezmiennik jednej otwartej sesji nie zadziałał: ${duplicateOpenError?.message ?? "duplikat został utworzony"}`,
+    );
+  }
+  ok("niezmiennik jednej otwartej sesji odrzuca duplikat (23505)");
+  await sb.from("sessions").update({ finished_at: new Date().toISOString() }).eq("id", s1!.id);
   const { data: s2 } = await sb
     .from("sessions")
     .insert({ user_id: userId, program_day_id: dayA!.id })
@@ -126,7 +137,9 @@ async function main() {
   if (afterDel) fail("usuwanie seta nie zadziałało");
   ok("edycja (82.5kg) i usuwanie seta działają");
 
-  // 6. Freestyle + dodanie ćwiczenia z katalogu
+  // 6. Freestyle + dodanie ćwiczenia z katalogu.
+  //    Najpierw kończymy s2 — niezmiennik dopuszcza jedną otwartą sesję.
+  await sb.from("sessions").update({ finished_at: new Date().toISOString() }).eq("id", s2!.id);
   const { data: sf } = await sb
     .from("sessions")
     .insert({ user_id: userId, program_day_id: null })
@@ -143,6 +156,8 @@ async function main() {
 
   // 7. Zaległy trening: data, flaga i zaplanowany czas są zapisane od początku.
   // finishSession ustawia finished_at na started_at + recorded_duration_seconds.
+  // Kończymy freestyle — do chwili finiszu zaległa sesja też liczy się jako otwarta.
+  await sb.from("sessions").update({ finished_at: new Date().toISOString() }).eq("id", sf!.id);
   const historicalStartedAt = "2026-07-12T15:30:00.000Z";
   const historicalDurationSeconds = 3_600;
   const { data: historical, error: historicalError } = await sb

@@ -94,11 +94,15 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 
 ## Następny krok
 
-Po technicznym zamknięciu R1a wykonujemy krótką regresję urządzeniową, a następnie R1b:
-niezmiennik jednej sesji, idempotentny start, terminalne redirecty i trwałe szkice. Dopiero
-potem przebudowujemy huby R2–R5b. Po R2 wykonujemy checkpoint dogfood, następnie
-przygotowujemy R6 i H2 w R7.
-Równolegle właściciel przenosi zweryfikowany backup do zaszyfrowanej lokalizacji poza laptopem.
+R1a i R1b są zakończone i **wdrożone na produkcję** (2026-07-16 wieczorem, decyzją właściciela
+przed regresją urządzeniową): migracja `20260716213000_single_open_session` zastosowana na
+prod (local == remote), deploy `9f65a6d` na Vercel zakończony sukcesem, strona logowania i
+service worker zweryfikowane w przeglądarce bez błędów konsoli. **Zaległa pozostaje krótka
+regresja [Ty] na iPhone PWA i Androidzie** — w pierwszej kolejności start/wznowienie treningu
+i odzyskanie szkicu, bo niezmiennik sesji działa już na realnych danych.
+Następnie R2 (Trening, Dziś i Plany), checkpoint dogfood, dalej R3–R5b, R6 i H2 w R7.
+Równolegle: przegląd słownika `r5a-slownik-pl-propozycja.md` [Ty] oraz przeniesienie
+zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
 
 Nie dokładamy teraz nowej funkcji. Porządkujemy istniejący rdzeń i testujemy jeden spójny model produktu.
 
