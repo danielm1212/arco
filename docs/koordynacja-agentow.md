@@ -49,6 +49,14 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (naprawa CI po lower-body migration): ZAKOŃCZONE.**
+  Zakres: wyłącznie świeży start bazy w CI, migracja
+  `20260716141007_lower_body_programs.sql` i workflow GitHub Actions. Przyczyna: migracja
+  danych planów wykonywała się przed seedem ćwiczeń na świeżym runnerze i łamała FK.
+  Fix `bcab3d5`: świadome pominięcie migracji danych przy pustej tabeli ćwiczeń oraz
+  `actions/setup-node@v6`. Weryfikacja: izolowana pusta baza ✓, lint ✓, testy 18/18 ✓,
+  treningi 907/15/308 ✓, rekomendacje 60/60 ✓, GitHub Actions #25 oba joby zielone ✓.
+  Nie dotknięto niezacommitowanych dokumentów równoległej sesji ani duplikatów ikon.
 - **2026-07-16 · Codex (integracja docs + produkcyjny backup/restore): ZAKOŃCZONE.**
   Zakres: integracja aktualnej paczki dokumentacji (`CLAUDE.md`, mapa docs, strategia v2/v3,
   paywall, wyszukiwarka, fotografia, roadmapa, kolejka Notion), aktualizacja statusu bottom
