@@ -31,6 +31,24 @@
 - **Wzorce wymagające natywu** (context menus z haptic, live activities itd.) — nie udajemy; PWA robi mniej, ale to co robi, robi bez lagu.
 - Prawny nawias: HIG to wytyczne Apple — stosujemy je jako dobre praktyki projektowe; nie podlegamy App Store Review (dopóki nie ma TWA w App Store).
 
+## 2a. Kontrakt nawigacji Arco
+
+Bottom bar jest przełącznikiem czterech głównych przestrzeni: **Trening, Postępy, Historia i Ekipa**. Ciało jest podwidokiem Postępów, a Plany podwidokiem Treningu. Widok dostaje jawny tryb chrome:
+
+| Tryb | Przeznaczenie | Bottom bar | Powrót |
+|---|---|---|---|
+| `hub` | główne przestrzenie: Trening, Postępy, Historia, Ekipa | tak | brak strzałki |
+| `hub-subview` | Plany w Treningu oraz Ciało w Postępach | tak, z aktywnym tabem | lokalny segment zamiast strzałki |
+| `child` | szczegół, biblioteka lub ekran podrzędny należący do taba | tak, z aktywnym tabem | ikona Back do źródła, fallback do rodzica |
+| `focus` | formularz albo zadanie wymagające zakończenia/anulowania | nie | ikona powrotu lub `X`, zależnie od semantyki |
+| `session` | logger i moment zakończenia treningu | nie | zachowanie specyficzne dla sesji |
+
+Mini-bar aktywnego treningu nie jest częścią bottom baru. To globalny status sesji i wymaga osobnej reguły położenia: nad bottom barem na `hub/child`, przy dolnej safe area na widokach bez bottom baru, jeżeli dany `focus` dopuszcza aktywną sesję; ukryty w samym loggerze.
+
+**Powrót w headerze:** mobilnie pokazujemy sam `ChevronLeft` w pełnym targecie 44×44 px, bez widocznego „← Historia/Programy/Postępy”. Dostępność zachowuje pełną nazwę przez `aria-label`. Przycisk preferuje poprzedni widok należący do bieżącej sesji Arco, żeby zachować filtr i scroll; deep link/refresh korzysta z jawnego fallbacku do logicznego rodzica. Nie używamy globalnie gołego `router.back()` ani wyłącznie sztywnego linku do rodzica. Szczegóły: `audyt-nawigacji-2026-07.md`.
+
+**Znaczenia:** `ChevronLeft` = poziom wyżej; `ChevronDown` = zminimalizuj aktywną sesję; `X` = zamknij/anuluj warstwę lub modalne zadanie. Nie zamieniamy tych ikon miejscami tylko dla symetrii wizualnej. Pełna macierz i flowy są w `userflows-docelowe-2026-07.md`.
+
 ## 2b. Normy typografii i kształtu (mini-sprint „rymy", 2026-07-11)
 
 - **Waga sans: max `font-semibold` (600). `font-bold` nie istnieje w apce** — „krzyk" robi Gambarino (`font-display`), nie tłuszcz. Sweep wykonany (17 wystąpień).

@@ -1,6 +1,6 @@
 # Arco — roadmapa produktu
 
-**Aktualizacja:** 2026-07-14
+**Aktualizacja:** 2026-07-16
 
 Roadmapa opisuje kolejność i bramki. Konkretne zadania i statusy są w `plan-sprintow-2026-07.md`.
 
@@ -17,22 +17,26 @@ Arco ma być najprostszym sposobem na konsekwentny trening siłowy: szybkie logo
 
 ## Horyzont 0 — stabilny produkt testowy
 
-**Status:** końcówka.
+**Status:** refinement docelowych user flows.
 
 Zakres zrealizowany: logger, programy, historia, postępy, ciało, offline/PWA, edycja przeszłości, trening po fakcie, Ekipy na kontach testowych, automatyczna jakość.
 
 Do zamknięcia:
 
+- program R0.5–R6: prototyp, chrome, integralność sesji, Home/Plany, Postępy/Ciało,
+  Ekipa, Sesja/Historia, wyszukiwanie i dostępność;
 - regresja bottom sheetów i PWA na urządzeniach,
 - pełna dostępność własnego dialogu,
 - backup i udowodnione odtworzenie,
 - aktualizacje PWA bez starego interfejsu z cache.
 
-**Bramka H0:** zero blockerów w głównym przepływie i udokumentowany restore.
+**Bramka H0:** R0.5–R6 zamknięte, zero znanego P0/P1 w głównych flow, serwerowy
+niezmiennik jednej otwartej sesji, odzyskiwanie szkiców, polskie wyszukiwanie, macierz
+urządzeń i udokumentowany restore.
 
 ## Horyzont 1 — walidacja z ludźmi
 
-Testy H2 z 3–5 osobami spoza projektu. Sprawdzamy pierwsze uruchomienie, wybór programu, start treningu, logowanie serii, zakończenie, odnalezienie historii, korektę błędu, pomiar ciała i zrozumienie idei Ekipy.
+Testy H2 z 3–5 osobami spoza projektu po zamrożeniu IA. Sprawdzamy pierwsze uruchomienie, Dziś/Plany, start i wznowienie treningu, Historię i korektę, trening po fakcie, Postępy/Ciało oraz zrozumienie Ekipy.
 
 **Bramka B1:** większość uczestników samodzielnie przechodzi rdzeń bez pomocy, a problemy krytyczne są poprawione i ponownie sprawdzone.
 

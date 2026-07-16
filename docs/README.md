@@ -6,11 +6,12 @@
 
 - `HANDOFF.md` — co działa, co jest na produkcji i jakie są aktualne ryzyka.
 - `plan-sprintow-2026-07.md` — aktywny backlog i kolejność następnych sprintów.
+- `userflows-docelowe-2026-07.md` — docelowa architektura informacji, przepływy i kontrakt chrome.
 - `roadmap.md` — horyzonty rozwoju i bramki decyzyjne.
 - `wizja-i-strategia-v3.md` — **kanon misji, person, modelu, strategii i języka marki (2026-07-16)**.
 - `wizja-i-plan-produktu-v2.md` — kanon zasad Z1–Z3 oraz §4–§10: ekipa, dystrybucja, sekwencja i bramki.
 
-Tych pięć plików jest jedynymi dokumentami sterującymi bieżącą pracą. Gdy starszy dokument im przeczy, obowiązuje powyższa kolejność.
+Tych sześć plików jest dokumentami sterującymi bieżącą pracą. Gdy starszy dokument im przeczy, obowiązuje powyższa kolejność.
 
 ## Trwałe referencje
 
@@ -19,7 +20,11 @@ Tych pięć plików jest jedynymi dokumentami sterującymi bieżącą pracą. Gd
 - `scenariusz-h2.md` — scenariusz testów z użytkownikami.
 - `feedback-uzytkownikow.md` — dziennik obserwacji i decyzji.
 - `usability-audit.md` — audyt użyteczności i stan ustaleń.
-- `audyt-wyszukiwarki-2026-07.md` — audyt wyszukiwania ćwiczeń i blocker H2 R1–R2.
+- `audyt-wyszukiwarki-2026-07.md` — audyt wyszukiwania ćwiczeń; jego lokalne fazy R1–R6
+  składają się na R5a aktywnego planu i blokują H2.
+- `audyt-nawigacji-2026-07.md` — docelowy kontrakt Back/Up, bottom baru, mini-bara sesji i stosu historii.
+- `userflows-docelowe-2026-07.md` — decyzja nadrzędna wobec wcześniejszych wariantów IA z audytów.
+- `r0-5-wynik-prototypu.md` — wynik klikalnego prototypu, przetestowane flow i decyzje przed implementacją.
 - `konkurencja-hevy.md` oraz `archive/konkurencja-hevy-ux.md` — benchmark konkurencyjny.
 - `monetyzacja.md` — wcześniejsza analiza; wizja v2 rozstrzyga konflikty.
 

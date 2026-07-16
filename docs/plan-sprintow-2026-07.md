@@ -1,154 +1,332 @@
-# Arco — aktywny backlog i kolejne sprinty
+# Arco: aktywny backlog i plan refinementu
 
 **Aktualizacja:** 2026-07-16
 
+**Status:** kierunek zaakceptowany, plan dopracowany po refinements
+
 **Źródło prawdy dla kolejności prac**
 
-## Priorytety
+## 1. Decyzja planistyczna
 
-1. Stabilność i użyteczność rdzenia.
-2. Ochrona danych i możliwość odtworzenia systemu.
-3. Test z osobami spoza projektu.
-4. Publiczne konta i zgodność prawna.
-5. Launch, monetyzacja i dopiero potem publiczna Ekipa.
+Dotychczasową kolejność Sprint 17b → H2 zastępuje program **R0–R7**. Nie przebudowujemy
+całej aplikacji w jednym dużym wydaniu. Każdy etap kończy się działającym pionowym wycinkiem,
+testem automatycznym i krótką regresją na realnym urządzeniu.
 
-## Sprint 15 — stabilność PWA i regresja UX ✅ FUNKCJONALNIE ZAMKNIĘTE
+Docelowy model produktu opisuje `userflows-docelowe-2026-07.md`:
 
-**Czas:** 1–2 dni
+- bottom bar: Trening · Postępy · Historia · Ekipa;
+- Trening: Dziś | Plany;
+- Postępy: Trening | Ciało;
+- profil i ustawienia przez awatar;
+- jednoznaczne CTA w hero;
+- najwyżej jedna niezakończona sesja;
+- Back, minimalizacja i zamknięcie jako trzy różne zachowania.
 
-**Cel:** domknąć zachowanie warstw mobilnych i upewnić się, że ostatnie poprawki nie wprowadziły regresji.
+## 2. Priorytety
 
-- ✅ Brak skoku, klikania pod overlayem i scrollowania tła; poprawny scroll treści.
-- ✅ Escape, overlay, przycisk zamknięcia i swipe w dół.
-- ✅ Sticky header, toasty i floating nav respektują safe area.
-- ✅ Poprawki wdrożone i potwierdzone przez właściciela na PWA.
-- ⬜ Refinement dostępności: focus trap, zwrot fokusu do triggera i pełna kontrola Tab.
-- ⬜ Pełna macierz Android/desktop oraz test starego cache przy kolejnej regresji PWA.
+1. Integralność danych i spójny model mentalny.
+2. Stabilność mobilnego PWA, dostępność i wydajność odczuwalna przez użytkownika.
+3. Wiarygodny test H2 z osobami spoza projektu.
+4. Bezpieczeństwo operacyjne, publiczne konta i zgodność prawna.
+5. Pomiar, cichy launch i dopiero później publiczne skalowanie Ekipy.
 
-**Stan:** problemy funkcjonalne zamknięte. Pozostałe punkty nie blokują H2 i wracają jako refinement dostępności/regresji.
+## 3. Zrealizowana baza
 
-## Sprint 16 — bezpieczeństwo operacyjne 🔄 W TOKU
+### Sprint 15: stabilność PWA i regresja UX ✅
 
-**Czas:** 2–4 dni
+- zamknięte skoki i scrollowanie tła pod overlayem;
+- poprawne zamykanie, swipe, sticky header, toasty, floating nav i safe area;
+- focus trap, zwrot fokusu i pełna macierz urządzeń wracają w R5b.
 
-**Cel:** udowodnić, że produkcyjne dane można odzyskać i bezpiecznie wdrażać zmiany.
+### Sprint 16: restore i bezpieczeństwo operacyjne 🔄
 
-- ✅ Wykonać backup bazy i Storage — 2026-07-16.
-- ✅ Odtworzyć backup do odizolowanego środowiska i zachować dowód testu — 2026-07-16, wynik w `backup-i-restore.md`.
-- Spisać checklistę rollbacku aplikacji, migracji i Storage.
-- Przejrzeć nagłówki, CSP i zależności; usunąć niepotrzebną zależność CSP od `raw.githubusercontent.com`, jeżeli produkcja jej nie używa.
-- Zweryfikować prywatność bucketów i uprawnienia wszystkich aktualnych tabel.
-- ✅ Ustalić rytm backupów i właściciela okresowego testu restore — Daniel; backup co 7 dni, restore co miesiąc.
+- wykonany backup bazy i Storage;
+- wykonany restore do odizolowanego środowiska, opisany w `backup-i-restore.md`;
+- ustalony właściciel i rytm backup/restore;
+- przed publicznym uruchomieniem pozostają: zaszyfrowana kopia poza laptopem, checklista
+  rollbacku, CSP, zależności, buckety i pełny przegląd RLS.
 
-**Pozostało:** zaszyfrowana kopia poza laptopem, pełna checklista rollbacku oraz przegląd CSP, zależności, bucketów i RLS.
+### Sprint 17a: onboarding v3.1 ✅
 
-**Done:** restore jest wykonany, nie tylko opisany, a rollback da się przeprowadzić z dokumentu.
+- naprawione dwie gałęzie E6, zapis profilu przy skipie oraz copy O3–O9;
+- pozostaje test klawiatury na telefonie i radiogroup/a11y w R5b.
 
-## Sprint 17a — onboarding v3.1 (naprawa przed H2) ✅ ZROBIONE 2026-07-16
+## 4. Program refinementu R0–R7
 
-**Czas:** ~1 wieczór [Claude] + krótka weryfikacja [Ty] na telefonie
+### R0: kontrakt produktu i user flows ✅ dokumentacyjnie
 
-**Wejście:** `docs/audyt-onboardingu-2026-07.md` (cognitive walkthrough, 2026-07-16) — werdykt: onboarding ~85% zrozumiały, 2 realne pułapki (P1) i garść zgrzytów zdejmowalnych w jednej turze.
+**Cel:** zamknąć architekturę informacji przed zmianami kodu.
 
-**Cel:** zamknąć obie pułapki P1 przed H2, bo Z1/Z1a w scenariuszu H2 testuje dokładnie te ścieżki — nie chcemy tracić sesji testowej na znany już bug.
+- zinwentaryzowane trasy, źródła wejścia, powroty i redirecty;
+- ustalone cztery przestrzenie główne i lokalne podwidoki;
+- opisana semantyka Home, Planów, Sesji, Historii, Postępów/Ciała, Ekipy i Profilu;
+- ustalona macierz chrome oraz zasady push/replace/Back;
+- wcześniejsze sprzeczne zalecenia oznaczone jako zastąpione.
 
-- O1 — fallback E6 dostaje **dwa uczciwe wyjścia** (decyzja [Ty] 2026-07-16): primary „Przejdź do biblioteki" → realna nawigacja na `/programs`; ghost „Wybiorę później" → home z zapisanym profilem (empty-state hero przejmuje).
-- O2 — globalny „Pomiń" od E5 zapisuje zebrany profil zamiast go gubić; na E6 znika (są już dwa jawne wyjścia z O1).
-- O3 — poprawka odmiany liczebnika w zdaniu-uzasadnieniu rekomendacji („5 treningów", nie „5 treningi").
-- O4 — „Pomiń ten krok" na E4 (przyjmuje default), spójnie z E2/E3.
-- O5–O9 — pięć poprawek copy w jednej turze (żargon „deficyt", nagłówek E3, „bezpieczny plan", brak kontekstu przy imieniu na E1, hint o zamiennikach bez drążka).
-- **Poza tym sprintem:** O10 (test klawiatury E1 na telefonie) zostaje przy Tobie przy najbliższym teście PWA; O11 (a11y radiogroup) idzie do backlogu, przy najbliższym refaktorze onboardingu — nie warte osobnej paczki teraz.
+### R0.5: prototyp i walidacja stanów 🟡 gotowy do akceptacji właściciela
 
-**Done:** pełny flow E0→E7 + obie gałęzie E6 + skip na każdym kroku zweryfikowane w Preview na świeżym koncie, tsc/build czyste. Realna walidacja i tak czeka na H2 Z1/Z1a — ta paczka usuwa tylko znane, martwe pułapki przed testem.
+**Czas:** 0,5–1 dnia [Claude + Ty]
 
-## Sprint 17 — przygotowanie H2
+**Cel:** sprawdzić najdroższe decyzje, zanim zaczniemy pełną przebudowę.
 
-**Czas:** 2–3 dni
+- klikalny low-fi dla Trening / Dziś / Plany, Postępów / Ciała, Historii i Ekipy;
+- warianty: brak planu, aktywna sesja, błąd danych, offline i długa polska nazwa;
+- sprawdzenie, czy Ekipa jest znajdowalna i zasługuje na główny tab;
+- test na 320/393 px oraz iPhone PWA;
+- szybki walkthrough: start treningu, zmiana planu, trening po fakcie, pomiar i Ekipa;
+- zamrożenie nazw tabów, typów ekranów i miejsc głównych CTA.
 
-**Cel:** przygotować wiarygodny test produktu bez pomocy autora.
+**Done:** nie ma otwartej decyzji, która zmieniałaby strukturę routingu albo odpowiedzialność
+głównych tabów w połowie implementacji.
 
-- ✅ **Odświeżyć scenariusz H2 pod aktualny interfejs** (2026-07-16) — `scenariusz-h2.md`: onboarding v3.1 (opis odporny na iterację kroków), kanon v3 (persony, yearly-first).
-- ✅ **Ustalić pomiar** (2026-07-16) — §0.5: dwie niezależne bramki (A rdzeń, B wartość+ekipa), operacyjne definicje sukces/z-pomocą/porażka + skala dotkliwości S1–S4, uczciwe traktowanie n=5 (wzorce > arytmetyka). §8 rozstrzygnięcie przepisane pod dwie bramki.
-- ✅ **Dodać zadania + WTP pod v3** (2026-07-16) — B2 przepisane na trzy filary premium (prowadzenie/cel z prognozą/pełna historia zamiast starych opcji), B2a teaser stagnacji, B4 yearly-first.
-- ⬜ Przygotować czyste konta i realistyczne dane startowe — skrypt danych demo [Claude, na żądanie].
-- ⬜ Uzupełnić albo świadomie wyłączyć 16 ćwiczeń z placeholderem zdjęcia (45 slotów) — decyzja per ćwiczenie [Ty]: swap / AI-zdjęcie / hidden. **Twardy prerekwizyt: fix wyszukiwarki** (`audyt-wyszukiwarki-2026-07.md` R1–R2) — Z2/Z3 testują picker, search po EN da 0 wyników.
-- ⬜ Dosłać do produkcji wyłącznie `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`, bez pełnego re-seeda, i sprawdzić zależne programy.
-- ⬜ Wykonać sesję pilotażową i poprawić sam scenariusz [Ty].
+**Stan 2026-07-16:** klikalny artefakt, testy 320/393 px oraz decyzje techniczne są gotowe.
+Wynik opisuje `r0-5-wynik-prototypu.md`. Do pełnego zamknięcia pozostaje pięciozadaniowy
+walkthrough właściciela na telefonie.
 
-**Done:** test można przeprowadzić tak samo z każdą osobą, bez tłumaczenia interfejsu. *(Skrypt + metodologia pomiaru gotowe; zostają prerekwizyty operacyjne: fix wyszukiwarki, placeholdery, dane demo, pilot.)*
+### R1a: fundament chrome i nawigacji
 
-## Sprint 18 — H2 i synteza
+**Czas:** 3–4 dni [Claude] + regresja na urządzeniach [Ty]
+
+**Cel:** zbudować wspólny mechanizm bez rosnącej listy wyjątków pathname.
+
+- deklarowany typ ekranu: `hub`, `hub-subview`, `child`, `focus`, `session-live`,
+  `session-edit`, `session-child`, `moment` i `auth`;
+- oddzielne sterowanie bottom barem i mini-barem aktywnej sesji;
+- wspólne PageHeader i BackButton: target co najmniej 44×44 px, właściwy `aria-label`;
+- history-first Back z kontrolowanym fallbackiem i źródłem dla tras wielowejściowych;
+- semantyka ChevronLeft, ChevronDown i X;
+- helpery push/replace dla tabów, filtrów, detali i akcji terminalnych;
+- rezerwy safe area dla każdej kombinacji pływających warstw;
+- centralna macierz tras oraz automatyczny test pokrycia każdej strony typem chrome.
+
+**Done:** każda trasa ma jawny typ, właściwy aktywny tab i bezpieczny fallback po deep linku.
+
+### R1b: integralność sesji i bezpieczeństwo nawigacji
+
+**Czas:** 2–3 dni [Claude] + test offline/PWA [Ty]
+
+**Cel:** zabezpieczyć dane przed przebudową powierzchni, które je tworzą i edytują.
+
+- jedna niezakończona sesja jako niezmiennik warstwy danych/serwera, nie tylko UI;
+- idempotentny start: kolejna próba otwiera istniejącą sesję albo zwraca jasną decyzję;
+- jeden kontrakt terminalnych redirectów dla startu, finishu, edycji i treningu po fakcie;
+- guard przed drugim check-inem po edycji zakończonej sesji;
+- wspólny dirty guard dla nawigacji wewnątrz aplikacji, systemowego Back i `beforeunload`
+  tam, gdzie przeglądarka na to pozwala;
+- trwały szkic i ekran odzyskania dla dłuższych formularzy oraz loggera;
+- zamknięcie PWA, ubijanie procesu i utrata sieci nie mogą opierać bezpieczeństwa danych na
+  samym oknie potwierdzenia;
+- precyzyjny sync brakujących `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`, bez pełnego seeda.
+
+**Done:** nie da się utworzyć dwóch otwartych sesji, a przerwanie aplikacji nie usuwa szkicu
+ważnego zadania.
+
+### R2: Trening, Dziś i Plany
+
+**Czas:** 3–4 dni [Claude] + decyzje copy/wizualne [Ty]
+
+**Cel:** Home staje się spokojnym pulpitem do rozpoczęcia kolejnej sesji.
+
+- header: logo, kompaktowy badge celu tygodniowego i awatar;
+- lokalna nawigacja Dziś | Plany;
+- hero jako Następny trening, dopóki nie ma realnego harmonogramu;
+- osobne cele tapnięcia: Zacznij/Wznów, nazwa aktywnego planu, podgląd i Zmień;
+- Plany pokazują aktywny plan oraz bibliotekę, filtry zapisują stan przez replace;
+- powrót ze szczegółu zachowuje filtry i scroll;
+- aktywacja planu nie zmienia sesji w toku i terminalnie wraca do Dziś;
+- usunięcie konkurencyjnych stałych kart z Home;
+- kontekstowy, dismissowalny insight o przeglądzie planu;
+- brak duplikacji hero Wznów i globalnego mini-bara;
+- główne CTA nie czeka na moduły poniżej folda ani sekwencyjny waterfall zapytań;
+- liczba zapytań jest wskaźnikiem diagnostycznym, nie sztucznym limitem akceptacyjnym.
+
+**Done:** nowa osoba potrafi zacząć trening i znaleźć bibliotekę, a główne CTA pojawia się
+stabilnie przed treściami drugorzędnymi.
+
+### Checkpoint dogfood
+
+**Czas:** 0,5–1 dnia [Ty + Claude]
+
+- iPhone PWA, Safari, Arc/Chromium i jeden Android;
+- start, minimalizacja, wznowienie, zmiana planu, deep link i stary cache;
+- naprawiamy P0/P1 przed przejściem do kolejnych hubów.
+
+### R3a: Postępy i Ciało
+
+**Czas:** 2–3 dni [Claude] + regresja treści [Ty]
+
+- Ciało jako podwidok Postępów: Trening | Ciało;
+- filtry Postępów i podwidok przez replace;
+- szczegół ćwiczenia z origin-aware Back;
+- Ciało jako przegląd trendu;
+- dodanie pomiaru jako osobny ekran `focus`;
+- szkic pomiaru, dirty guard, jawny stan odzyskania i replace po zapisie;
+- waga jako pole wymagane, maksymalnie dwa zdjęcia i widoczna notatka w historii.
+
+**Done:** trend, pomiar i powrót do wcześniejszego kontekstu są zrozumiałe bez pomocy.
+
+### R3b: Ekipa jako główna przestrzeń
+
+**Czas:** 2–3 dni [Claude] + dogfooding kont testowych [Ty]
+
+- Ekipa jako hub bez strzałki Back;
+- empty state: Utwórz ekipę i Dołącz kodem z jasnymi CTA;
+- jawna zgoda i opis zakresu udostępnianych danych;
+- switcher wielu ekip przez replace i zapamiętanie ostatniej;
+- kropka nieprzeczytanego stanu na tabie;
+- najwyżej jedno kontekstowe zdarzenie Ekipy na Home;
+- bez osobnego dzwonka na tym etapie;
+- test scenariusza z co najmniej dwoma kontami testowymi.
+
+**Uwaga:** publiczne zaproszenia, dostarczanie powiadomień i hardening pozostają za bramką H2.
+
+### R4: Logger, Historia i trening po fakcie
+
+**Czas:** 3–4 dni [Claude] + regresja iOS PWA [Ty]
+
+- aktywny logger używa ChevronDown i minimalizacji;
+- edycja zakończonej sesji używa ChevronLeft do szczegółu historii;
+- finish live → replace Done → replace Dziś;
+- zapis edycji bez Done i bez drugiego check-inu;
+- Historia zachowuje stronę, filtry i scroll;
+- `/history/add` bez bottom baru, poziomego overflow i rozjazdu datetime na iOS;
+- progresywny wybór: Własny trening, dni aktywnego planu i Inny plan;
+- sheet Inny plan: ostatnie, własne, biblioteka i wyszukiwanie;
+- brak domyślnie zaznaczonej odpowiedzi i czytelny błąd pobierania;
+- trening po fakcie korzysta z niezmiennika oraz szkicu wdrożonych w R1b.
+
+**QA:** 320/375/393 px, długie nazwy, Safari/PWA, Android/Chromium, klawiatura i offline.
+
+### R5a: polskie wyszukiwanie i treść ćwiczeń
+
+**Czas:** 3–4 dni [Claude] + przegląd właściciela [Ty]
+
+- zatwierdzona lista około 200 najważniejszych identyfikatorów ćwiczeń z `name_pl`;
+- około 50 jawnie wersjonowanych aliasów potocznych;
+- wyszukiwanie po nazwie PL/EN i aliasach;
+- ranking exact > prefix > alias > substring oraz normalizacja znaków;
+- stały zestaw krytycznych zapytań jako test regresji;
+- rozsądny empty state, który nie zachęca do tworzenia duplikatu;
+- decyzja dla 16 ćwiczeń z placeholderem występujących w 49 slotach programów:
+  zdjęcie, podmiana albo świadome ukrycie.
+
+Ten etap może zacząć przygotowanie treści równolegle po zamrożeniu schematu, ale jego integracja
+wchodzi dopiero po stabilnym chrome i niezmienniku sesji.
+
+### R5b: dostępność i regresja PWA
+
+**Czas:** 3–4 dni [Claude] + macierz urządzeń [Ty]
+
+- focus trap i zwrot fokusu wszystkich bottom sheetów;
+- poprawne radiogroup w onboardingu i wyborach treningu;
+- `focus-visible`, `aria-label`, kolejność Tab i komunikaty błędów;
+- zoom 200%, 320 px, reduced motion i kontrola kontrastu;
+- pełna macierz starego cache, iOS PWA/Safari, Android/Chromium i desktop;
+- regresja safe area, klawiatury, overlayów, draft recovery i offline;
+- pomiar czasu pojawienia się głównego CTA Home oraz wykrywanie serial waterfall.
+
+### R6: gotowość H2 i pilot
+
+**Czas:** 1–2 dni [Claude] + pilot [Ty]
+
+- realistyczne dane demo i czyste konta;
+- aktualizacja `scenariusz-h2.md` po zamrożeniu interfejsu;
+- automatyczna regresja scenariuszy z `userflows-docelowe-2026-07.md`;
+- pilot na realnym telefonie;
+- poprawa instrukcji testu, bez tłumaczenia interfejsu badanym;
+- freeze funkcji od pilota do końca H2, poza P0/P1.
+
+### R7: H2 i synteza
 
 **Czas:** 1–2 tygodnie kalendarzowo
 
-**Cel:** sprawdzić Arco z 3–5 osobami i podjąć bramkę B1.
+- 3–5 sesji na realnych telefonach;
+- zadania rdzenia, Postępów/Ciała, planów i koncept Ekipy;
+- oddzielenie problemów użyteczności od braków funkcjonalnych;
+- zapis dotkliwości i wzorców bez nadinterpretowania średniej przy małym n;
+- naprawa P0/P1 i powtórzenie zmienionych przepływów;
+- aktualizacja `feedback-uzytkownikow.md` oraz raportu H2;
+- decyzja B1: kontynuacja, kolejna iteracja albo wstrzymanie publicznego launchu.
 
-- Przeprowadzić sesje na realnych telefonach.
-- Oddzielić problemy użyteczności od braków funkcjonalnych.
-- Naprawić P0/P1 i ponownie sprawdzić zmienione przepływy.
-- Zaktualizować `feedback-uzytkownikow.md` i raport H2.
-- Podjąć decyzję B1: kontynuacja, kolejna iteracja lub wstrzymanie publicznego launchu.
+## 5. Kolejność, zależności i rytm dostarczania
 
-**Done:** mamy dowody, nie intuicję, że nowa osoba rozumie rdzeń aplikacji.
+```text
+R0 → R0.5 → R1a → R1b → R2 → checkpoint → R3a → R3b → R4 → R5a → R5b → R6 → R7
+```
 
-## Sprint 19 — publiczne konta i RODO
+Reguły wykonania:
 
-**Warunek wejścia:** zielona B1
+- każdy etap kończy się działającym pionowym wycinkiem na preview;
+- po R1a, R1b, R2, R3b i R4 wykonujemy krótką regresję urządzeniową;
+- nie łączymy całej zmiany IA w jeden deploy;
+- kryteria Done obejmują loading, empty, error, offline i success;
+- R5a może być przygotowywany równolegle po zamrożeniu schematu wyszukiwania;
+- P0/P1 zatrzymuje przejście dalej, P2 trafia do najbliższego pasującego etapu.
 
-**Szacunek:** 3–5 tygodni
+Szacunek R0.5–R6:
 
-- Rejestracja, weryfikacja e-mail i reset hasła.
-- Regulamin, polityka prywatności, wersjonowane zgody i wymagania wieku.
-- Eksport i usunięcie danych.
-- Rate limiting i ochrona przed nadużyciami.
-- Audyt RLS na minimum dwóch kontach.
-- Jawna zgoda na udostępnianie aktywności w Ekipie.
+- **23–33 dni robocze sekwencyjnie**;
+- **20–28 dni roboczych** przy równoległym przygotowaniu treści, design review i sprawnej
+  weryfikacji właściciela;
+- R7 dodatkowo zajmuje 1–2 tygodnie kalendarzowo.
 
-## Sprint 20 — pomiar i cichy launch
+## 6. Bramka wejścia do H2
 
-**Warunek wejścia:** zielona B2
+- R0.5–R6 są zamknięte;
+- nie ma znanego P0/P1 w głównych flow;
+- działa serwerowy/danych niezmiennik jednej otwartej sesji;
+- draft recovery działa po zamknięciu PWA i odzyskaniu sieci;
+- każdy główny hub ma poprawne loading/empty/error/offline/success;
+- polskie wyszukiwanie przechodzi stały zestaw zapytań krytycznych;
+- placeholdery w widocznych planach mają świadomą decyzję;
+- iPhone PWA i Android/Chromium przechodzą scenariusze rdzenia;
+- stary cache nie łamie nowego chrome;
+- dane demo i instrukcja moderatora są gotowe.
 
-- Decyzja o analityce i wdrożenie adaptera zgodne z prawem.
-- Landing, domena i ESP w UE.
-- Stripe, reverse trial i paywalle zgodne z Z1–Z3.
-- Test rollbacku, support i monitoring.
-- Cichy launch do małej grupy.
+## 7. Po H2
 
-## Sprint 21 — publiczna Ekipa
+### Publiczne konta i RODO
 
-**Warunek wejścia:** stabilny launch
+- rejestracja, weryfikacja e-mail i reset hasła;
+- regulamin, polityka prywatności, wersjonowane zgody i wymagania wieku;
+- eksport i usunięcie danych;
+- rate limiting i ochrona przed nadużyciami;
+- audyt RLS na co najmniej dwóch kontach;
+- jawna zgoda na udostępnianie aktywności w Ekipie;
+- kopia poza laptopem, rollback, CSP, buckety i RLS.
 
-- Zgody i czytelne ustawienia prywatności.
-- Rate limiting, ochrona 8-znakowych kodów i rotacja zaproszeń.
-- Quiet hours, dostarczanie nudge i zabezpieczenie przed spamem.
-- Trzy tygodnie dogfoodingu na realnych ekipach.
-- Decyzja B3 na podstawie aktywacji, powrotów i reakcji użytkowników.
+### Pomiar i cichy launch
 
-## Backlog po bramkach
+- zgodna prawnie analityka;
+- landing, domena i ESP w UE;
+- płatności, trial i paywalle zgodne z eksperymentami;
+- test rollbacku, support i monitoring;
+- cichy launch do małej grupy.
 
-### Następne po launchu
+### Publiczne skalowanie Ekipy
 
-- miesięczny i roczny recap,
-- karta udostępnienia treningu lub rekordu,
-- lepszy prompt instalacji PWA,
-- kuracja wizualna najczęstszych ćwiczeń,
-- awatary Ekipy,
-- dopracowanie powiadomień.
+- publiczny flow zaproszeń i deep link przez auth;
+- prywatność, quiet hours i dostarczanie nudge;
+- rate limiting i rotacja kodów;
+- trzy tygodnie dogfoodingu na realnych ekipach;
+- decyzja B3 na podstawie aktywacji, powrotów i reakcji.
 
-### Później
+## 8. Backlog po bramkach
 
-- angielska wersja produktu,
-- wrapper App Store/Play Store, jeśli PWA ogranicza retencję,
-- ponowna ocena warstwy trenerskiej po danych.
+- osobne stosy historii dla tabów, tylko jeśli Back nadal jest problemem;
+- pełna skrzynka i dzwonek, gdy pojawią się zdarzenia poza Ekipą;
+- tłumaczenia dalszej części bazy i kalibracja rankingu z danych;
+- awatary Ekipy i dalszy refinement jej stanów;
+- recap miesięczny i roczny;
+- karta udostępnienia treningu lub rekordu;
+- lepszy prompt instalacji PWA;
+- udostępnianie własnego planu;
+- wrapper sklepowy, jeśli PWA ograniczy retencję.
 
-### Zaparkowane lub poza zakresem
+Zaparkowane: publiczny feed, komentarze i czat, automatyczne programowanie AI, dieta i makro,
+wearables/HRV, marketplace programów oraz piąty tab bez dowodu częstotliwości.
 
-- publiczny feed, komentarze i czat,
-- automatyczne programowanie AI,
-- dieta i makro,
-- wearables/HRV,
-- marketplace programów.
+## 9. Reguła backlogu
 
-## Reguła backlogu
-
-Nowy pomysł trafia najpierw tutaj z opisem problemu, odbiorcy i kryterium sukcesu. Nie staje się sprintem tylko dlatego, że jest łatwy do zbudowania. Przed H2 każda nowa funkcja musi uzasadnić, dlaczego nie może poczekać na wyniki testów.
+Nowy pomysł opisuje problem, odbiorcę, spodziewany efekt i kryterium sukcesu. Przed H2 nie
+wchodzi do sprintu, jeśli nie zamyka P0/P1, integralności danych albo warunku bramki.

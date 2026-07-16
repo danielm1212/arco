@@ -3,6 +3,7 @@
 > **Data:** 2026-07-08 · **Odświeżenie:** 2026-07-16 (Sprint 17) — pod aktualny UI (onboarding v3.1) i kanon `wizja-i-strategia-v3.md`: persony Paweł/Kasia/Radek, **trzy filary premium** (cel z prognozą · diagnoza stagnacji · pełna historia), yearly-first (99/rok), teaser stagnacji. Dodana §0.5 z operacyjnymi definicjami pomiaru i dwiema bramkami.
 > **Podstawa:** `wizja-i-strategia-v3.md` §2–3 (persony, model) · `wizja-i-plan-produktu-v2.md` Krok 1 + §7 (bramki) + Z1–Z3 (§2) · `usability-audit.md` §C (zadania) · `feedback-uzytkownikow.md` #1 (first-click).
 > **Format:** 1 sesja moderowana × 3–5 osób, ~70 min. Moderator: Ty. Ten plik = skrypt do wydruku/drugiego ekranu.
+> **Status 2026-07-16:** metodologia pozostaje ważna, ale opis kroków odzwierciedla obecny UI. Nie używać jako finalnego skryptu przed wdrożeniem R0.5–R5b; w R6 aktualizujemy nazwy, ścieżki i dane startowe pod `userflows-docelowe-2026-07.md`, a następnie wykonujemy pilot.
 
 ---
 
@@ -154,8 +155,8 @@ Wynik + surowe cytaty + lista dotkliwości (S3/S4 → P0/P1) → **`docs/wyniki-
 ## 9. Przed pierwszą prawdziwą sesją
 
 **Twarde prerekwizyty (blokują sesję, jeśli nie domknięte):**
-- [ ] **Fix wyszukiwarki ćwiczeń** (`audyt-wyszukiwarki-2026-07.md` R1–R2: `name_pl` top-200 + aliasy). **Z2/Z3 testują picker** — search tylko po nazwach EN da 0 wyników na „wyciskanie" i wywali podmianę (Z3). Bez tego Bramka A prawie na pewno czerwona z powodu, który znamy.
-- [ ] **16 ćwiczeń z placeholderem zdjęcia (45 slotów)** — uzupełnić zdjęciami albo świadomie wyłączyć z widocznych programów, żeby Z3/podgląd nie trafił na pusty placeholder. Decyzja per ćwiczenie [Ty]: swap na wariant ze zdjęciem / AI-zdjęcie / hidden.
+- [ ] **Fix wyszukiwarki ćwiczeń** (R5a planu; lokalne fazy R1–R2 z `audyt-wyszukiwarki-2026-07.md`: `name_pl` top-200 + aliasy). **Z2/Z3 testują picker** — search tylko po nazwach EN da 0 wyników na „wyciskanie" i wywali podmianę (Z3). Bez tego Bramka A prawie na pewno czerwona z powodu, który znamy.
+- [ ] **16 ćwiczeń z placeholderem zdjęcia (49 slotów)** — uzupełnić zdjęciami albo świadomie wyłączyć z widocznych programów, żeby Z3/podgląd nie trafił na pusty placeholder. Decyzja per ćwiczenie [Ty]: swap na wariant ze zdjęciem / AI-zdjęcie / hidden.
 - [ ] 5 punktów P0/P1 z `usability-audit.md` §E domknięte (zoom, dark, focus-visible…).
 
 **Przygotowanie:**

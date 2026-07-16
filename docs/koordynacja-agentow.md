@@ -49,6 +49,29 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (R0.5 klikalny prototyp): ZAKOŃCZONE TECHNICZNIE.**
+  Zakres: nowy, izolowany `prototypes/r0-5/`, test lokalny w przeglądarce oraz aktualizacja
+  `docs/plan-sprintow-2026-07.md`, `docs/userflows-docelowe-2026-07.md` i tego logu.
+  Prototyp waliduje Dziś/Plany, Postępy/Ciało, Historię, Ekipę, aktywną sesję i stany
+  brzegowe na 320/393 px. Wynik: pełne flow start/minimalizacja/wznowienie, Plany,
+  Postępy/Ciało, trening po fakcie i Ekipa; stany no-plan/offline/error/long; zero overflow,
+  zero targetów poniżej 44 px, brak błędów konsoli i kolizji mini-bara z navem. Prototyp
+  wykrył i rozstrzygnął, że backfill używa chrome `session-edit`, bez timera, minimalizacji,
+  mini-bara, Done i celebracji. Artefakt: `prototypes/r0-5/`, raport:
+  `docs/r0-5-wynik-prototypu.md`. Pozostaje krótki walkthrough [Ty] na telefonie. Nie
+  zmieniono produkcyjnych komponentów ani danych.
+- **2026-07-16 · Codex (refinement planu IA i user flows): ZAKOŃCZONE.**
+  Zakres: wyłącznie `docs/plan-sprintow-2026-07.md`,
+  `docs/userflows-docelowe-2026-07.md`, `docs/audyt-nawigacji-2026-07.md` oraz punktowe
+  aktualizacje zależnych dokumentów (`HANDOFF`, roadmapa, H2 i kolejka Notion). Cel:
+  rozbić zbyt szerokie sprinty, przesunąć integralność sesji przed przebudowę UI, dodać
+  prototyp/checkpoint oraz realne zabezpieczenie szkiców w PWA. Wynik: R0.5, R1a/R1b,
+  R3a/R3b i R5a/R5b; integralność sesji i szkice przesunięte przed redesign UI; delivery
+  pionowymi wycinkami; szacunek 23–33 dni sekwencyjnie lub 20–28 przy równoległej pracy.
+  Ujednolicono typy ekranów oraz HANDOFF, roadmapę, H2, usability audit, mapę docs i kolejkę
+  Notion. Walidacja treści: 907 ćwiczeń, 15 programów, 308 slotów, 16 placeholderów w 49
+  slotach, zero błędów integralności. `git diff --check` i kontrola whitespace ✓. Nie dotknięto
+  kodu aplikacji, migracji ani duplikatów `public/icons-3d/* 2.png`.
 - **2026-07-16 · Codex (naprawa CI po lower-body migration): ZAKOŃCZONE.**
   Zakres: wyłącznie świeży start bazy w CI, migracja
   `20260716141007_lower_body_programs.sql` i workflow GitHub Actions. Przyczyna: migracja

@@ -1,6 +1,6 @@
 # Arco — aktualny audyt użyteczności
 
-**Aktualizacja:** 2026-07-14
+**Aktualizacja:** 2026-07-16
 
 **Metoda:** heurystyki, cognitive walkthrough, audyt kodu i dogfooding właściciela.
 
@@ -8,20 +8,23 @@
 
 ## Werdykt
 
-Arco zachowuje się dziś jak aplikacja, a nie zbiór stron: ma stałą nawigację, ciągłość aktywnej sesji, warstwy modalne, stany offline, reakcje natychmiastowe i przepływy powrotu. Rdzeń jest wystarczająco dojrzały do testów H2, ale przed nimi należy domknąć regresję PWA i dostępność bottom sheetów.
+Arco ma dojrzały rdzeń funkcjonalny, ale audyt pełnych user flows ujawnił niespójny model
+nawigacji: Home konkuruje wieloma wejściami, Ciało i Ekipa nie mają docelowej hierarchii,
+a cykl życia sesji miesza Back, minimalizację i edycję. H2 należy wykonać dopiero po
+refinements R0.5–R6, aby nie testować znanych problemów architektury.
 
 Największe ryzyko nie leży już w wyglądzie pojedynczego ekranu. Leży w przewidywalności zachowania na prawdziwym telefonie oraz w tym, czy nowa osoba rozumie architekturę informacji bez wcześniejszej znajomości produktu.
 
 ## Architektura informacji
 
-Aktualny model jest logiczny:
+Docelowy model, rozstrzygnięty 2026-07-16:
 
-- **Trening** — plan, biblioteka i start działania,
-- **Postępy** — interpretacja wyniku,
+- **Trening** — Dziś oraz Plany,
+- **Postępy** — wyniki treningowe oraz Ciało,
 - **Historia** — zapis i korekta przeszłości,
-- **Ciało** — pomiary oraz zdjęcia.
+- **Ekipa** — prywatne wsparcie i check-iny.
 
-Ekipa pozostaje funkcją kontekstową na home i osobnym ekranem, ale nie dostaje piątego stałego taba przed potwierdzeniem użycia. Biblioteka programów ma jawne wejście, więc usunięto wcześniejszą lukę „nie wiadomo, gdzie przeglądać treningi”. Filtry w bottom sheecie ograniczają przeładowanie strony.
+Bottom bar ma cztery pozycje: Trening, Postępy, Historia i Ekipa. Profil otwiera awatar, Plany są jawnym podwidokiem Treningu, a Home pokazuje Ekipę tylko kontekstowo. Jest to stan docelowy, jeszcze niewdrożony; szczegóły są w `userflows-docelowe-2026-07.md`.
 
 ## Stan wcześniejszych problemów
 
@@ -44,11 +47,15 @@ Ekipa pozostaje funkcją kontekstową na home i osobnym ekranem, ale nie dostaje
 
 ## Otwarte problemy
 
-### P0 przed H2
+### P0/P1 przed H2
 
 - Pełna regresja bottom sheetów na iPhone PWA, Safari, Arc/Chromium, Android i desktop.
 - Focus trap, zwrot fokusu do triggera i kontrola klawiaturą w customowym bottom sheecie.
 - Potwierdzenie zachowania po aktualizacji service workera i starego cache.
+- Wdrożenie kontraktu chrome, poprawnego Back/replace i dirty guard.
+- Jedna otwarta sesja egzekwowana po stronie serwera/danych.
+- Przebudowa Home/Planów oraz progresywnego treningu po fakcie.
+- Polskie nazwy i aliasy dla krytycznych ćwiczeń w wyszukiwarce.
 
 ### P1 do sprawdzenia w H2
 
@@ -74,4 +81,6 @@ Mierzymy sukces bez pomocy, czas, błędny pierwszy klik, liczbę próśb o pomo
 
 ## Wniosek
 
-UI jest spójny i wystarczająco dopracowany, aby nie blokować testów. Nie ma jednak podstaw, by twierdzić, że użyteczność jest „na najwyższym poziomie”, dopóki rdzenia nie przejdą samodzielnie osoby spoza projektu. Następna inwestycja w jakość to test i obserwacja, nie kolejna warstwa wizualna.
+Pojedyncze komponenty są dopracowane, ale pełny model produktu wymaga refinementu przed
+badaniem. Następna inwestycja w jakość to prototyp R0.5 i wdrożenie R1a–R6, a następnie
+test i obserwacja, nie dokładanie kolejnych kart do Home.
