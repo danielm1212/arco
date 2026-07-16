@@ -14,8 +14,8 @@ Po audycie całej aplikacji przyjęto docelową IA: bottom bar **Trening · Post
 
 Pełny kontrakt jest w `userflows-docelowe-2026-07.md`. Aktywny plan wdrożenia to
 R0–R7 z `plan-sprintow-2026-07.md`, rozbity na R0.5, R1a/R1b, R3a/R3b i R5a/R5b.
-Zastępuje wcześniejszą sekwencję Sprint 17b → H2. Na tym etapie zmieniono dokumentację
-i backlog, nie kod aplikacji.
+Zastępuje wcześniejszą sekwencję Sprint 17b → H2. R0.5 został zaakceptowany, a fundament
+R1a jest wdrożony lokalnie i czeka na regresję urządzeniową przed publikacją.
 
 ## Sprint 17a — onboarding v3.1 (2026-07-16)
 
@@ -50,6 +50,9 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Dodano dwa kierunkowe plany „Pośladki i nogi" oraz doprecyzowano rytm tygodniowy i rotację wszystkich programów.
 - Odświeżono scenariusz H2 i metodologię pomiaru; onboarding v3.1 usuwa znane pułapki przed testem.
 - Wykonano produkcyjny backup bazy i Storage oraz pełny restore do odizolowanej bazy; dowód i liczby są w `backup-i-restore.md`.
+- Wdrożono fundament nowej nawigacji: centralną macierz chrome, cztery taby
+  Trening/Postępy/Historia/Ekipa, wspólny Back z fallbackiem, osobną minimalizację aktywnego
+  treningu i poprawne replace dla filtrów oraz ekranów terminalnych.
 
 ## Technologia i dane
 
@@ -65,7 +68,7 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 Aktualny gate obejmuje:
 
 - lint,
-- 18 testów jednostkowych,
+- 22 testy jednostkowe,
 - walidację danych treningowych,
 - walidację rekomendacji,
 - build produkcyjny,
@@ -83,14 +86,18 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 6. **Analityka:** adapter istnieje, ale produkcyjnie pozostaje no-op do czasu decyzji prawnej i produktowej.
 7. **Ekipy publiczne:** przed otwarciem wymagają zgód, rate limitów, ochrony 8-znakowych kodów, rotacji zaproszeń i dogfoodingu wielokontowego.
 8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. Należy je uzupełnić lub świadomie wyłączyć przed H2.
-9. **Docelowa IA nie jest jeszcze wdrożona:** kod nadal pokazuje stary bottom bar i przeładowany Home. R0.5–R5b obejmują prototyp, chrome, integralność sesji, Dziś/Plany, Postępy/Ciało, Ekipę, Historię, polskie wyszukiwanie i dostępność. `/history/add` nadal ma overflow, iOS-owy rozjazd daty oraz 43 spłaszczone opcje.
+9. **Docelowa IA jest wdrożona częściowo:** R0.5 jest zaakceptowany, a R1a wprowadza nowy
+   kontrakt chrome i tab Ekipy. Home oraz huby nadal czekają na R2–R4; R1b musi wcześniej
+   zabezpieczyć jedną aktywną sesję i szkice. `/history/add` nadal wymaga przebudowy wyboru
+   programu oraz pełnej regresji daty i overflow na iOS.
 10. **Drift danych treningowych:** w produkcji brakuje `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`; zweryfikowany restore ma 905 ćwiczeń, a lokalny zestaw 907. Przed H2 trzeba wykonać precyzyjny sync tych dwóch rekordów zamiast pełnego re-seeda.
 
 ## Następny krok
 
-Zaczynamy od R0.5: krótkiego prototypu i walidacji stanów. Potem realizujemy R1a (chrome)
-i R1b (niezmiennik jednej sesji, terminalne redirecty, szkice), a dopiero dalej przebudowę
-hubów R2–R5b. Po R2 wykonujemy checkpoint dogfood, następnie przygotowujemy R6 i H2 w R7.
+Po technicznym zamknięciu R1a wykonujemy krótką regresję urządzeniową, a następnie R1b:
+niezmiennik jednej sesji, idempotentny start, terminalne redirecty i trwałe szkice. Dopiero
+potem przebudowujemy huby R2–R5b. Po R2 wykonujemy checkpoint dogfood, następnie
+przygotowujemy R6 i H2 w R7.
 Równolegle właściciel przenosi zweryfikowany backup do zaszyfrowanej lokalizacji poza laptopem.
 
 Nie dokładamy teraz nowej funkcji. Porządkujemy istniejący rdzeń i testujemy jeden spójny model produktu.

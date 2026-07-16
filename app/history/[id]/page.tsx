@@ -6,6 +6,7 @@ import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
 import { DateEditor } from "./DateEditor";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
+import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -91,15 +92,17 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/history" className="flex min-h-11 items-center text-sm text-muted-foreground">
-          ← Historia
-        </Link>
-        <h1 className="truncate px-sm font-semibold">{title}</h1>
-        <Button size="sm" variant="outline" asChild>
-          <Link href={`/session/${session.id}`}>{session.finished_at ? "Edytuj" : "Otwórz"}</Link>
-        </Button>
-      </header>
+      <PageHeader
+        title={title}
+        fallback="/history"
+        backLabel="Wróć do historii"
+        sticky
+        action={
+          <Button variant="outline" asChild>
+            <Link href={`/session/${session.id}`}>{session.finished_at ? "Edytuj" : "Otwórz"}</Link>
+          </Button>
+        }
+      />
 
       <main className="flex-1 space-y-md p-md">
         {/* S12: edycja daty/czasu (logowanie po fakcie); sesja w toku — bez edycji */}

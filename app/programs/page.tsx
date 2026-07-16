@@ -11,6 +11,7 @@ import {
   type ProgramFocus,
 } from "@/lib/programRecommendation";
 import { ProgramFilters } from "./ProgramFilters";
+import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -161,13 +162,7 @@ export default async function ProgramsPage({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="flex min-h-11 items-center text-sm text-muted-foreground">
-          ← Trening
-        </Link>
-        <h1 className="font-semibold">Programy</h1>
-        <span className="w-12" />
-      </header>
+      <PageHeader title="Programy" fallback="/" backLabel="Wróć do treningu" sticky />
 
       <main className="flex-1 space-y-lg p-md">
         {own.length > 0 && (

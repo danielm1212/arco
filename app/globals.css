@@ -76,6 +76,7 @@
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
     --floating-nav-gap: 0.75rem;
     --floating-nav-height: 4.25rem;
+    --session-mini-height: 3.5rem;
 
     /* promienie (primitive) */
     --radius-sm: 0.375rem;

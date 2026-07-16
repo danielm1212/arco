@@ -8,7 +8,7 @@ import type { ExerciseType, SessionSet, TrainingPriority, UnitSystem } from "@/l
 import { trainingPriorityMeta } from "@/lib/trainingPriority";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getKeepAwake } from "@/lib/prefs";
-import { ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { reorderExercise } from "@/app/actions/sets";
 import { ensureOnline } from "@/lib/offlineGuard";
@@ -21,6 +21,8 @@ import { useRestTimer } from "./useRestTimer";
 import { useSessionOutbox } from "./useSessionOutbox";
 import { useSessionMutations } from "./useSessionMutations";
 import { handleFinish, handleDeleteSession } from "./finish";
+import { ScreenChrome } from "@/components/navigation/ScreenChrome";
+import { useNavigationHistory } from "@/components/navigation/NavigationHistory";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -85,6 +87,7 @@ export function Logger({
   initialExercises: LoggerExercise[];
 }) {
   const router = useRouter();
+  const { goBack, replace } = useNavigationHistory();
   const [exercises, setExercises] = useState(initialExercises);
   // Najświeższy stan dostępny w handlerach (do złożenia pełnego wiersza przy zapisie)
   const exercisesRef = useRef(exercises);
@@ -195,16 +198,31 @@ export function Logger({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
+      <ScreenChrome
+        screenType={isFinished || isHistorical ? "session-edit" : "session-live"}
+        showBottomNav={false}
+        activeTab={null}
+        showSessionMiniBar={false}
+        miniBarPosition="safe-bottom"
+      />
       <header className="relative sticky top-[var(--safe-area-top)] z-10 border-b bg-background px-md py-sm before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-[var(--safe-area-top)] before:bg-background">
         <div className="flex items-center justify-between gap-sm">
           <div className="flex min-w-0 items-center gap-2xs">
             {/* 44px pełnowymiarowy target (było: mikro-tekst "← Trening") */}
             <button
-              onClick={() => router.push("/")}
-              aria-label="Wróć do treningu"
-              className="flex h-11 w-11 shrink-0 -ml-2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+              onClick={() =>
+                isFinished || isHistorical
+                  ? goBack(isFinished ? `/history/${sessionId}` : "/history")
+                  : replace("/")
+              }
+              aria-label={isFinished || isHistorical ? "Wróć" : "Zwiń trening"}
+              className="flex size-11 shrink-0 -ml-2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <ChevronLeft className="size-5" />
+              {isFinished || isHistorical ? (
+                <ChevronLeft className="size-5" aria-hidden />
+              ) : (
+                <ChevronDown className="size-5" aria-hidden />
+              )}
             </button>
             <div className="min-w-0">
               {/* Nazwa dnia = tytuł: jedyna część odróżniająca sesję, program

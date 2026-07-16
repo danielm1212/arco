@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Check, SlidersHorizontal } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { useNavigationHistory } from "@/components/navigation/NavigationHistory";
 
 type Filters = {
   environment?: string;
@@ -78,7 +78,7 @@ function FilterGroup({
 }
 
 export function ProgramFilters({ filters, goals }: { filters: Filters; goals: string[] }) {
-  const router = useRouter();
+  const { replace } = useNavigationHistory();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Filters>(filters);
   const appliedCount = countFilters(filters);
@@ -97,7 +97,7 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
     if (draft.focus) query.set("focus", draft.focus);
     const value = query.toString();
     setOpen(false);
-    router.push(value ? `/programs?${value}` : "/programs");
+    replace(value ? `/programs?${value}` : "/programs");
   }
 
   return (

@@ -5,6 +5,8 @@ import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
 import { repPRRows } from "@/lib/repPRs";
 import { Sparkline } from "@/components/Sparkline";
+import { PageHeader } from "@/components/navigation/PageHeader";
+import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
@@ -24,12 +26,15 @@ export const dynamic = "force-dynamic";
 
 export default async function ExercisePage(props: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ m?: string }>;
+  searchParams: Promise<{ m?: string; returnTo?: string }>;
 }) {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const supabase = await createClient();
   const exerciseId = decodeURIComponent(params.id);
+  const sessionReturnTo = /^\/session\/[^/]+$/.test(searchParams.returnTo ?? "")
+    ? searchParams.returnTo!
+    : null;
 
   const [{ data: exercise }, { data: settings }] = await Promise.all([
     supabase
@@ -124,13 +129,21 @@ export default async function ExercisePage(props: {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/progress" className="flex min-h-11 items-center text-sm text-muted-foreground">
-          ← Postępy
-        </Link>
-        <h1 className="truncate px-sm font-semibold">{exercise.name}</h1>
-        <span className="w-12" />
-      </header>
+      {sessionReturnTo ? (
+        <ScreenChrome
+          screenType="session-child"
+          showBottomNav={false}
+          activeTab={null}
+          showSessionMiniBar={false}
+          miniBarPosition="safe-bottom"
+        />
+      ) : null}
+      <PageHeader
+        title={exercise.name}
+        fallback={sessionReturnTo ?? "/progress"}
+        backLabel={sessionReturnTo ? "Wróć do treningu" : "Wróć do postępów"}
+        sticky
+      />
 
       <main className="flex-1 space-y-md p-md">
         <p className="text-xs capitalize text-muted-foreground">
@@ -190,11 +203,11 @@ export default async function ExercisePage(props: {
                 {WEIGHTED_TABS.map((t) => (
                   <Link
                     key={t.key}
-                    href={
-                      t.key === "e1rm"
-                        ? `/exercise/${encodeURIComponent(exerciseId)}`
-                        : `/exercise/${encodeURIComponent(exerciseId)}?m=${t.key}`
-                    }
+                    replace
+                    href={`/exercise/${encodeURIComponent(exerciseId)}?${new URLSearchParams({
+                      ...(t.key === "e1rm" ? {} : { m: t.key }),
+                      ...(sessionReturnTo ? { returnTo: sessionReturnTo } : {}),
+                    }).toString()}`}
                     aria-current={t.key === sel ? "page" : undefined}
                     className={`flex min-h-11 flex-1 items-center justify-center rounded-md border px-2 text-center text-sm ${
                       t.key === sel

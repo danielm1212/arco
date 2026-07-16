@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Info, LineChart } from "lucide-react";
@@ -49,6 +51,7 @@ export function ExerciseBrowser({
   defaultNote?: string | null;
   autoFocus?: boolean;
 }) {
+  const pathname = usePathname();
   const [q, setQ] = useState("");
   const [parts, setParts] = useState<string[]>([]);
   const [equip, setEquip] = useState<string[]>([]);
@@ -255,13 +258,13 @@ export function ExerciseBrowser({
               <p className="truncate text-xs text-muted-foreground">{h.equipment ?? "Brak danych"}</p>
             </button>
             {/* S13: skok do progresu ćwiczenia */}
-            <a
-              href={`/exercise/${encodeURIComponent(h.id)}`}
+            <Link
+              href={`/exercise/${encodeURIComponent(h.id)}?returnTo=${encodeURIComponent(pathname)}`}
               aria-label="Progres ćwiczenia"
               className="grid size-11 shrink-0 place-items-center rounded-full border border-input text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <LineChart className="size-4" />
-            </a>
+            </Link>
             <ExerciseInfoSheet exerciseId={h.id}>
               <button
                 type="button"

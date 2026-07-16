@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 async function ctx() {
@@ -100,7 +100,7 @@ export async function deleteProgram(programId: string) {
   const { error } = await supabase.from("programs").delete().eq("id", programId);
   if (error) throw new Error(error.message);
   revalidatePath("/programs");
-  redirect("/programs");
+  redirect("/programs", RedirectType.replace);
 }
 
 export async function addDay(programId: string) {

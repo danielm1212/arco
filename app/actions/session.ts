@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { localDayKey } from "@/lib/week";
 
@@ -27,7 +27,7 @@ export async function saveActiveProgram(programId: string) {
 /** Ustaw aktywny program i wróć do ekranu Trening. */
 export async function setActiveProgram(programId: string) {
   await saveActiveProgram(programId);
-  redirect("/");
+  redirect("/", RedirectType.replace);
 }
 
 type NewSessionOptions = {
@@ -208,7 +208,7 @@ export async function finishSession(sessionId: string) {
   revalidatePath("/progress");
   revalidatePath("/");
   revalidatePath("/ekipa");
-  redirect(`/session/${sessionId}/done`); // ekran celebracji
+  redirect(`/session/${sessionId}/done`, RedirectType.replace); // ekran celebracji
 }
 
 /** Usuń całą sesję. */

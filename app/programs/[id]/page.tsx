@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { duplicateProgram } from "@/app/actions/program";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { ExerciseInfoSheet } from "@/components/ExerciseInfoSheet";
 import { ProgramEditor, type EditorDay } from "./ProgramEditor";
+import { PageHeader } from "@/components/navigation/PageHeader";
 import {
   formatCycleStructure,
   formatEquipment,
@@ -84,13 +84,12 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/programs" className="flex min-h-11 items-center text-sm text-muted-foreground">
-          ← Biblioteka
-        </Link>
-        <h1 className="truncate px-sm font-semibold">{program.name}</h1>
-        <span className="w-12" />
-      </header>
+      <PageHeader
+        title={program.name}
+        fallback="/programs"
+        backLabel="Wróć do biblioteki programów"
+        sticky
+      />
 
       <main className="flex-1 space-y-md p-md">
         <div className="flex flex-wrap gap-2xs">

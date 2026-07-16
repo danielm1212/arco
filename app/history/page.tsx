@@ -5,6 +5,7 @@ import { MonthCalendar } from "@/components/MonthCalendar";
 import { weekStart, computeStreak, localDayKey } from "@/lib/week";
 import { DeleteSessionButton } from "./DeleteSessionButton";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
+import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -46,12 +47,15 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <h1 className="font-semibold">Historia</h1>
-        <Button size="sm" asChild>
-          <Link href="/history/add">Dodaj po fakcie</Link>
-        </Button>
-      </header>
+      <PageHeader
+        title="Historia"
+        mode="none"
+        action={
+          <Button asChild>
+            <Link href="/history/add" aria-label="Dodaj trening po fakcie">Dodaj</Link>
+          </Button>
+        }
+      />
 
       <main className="flex-1 space-y-md p-md">
         <MonthCalendar trainingDays={trainingDays} streak={streak} />

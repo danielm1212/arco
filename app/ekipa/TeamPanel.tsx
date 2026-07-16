@@ -128,7 +128,7 @@ export function TeamPanel({
           return;
         }
         if (success) toast.success(success);
-        if (result.podId) router.push(`/ekipa?pod=${result.podId}`);
+        if (result.podId) router.replace(`/ekipa?pod=${result.podId}`);
         onSuccess?.();
         router.refresh();
       } catch {
@@ -214,7 +214,7 @@ export function TeamPanel({
             <button
               key={team.id}
               type="button"
-              onClick={() => router.push(`/ekipa?pod=${team.id}`)}
+              onClick={() => router.replace(`/ekipa?pod=${team.id}`)}
               className={`h-11 shrink-0 rounded-full px-4 text-sm font-semibold ${team.id === selected.id ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground shadow-sm"}`}
             >
               {team.name ?? "Ekipa"}

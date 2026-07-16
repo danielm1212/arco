@@ -63,7 +63,7 @@ Docelowy model produktu opisuje `userflows-docelowe-2026-07.md`:
 - ustalona macierz chrome oraz zasady push/replace/Back;
 - wcześniejsze sprzeczne zalecenia oznaczone jako zastąpione.
 
-### R0.5: prototyp i walidacja stanów 🟡 gotowy do akceptacji właściciela
+### R0.5: prototyp i walidacja stanów ✅ zaakceptowany
 
 **Czas:** 0,5–1 dnia [Claude + Ty]
 
@@ -80,10 +80,10 @@ Docelowy model produktu opisuje `userflows-docelowe-2026-07.md`:
 głównych tabów w połowie implementacji.
 
 **Stan 2026-07-16:** klikalny artefakt, testy 320/393 px oraz decyzje techniczne są gotowe.
-Wynik opisuje `r0-5-wynik-prototypu.md`. Do pełnego zamknięcia pozostaje pięciozadaniowy
-walkthrough właściciela na telefonie.
+Wynik opisuje `r0-5-wynik-prototypu.md`. Właściciel zaakceptował kierunek i przejście do
+implementacji; pełny walkthrough wraca w checkpoint regresji po R1a/R1b.
 
-### R1a: fundament chrome i nawigacji
+### R1a: fundament chrome i nawigacji 🟡 gotowy do regresji urządzeniowej
 
 **Czas:** 3–4 dni [Claude] + regresja na urządzeniach [Ty]
 
@@ -100,6 +100,14 @@ walkthrough właściciela na telefonie.
 - centralna macierz tras oraz automatyczny test pokrycia każdej strony typem chrome.
 
 **Done:** każda trasa ma jawny typ, właściwy aktywny tab i bezpieczny fallback po deep linku.
+
+**Stan 2026-07-16:** wdrożono centralną macierz 14 tras, deklarowane nadpisanie trybu dla
+edytora programu i widoku ćwiczenia z loggera, niezależny bottom nav/mini-bar, dynamiczną
+rezerwę dolną, wspólne `PageHeader`, `BackButton` i `CloseButton`, sesyjny bezpieczny Back,
+replace dla tabów, filtrów, wyboru Ekipy oraz akcji terminalnych. Logger live używa
+ChevronDown, a edycja ChevronLeft. Automatyczny test wykrywa stronę bez reguły chrome.
+Lokalnie: lint ✓, testy 22/22 ✓, build ✓, regresja zalogowanych tras w Chromium ✓.
+Pozostaje checkpoint [Ty]: iPhone PWA/Safari oraz Android system Back.
 
 ### R1b: integralność sesji i bezpieczeństwo nawigacji
 

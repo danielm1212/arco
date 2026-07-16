@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
 import { SettingsForm } from "./SettingsForm";
+import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -15,13 +15,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="flex min-h-11 items-center text-sm text-muted-foreground">
-          ← Trening
-        </Link>
-        <h1 className="font-semibold">Ustawienia</h1>
-        <span className="w-12" />
-      </header>
+      <PageHeader title="Ustawienia" fallback="/" backLabel="Wróć do treningu" sticky />
       <main className="flex-1 p-md">
         <SettingsForm
           unit={s?.unit_system ?? "kg"}

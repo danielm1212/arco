@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TeamPanel } from "./TeamPanel";
+import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -51,11 +51,7 @@ export default async function TeamPage(props: { searchParams: Promise<{ pod?: st
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/" className="flex min-h-11 items-center text-sm text-muted-foreground">← Trening</Link>
-        <h1 className="font-semibold">Ekipa</h1>
-        <span className="w-12" />
-      </header>
+      <PageHeader title="Ekipa" mode="none" />
       <main className="p-md">
         <TeamPanel
           teams={teams}

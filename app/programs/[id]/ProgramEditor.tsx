@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, Plus, Trash2, X } from "lucide-react";
@@ -21,6 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/navigation/PageHeader";
+import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 
 export interface EditorSlot {
   id: string;
@@ -75,13 +76,14 @@ export function ProgramEditor({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="flex items-center justify-between border-b px-md py-sm">
-        <Link href="/programs" className="flex min-h-11 items-center text-sm text-muted-foreground">
-          ← Programy
-        </Link>
-        <h1 className="font-semibold">Edytor</h1>
-        <span className="w-12" />
-      </header>
+      <ScreenChrome
+        screenType="focus"
+        showBottomNav={false}
+        activeTab={null}
+        showSessionMiniBar={false}
+        miniBarPosition="safe-bottom"
+      />
+      <PageHeader title="Edytor" fallback="/programs" backLabel="Wróć do programów" sticky />
 
       <main className="flex-1 space-y-lg p-md">
         <div className="space-y-xs">

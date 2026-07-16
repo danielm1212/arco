@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import { MomentIcon3D, type MomentIconName } from "@/components/MomentIcon3D";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
+import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { weekStart, computeStreak } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -171,13 +171,13 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
         <Button asChild size="lg" className="w-full">
           {/* F2 (redesign-home.md §3.6): ?trained=1 odpala zapłon flame'a
               dzisiejszego dnia na home, raz, po powrocie z celebracji */}
-          <Link href="/?trained=1">Wróć na ekran główny</Link>
+          <ReplaceLink href="/?trained=1">Wróć na ekran główny</ReplaceLink>
         </Button>
         {goalLeft > 0 && (
           <Button asChild variant="outline" size="lg" className="w-full">
-            <Link href="/">
+            <ReplaceLink href="/">
               {weeklyCount} z {goal} w tym tygodniu. {goalLeft === 1 ? "Został jeden" : `Zostały ${goalLeft}`}
-            </Link>
+            </ReplaceLink>
           </Button>
         )}
         {goalLeft === 0 && (

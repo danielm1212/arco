@@ -9,6 +9,8 @@ import { deleteSession } from "@/app/actions/session";
 import { Play, X } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { MiniBarPosition } from "@/lib/appChrome";
 
 interface OpenSession {
   id: string;
@@ -23,7 +25,13 @@ const mmss = (s: number) =>
  * S12: sesja jako obiekt globalny — mini-bar „Trening w toku" nad nawigacją
  * na każdym ekranie poza loggerem. ▶ Wróć / ✕ Porzuć (zawsze z potwierdzeniem).
  */
-export function SessionMiniBar() {
+export function SessionMiniBar({
+  position,
+  onVisibilityChange,
+}: {
+  position: MiniBarPosition;
+  onVisibilityChange?: (visible: boolean) => void;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState<OpenSession | null>(null);
@@ -69,6 +77,11 @@ export function SessionMiniBar() {
     return () => window.clearInterval(id);
   }, [open]);
 
+  useEffect(() => {
+    onVisibilityChange?.(Boolean(open));
+    return () => onVisibilityChange?.(false);
+  }, [onVisibilityChange, open]);
+
   if (!open) return null;
 
   function discard() {
@@ -92,7 +105,14 @@ export function SessionMiniBar() {
 
   return (
     <>
-    <div className="fixed inset-x-[var(--floating-nav-gap)] bottom-[calc(var(--floating-nav-height)+var(--floating-nav-gap)+0.25rem)] z-40 mx-auto max-w-[424px]">
+    <div
+      className={cn(
+        "fixed inset-x-[var(--floating-nav-gap)] z-40 mx-auto max-w-[424px]",
+        position === "above-nav"
+          ? "bottom-[calc(var(--floating-nav-height)+var(--floating-nav-gap)+0.25rem)]"
+          : "bottom-[calc(var(--safe-area-bottom)+var(--floating-nav-gap))]",
+      )}
+    >
       <div className="flex items-center gap-sm rounded-xl bg-volt px-sm py-1.5 text-volt-foreground shadow-lg">
         <Link href={`/session/${open.id}`} className="flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-md px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt-foreground">
           <p className="flex items-center gap-1 truncate text-sm font-semibold">

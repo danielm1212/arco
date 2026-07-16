@@ -49,6 +49,19 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (R1a fundament chrome i nawigacji): ZAKOŃCZONE TECHNICZNIE.**
+  Zakres: centralny kontrakt typów ekranów i tras, niezależne sterowanie bottom navem oraz
+  mini-barem, wspólne `PageHeader`/`BackButton`, bezpieczny Back z fallbackiem, helpery
+  push/replace, rezerwy safe area i automatyczny test pokrycia tras. Dotykane obszary:
+  `components/AppChrome.tsx`, `BottomNav.tsx`, `SessionMiniBar.tsx`, nowe komponenty
+  nawigacji, `lib/appChrome.ts`, nagłówki stron, testy i punktowa aktualizacja planu/logu.
+  Wynik: 14/14 tras z jawnym kontraktem, nowy tab Ekipy, Ciało jako podwidok Postępów,
+  niezależne warstwy bottom nav/mini-bar, dynamiczny padding, history-first Back z fallbackiem,
+  poprawne ChevronDown/ChevronLeft/X, origin-aware ćwiczenie z loggera oraz replace tabów,
+  filtrów, Ekipy i przejść terminalnych. Lokalna regresja zalogowanych tras Chromium ✓,
+  deep link ustawień → bezpieczny fallback ✓, target Back 44×44 ✓, lint ✓, testy 22/22 ✓,
+  build ✓. Pozostaje regresja [Ty] na iPhone PWA/Safari i Android system Back przed publikacją.
+  Nie dotknięto migracji, danych treningowych ani 8 duplikatów `public/icons-3d/* 2.png`.
 - **2026-07-16 · Codex (R0.5 klikalny prototyp): ZAKOŃCZONE TECHNICZNIE.**
   Zakres: nowy, izolowany `prototypes/r0-5/`, test lokalny w przeglądarce oraz aktualizacja
   `docs/plan-sprintow-2026-07.md`, `docs/userflows-docelowe-2026-07.md` i tego logu.
