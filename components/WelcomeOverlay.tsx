@@ -18,6 +18,7 @@ import {
   formatEstimatedMinutes,
   formatFrequency,
   formatProgramFocus,
+  formatWeeklyRotationExample,
   recommendProgram,
   type ProgramFocus,
   type ProgramCandidate,
@@ -77,13 +78,10 @@ function pluralTreningow(n: number) {
 
 function recommendationRhythmCopy(suggestion: ReturnType<typeof recommendProgram>) {
   if (!suggestion) return "Pokażemy najbliższy plan dla Twojego rytmu.";
-  const rhythm = `${formatCycleStructure(suggestion.program.cycle_days)} · ${formatFrequency(
-    suggestion.program.frequency_min!,
-    suggestion.program.frequency_max!,
-  )}`;
+  const rhythm = `${formatFrequency(suggestion.program.frequency_min!, suggestion.program.frequency_max!)}. Rotacja treningów: ${formatCycleStructure(suggestion.program.cycle_days)}.`;
   return suggestion.exact
-    ? `Twój plan będzie działał w rytmie: ${rhythm}.`
-    : `Najbliższy pasujący plan działa w rytmie: ${rhythm}.`;
+    ? `Twój plan: ${rhythm} Po każdym treningu przechodzisz do kolejnej litery.`
+    : `Najbliższy pasujący plan: ${rhythm} Po każdym treningu przechodzisz do kolejnej litery.`;
 }
 
 export function WelcomeOverlay({
@@ -440,11 +438,11 @@ export function WelcomeOverlay({
                   </p>
                   <dl className="mt-sm grid grid-cols-2 gap-xs text-xs">
                     <div className="rounded-lg bg-secondary p-sm">
-                      <dt className="text-muted-foreground">Twój rytm</dt>
+                      <dt className="text-muted-foreground">Treningi w tygodniu</dt>
                       <dd className="mt-2xs font-medium">{formatFrequency(suggestion.program.frequency_min!, suggestion.program.frequency_max!)}</dd>
                     </div>
                     <div className="rounded-lg bg-secondary p-sm">
-                      <dt className="text-muted-foreground">Kolejność</dt>
+                      <dt className="text-muted-foreground">Rotacja treningów</dt>
                       <dd className="mt-2xs font-medium">{formatCycleStructure(suggestion.program.cycle_days)}</dd>
                     </div>
                     <div className="rounded-lg bg-secondary p-sm">
@@ -463,6 +461,11 @@ export function WelcomeOverlay({
                       </dd>
                     </div>
                   </dl>
+                  {formatWeeklyRotationExample(suggestion.program.cycle_days, effectiveGoal) && (
+                    <p className="mt-sm rounded-lg bg-primary/5 px-sm py-xs text-xs leading-relaxed text-muted-foreground">
+                      Nowy tydzień nie resetuje kolejności. Przy {effectiveGoal} {pluralTreningow(effectiveGoal)} w tygodniu: {formatWeeklyRotationExample(suggestion.program.cycle_days, effectiveGoal)}.
+                    </p>
+                  )}
                   <p className="mt-sm text-xs text-muted-foreground">
                     Progresja: gdy wykonasz górny zakres powtórzeń we wszystkich seriach z dobrą techniką, następnym razem dołóż najmniejszy ciężar.
                   </p>

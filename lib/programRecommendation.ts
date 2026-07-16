@@ -202,11 +202,27 @@ const EQUIPMENT_LABELS: Record<string, string> = {
   "pull-up bar": "drążek",
 };
 
-/** Krótka, zrozumiała nazwa rytmu cyklu — do kart planów i onboardingu. */
+/** Litery kolejnych treningów w planie — niezależne od tygodnia kalendarzowego. */
 export function formatCycleStructure(days: number) {
-  if (days === 2) return "A → B";
-  if (days === 3) return "A → B → C";
-  return `${days} treningi w cyklu`;
+  return Array.from({ length: Math.max(1, days) }, (_, index) =>
+    String.fromCharCode(65 + index),
+  ).join(" → ");
+}
+
+/** Dwa tygodnie rotacji, dopasowane do deklarowanej liczby treningów. */
+export function formatWeeklyRotationExample(cycleDays: number, weeklyGoal: number) {
+  if (cycleDays < 1 || weeklyGoal < 1) return null;
+
+  const labels = Array.from({ length: cycleDays }, (_, index) => String.fromCharCode(65 + index));
+  const week = (startAt: number) =>
+    Array.from({ length: weeklyGoal }, (_, index) => labels[(startAt + index) % labels.length]).join(", ");
+
+  return `Tydzień 1: ${week(0)} · tydzień 2: ${week(weeklyGoal)}`;
+}
+
+/** Stała zasada rotacji — ważniejsza niż liczba dni w samym cyklu. */
+export function formatRotationGuidance(cycleDays: number) {
+  return `Rotacja: ${formatCycleStructure(cycleDays)}. Po każdym treningu wykonaj kolejny dzień planu — nowy tydzień nie resetuje kolejności.`;
 }
 
 export function formatEquipment(items: string[], limit = 4) {

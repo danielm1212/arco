@@ -1,4 +1,4 @@
-# Intermediate · Masa ciała · Full Body · cykl 3 dni
+# Średniozaawansowany · Masa ciała · Całe ciało
 
 > **Poziom:** średniozaawansowany · **Środowisko:** masa ciała + drążek · **Częstotliwość:** 3–4 dni/tydz. · **Czas:** 40–55 min · **RIR:** 1–2
 

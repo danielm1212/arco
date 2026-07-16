@@ -1,4 +1,4 @@
-# Beginner · Masa ciała · Full Body · cykl 3 dni
+# Początkujący · Masa ciała · Całe ciało
 
 > **Poziom:** początkujący · **Środowisko:** masa ciała — **default: drążek do podciągania** · **Sesje:** 3× / tydz. (A → B → C) · **Częstotliwość / partia:** ~3× · **RIR:** 2–3 · **Progresja:** double progression (reps → leverage)
 >

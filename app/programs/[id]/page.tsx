@@ -13,6 +13,8 @@ import {
   formatEstimatedMinutes,
   formatFrequency,
   formatProgramFocus,
+  formatRotationGuidance,
+  formatWeeklyRotationExample,
 } from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
@@ -24,13 +26,16 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: program } = await supabase
-    .from("programs")
-    .select(
-      "id, name, user_id, description, goal, level, focus_key, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
-    )
-    .eq("id", params.id)
-    .maybeSingle();
+  const [{ data: program }, { data: settings }] = await Promise.all([
+    supabase
+      .from("programs")
+      .select(
+        "id, name, user_id, description, goal, level, focus_key, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
+      )
+      .eq("id", params.id)
+      .maybeSingle(),
+    supabase.from("user_settings").select("weekly_goal").maybeSingle(),
+  ]);
 
   if (!program) notFound();
 
@@ -93,7 +98,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
             program.goal,
             program.level,
             program.focus_key === "lower_body" ? `Kierunek: ${formatProgramFocus(program.focus_key)}` : null,
-            `kolejność: ${formatCycleStructure(program.cycle_days)}`,
+            `rotacja: ${formatCycleStructure(program.cycle_days)}`,
             program.frequency_min !== null && program.frequency_max !== null
               ? formatFrequency(program.frequency_min, program.frequency_max)
               : null,
@@ -111,6 +116,18 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
         {program.description && (
           <p className="text-sm text-muted-foreground">{program.description}</p>
         )}
+
+        <section className="rounded-xl border border-primary/20 bg-primary/5 p-md">
+          <h2 className="text-sm font-semibold">Jak działa rotacja?</h2>
+          <p className="mt-2xs text-sm leading-relaxed text-muted-foreground">
+            {formatRotationGuidance(program.cycle_days)}
+          </p>
+          {settings?.weekly_goal && (
+            <p className="mt-xs text-sm font-medium text-primary">
+              Przy Twoim celu ({settings.weekly_goal} treningi w tygodniu): {formatWeeklyRotationExample(program.cycle_days, settings.weekly_goal)}.
+            </p>
+          )}
+        </section>
 
         <section className="grid grid-cols-2 gap-xs rounded-xl bg-card p-md text-card-foreground shadow-sm">
           <div>

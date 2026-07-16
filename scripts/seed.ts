@@ -285,7 +285,7 @@ export interface Program {
 export const PROGRAMS: Program[] = [
   {
     slug: "beginner-gym-fbw2",
-    name: "Beginner · Siłownia · Full Body · cykl 2 dni",
+    name: "Początkujący · Siłownia · Całe ciało · 2× w tygodniu",
     description: "Dwa naprzemienne treningi całego ciała dla osób, które realnie mogą ćwiczyć dwa razy w tygodniu. Ucz się techniki, zostaw 2 lub 3 powtórzenia w zapasie i zwiększaj ciężar dopiero po osiągnięciu górnego zakresu.",
     goal: "Siłownia · baza siły i masy",
     goal_key: "foundation",
@@ -329,7 +329,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "beginner-gym-fbw3",
-    name: "Beginner · Siłownia · Full Body · cykl 3 dni",
+    name: "Początkujący · Siłownia · Całe ciało · 2–3× w tygodniu",
     description: "Plan całego ciała do nauki podstawowych ruchów ze sztangą. Gdy wykonasz górny zakres powtórzeń, zwiększ ciężar. Zostaw 2 lub 3 powtórzenia w zapasie.",
     goal: "Siłownia · masa i siła",
     goal_key: "strength_hypertrophy",
@@ -381,7 +381,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "beginner-home-fbw2",
-    name: "Beginner · Dom z hantlami · Full Body · cykl 2 dni",
+    name: "Początkujący · Dom z hantlami · Całe ciało · 2× w tygodniu",
     description: "Dwa naprzemienne treningi całego ciała z hantlami. Ławka i guma pomagają, ale każde ćwiczenie ma prosty wariant możliwy do wykonania w domu bez rozbudowanego sprzętu.",
     goal: "Dom (hantle) · baza siły i masy",
     goal_key: "foundation",
@@ -425,7 +425,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "beginner-home-fbw3",
-    name: "Beginner · Dom z hantlami · Full Body · cykl 3 dni",
+    name: "Początkujący · Dom z hantlami · Całe ciało · 2–3× w tygodniu",
     description: "Domowy plan całego ciała z hantlami i ławką. Przyda się też guma albo drążek. Gdy wykonasz górny zakres powtórzeń, zwiększ ciężar.",
     goal: "Dom (hantle) · masa i siła",
     goal_key: "strength_hypertrophy",
@@ -480,8 +480,8 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "lower-body-gym3",
-    name: "Beginner–Intermediate · Siłownia · Pośladki i nogi · cykl 3 dni",
-    description: "Trzy różne treningi z większym naciskiem na pośladki, uda i tył nóg. Góra ciała nadal dostaje regularny bodziec, dzięki czemu plan pozostaje kompletny. Wykonuj cykl A → B → C dwa lub trzy razy w tygodniu.",
+    name: "Początkujący–średniozaawansowany · Siłownia · Pośladki i nogi",
+    description: "Trzy różne treningi z większym naciskiem na pośladki, uda i tył nóg. Góra ciała nadal dostaje regularny bodziec, dzięki czemu plan pozostaje kompletny. Wykonuj rotację A → B → C dwa lub trzy razy w tygodniu.",
     goal: "Nacisk: pośladki i nogi",
     goal_key: "hypertrophy",
     focus_key: "lower_body",
@@ -535,8 +535,8 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "lower-body-home3",
-    name: "Beginner–Intermediate · Dom z hantlami · Pośladki i nogi · cykl 3 dni",
-    description: "Domowy cykl z większym naciskiem na pośladki i nogi, oparty na hantlach oraz ćwiczeniach jednostronnych. Góra ciała pozostaje w planie w mniejszej dawce. Wykonuj A → B → C dwa lub trzy razy w tygodniu.",
+    name: "Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi",
+    description: "Domowy plan z większym naciskiem na pośladki i nogi, oparty na hantlach oraz ćwiczeniach jednostronnych. Góra ciała pozostaje w planie w mniejszej dawce. Wykonuj rotację A → B → C dwa lub trzy razy w tygodniu.",
     goal: "Nacisk: pośladki i nogi",
     goal_key: "hypertrophy",
     focus_key: "lower_body",
@@ -590,7 +590,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "beginner-bodyweight-fbw3",
-    name: "Beginner · Masa ciała · Full Body · cykl 3 dni",
+    name: "Początkujący · Masa ciała · Całe ciało",
     description: "Plan całego ciała z masą własnego ciała i drążkiem. Najpierw zwiększaj liczbę powtórzeń, a potem wybierz trudniejszy wariant ćwiczenia.",
     goal: "Masa ciała (drążek) · baza",
     goal_key: "foundation",
@@ -642,7 +642,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "intermediate-bodyweight-fbw3",
-    name: "Intermediate · Masa ciała · Full Body · cykl 3 dni",
+    name: "Średniozaawansowany · Masa ciała · Całe ciało",
     description: "Trzy treningi kalisteniczne z drążkiem dla osób, które opanowały podstawowe warianty. Progresuj powtórzeniami, tempem i trudnością dźwigni, zostawiając 1 lub 2 powtórzenia w zapasie.",
     goal: "Masa ciała (drążek) · siła i sprawność",
     goal_key: "strength_hypertrophy",
@@ -697,7 +697,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "intermediate-gym-upper-lower4",
-    name: "Intermediate · Siłownia · Upper / Lower · cykl 4 dni",
+    name: "Średniozaawansowany · Siłownia · Góra / dół ciała",
     description: "Cztery treningi: dwa na górę i dwa na dół ciała. Dni A skupiają się na sile, a dni B na większej liczbie powtórzeń. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Siłownia · hipertrofia i siła",
     goal_key: "strength_hypertrophy",
@@ -765,7 +765,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "intermediate-home-upper-lower4",
-    name: "Intermediate · Dom z hantlami · Upper / Lower · cykl 4 dni",
+    name: "Średniozaawansowany · Dom z hantlami · Góra / dół ciała",
     description: "Cztery treningi z hantlami i drążkiem. Ćwiczenia jednostronne oraz większe zakresy powtórzeń pozwalają trenować mocno bez bardzo dużych ciężarów.",
     goal: "Dom (hantle) · hipertrofia",
     goal_key: "hypertrophy",
@@ -833,7 +833,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "advanced-home-upper-lower4",
-    name: "Advanced · Dom z hantlami · Upper / Lower · cykl 4 dni",
+    name: "Zaawansowany · Dom z hantlami · Góra / dół ciała",
     description: "Czterodniowy plan dla osób z regulowanymi hantlami, ławką i drążkiem. Wykorzystuje ćwiczenia jednostronne, wolne tempo i trudniejsze warianty, żeby obejść ograniczony ciężar domowy.",
     goal: "Dom (hantle) · hipertrofia zaawansowana",
     goal_key: "hypertrophy",
@@ -902,7 +902,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "advanced-bodyweight-upper-lower4",
-    name: "Advanced · Masa ciała · Upper / Lower · cykl 4 dni",
+    name: "Zaawansowany · Masa ciała · Góra / dół ciała",
     description: "Czterodniowy plan kalisteniczny z drążkiem i stabilnymi podporami. Progresja opiera się na trudniejszej dźwigni, tempie, pauzach i kontrolowanym zakresie, bez dokładania przypadkowej objętości.",
     goal: "Masa ciała (drążek) · siła zaawansowana",
     goal_key: "strength_hypertrophy",
@@ -969,7 +969,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "advanced-gym-ppl6",
-    name: "Advanced · Siłownia · Push / Pull / Legs · cykl 6 dni",
+    name: "Zaawansowany · Siłownia · Push / Pull / Legs",
     description: "Sześć treningów dla osób przyzwyczajonych do dużej objętości. Dni A są cięższe, a dni B mają więcej powtórzeń. Zaplanuj lżejszy tydzień co 6 do 8 tygodni.",
     goal: "Siłownia · hipertrofia zaawansowana",
     goal_key: "hypertrophy",
@@ -1062,7 +1062,7 @@ export const PROGRAMS: Program[] = [
   // Nazwy bez „Autorski" — spójny schemat „Poziom · Miejsce · Typ".
   {
     slug: "intermediate-gym-fbw2",
-    name: "Intermediate · Siłownia · FBW · cykl 2 dni",
+    name: "Średniozaawansowany · Siłownia · Całe ciało",
     description: "Dwa treningi całego ciała na pełnym sprzęcie. Dobry wybór, gdy masz mało czasu, ale chcesz rozwijać siłę i masę. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Siłownia · masa i siła",
     goal_key: "strength_hypertrophy",
@@ -1107,7 +1107,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "intermediate-home-fbw2",
-    name: "Intermediate · Dom z hantlami · FBW · cykl 2 dni",
+    name: "Średniozaawansowany · Dom z hantlami · Całe ciało",
     description: "Dwa domowe treningi całego ciała z hantlami i kettlem. Jedna sesja zajmuje około 45 do 60 minut. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Dom (hantle+kettlebell) · masa i siła",
     goal_key: "strength_hypertrophy",

@@ -49,6 +49,13 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (czytelny rytm programów): GOTOWE DO DEPLOYU.**
+  Zakres: nazwy kuratorowanych programów, komunikacja częstotliwości i rotacji na kartach,
+  w szczegółach planu oraz w onboardingu; migracja danych tylko dla nazw/opisów presetów.
+  Nie zmieniam ćwiczeń ani mechanizmu wyboru kolejnego treningu. Nie dotykam plików
+  zmienianych przez drugą sesję (`CLAUDE.md`, dokumentów strategii/roadmapy i assetów).
+  Weryfikacja: testy 18/18 ✓, walidacja treści ✓, macierz rekomendacji 60/60 ✓, lint ✓,
+  build ✓. Planowana migracja: `20260716160000_program_names_and_rotation_copy.sql`.
 - **2026-07-16 · Codex (plany „Pośladki i nogi" + rekomendacje): ZAKOŃCZONE.**
   Zakres: `scripts/seed.ts`, `lib/programRecommendation.ts`, onboarding i ustawienia kierunku,
   biblioteka/program detail, typy/analityka, walidator rekomendacji, migracja

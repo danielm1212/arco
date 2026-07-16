@@ -12,7 +12,12 @@ import { GuidanceChip } from "./GuidanceChip";
 import { FlameWeek } from "./FlameWeek";
 import { TeamHomeCard } from "@/components/TeamHomeCard";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
-import type { ProgramCandidate, ProgramFocus, TrainingEnvironment } from "@/lib/programRecommendation";
+import {
+  formatCycleStructure,
+  type ProgramCandidate,
+  type ProgramFocus,
+  type TrainingEnvironment,
+} from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
 
@@ -262,6 +267,11 @@ export default async function HomePage() {
                 <p className="mt-sm text-2xl font-semibold leading-tight">
                   Dziś · {suggested.label}
                 </p>
+                {activeProgram && activeDays.length > 1 && (
+                  <p className="mt-2xs text-xs text-muted-foreground">
+                    Rotacja {formatCycleStructure(activeProgram.cycle_days)} · następny trening po ostatniej ukończonej sesji
+                  </p>
+                )}
                 {suggestedMeta && (
                   <>
                     <p className="mt-2xs text-sm font-medium text-muted-foreground">

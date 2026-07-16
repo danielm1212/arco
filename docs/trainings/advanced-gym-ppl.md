@@ -1,4 +1,4 @@
-# Advanced · Siłownia · Push / Pull / Legs · cykl 6 dni
+# Zaawansowany · Siłownia · Push / Pull / Legs
 
 > **Poziom:** zaawansowany · **Środowisko:** pełna siłownia · **Sesje:** 6× / tydz. (Push A · Pull A · Legs A · Push B · Pull B · Legs B) · **Częstotliwość / partia:** 2× · **RIR:** 0–2 · **Progresja:** double progression + periodyzacja + deload
 >

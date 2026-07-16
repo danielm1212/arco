@@ -1,4 +1,4 @@
-# Beginner–Intermediate · Siłownia · Pośladki i nogi · cykl 3 dni
+# Początkujący–średniozaawansowany · Siłownia · Pośladki i nogi
 
 > **Poziom:** początkujący–średniozaawansowany · **Środowisko:** siłownia · **Sesje:** 2–3× / tydz. (A → B → C) · **RIR:** 2–3 · **Progresja:** double progression
 >

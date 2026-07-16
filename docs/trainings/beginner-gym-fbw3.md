@@ -1,4 +1,4 @@
-# Beginner · Siłownia · Full Body · cykl 3 dni
+# Początkujący · Siłownia · Całe ciało · 2–3× w tygodniu
 
 > **Poziom:** początkujący · **Środowisko:** pełna siłownia · **Sesje:** 3× / tydz. (A → B → C, rotacja) · **Częstotliwość / partia:** ~3× · **RIR:** 2–3 · **Progresja:** double progression
 >

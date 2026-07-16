@@ -1,4 +1,4 @@
-# Advanced · Dom z hantlami · Upper / Lower · cykl 4 dni
+# Zaawansowany · Dom z hantlami · Góra / dół ciała
 
 > **Poziom:** zaawansowany · **Środowisko:** regulowane hantle + ławka + drążek · **Częstotliwość:** 4–5 dni/tydz. · **Czas:** 50–70 min · **RIR:** 1–2
 

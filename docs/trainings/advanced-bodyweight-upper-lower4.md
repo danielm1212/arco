@@ -1,4 +1,4 @@
-# Advanced · Masa ciała · Upper / Lower · cykl 4 dni
+# Zaawansowany · Masa ciała · Góra / dół ciała
 
 > **Poziom:** zaawansowany · **Środowisko:** drążek + stabilne podpory/poręcze · **Częstotliwość:** 3–4 dni/tydz. · **Czas:** 45–65 min · **RIR:** 1–2
 

@@ -1,4 +1,4 @@
-# Beginner–Intermediate · Dom z hantlami · Pośladki i nogi · cykl 3 dni
+# Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi
 
 > **Poziom:** początkujący–średniozaawansowany · **Środowisko:** dom z hantlami · **Sesje:** 2–3× / tydz. (A → B → C) · **RIR:** 2–3 · **Progresja:** double progression
 >

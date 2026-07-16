@@ -1,4 +1,4 @@
-# Intermediate · Siłownia · Upper / Lower · cykl 4 dni
+# Średniozaawansowany · Siłownia · Góra / dół ciała
 
 > **Poziom:** średniozaawansowany · **Środowisko:** pełna siłownia · **Sesje:** 4× / tydz. (Upper A · Lower A · Upper B · Lower B) · **Częstotliwość / partia:** 2× · **RIR:** 1–2 · **Progresja:** double progression
 >

@@ -1,4 +1,4 @@
-# Beginner · Dom z hantlami · Full Body · cykl 2 dni
+# Początkujący · Dom z hantlami · Całe ciało · 2× w tygodniu
 
 > **Poziom:** początkujący · **Środowisko:** hantle · **Sesje:** 2× / tydz. (A → B) · **Częstotliwość / partia:** 2× · **RIR:** 2–3 · **Progresja:** double progression
 >

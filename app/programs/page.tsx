@@ -119,7 +119,7 @@ export default async function ProgramsPage({
               [
                 p.goal,
                 p.focus_key === "lower_body" ? `kierunek: ${formatProgramFocus(p.focus_key)}` : null,
-                `kolejność: ${formatCycleStructure(p.cycle_days)}`,
+                `rotacja: ${formatCycleStructure(p.cycle_days)}`,
                 p.frequency_min !== null && p.frequency_max !== null
                   ? formatFrequency(p.frequency_min, p.frequency_max)
                   : null,

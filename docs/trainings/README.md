@@ -1,6 +1,6 @@
 # ARCO — Starter Programs
 
-Kuratorowany zestaw programów na start dla ARCO. Filozofia: **curated-premium**, nie sprawl. Dziewięć flagowych struktur pokrywa grid poziom × środowisko bez mnożenia kosmetycznych wariantów. Razem z czterema celowymi planami FBW 2-dniowymi biblioteka aplikacji zawiera 13 presetów.
+Kuratorowany zestaw programów na start dla ARCO. Filozofia: **curated-premium**, nie sprawl. Dziewięć flagowych struktur pokrywa grid poziom × środowisko bez mnożenia kosmetycznych wariantów. Razem z czterema celowymi planami FBW 2-dniowymi i dwoma planami z naciskiem na dolne ciało biblioteka aplikacji zawiera 15 presetów.
 
 Wszystkie parametry oparte na meta-analizach objętości/częstotliwości (Schoenfeld i in.) i na kanonie sprawdzonych programów (Starting Strength / StrongLifts / GZCLP dla base, Upper/Lower i PPL wyżej).
 
@@ -18,6 +18,10 @@ Plany z naciskiem na dolne ciało (poziom początkujący–średniozaawansowany)
 
 - `lower-body-gym3` — siłownia, cykl A → B → C, 2–3 treningi tygodniowo,
 - `lower-body-home3` — dom z hantlami, cykl A → B → C, 2–3 treningi tygodniowo.
+
+## Rytm tygodnia a rotacja treningów
+
+Liczba treningów w tygodniu i liczba dni w planie to dwie różne rzeczy. Plan prowadzi przez kolejne treningi w stałej kolejności, a nowy tydzień jej nie resetuje. Na przykład przy rotacji A → B → C i dwóch treningach tygodniowo: tydzień 1 to A, B, a tydzień 2 to C, A. Dzięki temu każdy trening z planu wraca regularnie, bez pomijania dnia C.
 
 **9 flagowych programów.** P3 zamknął trzy luki, których nie dało się już uczciwie obsłużyć samą notą fallbacku:
 
