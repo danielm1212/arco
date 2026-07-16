@@ -44,7 +44,7 @@ const LEVELS: { id: TrainingLevel; label: string; hint: string }[] = [
 const ENVS: { id: TrainingEnvironment; label: string; hint: string }[] = [
   { id: "gym", label: "Siłownia", hint: "Mam dostęp do pełnego sprzętu." },
   { id: "home", label: "Dom z hantlami", hint: "Mam hantle i ławkę." },
-  { id: "bodyweight", label: "Masa ciała", hint: "Mam drążek i ćwiczę głównie masą ciała." },
+  { id: "bodyweight", label: "Masa ciała", hint: "Drążek mile widziany — każde ćwiczenie ma zamiennik bez sprzętu." },
 ];
 
 /** Default celu tygodniowego wg poziomu (onboarding-v3 §E4). */
@@ -63,6 +63,15 @@ const ENV_REASON: Record<TrainingEnvironment, string> = {
   bodyweight: "trenujesz głównie masą ciała",
 };
 
+/** Polska odmiana liczebnika przy „trening": 1 trening, 2–4 treningi, 5+ treningów. */
+function pluralTreningow(n: number) {
+  if (n === 1) return "trening";
+  const lastTwo = n % 100;
+  const lastDigit = n % 10;
+  if (lastDigit >= 2 && lastDigit <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return "treningi";
+  return "treningów";
+}
+
 function recommendationRhythmCopy(suggestion: ReturnType<typeof recommendProgram>) {
   if (!suggestion) return "Pokażemy najbliższy plan dla Twojego rytmu.";
   const rhythm = `${formatCycleStructure(suggestion.program.cycle_days)} · ${formatFrequency(
@@ -71,7 +80,7 @@ function recommendationRhythmCopy(suggestion: ReturnType<typeof recommendProgram
   )}`;
   return suggestion.exact
     ? `Twój plan będzie działał w rytmie: ${rhythm}.`
-    : `Najbliższy bezpieczny plan działa w rytmie: ${rhythm}.`;
+    : `Najbliższy pasujący plan działa w rytmie: ${rhythm}.`;
 }
 
 export function WelcomeOverlay({
@@ -171,6 +180,13 @@ export function WelcomeOverlay({
   }
 
   function skipAll() {
+    // Od E5 user ma już wpisany profil (imię/jednostki/cel/priorytet) — „Pomiń"
+    // ma go zapisać, nie zgubić w milczeniu (O2). Na E6 przycisk jest ukryty:
+    // obie gałęzie E6 mają już dwa jawne wyjścia (O1).
+    if (step >= 5) {
+      void saveProfile(false);
+      return;
+    }
     track({ name: "onboarding_skipped", props: { step } });
     finish();
   }
@@ -192,7 +208,7 @@ export function WelcomeOverlay({
         ) : (
           <span />
         )}
-        {step <= 6 && (
+        {step <= 5 && (
           <button onClick={skipAll} className="min-h-11 px-2 text-sm text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             Pomiń
           </button>
@@ -225,6 +241,7 @@ export function WelcomeOverlay({
               placeholder="Imię (opcjonalnie)"
               autoFocus
             />
+            <p className="-mt-xs text-xs text-brand-muted">Będziemy mówić po imieniu. Możesz zostawić puste.</p>
             <div className="space-y-xs">
               <p className="text-sm font-medium text-brand-muted">Jednostki</p>
               <div className="flex gap-xs">
@@ -272,7 +289,7 @@ export function WelcomeOverlay({
         {/* E3 · POZIOM — auto-advance */}
         {step === 3 && (
           <div className="space-y-md">
-            <h1 className="text-2xl font-semibold tracking-tight">Jak długo trenujesz?</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Ile masz doświadczenia?</h1>
             <div className="space-y-xs">
               {LEVELS.map((l) => (
                 <button
@@ -382,7 +399,8 @@ export function WelcomeOverlay({
                 <div className="rounded-xl bg-card p-md text-card-foreground shadow-md">
                   <p className="text-xl font-semibold leading-tight">{suggestion.program.name}</p>
                   <p className="mt-2xs text-sm text-muted-foreground">
-                    Wybraliśmy go, bo {LEVEL_REASON[level!]}, {ENV_REASON[env!]} i wybierasz {effectiveGoal} treningi w tygodniu.
+                    Wybraliśmy go, bo {LEVEL_REASON[level!]}, {ENV_REASON[env!]} i wybierasz {effectiveGoal}{" "}
+                    {pluralTreningow(effectiveGoal)} w tygodniu.
                   </p>
                   <dl className="mt-sm grid grid-cols-2 gap-xs text-xs">
                     <div className="rounded-lg bg-secondary p-sm">
@@ -444,9 +462,18 @@ export function WelcomeOverlay({
                   size="lg"
                   className="w-full"
                   disabled={saving}
-                  onClick={() => saveProfile(false)}
+                  onClick={() => saveProfile(false).then(() => router.push("/programs"))}
                 >
                   {saving ? "Zapisuję…" : "Przejdź do biblioteki"}
+                </Button>
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  className="w-full text-brand-foreground"
+                  disabled={saving}
+                  onClick={() => saveProfile(false)}
+                >
+                  Wybiorę później
                 </Button>
               </>
             )}
@@ -488,7 +515,7 @@ export function WelcomeOverlay({
             Dalej
           </Button>
         )}
-        {(step === 2 || step === 3) && (
+        {(step === 2 || step === 3 || step === 4) && (
           <Button
             size="lg"
             variant="ghost"

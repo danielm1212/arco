@@ -44,7 +44,7 @@
 
 **Done:** restore jest wykonany, nie tylko opisany, a rollback da się przeprowadzić z dokumentu.
 
-## Sprint 16b — onboarding v3.1 (naprawa przed H2)
+## Sprint 16b — onboarding v3.1 (naprawa przed H2) ✅ ZROBIONE 2026-07-16
 
 **Czas:** ~1 wieczór [Claude] + krótka weryfikacja [Ty] na telefonie
 
