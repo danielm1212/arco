@@ -1,5 +1,14 @@
 -- Dwa kuratorowane programy z naciskiem na dolne ciało.
 -- Dane są zgodne z scripts/seed.ts; migracja pozwala wdrożyć je bez service role.
+-- Na świeżej bazie CI ćwiczenia powstają dopiero w późniejszym kroku seeda, więc
+-- ta migracja danych świadomie nic wtedy nie robi. Seed utworzy komplet programów.
+
+do $lower_body_programs$
+begin
+  if not exists (select 1 from public.exercises) then
+    raise notice 'Pomijam lower-body programs: baza ćwiczeń jest jeszcze pusta.';
+    return;
+  end if;
 
 insert into public.programs (
   id, slug, name, description, goal, goal_key, focus_key, level,
@@ -96,3 +105,6 @@ where not exists (
   select 1 from public.program_day_slots s
   where s.program_day_id = d.id and s.position = v.slot_position
 );
+
+end
+$lower_body_programs$;
