@@ -49,6 +49,17 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (audyt koordynacji i dokumentacji):** zajęty wyłącznie
+  `docs/koordynacja-agentow.md` oraz ewentualnie wpis podsumowujący w `docs/HANDOFF.md`.
+  Nie dotykam aktualnie zmienionych przez inną sesję plików: `CLAUDE.md`, `docs/README.md`,
+  `docs/notion-sync-queue.md`, `docs/roadmap.md`, `docs/strategia-marketingowa.md`,
+  `docs/wizja-i-plan-produktu-v2.md` ani nowych dokumentów strategii/paywalla/fotografii.
+  `git pull --rebase` wstrzymany, ponieważ working tree zawiera niezacommitowane zmiany innej sesji.
+  **Wynik:** lint ✓, testy jednostkowe 14/14 ✓. Ocena: koordynacja i Sprint 17a są dobre,
+  w szczególności usuwają znane pułapki onboardingowe przed H2. Uwagi do integracji przed
+  commitem cudzej paczki: `docs/README.md` wskazuje pięć dokumentów, ale nadal mówi „Te cztery";
+  v3 i v2 powinny precyzyjnie rozdzielić zakres nadpisania, bo Z1–Z3 w v2 pozostają wiążące.
+  Nowe dokumenty v3/paywall/fotografia warto dopisać do mapy docs przy ich finalizacji.
 - **2026-07-14 · sesja B (deploy/CI/zdjęcia + weryfikacja):** rename „pody"→„ekipa", flush Notion,
   wypchnięcie Ekipy v0 na prod, naprawa CI (lint `.map()`, `[auth.email]` provider e-mail),
   incydent zdjęć (prod wskazywał GitHub + pusty bucket → upload + sync na bucket). Zweryfikowała
