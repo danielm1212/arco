@@ -67,14 +67,14 @@
 
 **Cel:** przygotować wiarygodny test produktu bez pomocy autora.
 
-- Odświeżyć scenariusz H2 pod aktualny interfejs.
-- Przygotować czyste konta i realistyczne dane startowe.
-- Uzupełnić albo świadomie wyłączyć 16 ćwiczeń używających placeholderów zdjęć w 45 slotach programów.
-- Dodać zadania: biblioteka programów, trening po fakcie, korekta historii, pomiar i koncept Ekipy.
-- Ustalić pomiar: sukces, czas, prośba o pomoc, błędny pierwszy klik, cytat i dotkliwość problemu.
-- Wykonać sesję pilotażową i poprawić sam scenariusz.
+- ✅ **Odświeżyć scenariusz H2 pod aktualny interfejs** (2026-07-16) — `scenariusz-h2.md`: onboarding v3.1 (opis odporny na iterację kroków), kanon v3 (persony, yearly-first).
+- ✅ **Ustalić pomiar** (2026-07-16) — §0.5: dwie niezależne bramki (A rdzeń, B wartość+ekipa), operacyjne definicje sukces/z-pomocą/porażka + skala dotkliwości S1–S4, uczciwe traktowanie n=5 (wzorce > arytmetyka). §8 rozstrzygnięcie przepisane pod dwie bramki.
+- ✅ **Dodać zadania + WTP pod v3** (2026-07-16) — B2 przepisane na trzy filary premium (prowadzenie/cel z prognozą/pełna historia zamiast starych opcji), B2a teaser stagnacji, B4 yearly-first.
+- ⬜ Przygotować czyste konta i realistyczne dane startowe — skrypt danych demo [Claude, na żądanie].
+- ⬜ Uzupełnić albo świadomie wyłączyć 16 ćwiczeń z placeholderem zdjęcia (45 slotów) — decyzja per ćwiczenie [Ty]: swap / AI-zdjęcie / hidden. **Twardy prerekwizyt: fix wyszukiwarki** (`audyt-wyszukiwarki-2026-07.md` R1–R2) — Z2/Z3 testują picker, search po EN da 0 wyników.
+- ⬜ Wykonać sesję pilotażową i poprawić sam scenariusz [Ty].
 
-**Done:** test można przeprowadzić tak samo z każdą osobą, bez tłumaczenia interfejsu.
+**Done:** test można przeprowadzić tak samo z każdą osobą, bez tłumaczenia interfejsu. *(Skrypt + metodologia pomiaru gotowe; zostają prerekwizyty operacyjne: fix wyszukiwarki, placeholdery, dane demo, pilot.)*
 
 ## Sprint 18 — H2 i synteza
 
