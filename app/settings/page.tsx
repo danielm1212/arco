@@ -10,7 +10,7 @@ export default async function SettingsPage() {
   const supabase = await createClient();
   const { data: s } = await supabase
     .from("user_settings")
-    .select("unit_system, default_rest_seconds, available_equipment, weekly_goal, display_name, training_priority")
+    .select("unit_system, default_rest_seconds, available_equipment, weekly_goal, display_name, training_priority, training_focus")
     .maybeSingle();
 
   return (
@@ -30,6 +30,7 @@ export default async function SettingsPage() {
           weeklyGoal={s?.weekly_goal ?? 2}
           displayName={s?.display_name ?? ""}
           priority={s?.training_priority ?? "general_fitness"}
+          focus={s?.training_focus ?? "balanced"}
         />
         {/* F1 (redesign-home.md §3.4): przeniesione z home — jedna ikona
             wylogowania w apce, tu gdzie się jej realnie szuka */}

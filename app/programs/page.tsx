@@ -3,7 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import { formatCycleStructure, formatEquipment, formatFrequency } from "@/lib/programRecommendation";
+import {
+  formatCycleStructure,
+  formatEquipment,
+  formatFrequency,
+  formatProgramFocus,
+  type ProgramFocus,
+} from "@/lib/programRecommendation";
 import { ProgramFilters } from "./ProgramFilters";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +22,9 @@ type Prog = {
   goal: string | null;
   level: string | null;
   level_min: number | null;
+  level_max: number | null;
   environment: string | null;
+  focus_key: ProgramFocus;
   frequency_min: number | null;
   frequency_max: number | null;
   estimated_minutes_min: number | null;
@@ -29,6 +37,7 @@ type LibraryFilters = {
   environment?: string;
   level?: string;
   goal?: string;
+  focus?: string;
 };
 
 export default async function ProgramsPage({
@@ -42,14 +51,16 @@ export default async function ProgramsPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: programs }, { data: active }] = await Promise.all([
+  const [{ data: programs }, { data: active }, { data: settings }] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, name, cycle_days, user_id, goal, level, level_min, environment, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, program_days(id)")
+      .select("id, name, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
+    supabase.from("user_settings").select("training_focus").maybeSingle(),
   ]);
   const activeId = active?.program_id ?? null;
+  const preferredFocus = settings?.training_focus ?? "balanced";
   const own = ((programs as Prog[]) ?? []).filter((p) => p.user_id === user?.id);
   const presets = ((programs as Prog[]) ?? [])
     .filter((p) => p.user_id === null)
@@ -57,10 +68,15 @@ export default async function ProgramsPage({
       const environmentOrder = { gym: 0, home: 1, bodyweight: 2 } as Record<string, number>;
       return (
         (a.level_min ?? 9) - (b.level_min ?? 9) ||
+        (preferredFocus === "lower_body"
+          ? Number(b.focus_key === preferredFocus) - Number(a.focus_key === preferredFocus)
+          : 0) ||
         (environmentOrder[a.environment ?? ""] ?? 9) - (environmentOrder[b.environment ?? ""] ?? 9) ||
         (a.frequency_min ?? 9) - (b.frequency_min ?? 9)
       );
     });
+  const selectedLevel = Number(filters.level);
+  const hasSelectedLevel = Number.isInteger(selectedLevel) && selectedLevel >= 1 && selectedLevel <= 3;
   const presetGroups = [
     { rank: 1, label: "Początkujący" },
     { rank: 2, label: "Średniozaawansowani" },
@@ -70,16 +86,20 @@ export default async function ProgramsPage({
       ...group,
       programs: presets.filter(
         (program) =>
-          program.level_min === group.rank &&
+          (hasSelectedLevel
+            ? group.rank === selectedLevel &&
+              program.level_min !== null &&
+              program.level_max !== null &&
+              program.level_min <= selectedLevel &&
+              program.level_max >= selectedLevel
+            : program.level_min === group.rank) &&
           (!filters.environment || program.environment === filters.environment) &&
-          (!filters.goal || program.goal === filters.goal),
+          (!filters.goal || program.goal === filters.goal) &&
+          (!filters.focus || program.focus_key === filters.focus),
       ),
     }))
     .filter((group) => group.programs.length > 0);
-  const selectedLevel = Number(filters.level);
-  const visibleGroups = Number.isInteger(selectedLevel) && selectedLevel >= 1 && selectedLevel <= 3
-    ? presetGroups.filter((group) => group.rank === selectedLevel)
-    : presetGroups;
+  const visibleGroups = presetGroups;
   const goals = [...new Set(presets.map((program) => program.goal).filter((goal): goal is string => !!goal))].sort((a, b) => a.localeCompare(b, "pl"));
 
   function Row({ p, kind }: { p: Prog; kind: "own" | "preset" }) {
@@ -89,10 +109,16 @@ export default async function ProgramsPage({
         <Link href={`/programs/${p.id}`} className="block min-w-0 flex-1 p-md">
           {/* Pełna nazwa (N2#1) — zawijanie zamiast ucinania */}
           <p className="break-words font-medium">{p.name}</p>
+          {kind === "preset" && preferredFocus === "lower_body" && p.focus_key === preferredFocus && (
+            <span className="mt-2xs inline-flex rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+              Pasuje do Twojego kierunku
+            </span>
+          )}
           <div className="mt-2xs flex flex-wrap items-center gap-2xs text-xs text-muted-foreground">
             {kind === "preset" ? (
               [
                 p.goal,
+                p.focus_key === "lower_body" ? `kierunek: ${formatProgramFocus(p.focus_key)}` : null,
                 `kolejność: ${formatCycleStructure(p.cycle_days)}`,
                 p.frequency_min !== null && p.frequency_max !== null
                   ? formatFrequency(p.frequency_min, p.frequency_max)

@@ -11,6 +11,7 @@ import { clampNum, LIMITS } from "@/lib/format";
 import { getAutoRest, setAutoRest, getKeepAwake, setKeepAwake } from "@/lib/prefs";
 import type { UnitSystem } from "@/lib/types";
 import { TRAINING_PRIORITIES, type TrainingPriority } from "@/lib/trainingPriority";
+import { PROGRAM_FOCUSES, type ProgramFocus } from "@/lib/programRecommendation";
 
 const THEMES = [
   { value: "light", label: "Jasny" },
@@ -42,6 +43,7 @@ export function SettingsForm({
   weeklyGoal,
   displayName,
   priority,
+  focus,
 }: {
   unit: UnitSystem;
   rest: number;
@@ -49,6 +51,7 @@ export function SettingsForm({
   weeklyGoal: number;
   displayName: string;
   priority: TrainingPriority;
+  focus: ProgramFocus;
 }) {
   const [u, setU] = useState<UnitSystem>(unit);
   const [name, setName] = useState(displayName);
@@ -56,6 +59,7 @@ export function SettingsForm({
   const [eq, setEq] = useState<string[]>(equipment);
   const [goal, setGoal] = useState(weeklyGoal);
   const [trainingPriority, setTrainingPriority] = useState<TrainingPriority>(priority);
+  const [trainingFocus, setTrainingFocus] = useState<ProgramFocus>(focus);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -78,6 +82,7 @@ export function SettingsForm({
           weekly_goal: goal,
           display_name: name.trim() || null,
           training_priority: trainingPriority,
+          training_focus: trainingFocus,
         });
         setSaved(true);
         toast.success("Ustawienia zapisane.");
@@ -174,6 +179,29 @@ export function SettingsForm({
           ))}
         </div>
         <p className="text-xs text-muted-foreground">Plan zostaje ten sam — zmieniamy wskazówki dotyczące progresji i regeneracji.</p>
+      </section>
+
+      <section className="space-y-sm">
+        <h2 className="text-sm font-medium text-muted-foreground">Kierunek programu</h2>
+        <div className="space-y-xs">
+          {PROGRAM_FOCUSES.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              aria-pressed={trainingFocus === item.id}
+              onClick={() => setTrainingFocus(item.id)}
+              className={`w-full rounded-xl border p-sm text-left ${
+                trainingFocus === item.id
+                  ? "border-primary bg-primary/10"
+                  : "border-input text-muted-foreground"
+              }`}
+            >
+              <span className="block text-sm font-medium text-foreground">{item.label}</span>
+              <span className="block text-xs">{item.hint}</span>
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground">Dopasowuje oznaczenia i kolejność w bibliotece. Nie zmienia aktywnego planu automatycznie.</p>
       </section>
 
       <section className="space-y-sm">

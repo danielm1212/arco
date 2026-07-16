@@ -14,6 +14,11 @@ Wszystkie parametry oparte na meta-analizach objętości/częstotliwości (Schoe
 | **Intermediate** | `intermediate-gym-fbw2` · `intermediate-gym-upper-lower4` | `intermediate-home-fbw2` · `intermediate-home-upper-lower4` | `intermediate-bodyweight-fbw3` |
 | **Advanced** | `advanced-gym-ppl6` | `advanced-home-upper-lower4` | `advanced-bodyweight-upper-lower4` |
 
+Plany z naciskiem na dolne ciało (poziom początkujący–średniozaawansowany):
+
+- `lower-body-gym3` — siłownia, cykl A → B → C, 2–3 treningi tygodniowo,
+- `lower-body-home3` — dom z hantlami, cykl A → B → C, 2–3 treningi tygodniowo.
+
 **9 flagowych programów.** P3 zamknął trzy luki, których nie dało się już uczciwie obsłużyć samą notą fallbacku:
 
 - **Intermediate · masa ciała:** trzydniowe FBW z drążkiem, progresją leverage i opcjonalnym czwartym dniem jako kontynuacją cyklu.

@@ -25,6 +25,7 @@ const candidates: ProgramCandidate[] = PROGRAMS.map((program) => ({
   estimated_minutes_max: program.estimated_minutes_max,
   required_equipment: program.required_equipment,
   optional_equipment: program.optional_equipment,
+  focus_key: program.focus_key ?? "balanced",
 }));
 
 const failures: string[] = [];
@@ -110,6 +111,41 @@ for (const level of levels) {
   }
 }
 
+for (const environment of ["gym", "home"] as const) {
+  for (const level of levels) {
+    for (const weeklyGoal of goals) {
+      const recommendation = recommendProgram({
+        programs: candidates,
+        level,
+        environment,
+        weeklyGoal,
+        availableEquipment: EQUIPMENT_BY_ENVIRONMENT[environment],
+        focus: "lower_body",
+      });
+      const profile = `${level}/${environment}/${weeklyGoal}/lower_body`;
+      const levelRank = levels.indexOf(level) + 1;
+      const compatibleFocusedPlanExists = candidates.some(
+        (candidate) =>
+          candidate.environment === environment &&
+          candidate.focus_key === "lower_body" &&
+          candidate.level_min !== null &&
+          candidate.level_max !== null &&
+          candidate.level_min <= levelRank &&
+          candidate.level_max >= levelRank,
+      );
+      if (!recommendation || (compatibleFocusedPlanExists && recommendation.program.focus_key !== "lower_body")) {
+        failures.push(`${profile}: nie wybrano planu z naciskiem na dolne ciało`);
+        continue;
+      }
+      rows.push({
+        profile,
+        result: recommendation.program.slug ?? recommendation.program.name,
+        match: recommendation.exact ? "exact" : "fallback",
+      });
+    }
+  }
+}
+
 console.table(rows);
 if (failures.length > 0) {
   console.error(`❌ Macierz rekomendacji: ${failures.length} błędów`);
@@ -117,4 +153,5 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`✅ Macierz rekomendacji: ${rows.length}/${levels.length * environments.length * goals.length} profili poprawnych.`);
+const expectedProfiles = levels.length * environments.length * goals.length + levels.length * 2 * goals.length;
+console.log(`✅ Macierz rekomendacji: ${rows.length}/${expectedProfiles} profili poprawnych.`);

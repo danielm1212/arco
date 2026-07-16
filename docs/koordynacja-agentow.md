@@ -49,6 +49,14 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (plany „Pośladki i nogi" + rekomendacje): ZAKOŃCZONE.**
+  Zakres: `scripts/seed.ts`, `lib/programRecommendation.ts`, onboarding i ustawienia kierunku,
+  biblioteka/program detail, typy/analityka, walidator rekomendacji, migracja
+  `20260716120000_program_focus.sql` oraz `docs/trainings/*lower-body*` + indeks treningów.
+  Nie dotykano zajętych przez drugą sesję: `docs/HANDOFF.md`, aktywnego backlogu, strategii,
+  roadmapy, kolejki Notion ani pozostałych nowych dokumentów. Wynik: 15 programów, 308 slotów,
+  integralność treningów ✓, macierz rekomendacji 60/60 ✓, lint ✓, testy 14/14 ✓, build ✓.
+  Migracja i seed nie zostały wypchnięte ani uruchomione na prod; wymagają osobnego kroku deploy.
 - **2026-07-16 · Codex (audyt koordynacji i dokumentacji):** zajęty wyłącznie
   `docs/koordynacja-agentow.md` oraz ewentualnie wpis podsumowujący w `docs/HANDOFF.md`.
   Nie dotykam aktualnie zmienionych przez inną sesję plików: `CLAUDE.md`, `docs/README.md`,

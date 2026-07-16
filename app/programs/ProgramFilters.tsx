@@ -10,6 +10,7 @@ type Filters = {
   environment?: string;
   level?: string;
   goal?: string;
+  focus?: string;
 };
 
 const ENVIRONMENTS = [
@@ -25,7 +26,7 @@ const LEVELS = [
 ] as const;
 
 function countFilters(filters: Filters) {
-  return Number(Boolean(filters.environment)) + Number(Boolean(filters.level)) + Number(Boolean(filters.goal));
+  return Number(Boolean(filters.environment)) + Number(Boolean(filters.level)) + Number(Boolean(filters.goal)) + Number(Boolean(filters.focus));
 }
 
 function FilterGroup({
@@ -93,6 +94,7 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
     if (draft.environment) query.set("environment", draft.environment);
     if (draft.level) query.set("level", draft.level);
     if (draft.goal) query.set("goal", draft.goal);
+    if (draft.focus) query.set("focus", draft.focus);
     const value = query.toString();
     setOpen(false);
     router.push(value ? `/programs?${value}` : "/programs");
@@ -103,7 +105,7 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
       open={open}
       onOpenChange={changeOpen}
       title="Filtry programów"
-      description="Dopasuj bibliotekę programów do miejsca, poziomu i celu treningowego."
+      description="Dopasuj bibliotekę programów do miejsca, poziomu, celu i kierunku treningu."
       trigger={
         <Button type="button" variant="outline" size="sm" className="shrink-0 gap-xs">
           <SlidersHorizontal className="size-4" aria-hidden />
@@ -117,6 +119,15 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
           value={draft.environment}
           options={ENVIRONMENTS}
           onChange={(environment) => setDraft((current) => ({ ...current, environment }))}
+        />
+        <FilterGroup
+          label="Kierunek programu"
+          value={draft.focus}
+          options={[
+            ["balanced", "Całe ciało równomiernie"],
+            ["lower_body", "Więcej pośladków i nóg"],
+          ]}
+          onChange={(focus) => setDraft((current) => ({ ...current, focus }))}
         />
         <FilterGroup
           label="Poziom"

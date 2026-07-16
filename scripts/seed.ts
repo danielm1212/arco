@@ -265,6 +265,7 @@ export interface Program {
   description: string;
   goal: string;
   goal_key: "strength_hypertrophy" | "hypertrophy" | "foundation";
+  focus_key?: "balanced" | "lower_body";
   level: string;
   environment: "gym" | "home" | "bodyweight";
   level_min: 1 | 2 | 3;
@@ -473,6 +474,116 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "lower-body-gym3",
+    name: "Beginner–Intermediate · Siłownia · Pośladki i nogi · cykl 3 dni",
+    description: "Trzy różne treningi z większym naciskiem na pośladki, uda i tył nóg. Góra ciała nadal dostaje regularny bodziec, dzięki czemu plan pozostaje kompletny. Wykonuj cykl A → B → C dwa lub trzy razy w tygodniu.",
+    goal: "Nacisk: pośladki i nogi",
+    goal_key: "hypertrophy",
+    focus_key: "lower_body",
+    level: "początkujący–średniozaawansowany",
+    environment: "gym",
+    level_min: 1,
+    level_max: 2,
+    frequency_min: 2,
+    frequency_max: 3,
+    estimated_minutes_min: 45,
+    estimated_minutes_max: 60,
+    required_equipment: ["barbell", "dumbbell", "cable", "machine"],
+    optional_equipment: ["body only"],
+    content_version: 1,
+    days_per_week: 3,
+    days: [
+      {
+        label: "Dół A · siła",
+        slots: [
+          { exercise_id: "Barbell_Hip_Thrust", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
+          { exercise_id: "Barbell_Squat", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
+          { exercise_id: "Romanian_Deadlift", sets: 2, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Standing_Calf_Raises", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
+        ],
+      },
+      {
+        label: "Góra + pośladki",
+        slots: [
+          { exercise_id: "Dumbbell_Rear_Lunge", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
+          { exercise_id: "Thigh_Abductor", sets: 2, repsMin: 12, repsMax: 20, rest: 75 },
+          { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
+          { exercise_id: "One-Legged_Cable_Kickback", sets: 2, repsMin: 12, repsMax: 20, rest: 75, notes: "na nogę; zatrzymaj ruch na górze" },
+        ],
+      },
+      {
+        label: "Dół B · objętość",
+        slots: [
+          { exercise_id: "Leg_Press", sets: 3, repsMin: 10, repsMax: 15, rest: 120 },
+          { exercise_id: "Barbell_Hip_Thrust", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Lying_Leg_Curls", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
+          { exercise_id: "Bulgarian_Split_Squat", sets: 2, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
+          { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 2, repsMin: 10, repsMax: 15, rest: 90 },
+          { exercise_id: "Dumbbell_Bench_Press", sets: 2, repsMin: 10, repsMax: 15, rest: 90 },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "lower-body-home3",
+    name: "Beginner–Intermediate · Dom z hantlami · Pośladki i nogi · cykl 3 dni",
+    description: "Domowy cykl z większym naciskiem na pośladki i nogi, oparty na hantlach oraz ćwiczeniach jednostronnych. Góra ciała pozostaje w planie w mniejszej dawce. Wykonuj A → B → C dwa lub trzy razy w tygodniu.",
+    goal: "Nacisk: pośladki i nogi",
+    goal_key: "hypertrophy",
+    focus_key: "lower_body",
+    level: "początkujący–średniozaawansowany",
+    environment: "home",
+    level_min: 1,
+    level_max: 2,
+    frequency_min: 2,
+    frequency_max: 3,
+    estimated_minutes_min: 40,
+    estimated_minutes_max: 55,
+    required_equipment: ["dumbbell"],
+    optional_equipment: ["kettlebells", "body only", "other"],
+    content_version: 1,
+    days_per_week: 3,
+    days: [
+      {
+        label: "Dół A · siła",
+        slots: [
+          { exercise_id: "Dumbbell_Hip_Thrust", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "bez ławki: glute bridge z hantlem" },
+          { exercise_id: "Goblet_Squat", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "możesz trzymać jeden hantel przy klatce" },
+          { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 2, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "One-Arm_Dumbbell_Row", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na rękę" },
+          { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "bez ławki: wyciskanie hantli na podłodze" },
+          { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
+        ],
+      },
+      {
+        label: "Góra + pośladki",
+        slots: [
+          { exercise_id: "Bulgarian_Split_Squat", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
+          { exercise_id: "Glute_Kickback", sets: 2, repsMin: 12, repsMax: 20, rest: 60, notes: "na nogę; zatrzymaj ruch na górze" },
+          { exercise_id: "Bent_Over_Two-Dumbbell_Row", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Incline_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90, notes: "bez ławki: wyciskanie hantli na podłodze" },
+          { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
+          { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
+        ],
+      },
+      {
+        label: "Dół B · objętość",
+        slots: [
+          { exercise_id: "Dumbbell_Rear_Lunge", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
+          { exercise_id: "Dumbbell_Hip_Thrust", sets: 3, repsMin: 10, repsMax: 15, rest: 120, notes: "bez ławki: glute bridge z hantlem" },
+          { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 3, repsMin: 10, repsMax: 15, rest: 120 },
+          { exercise_id: "One-Arm_Dumbbell_Row", sets: 3, repsMin: 10, repsMax: 15, rest: 90, notes: "na rękę" },
+          { exercise_id: "Dumbbell_Bench_Press", sets: 2, repsMin: 10, repsMax: 15, rest: 90, notes: "bez ławki: wyciskanie hantli na podłodze" },
+          { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 2, repsMin: 15, repsMax: 20, rest: 60 },
         ],
       },
     ],
@@ -1074,6 +1185,7 @@ async function seedPrograms() {
       description: prog.description,
       goal: prog.goal,
       goal_key: prog.goal_key,
+      focus_key: prog.focus_key ?? "balanced",
       level: prog.level,
       environment: prog.environment,
       level_min: prog.level_min,

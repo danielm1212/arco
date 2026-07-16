@@ -12,6 +12,7 @@ import {
   formatEquipment,
   formatEstimatedMinutes,
   formatFrequency,
+  formatProgramFocus,
 } from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
   const { data: program } = await supabase
     .from("programs")
     .select(
-      "id, name, user_id, description, goal, level, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
+      "id, name, user_id, description, goal, level, focus_key, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
     )
     .eq("id", params.id)
     .maybeSingle();
@@ -91,6 +92,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           {[
             program.goal,
             program.level,
+            program.focus_key === "lower_body" ? `Kierunek: ${formatProgramFocus(program.focus_key)}` : null,
             `kolejność: ${formatCycleStructure(program.cycle_days)}`,
             program.frequency_min !== null && program.frequency_max !== null
               ? formatFrequency(program.frequency_min, program.frequency_max)

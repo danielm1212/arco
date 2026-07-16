@@ -1,5 +1,23 @@
 export type TrainingLevel = "beginner" | "intermediate" | "advanced";
 export type TrainingEnvironment = "gym" | "home" | "bodyweight";
+export type ProgramFocus = "balanced" | "lower_body";
+
+export const PROGRAM_FOCUSES: { id: ProgramFocus; label: string; hint: string }[] = [
+  {
+    id: "balanced",
+    label: "Całe ciało równomiernie",
+    hint: "Podobna ilość pracy dla góry i dołu ciała.",
+  },
+  {
+    id: "lower_body",
+    label: "Więcej pośladków i nóg",
+    hint: "Większa część planu rozwija dolne ciało, ale góra nadal jest trenowana.",
+  },
+];
+
+export function formatProgramFocus(focus: ProgramFocus | null) {
+  return PROGRAM_FOCUSES.find((item) => item.id === focus)?.label ?? PROGRAM_FOCUSES[0].label;
+}
 
 export type ProgramCandidate = {
   id: string;
@@ -15,6 +33,7 @@ export type ProgramCandidate = {
   estimated_minutes_max: number | null;
   required_equipment: string[];
   optional_equipment: string[];
+  focus_key: ProgramFocus | null;
 };
 
 export type ProgramRecommendation = {
@@ -68,12 +87,14 @@ export function recommendProgram({
   environment,
   weeklyGoal,
   availableEquipment,
+  focus = "balanced",
 }: {
   programs: ProgramCandidate[];
   level: TrainingLevel;
   environment: TrainingEnvironment;
   weeklyGoal: number;
   availableEquipment: string[];
+  focus?: ProgramFocus;
 }): ProgramRecommendation | null {
   const rank = LEVEL_RANK[level];
   const equipment = new Set(availableEquipment);
@@ -92,23 +113,30 @@ export function recommendProgram({
     const belowPlan = Math.max(0, program.frequency_min! - weeklyGoal);
     const abovePlan = Math.max(0, weeklyGoal - program.frequency_max!);
     const frequencyDistance = belowPlan + abovePlan;
+    const focusMismatch = (program.focus_key ?? "balanced") !== focus;
 
     // A plan demanding more days than the user chose is the most likely to be abandoned.
     const score =
       levelDistance * 30 +
       belowPlan * 80 +
       abovePlan * 12 +
+      Number(focusMismatch) * 45 +
       missingEquipment.length * 100 +
       Math.abs(program.cycle_days - weeklyGoal) * 0.01;
 
     return {
       program,
       score,
-      exact: levelDistance === 0 && frequencyDistance === 0 && missingEquipment.length === 0,
+      exact:
+        levelDistance === 0 &&
+        frequencyDistance === 0 &&
+        missingEquipment.length === 0 &&
+        !focusMismatch,
       levelDistance,
       belowPlan,
       abovePlan,
       missingEquipment,
+      focusMismatch,
     };
   });
 
@@ -132,6 +160,13 @@ export function recommendProgram({
   }
   if (best.missingEquipment.length > 0) {
     notes.push("Plan może wymagać sprzętu, którego nie zaznaczono w profilu.");
+  }
+  if (best.focusMismatch) {
+    notes.push(
+      focus === "lower_body"
+        ? "Nie ma jeszcze planu z naciskiem na dolne ciało dla tego miejsca lub rytmu, dlatego pokazujemy najbliższy plan równomierny."
+        : "To plan z większym naciskiem na dolne ciało; wybierz go tylko, jeśli odpowiada Ci taki kierunek.",
+    );
   }
 
   return {

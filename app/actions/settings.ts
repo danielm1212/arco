@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import type { TrainingPriority, UnitSystem } from "@/lib/types";
+import type { ProgramFocus, TrainingPriority, UnitSystem } from "@/lib/types";
 
 export async function updateSettings(values: {
   unit_system?: UnitSystem;
@@ -11,6 +11,7 @@ export async function updateSettings(values: {
   weekly_goal?: number;
   display_name?: string | null;
   training_priority?: TrainingPriority;
+  training_focus?: ProgramFocus;
 }) {
   const supabase = await createClient();
   const {

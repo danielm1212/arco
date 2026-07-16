@@ -12,7 +12,7 @@ import { GuidanceChip } from "./GuidanceChip";
 import { FlameWeek } from "./FlameWeek";
 import { TeamHomeCard } from "@/components/TeamHomeCard";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
-import type { ProgramCandidate, TrainingEnvironment } from "@/lib/programRecommendation";
+import type { ProgramCandidate, ProgramFocus, TrainingEnvironment } from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +33,7 @@ export default async function HomePage() {
   ] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, slug, name, cycle_days, environment, level_min, level_max, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position)")
+      .select("id, slug, name, cycle_days, environment, focus_key, level_min, level_max, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position)")
       .order("cycle_days"),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
     supabase
@@ -175,6 +175,7 @@ export default async function HomePage() {
           name: p.name,
           cycle_days: p.cycle_days,
           environment: p.environment as TrainingEnvironment | null,
+          focus_key: p.focus_key as ProgramFocus | null,
           level_min: p.level_min,
           level_max: p.level_max,
           frequency_min: p.frequency_min,

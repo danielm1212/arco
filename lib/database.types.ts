@@ -429,6 +429,7 @@ export type Database = {
           frequency_min: number | null
           goal: string | null
           goal_key: string | null
+          focus_key: Database["public"]["Enums"]["program_focus"]
           id: string
           is_default: boolean
           level: string | null
@@ -452,6 +453,7 @@ export type Database = {
           frequency_min?: number | null
           goal?: string | null
           goal_key?: string | null
+          focus_key?: Database["public"]["Enums"]["program_focus"]
           id?: string
           is_default?: boolean
           level?: string | null
@@ -475,6 +477,7 @@ export type Database = {
           frequency_min?: number | null
           goal?: string | null
           goal_key?: string | null
+          focus_key?: Database["public"]["Enums"]["program_focus"]
           id?: string
           is_default?: boolean
           level?: string | null
@@ -714,6 +717,7 @@ export type Database = {
           default_rest_seconds: number
           display_name: string | null
           training_priority: Database["public"]["Enums"]["training_priority"]
+          training_focus: Database["public"]["Enums"]["program_focus"]
           unit_system: Database["public"]["Enums"]["unit_system"]
           updated_at: string
           user_id: string
@@ -727,6 +731,7 @@ export type Database = {
           default_rest_seconds?: number
           display_name?: string | null
           training_priority?: Database["public"]["Enums"]["training_priority"]
+          training_focus?: Database["public"]["Enums"]["program_focus"]
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id: string
@@ -740,6 +745,7 @@ export type Database = {
           default_rest_seconds?: number
           display_name?: string | null
           training_priority?: Database["public"]["Enums"]["training_priority"]
+          training_focus?: Database["public"]["Enums"]["program_focus"]
           unit_system?: Database["public"]["Enums"]["unit_system"]
           updated_at?: string
           user_id?: string
@@ -830,6 +836,7 @@ export type Database = {
         | "core"
       record_type: "max_weight" | "max_e1rm" | "max_reps" | "max_duration"
       set_type: "warmup" | "working" | "drop"
+      program_focus: "balanced" | "lower_body"
       training_priority: "general_fitness" | "strength" | "muscle_gain" | "fat_loss"
       unit_system: "kg" | "lbs"
     }

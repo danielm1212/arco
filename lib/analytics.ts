@@ -18,6 +18,7 @@ export type AnalyticsEvent =
         level: string;
         env: string;
         weekly_goal: number;
+        training_focus: "balanced" | "lower_body";
         recommendation_kind: "exact" | "fallback" | "none";
         program_slug: string | null;
         suggested_program_accepted: boolean;
@@ -31,6 +32,7 @@ export type AnalyticsEvent =
         level: string;
         env: string;
         weekly_goal: number;
+        training_focus: "balanced" | "lower_body";
         match: "exact" | "fallback";
       };
     }

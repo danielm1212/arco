@@ -12,11 +12,14 @@ import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { track } from "@/lib/analytics";
 import {
   EQUIPMENT_BY_ENVIRONMENT,
+  PROGRAM_FOCUSES,
   formatCycleStructure,
   formatEquipment,
   formatEstimatedMinutes,
   formatFrequency,
+  formatProgramFocus,
   recommendProgram,
+  type ProgramFocus,
   type ProgramCandidate,
   type TrainingEnvironment,
   type TrainingLevel,
@@ -30,7 +33,7 @@ import {
 
 // Onboarding v3 (docs/onboarding-v3.md, akcept [Ty] 2026-07-11):
 // E0 moment (Gambarino) → E1 imię+jednostki → E2 gdzie → E3 poziom →
-// E4 priorytet → E5 rytm (default wg poziomu) → E6 karta planu + potwierdzenie.
+// E4 priorytet → E5 kierunek planu → E6 rytm → E7 karta planu + potwierdzenie.
 // Jedna decyzja na ekran · ≤60 s · wszystko skipowalne · kropki + wstecz.
 // Na sand: teksty wtórne w brand-muted (stone), NIE muted-foreground (O5).
 const FLAG = "arco-onboarded-v3";
@@ -101,7 +104,7 @@ export function WelcomeOverlay({
     () => false,
   );
   const [dismissed, setDismissed] = useState(false);
-  // 0=moment · 1=ty · 2=gdzie · 3=poziom · 4=priorytet · 5=rytm · 6=plan · 7=potwierdzenie
+  // 0=moment · 1=ty · 2=gdzie · 3=poziom · 4=priorytet · 5=kierunek · 6=rytm · 7=plan · 8=potwierdzenie
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [u, setU] = useState<UnitSystem>(unit);
@@ -110,6 +113,7 @@ export function WelcomeOverlay({
   const [goal, setGoal] = useState(weeklyGoal);
   const [goalTouched, setGoalTouched] = useState(false);
   const [priority, setPriority] = useState<TrainingPriority>(DEFAULT_TRAINING_PRIORITY);
+  const [focus, setFocus] = useState<ProgramFocus>("balanced");
   const [saving, setSaving] = useState(false);
   // E4: default celu wg poziomu — dopóki user sam nie dotknął wyboru.
   const effectiveGoal = level && !goalTouched ? GOAL_DEFAULT[level] : goal;
@@ -122,8 +126,9 @@ export function WelcomeOverlay({
       environment: env,
       weeklyGoal: effectiveGoal,
       availableEquipment: EQUIPMENT_BY_ENVIRONMENT[env],
+      focus,
     });
-  }, [level, env, effectiveGoal, programs]);
+  }, [level, env, effectiveGoal, focus, programs]);
 
   if (!eligibleToShow || dismissed) return null;
 
@@ -140,6 +145,7 @@ export function WelcomeOverlay({
         unit_system: u,
         weekly_goal: effectiveGoal,
         training_priority: priority,
+        training_focus: focus,
         display_name: name.trim() || null,
         ...(env ? { available_equipment: EQUIPMENT_BY_ENVIRONMENT[env] } : {}),
       };
@@ -164,6 +170,7 @@ export function WelcomeOverlay({
         level: level ?? "skip",
         env: env ?? "skip",
         weekly_goal: effectiveGoal,
+        training_focus: focus,
         recommendation_kind: suggestion ? (suggestion.exact ? "exact" : "fallback") : "none",
         program_slug: suggestion?.program.slug ?? null,
         suggested_program_accepted: activate && !!suggestion,
@@ -171,8 +178,8 @@ export function WelcomeOverlay({
     });
     setSaving(false);
     if (activate && suggestion) {
-      // E6 → mikro-potwierdzenie E7 (0,9 s), potem home z hero „Dziś" gotowym na Start
-      setStep(7);
+      // E7 → mikro-potwierdzenie E8 (0,9 s), potem home z hero „Dziś" gotowym na Start
+      setStep(8);
       window.setTimeout(finish, 900);
     } else {
       finish();
@@ -180,10 +187,9 @@ export function WelcomeOverlay({
   }
 
   function skipAll() {
-    // Od E5 user ma już wpisany profil (imię/jednostki/cel/priorytet) — „Pomiń"
-    // ma go zapisać, nie zgubić w milczeniu (O2). Na E6 przycisk jest ukryty:
-    // obie gałęzie E6 mają już dwa jawne wyjścia (O1).
-    if (step >= 5) {
+    // Od E6 user ma już wpisany profil — „Pomiń" zapisuje go, nie gubi w milczeniu.
+    // Na E7 przycisk jest ukryty, bo karta wyniku ma dwa jawne wyjścia.
+    if (step >= 6) {
       void saveProfile(false);
       return;
     }
@@ -191,13 +197,13 @@ export function WelcomeOverlay({
     finish();
   }
 
-  const dots = 6;
+  const dots = 7;
 
   return (
     // fixed → poza pt-safe z <body>; własny safe-area (notch PWA, ekran pełnoekranowy)
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] text-brand-foreground">
       <div className="flex min-h-11 items-center justify-between">
-        {step >= 1 && step <= 6 ? (
+        {step >= 1 && step <= 7 ? (
           <button
             onClick={() => setStep(step - 1)}
             aria-label="Wstecz"
@@ -208,7 +214,7 @@ export function WelcomeOverlay({
         ) : (
           <span />
         )}
-        {step <= 5 && (
+        {step <= 6 && (
           <button onClick={skipAll} className="min-h-11 px-2 text-sm text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             Pomiń
           </button>
@@ -339,8 +345,34 @@ export function WelcomeOverlay({
           </div>
         )}
 
-        {/* E5 · RYTM — default wg poziomu, copy „życiowo, nie ambitnie" */}
+        {/* E5 · KIERUNEK PLANU — osobno od celu siła/masa/redukcja. */}
         {step === 5 && (
+          <div className="space-y-md">
+            <h1 className="text-2xl font-semibold tracking-tight">Jak rozłożyć nacisk w planie?</h1>
+            <div className="space-y-xs">
+              {PROGRAM_FOCUSES.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setFocus(item.id);
+                    setStep(6);
+                  }}
+                  className={`w-full rounded-xl border p-md text-left ${
+                    focus === item.id
+                      ? "border-primary bg-primary/10"
+                      : "border-input bg-card text-card-foreground"
+                  }`}
+                >
+                  <p className="font-medium">{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.hint}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* E6 · RYTM — default wg poziomu, copy „życiowo, nie ambitnie" */}
+        {step === 6 && (
           <div className="space-y-md">
             <h1 className="text-2xl font-semibold tracking-tight">Ile treningów w tygodniu?</h1>
             <div className="flex gap-xs">
@@ -376,11 +408,12 @@ export function WelcomeOverlay({
                       level,
                       env,
                       weekly_goal: effectiveGoal,
+                      training_focus: focus,
                       match: suggestion.exact ? "exact" : "fallback",
                     },
                   });
                 }
-                setStep(6);
+                setStep(7);
               }}
             >
               Dalej
@@ -388,8 +421,8 @@ export function WelcomeOverlay({
           </div>
         )}
 
-        {/* E6 · WYNIK (outcome-first) — karta planu; świadomie BEZ auto-startu Dnia A */}
-        {step === 6 && (
+        {/* E7 · WYNIK (outcome-first) — karta planu; świadomie BEZ auto-startu Dnia A */}
+        {step === 7 && (
           <div className="space-y-md">
             {suggestion ? (
               <>
@@ -401,6 +434,9 @@ export function WelcomeOverlay({
                   <p className="mt-2xs text-sm text-muted-foreground">
                     Wybraliśmy go, bo {LEVEL_REASON[level!]}, {ENV_REASON[env!]} i wybierasz {effectiveGoal}{" "}
                     {pluralTreningow(effectiveGoal)} w tygodniu.
+                  </p>
+                  <p className="mt-xs text-xs font-medium text-primary">
+                    Kierunek: {formatProgramFocus(suggestion.program.focus_key)}
                   </p>
                   <dl className="mt-sm grid grid-cols-2 gap-xs text-xs">
                     <div className="rounded-lg bg-secondary p-sm">
@@ -481,7 +517,7 @@ export function WelcomeOverlay({
         )}
 
         {/* Mikro-potwierdzenie po aktywacji (0,9 s) — domknięcie pętli E5 */}
-        {step === 7 && (
+        {step === 8 && (
           <div className="flex flex-col items-center gap-md text-center">
             <MomentIcon3D name="rocket" className="-my-sm size-24" priority />
             <p className="text-lg font-semibold">Plan gotowy</p>
@@ -493,7 +529,7 @@ export function WelcomeOverlay({
       </div>
 
       <div className="space-y-md">
-        {step >= 1 && step <= 6 && (
+        {step >= 1 && step <= 7 && (
           <div className="flex justify-center gap-xs" aria-hidden>
             {Array.from({ length: dots }, (_, i) => (
               <span
@@ -515,7 +551,7 @@ export function WelcomeOverlay({
             Dalej
           </Button>
         )}
-        {(step === 2 || step === 3 || step === 4) && (
+        {(step === 2 || step === 3 || step === 4 || step === 5) && (
           <Button
             size="lg"
             variant="ghost"
