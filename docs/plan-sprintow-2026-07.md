@@ -1,6 +1,6 @@
 # Arco — aktywny backlog i kolejne sprinty
 
-**Aktualizacja:** 2026-07-14
+**Aktualizacja:** 2026-07-16
 
 **Źródło prawdy dla kolejności prac**
 
@@ -43,6 +43,23 @@
 - Ustalić rytm backupów i właściciela okresowego testu restore.
 
 **Done:** restore jest wykonany, nie tylko opisany, a rollback da się przeprowadzić z dokumentu.
+
+## Sprint 16b — onboarding v3.1 (naprawa przed H2)
+
+**Czas:** ~1 wieczór [Claude] + krótka weryfikacja [Ty] na telefonie
+
+**Wejście:** `docs/audyt-onboardingu-2026-07.md` (cognitive walkthrough, 2026-07-16) — werdykt: onboarding ~85% zrozumiały, 2 realne pułapki (P1) i garść zgrzytów zdejmowalnych w jednej turze.
+
+**Cel:** zamknąć obie pułapki P1 przed H2, bo Z1/Z1a w scenariuszu H2 testuje dokładnie te ścieżki — nie chcemy tracić sesji testowej na znany już bug.
+
+- O1 — fallback E6 dostaje **dwa uczciwe wyjścia** (decyzja [Ty] 2026-07-16): primary „Przejdź do biblioteki" → realna nawigacja na `/programs`; ghost „Wybiorę później" → home z zapisanym profilem (empty-state hero przejmuje).
+- O2 — globalny „Pomiń" od E5 zapisuje zebrany profil zamiast go gubić; na E6 znika (są już dwa jawne wyjścia z O1).
+- O3 — poprawka odmiany liczebnika w zdaniu-uzasadnieniu rekomendacji („5 treningów", nie „5 treningi").
+- O4 — „Pomiń ten krok" na E4 (przyjmuje default), spójnie z E2/E3.
+- O5–O9 — pięć poprawek copy w jednej turze (żargon „deficyt", nagłówek E3, „bezpieczny plan", brak kontekstu przy imieniu na E1, hint o zamiennikach bez drążka).
+- **Poza tym sprintem:** O10 (test klawiatury E1 na telefonie) zostaje przy Tobie przy najbliższym teście PWA; O11 (a11y radiogroup) idzie do backlogu, przy najbliższym refaktorze onboardingu — nie warte osobnej paczki teraz.
+
+**Done:** pełny flow E0→E7 + obie gałęzie E6 + skip na każdym kroku zweryfikowane w Preview na świeżym koncie, tsc/build czyste. Realna walidacja i tak czeka na H2 Z1/Z1a — ta paczka usuwa tylko znane, martwe pułapki przed testem.
 
 ## Sprint 17 — przygotowanie H2
 
