@@ -33,12 +33,14 @@
 
 **Cel:** udowodnić, że produkcyjne dane można odzyskać i bezpiecznie wdrażać zmiany.
 
-- Wykonać backup bazy i Storage.
-- Odtworzyć backup do odizolowanego środowiska i zachować dowód testu.
+- ✅ Wykonać backup bazy i Storage — 2026-07-16.
+- ✅ Odtworzyć backup do odizolowanego środowiska i zachować dowód testu — 2026-07-16, wynik w `backup-i-restore.md`.
 - Spisać checklistę rollbacku aplikacji, migracji i Storage.
 - Przejrzeć nagłówki, CSP i zależności; usunąć niepotrzebną zależność CSP od `raw.githubusercontent.com`, jeżeli produkcja jej nie używa.
 - Zweryfikować prywatność bucketów i uprawnienia wszystkich aktualnych tabel.
-- Ustalić rytm backupów i właściciela okresowego testu restore.
+- ✅ Ustalić rytm backupów i właściciela okresowego testu restore — Daniel; backup co 7 dni, restore co miesiąc.
+
+**Pozostało:** zaszyfrowana kopia poza laptopem, pełna checklista rollbacku oraz przegląd CSP, zależności, bucketów i RLS.
 
 **Done:** restore jest wykonany, nie tylko opisany, a rollback da się przeprowadzić z dokumentu.
 
@@ -70,6 +72,7 @@
 - ✅ **Dodać zadania + WTP pod v3** (2026-07-16) — B2 przepisane na trzy filary premium (prowadzenie/cel z prognozą/pełna historia zamiast starych opcji), B2a teaser stagnacji, B4 yearly-first.
 - ⬜ Przygotować czyste konta i realistyczne dane startowe — skrypt danych demo [Claude, na żądanie].
 - ⬜ Uzupełnić albo świadomie wyłączyć 16 ćwiczeń z placeholderem zdjęcia (45 slotów) — decyzja per ćwiczenie [Ty]: swap / AI-zdjęcie / hidden. **Twardy prerekwizyt: fix wyszukiwarki** (`audyt-wyszukiwarki-2026-07.md` R1–R2) — Z2/Z3 testują picker, search po EN da 0 wyników.
+- ⬜ Dosłać do produkcji wyłącznie `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`, bez pełnego re-seeda, i sprawdzić zależne programy.
 - ⬜ Wykonać sesję pilotażową i poprawić sam scenariusz [Ty].
 
 **Done:** test można przeprowadzić tak samo z każdą osobą, bez tłumaczenia interfejsu. *(Skrypt + metodologia pomiaru gotowe; zostają prerekwizyty operacyjne: fix wyszukiwarki, placeholdery, dane demo, pilot.)*

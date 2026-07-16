@@ -49,11 +49,17 @@
 
 ## Log sesji (dopisuj na górze)
 
-- **2026-07-16 · Codex (integracja docs + produkcyjny backup/restore): W TOKU.**
+- **2026-07-16 · Codex (integracja docs + produkcyjny backup/restore): ZAKOŃCZONE.**
   Zakres: integracja aktualnej paczki dokumentacji (`CLAUDE.md`, mapa docs, strategia v2/v3,
   paywall, wyszukiwarka, fotografia, roadmapa, kolejka Notion), aktualizacja statusu bottom
   sheetu oraz wykonanie backupu produkcyjnej bazy i Storage z testem restore w izolowanej
-  lokalnej bazie. Nie dotykam kodu funkcji ani duplikatów `public/icons-3d/* 2.png`.
+  lokalnej bazie. Nie dotknięto kodu funkcji ani duplikatów `public/icons-3d/* 2.png`.
+  Dokumentacja: commit `af7affe`. Backup DB `20260716T124816Z`, Storage
+  `20260716T124921Z`; sumy DB poprawne. Restore: users 1, exercises 905, sessions 4,
+  pods 1, storage_objects 1747. Skrypty rozszerzono o backup przez powiązany Supabase CLI
+  i restore oficjalnego zestawu SQL. Bottom sheet zamknięty funkcjonalnie; focus trap i zwrot
+  fokusu pozostają refinementem dostępności. Weryfikacja: SHA-256 3/3 ✓, restore ✓,
+  cleanup bazy tymczasowej ✓, lint ✓, testy jednostkowe 18/18 ✓.
 - **2026-07-16 · Codex (czytelny rytm programów): ZAKOŃCZONE.**
   Zakres: nazwy kuratorowanych programów, komunikacja częstotliwości i rotacji na kartach,
   w szczegółach planu oraz w onboardingu; migracja danych tylko dla nazw/opisów presetów.

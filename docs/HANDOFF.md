@@ -40,6 +40,7 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - CI działa dla zmian na `main` i pull requestów.
 - Dodano dwa kierunkowe plany „Pośladki i nogi" oraz doprecyzowano rytm tygodniowy i rotację wszystkich programów.
 - Odświeżono scenariusz H2 i metodologię pomiaru; onboarding v3.1 usuwa znane pułapki przed testem.
+- Wykonano produkcyjny backup bazy i Storage oraz pełny restore do odizolowanej bazy; dowód i liczby są w `backup-i-restore.md`.
 
 ## Technologia i dane
 
@@ -67,16 +68,17 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 
 1. **Bottom sheet accessibility — refinement:** zachowanie funkcjonalne na PWA jest domknięte; własny dialog wymaga jeszcze pełnego focus trapu i zwrotu fokusu do elementu otwierającego.
 2. **Testy urządzeń:** potrzebna jest jedna uporządkowana macierz regresji na iPhone PWA, Safari, Chromium/Arc, Android i desktop.
-3. **Backup:** brakuje udokumentowanego backupu produkcyjnej bazy i Storage oraz realnego testu odtworzenia do odizolowanego środowiska.
+3. **Backup poza urządzeniem:** lokalny backup i restore są zweryfikowane. Kopię trzeba jeszcze przenieść do zaszyfrowanej lokalizacji poza laptopem.
 4. **H2:** obecne poprawki pochodzą głównie z dogfoodingu właściciela. Potrzeba testów z 3–5 osobami.
 5. **Konta publiczne:** rejestracja, reset hasła, wersjonowane zgody, eksport/usunięcie danych i ochrona przed nadużyciami nie są jeszcze gotowe.
 6. **Analityka:** adapter istnieje, ale produkcyjnie pozostaje no-op do czasu decyzji prawnej i produktowej.
 7. **Ekipy publiczne:** przed otwarciem wymagają zgód, rate limitów, ochrony 8-znakowych kodów, rotacji zaproszeń i dogfoodingu wielokontowego.
 8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 45 slotach programów. Należy je uzupełnić lub świadomie wyłączyć przed H2.
+9. **Drift danych treningowych:** w produkcji brakuje `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`; zweryfikowany restore ma 905 ćwiczeń, a lokalny zestaw 907. Przed H2 trzeba wykonać precyzyjny sync tych dwóch rekordów zamiast pełnego re-seeda.
 
 ## Następny krok
 
-Domykamy bezpieczeństwo operacyjne przez rzeczywisty backup i test restore. Następnie realizujemy R1–R2 z `audyt-wyszukiwarki-2026-07.md`, przygotowujemy dane demo i wykonujemy pilota H2.
+Realizujemy R1–R2 z `audyt-wyszukiwarki-2026-07.md`, następnie przygotowujemy dane demo i wykonujemy pilota H2. Równolegle właściciel przenosi zweryfikowany backup do zaszyfrowanej lokalizacji poza laptopem.
 
 Nie dokładamy teraz dużej funkcji. Najpierw potwierdzamy, że rdzeń jest stabilny i zrozumiały dla osób spoza projektu.
 
