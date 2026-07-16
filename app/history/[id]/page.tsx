@@ -7,11 +7,16 @@ import { formatSet } from "@/lib/format";
 import { DateEditor } from "./DateEditor";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import { PageHeader } from "@/components/navigation/PageHeader";
+import { MomentIcon3D } from "@/components/MomentIcon3D";
 
 export const dynamic = "force-dynamic";
 
-export default async function SessionDetailPage(props: { params: Promise<{ id: string }> }) {
+export default async function SessionDetailPage(props: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ added?: string }>;
+}) {
   const params = await props.params;
+  const searchParams = await props.searchParams;
   const supabase = await createClient();
 
   const [{ data: session }, { data: settings }] = await Promise.all([
@@ -105,6 +110,21 @@ export default async function SessionDetailPage(props: { params: Promise<{ id: s
       />
 
       <main className="flex-1 space-y-md p-md">
+        {searchParams.added === "1" && (
+          <section
+            className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 flex items-center gap-sm rounded-xl bg-primary/10 p-sm text-primary duration-300"
+            role="status"
+          >
+            <MomentIcon3D name="tick" className="size-12" />
+            <div>
+              <p className="text-sm font-semibold">Trening dodany do historii</p>
+              <p className="text-xs text-muted-foreground">
+                Zapisaliśmy prawdziwą datę i przeliczyliśmy Twoje rekordy.
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* S12: edycja daty/czasu (logowanie po fakcie); sesja w toku — bez edycji */}
         {session.finished_at ? (
           <DateEditor sessionId={session.id} startedAt={session.started_at} />

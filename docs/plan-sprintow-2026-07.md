@@ -114,6 +114,10 @@ treningu z pustych Postępów oraz test start → minimalizacja → wznowienie. 
 pozostaje również na Home i jest jedynym CTA wznowienia; osobna karta `Wznów` znika.
 Aktualny gate: 23/23 testy.
 
+**Bramka pierwszego deployu R1a:** przed publikacją uruchomić minimalny smoke aktualizacji
+`stary Service Worker → nowy chrome` na PWA. Nie odkładamy tego ryzyka do R5b; późniejsza
+macierz nadal rozszerza test, ale pierwszy deploy nie może zakładać wyłącznie świeżego cache.
+
 ### R1b: integralność sesji i bezpieczeństwo nawigacji
 
 **Czas:** 2–3 dni [Claude] + test offline/PWA [Ty]
@@ -141,6 +145,8 @@ ważnego zadania.
 **Cel:** Home staje się spokojnym pulpitem do rozpoczęcia kolejnej sesji.
 
 - header: logo, kompaktowy badge celu tygodniowego i awatar;
+- badge celu liczy ukończone treningi w tygodniu; płomienie poniżej oznaczają unikalne dni
+  aktywności i nie są drugą wersją tego samego licznika;
 - lokalna nawigacja Dziś | Plany;
 - hero jako Następny trening, dopóki nie ma realnego harmonogramu;
 - osobne cele tapnięcia: Zacznij/Wznów, nazwa aktywnego planu, podgląd i Zmień;
@@ -195,7 +201,7 @@ stabilnie przed treściami drugorzędnymi.
 
 ### R4: Logger, Historia i trening po fakcie
 
-**Czas:** 3–4 dni [Claude] + regresja iOS PWA [Ty]
+**Czas:** 5–6 dni [Claude] + regresja iOS PWA [Ty]
 
 - aktywny logger używa ChevronDown i minimalizacji;
 - edycja zakończonej sesji używa ChevronLeft do szczegółu historii;
@@ -271,6 +277,8 @@ Reguły wykonania:
 
 - każdy etap kończy się działającym pionowym wycinkiem na preview;
 - po R1a, R1b, R2, R3b i R4 wykonujemy krótką regresję urządzeniową;
+- właściciel rezerwuje dwa stałe sloty regresji urządzeniowej w tygodniu, żeby checkpointy
+  iPhone PWA/Android Back nie kumulowały się dopiero przed releasem;
 - nie łączymy całej zmiany IA w jeden deploy;
 - kryteria Done obejmują loading, empty, error, offline i success;
 - R5a może być przygotowywany równolegle po zamrożeniu schematu wyszukiwania;

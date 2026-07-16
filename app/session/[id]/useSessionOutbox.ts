@@ -11,7 +11,7 @@ import type { OutboxSetRow } from "@/lib/outbox";
  * Callbacki z useSync są stabilne (useCallback) — bezpieczne dla memo niżej.
  */
 export function useSessionOutbox(sessionId: string) {
-  const { online, pending, syncing, queueUpsert, queueDelete, flush } = useSync();
+  const { online, pending, syncing, queueUpsert, queueDelete, queueNotes, flush } = useSync();
 
   function toRow(s: SessionSet): OutboxSetRow {
     return {
@@ -33,6 +33,8 @@ export function useSessionOutbox(sessionId: string) {
     queueUpsert(sessionId, toRow({ ...s, ...patch }));
 
   const removeSet = (setId: string) => queueDelete(sessionId, setId);
+  const saveNotes = (sessionExerciseId: string, notes: string) =>
+    queueNotes(sessionId, sessionExerciseId, notes);
 
-  return { online, pending, syncing, flush, saveSet, removeSet };
+  return { online, pending, syncing, flush, saveSet, removeSet, saveNotes };
 }

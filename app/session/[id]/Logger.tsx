@@ -23,6 +23,7 @@ import { useSessionMutations } from "./useSessionMutations";
 import { handleFinish, handleDeleteSession } from "./finish";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { useNavigationHistory } from "@/components/navigation/NavigationHistory";
+import { pendingCount, restoreSessionDraft } from "@/lib/outbox";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -88,7 +89,11 @@ export function Logger({
 }) {
   const router = useRouter();
   const { goBack, replace } = useNavigationHistory();
-  const [exercises, setExercises] = useState(initialExercises);
+  const [recoveredChanges] = useState(() => pendingCount(sessionId));
+  const [recoveryVisible, setRecoveryVisible] = useState(recoveredChanges > 0);
+  const [exercises, setExercises] = useState(() =>
+    restoreSessionDraft(initialExercises, sessionId),
+  );
   // Najświeższy stan dostępny w handlerach (do złożenia pełnego wiersza przy zapisie)
   const exercisesRef = useRef(exercises);
   useEffect(() => {
@@ -97,7 +102,8 @@ export function Logger({
 
   const { rest, restFor, startRest, adjustRest, dismissRest, extendRest } =
     useRestTimer(defaultRest);
-  const { online, pending, syncing, flush, saveSet, removeSet } = useSessionOutbox(sessionId);
+  const { online, pending, syncing, flush, saveSet, removeSet, saveNotes } =
+    useSessionOutbox(sessionId);
   const {
     prSets,
     patchSetLocal,
@@ -117,6 +123,7 @@ export function Logger({
     exercisesRef,
     saveSet,
     removeSet,
+    saveNotes,
     startRest,
     allowRest: !isFinished,
   });
@@ -304,6 +311,32 @@ export function Logger({
 
       {/* pb przy aktywnej przerwie — rest-bar (fixed bottom) nie zasłania dolnych wierszy (N2#9) */}
       <main className={`flex-1 space-y-md p-md ${rest ? "pb-28" : ""}`}>
+        {recoveryVisible && recoveredChanges > 0 && (
+          <aside
+            className="flex items-start justify-between gap-sm rounded-xl border border-primary/30 bg-primary/10 p-sm"
+            role="status"
+          >
+            <div>
+              <p className="text-sm font-semibold text-primary">Odzyskaliśmy szkic treningu</p>
+              <p className="mt-2xs text-xs text-muted-foreground">
+                {recoveredChanges === 1
+                  ? "Ostatnia zmiana była zapisana na tym urządzeniu."
+                  : `${recoveredChanges} ostatnie zmiany były zapisane na tym urządzeniu.`}{" "}
+                {online ? "Synchronizujemy je z kontem." : "Wyślemy je po powrocie internetu."}
+              </p>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="shrink-0"
+              onClick={() => setRecoveryVisible(false)}
+            >
+              OK
+            </Button>
+          </aside>
+        )}
+
         <aside className="rounded-lg bg-secondary px-sm py-xs text-xs text-muted-foreground">
           <span className="font-medium text-foreground">{trainingPriorityMeta(trainingPriority).label}:</span>{" "}
           {trainingPriorityMeta(trainingPriority).loggerHint}

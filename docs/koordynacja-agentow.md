@@ -49,6 +49,18 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (R1b integralność sesji i szkice): W TOKU.**
+  Zakres: niezmiennik jednej otwartej sesji, idempotentny start, terminalne redirecty,
+  check-in po edycji, trwałe szkice/recovery, dirty guard i precyzyjny sync dwóch ćwiczeń.
+  Na wejściu uwzględniam review planu: stale-SW przed pierwszym deployem R1a, semantyka
+  badge celu w R2 i estymata R4 = 5–6 dni. Nie dotykam równoległego
+  `docs/spec-status-konta-ui.md`, `docs/README.md` ani `docs/notion-sync-queue.md`.
+  Pierwszy pion gotowy lokalnie: atomowy RPC start/wznowienie + częściowy unikalny indeks,
+  jawny konflikt backfillu z sesją live, historyczne zakończenie bez Done/check-inu i subtelne
+  potwierdzenie z PR. Logger nakłada lokalny outbox na model po ponownym uruchomieniu i odzyskuje
+  także notatki; użytkownik dostaje jawny komunikat o odzyskanym szkicu. Audyt: 1 otwarta sesja,
+  0 duplikatów. Transakcyjny test bazy ✓, lint ✓, testy 24/24 ✓, build ✓. Migracja
+  zastosowana wyłącznie lokalnie, bez deployu.
 - **2026-07-16 · Codex (spójność aktywnej sesji na Home): ZAKOŃCZONE.**
   Zakres: globalny mini-bar pozostaje także na Home, a duplikująca go karta `Wznów trening`
   znika z głównej treści. Mini-bar jest teraz jedynym globalnym CTA wznowienia, a Home nie

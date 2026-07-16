@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import { finishSession, deleteSession } from "@/app/actions/session";
-import { pendingCount } from "@/lib/outbox";
+import { clearSessionOps, pendingCount } from "@/lib/outbox";
 import type { LoggerExercise } from "./Logger";
 
 /**
@@ -44,6 +44,7 @@ export async function handleDeleteSession(args: { sessionId: string; online: boo
   }
   try {
     await deleteSession(sessionId);
+    clearSessionOps(sessionId);
     return true;
   } catch {
     toast.error("Nie udało się usunąć sesji.");

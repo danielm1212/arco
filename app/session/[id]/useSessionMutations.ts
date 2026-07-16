@@ -6,7 +6,6 @@ import {
   deleteSessionExercise,
   setSessionExerciseSkipped,
   setSupersetGroups,
-  updateSessionExerciseNotes,
 } from "@/app/actions/sets";
 import type { SessionSet, SetType } from "@/lib/types";
 import { getAutoRest } from "@/lib/prefs";
@@ -31,6 +30,7 @@ export function useSessionMutations({
   exercisesRef,
   saveSet,
   removeSet,
+  saveNotes,
   startRest,
   allowRest,
 }: {
@@ -39,6 +39,7 @@ export function useSessionMutations({
   exercisesRef: MutableRefObject<LoggerExercise[]>;
   saveSet: (s: SessionSet, patch?: Partial<SessionSet>) => void;
   removeSet: (setId: string) => void;
+  saveNotes: (sessionExerciseId: string, notes: string) => void;
   startRest: (ex: LoggerExercise, label?: string) => void;
   /** W trybie edycji historii nie uruchamiamy timera przerw. */
   allowRest: boolean;
@@ -62,7 +63,7 @@ export function useSessionMutations({
     setExercises((prev) =>
       prev.map((ex) => (ex.sessionExerciseId === seId ? { ...ex, notes } : ex)),
     );
-    updateSessionExerciseNotes(sessionId, seId, notes).catch(() => toast.error(SAVE_ERR));
+    saveNotes(seId, notes);
   }
 
   async function handleAddSet(ex: LoggerExercise) {

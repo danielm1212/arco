@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { upsertSet, deleteSet } from "@/app/actions/sets";
+import { upsertSet, deleteSet, updateSessionExerciseNotes } from "@/app/actions/sets";
 import {
   allOps,
   enqueueDelete,
+  enqueueNotes,
   enqueueUpsert,
   pendingCount,
   removeOp,
@@ -44,7 +45,8 @@ export function useSync() {
       for (const op of ops) {
         try {
           if (op.kind === "upsert") await upsertSet(op.sessionId, op.row);
-          else await deleteSet(op.sessionId, op.setId);
+          else if (op.kind === "delete") await deleteSet(op.sessionId, op.setId);
+          else await updateSessionExerciseNotes(op.sessionId, op.sessionExerciseId, op.notes);
           removeOp(op);
           setPending(pendingCount());
         } catch {
@@ -92,5 +94,14 @@ export function useSync() {
     [flush],
   );
 
-  return { online, pending, syncing, queueUpsert, queueDelete, flush };
+  const queueNotes = useCallback(
+    (sessionId: string, sessionExerciseId: string, notes: string) => {
+      enqueueNotes(sessionId, sessionExerciseId, notes);
+      setPending(pendingCount());
+      void flush();
+    },
+    [flush],
+  );
+
+  return { online, pending, syncing, queueUpsert, queueDelete, queueNotes, flush };
 }

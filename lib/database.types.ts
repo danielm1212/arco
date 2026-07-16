@@ -818,6 +818,16 @@ export type Database = {
       remove_pod_member: { Args: { p_pod_id: string; p_user_id: string }; Returns: undefined }
       rename_pod: { Args: { p_name: string; p_pod_id: string }; Returns: undefined }
       send_pod_nudge: { Args: { p_pod_id: string; p_to_user_id: string }; Returns: undefined }
+      start_or_resume_session: {
+        Args: {
+          p_date?: string | null
+          p_is_historical?: boolean
+          p_program_day_id?: string | null
+          p_recorded_duration_seconds?: number | null
+          p_started_at?: string | null
+        }
+        Returns: { created: boolean; session_id: string }[]
+      }
       sync_workout_activity_day: {
         Args: { p_previous_day: string; p_session_id: string }
         Returns: undefined

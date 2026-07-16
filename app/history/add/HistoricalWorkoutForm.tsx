@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { CalendarClock, Dumbbell, Timer } from "lucide-react";
@@ -174,13 +175,19 @@ export function HistoricalWorkoutForm({ programs }: { programs: HistoricalProgra
       </section>
 
       <p className="rounded-lg bg-muted px-sm py-xs text-xs leading-relaxed text-muted-foreground">
-        Jeśli korzystasz z Ekipy, aktywność zostanie przypisana do dnia, w którym rzeczywiście trenowałeś.
+        Trening zapisze się we właściwym dniu historii. Dodanie go po fakcie nie publikuje nowego
+        check-inu w Ekipie.
       </p>
 
       {state?.error && (
-        <p className="text-sm text-danger" role="alert">
-          {state.error}
-        </p>
+        <div className="space-y-xs rounded-lg border border-danger/30 bg-danger/5 p-sm" role="alert">
+          <p className="text-sm text-danger">{state.error}</p>
+          {state.activeSessionId && (
+            <Button asChild variant="outline" className="w-full">
+              <Link href={`/session/${state.activeSessionId}`}>Wróć do treningu w toku</Link>
+            </Button>
+          )}
+        </div>
       )}
       <SubmitButton />
     </form>
