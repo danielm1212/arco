@@ -3,6 +3,8 @@ import { BodyForm } from "./BodyForm";
 import { DeleteBodyMetricButton } from "./DeleteBodyMetricButton";
 import { BodyPhotoButton } from "./BodyPhotoButton";
 import { Sparkline } from "@/components/Sparkline";
+import { MomentIcon3D } from "@/components/MomentIcon3D";
+import { ProgressSubnav } from "@/components/navigation/ProgressSubnav";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +65,7 @@ export default async function BodyPage() {
       <header className="border-b px-md py-md text-center">
         <h1 className="font-semibold">Ciało</h1>
       </header>
+      <ProgressSubnav active="body" />
 
       <main className="flex-1 space-y-lg p-md">
         <BodyForm unit={unit} userId={user?.id ?? ""} />
@@ -88,7 +91,15 @@ export default async function BodyPage() {
         <section className="space-y-sm">
           <h2 className="text-base font-semibold">Historia pomiarów</h2>
           {metricRows.length === 0 && (
-            <p className="text-sm text-muted-foreground">Dodawaj pomiar mniej więcej raz w tygodniu. Po kilku wpisach zobaczysz trend.</p>
+            <div className="flex items-center gap-sm rounded-xl bg-card p-md shadow-sm">
+              <MomentIcon3D name="notebook" className="size-16" />
+              <div className="min-w-0">
+                <p className="font-semibold">Tu pojawi się historia pomiarów</p>
+                <p className="mt-2xs text-sm text-muted-foreground">
+                  Dodawaj pomiar mniej więcej raz w tygodniu. Po kilku wpisach zobaczysz trend.
+                </p>
+              </div>
+            </div>
           )}
           <ul className="space-y-2xs">
             {metricRows.map((m) => {

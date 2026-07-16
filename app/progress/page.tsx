@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
+import { ProgressSubnav } from "@/components/navigation/ProgressSubnav";
 import type { UnitSystem } from "@/lib/types";
 import {
   PERIODS,
@@ -51,6 +52,7 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
       <header className="border-b px-md py-md text-center">
         <h1 className="font-semibold">Postępy</h1>
       </header>
+      <ProgressSubnav active="training" />
 
       <main className="flex-1 space-y-lg p-md">
         {fresh ? (
@@ -58,7 +60,9 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
             <MomentIcon3D name="target" className="size-32" priority />
             <h2 className="mt-sm text-xl font-semibold">Twój postęp zaczyna się od pierwszego treningu</h2>
             <p className="mt-xs max-w-xs text-sm leading-relaxed text-muted-foreground">Po dwóch sesjach pokażemy trend siły, regularność i bilans trenowanych partii.</p>
-            <Button asChild size="lg" className="mt-md"><Link href="/">Zacznij trening</Link></Button>
+            <form action={startFreestyle} className="mt-md">
+              <Button type="submit" size="lg">Rozpocznij trening</Button>
+            </form>
           </section>
         ) : (
         <>

@@ -109,6 +109,10 @@ ChevronDown, a edycja ChevronLeft. Automatyczny test wykrywa stronę bez reguły
 Lokalnie: lint ✓, testy 22/22 ✓, build ✓, regresja zalogowanych tras w Chromium ✓.
 Pozostaje checkpoint [Ty]: iPhone PWA/Safari oraz Android system Back.
 
+**Refinement po review:** dodano widoczny przełącznik `Trening | Ciało`, działający start
+treningu z pustych Postępów oraz test start → minimalizacja → wznowienie. Home nie dubluje
+karty `Wznów` globalnym mini-barem. Aktualny gate: 23/23 testy.
+
 ### R1b: integralność sesji i bezpieczeństwo nawigacji
 
 **Czas:** 2–3 dni [Claude] + test offline/PWA [Ty]

@@ -34,6 +34,10 @@ const MOMENT_ICONS = {
     light: "/icons-3d/icon-3d-rocket-light.png",
     dark: "/icons-3d/icon-3d-rocket-dark.png",
   },
+  notebook: {
+    light: "/icons-3d/icon-3d-notebook-light.png",
+    dark: "/icons-3d/icon-3d-notebook-dark.png",
+  },
 } as const;
 
 export type MomentIconName = keyof typeof MOMENT_ICONS;

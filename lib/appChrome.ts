@@ -66,7 +66,13 @@ const focused = (screenType: ScreenType = "focus"): Omit<RouteRule, "id" | "matc
  * To jest jedyne miejsce z domyślnym kontraktem chrome dla produkcyjnych stron.
  */
 export const APP_ROUTE_RULES: readonly RouteRule[] = [
-  { id: "training-home", matches: exact("/"), ...hub("training") },
+  {
+    id: "training-home",
+    matches: exact("/"),
+    ...hub("training"),
+    // Home ma własne hero „Wznów trening”; drugi mini-bar dublowałby tę samą akcję.
+    showSessionMiniBar: false,
+  },
   { id: "program-library", matches: exact("/programs"), ...subview("training") },
   { id: "program-detail", matches: segment("/programs"), ...child("training") },
   { id: "progress-home", matches: exact("/progress"), ...hub("progress") },

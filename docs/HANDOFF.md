@@ -68,7 +68,7 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 Aktualny gate obejmuje:
 
 - lint,
-- 22 testy jednostkowe,
+- 23 testy jednostkowe,
 - walidację danych treningowych,
 - walidację rekomendacji,
 - build produkcyjny,

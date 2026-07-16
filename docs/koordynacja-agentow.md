@@ -49,6 +49,15 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-16 · Codex (R1a refinement po review właściciela): ZAKOŃCZONE.**
+  Zakres: widoczna lokalna nawigacja `Trening | Ciało` w Postępach, działające CTA startu
+  z pustego stanu Postępów oraz punktowe użycie istniejącej ikony 3D w pustym stanie Ciała.
+  Wynik: `Trening | Ciało` jest widoczne i przełącza podwidoki przez replace; CTA pustych
+  Postępów realnie tworzy trening bez planu; pusty stan Ciała dostał kompaktową ikonę
+  notatnika 3D. Pełny test: start → logger `session-live` bez bottom nav → ChevronDown →
+  Home z `Wznów` → mini-bar na Postępach ✓. Home nie dubluje już `Wznów` mini-barem.
+  Lint ✓, testy 23/23 ✓, build ✓. Utworzona testowa sesja lokalna pozostaje otwarta, aby
+  właściciel mógł od razu sprawdzić wznowienie. Nie dotknięto migracji ani duplikatów ikon.
 - **2026-07-16 · Codex (R1a fundament chrome i nawigacji): ZAKOŃCZONE TECHNICZNIE.**
   Zakres: centralny kontrakt typów ekranów i tras, niezależne sterowanie bottom navem oraz
   mini-barem, wspólne `PageHeader`/`BackButton`, bezpieczny Back z fallbackiem, helpery
