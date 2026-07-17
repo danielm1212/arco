@@ -53,6 +53,16 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Wdrożono fundament nowej nawigacji: centralną macierz chrome, cztery taby
   Trening/Postępy/Historia/Ekipa, wspólny Back z fallbackiem, osobną minimalizację aktywnego
   treningu i poprawne replace dla filtrów oraz ekranów terminalnych.
+- R2: header Treningu (badge celu liczący treningi + awatar), subnav Dziś | Plany, hero
+  „Następny trening" z rozdzielonymi celami tapnięcia, Plany z sekcją aktywnego planu,
+  odchudzony Home (bez powitania, stałych kart i pustych wskazówek), home w jednym
+  równoległym batchu zapytań.
+- Spokojniejszy ekran Done po feedbacku właściciela: bez ikony 3D, liczba-bohater
+  animowana od 0, postęp celu jako tekst zamiast przycisku, sesja-zero bez celebracji zer.
+- Polska wyszukiwarka ćwiczeń (R5a): 213 nazw `name_pl` + 94 aliasy potoczne z
+  zatwierdzonego słownika, wyszukiwanie po PL/EN/aliasach z rankingiem trafności,
+  polskie nazwy w pickerze, „ostatnio używanych" i kandydatach podmiany; test regresji
+  krytycznych fraz w testach jednostkowych.
 
 ## Technologia i dane
 
@@ -85,7 +95,7 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 5. **Konta publiczne:** rejestracja, reset hasła, wersjonowane zgody, eksport/usunięcie danych i ochrona przed nadużyciami nie są jeszcze gotowe.
 6. **Analityka:** adapter istnieje, ale produkcyjnie pozostaje no-op do czasu decyzji prawnej i produktowej.
 7. **Ekipy publiczne:** przed otwarciem wymagają zgód, rate limitów, ochrony 8-znakowych kodów, rotacji zaproszeń i dogfoodingu wielokontowego.
-8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. Należy je uzupełnić lub świadomie wyłączyć przed H2.
+8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. Decyzja podjęta (2026-07-17): zdjęcia dla wszystkich 16 generuje [Ty] w sobotę 2026-07-18; ryzyko zamyka się z ich uploadem.
 9. **Docelowa IA jest wdrożona częściowo:** R0.5 jest zaakceptowany, a R1a wprowadza nowy
    kontrakt chrome i tab Ekipy. Home oraz huby nadal czekają na R2–R4; R1b musi wcześniej
    zabezpieczyć jedną aktywną sesję i szkice. `/history/add` nadal wymaga przebudowy wyboru
@@ -94,15 +104,18 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 
 ## Następny krok
 
-R1a, R1b **oraz R2** są na produkcji. R1a+R1b weszły 2026-07-16 wieczorem (migracja
-`20260716213000_single_open_session` na prod, local == remote, deploy `9f65a6d` zweryfikowany
-w przeglądarce). R2 (`ac82a18`, `44d66cc`) trafiło na origin/main z pushem 2026-07-17 rano —
-**bez wcześniejszego przeglądu wizualnego [Ty] na localhost**, na który czekało wg dziennika.
-**Najpilniejsze [Ty]: jedna wspólna regresja urządzeniowa R1b+R2 na iPhone PWA i Androidzie** —
-start/wznowienie treningu, odzyskanie szkicu, nowy header/subnav Trening i hero z rozdzielonymi
-celami tapnięcia. Potem checkpoint dogfood, dalej R3a–R5b, R6 i H2 w R7.
-Równolegle: przegląd słownika `r5a-slownik-pl-propozycja.md` [Ty] oraz przeniesienie
-zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
+Na produkcji są: R1a, R1b, R2, spokojniejszy ekran Done oraz **polska wyszukiwarka R5a**
+(migracja `20260717130502_exercise_polish_names` — local == remote, deploy `6d7c26d`,
+CI zielone). Zaakceptowane po dogfoodzie [Ty]: pion R2 i ekran Done.
+**Najpilniejsze [Ty]: jedna wspólna regresja urządzeniowa na iPhone PWA i Androidzie** —
+start/wznowienie treningu, odzyskanie szkicu, nowy header/subnav Trening, hero, ekran Done
+oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
+**[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów (prompty `prompt-fotografia-warm.md`).
+Kod: checkpoint dogfood po R2, potem R3a–R4; z toru wyszukiwarki zostają R4–R6 audytu
+(normalizacja diakrytyk, instrumentacja search, kosmetyka) oraz **rozszerzenie `name_pl`
+na pozostałe powierzchnie** (logger, szczegóły programu, historia, done-preview — dziś
+polskie nazwy widzi picker, ostatnio używane i kandydaci swapu).
+Równolegle: przeniesienie zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
 Procedury wydania, zamknięcia sesji i migracji są od 2026-07-17 skodyfikowane w
 `.claude/skills/` (arco-release, arco-session-close, arco-migration) i wiążące przez `CLAUDE.md`.
 

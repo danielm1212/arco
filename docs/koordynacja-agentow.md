@@ -49,14 +49,25 @@
 
 ## Log sesji (dopisuj na górze)
 
-- **2026-07-17 · Claude (R5a implementacja: name_pl + aliasy + ranking wyszukiwarki): W TOKU.**
-  Podstawa: zatwierdzony `docs/r5a-slownik-pl-propozycja.md` (2026-07-17). Zakres: nowy
-  słownik `scripts/data/exercise-names-pl.json`, `scripts/seed.ts` (name_pl, search_aliases),
-  migracja schematu+danych (guard na pusty stan), `components/ExerciseBrowser.tsx` +
-  `lib/exerciseFilters.ts` (query PL/EN/aliasy, ranking, wyświetlanie name_pl), test
-  integralności słownika. NIE dotykam: loggera poza wyświetlaniem nazw, programów, Ekipy,
-  duplikatów ikon. Migracja wg skilla arco-migration (świeża baza + pełne smoke'i — zmiana
-  kontraktu danych).
+- **2026-07-17 · Claude (R5a: polska wyszukiwarka — name_pl, aliasy, ranking): ZAKOŃCZONE.**
+  Zakres: `scripts/data/exercise-names-pl.json` (213 nazw + 94 aliasy wygenerowane
+  programowo z zatwierdzonego doca), `scripts/seed.ts`, migracja
+  `20260717130502_exercise_polish_names` (schemat + dane z guardem, jeden JSON dla seeda
+  i migracji), `lib/exerciseSearch.ts` (sanityzacja W6, or-filter, ranking R3),
+  `app/session/[id]/ExerciseBrowser.tsx` (query PL/EN/aliasy + ranking + wyświetlanie),
+  `app/actions/substitute.ts` (nazwy PL kandydatów), `lib/database.types.ts`,
+  `tests/exercise-search.test.ts`. Wynik: lint ✓, tsc ✓, testy 33/33 ✓, build ✓, świeża
+  baza (guard zadziałał) ✓, seed 213/62/907 ✓, walidatory ✓, smoke ×4 ✓, realne zapytania
+  PostgREST na lokalnej bazie ✓, ścieżka danych migracji wykonana na zasianej bazie
+  (identyczny stan co seed, idempotentnie) ✓. Deploy: migracja na prod (db push wykonał
+  [Ty] — klasyfikator blokuje agentom prod push), kod `6d7c26d` push [Ty], CI zielone,
+  local == remote, prod zweryfikowany w przeglądarce. Uwaga: kod wszedł na origin PRZED
+  migracją (kolejność odwrócona ręcznym pushem [Ty]) — okno ekspozycji kilka minut,
+  dotyczyło tylko pickera za loginem. Wcześniej w tej sesji: deploy ekranu Done
+  (`b1cdfeb`, CI zielone, prod ✓). Czego nie dotknięto: logger poza pickerem, programy,
+  Ekipa, duplikaty ikon. Zaległości: [Ty] regresja urządzeniowa (R1b+R2+Done+R5a) i
+  zdjęcia placeholderów w sobotę; następna sesja — name_pl na pozostałych powierzchniach
+  (logger/program/historia), R4–R6 audytu wyszukiwarki, checkpoint dogfood po R2.
 
 - **2026-07-17 · Claude (ekran Done — feedback właściciela): ZAKOŃCZONE lokalnie.**
   Na wyraźny feedback [Ty] po dogfoodzie: (1) zdjęta ikona 3D znad liczby-bohatera

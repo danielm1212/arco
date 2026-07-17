@@ -252,6 +252,14 @@ urządzeniowa i decyzja o publikacji.
 Ten etap może zacząć przygotowanie treści równolegle po zamrożeniu schematu, ale jego integracja
 wchodzi dopiero po stabilnym chrome i niezmienniku sesji.
 
+**Stan 2026-07-17:** rdzeń R5a (R1–R3 audytu wyszukiwarki) jest **na produkcji**, przed
+sekwencją nominalną — właściciel zatwierdził słownik i zdecydował o wdrożeniu: 213 nazw
+`name_pl` + 94 aliasy (migracja `20260717130502`), wyszukiwanie PL/EN/aliasy z rankingiem,
+polskie nazwy w pickerze/ostatnich/swapie, test regresji fraz w unit testach. Zostają:
+normalizacja diakrytyk (R4 audytu), instrumentacja search (R5), kosmetyka (R6),
+rozszerzenie `name_pl` na pozostałe powierzchnie oraz zdjęcia 16 placeholderów
+([Ty], sobota 2026-07-18).
+
 ### R5b: dostępność i regresja PWA
 
 **Czas:** 3–4 dni [Claude] + macierz urządzeń [Ty]
