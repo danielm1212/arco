@@ -146,8 +146,10 @@ zweryfikowany w przeglądarce (świeży build, zero błędów CSP). Lokalny buck
 i18n komunikatów, multi-tab outbox — udokumentowane).
 Commit `33dd58e` (testy libów) jest wypchnięty — `origin/main` = `c6d2bac`, całość
 dorobku 2026-07-17 jest na GitHubie.
-Kod: **najpierw R2.1 według `audyt-r2-home-plany-2026-07-17.md`, potem checkpoint
-dogfood i R3a–R4.** Z toru wyszukiwarki zostają R5–R6 audytu
+Kod: **R2.1 zaimplementowane technicznie 2026-07-18 w nocy** (badge celu jako akcja
+z sheetem tygodnia, FlameWeek poza Home, polish hero, odchudzone karty Planów, loading
+z chrome, izolacja insightu per konto+program; wpis w koordynacji) — **czeka na przegląd
+wizualny [Ty] na localhost i push**. Potem checkpoint dogfood i R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
 powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie
 4 P1 zamknięte; zostaje P2 jako tło przy R3–R5.

@@ -9,10 +9,10 @@ import { getHomeGuidance } from "@/lib/getHomeGuidance";
 import { localDayKey } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
 import { GuidanceChip } from "./GuidanceChip";
-import { FlameWeek } from "./FlameWeek";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
+import { WeeklyGoalBadge } from "@/components/WeeklyGoalBadge";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 import {
   formatCycleStructure,
@@ -46,6 +46,9 @@ type ActiveDay = {
 
 export default async function HomePage() {
   const supabase = await createClient();
+  // Klucz izolacji insightu (R2.1): id z sesji cookie — lokalny odczyt, bez rundy sieciowej.
+  const { data: authData } = await supabase.auth.getSession();
+  const userId = authData.session?.user.id ?? "anon";
   const historySince = new Date();
   historySince.setDate(historySince.getDate() - 120);
 
@@ -193,20 +196,21 @@ export default async function HomePage() {
         }))}
       />
       <TrainingHeader
-        goalBadge={(sessionCount ?? 0) > 0 ? { done: weeklyDone, goal: weeklyGoal } : null}
+        goalSlot={
+          (sessionCount ?? 0) > 0 ? (
+            <Suspense fallback={null}>
+              <WeeklyGoalBadge done={weeklyDone} goal={weeklyGoal} week={week} streak={streak} />
+            </Suspense>
+          ) : null
+        }
         displayName={settings?.display_name ?? null}
       />
       <TrainingSubnav active="today" />
 
       <main className="flex-1 space-y-lg p-md">
-        {/* F2 (redesign-home.md §3.6): FlameWeek ukryty do 1. treningu —
-            rząd wygaszonych płomieni na dzień dobry to smutek, nie obietnica */}
-        {(sessionCount ?? 0) > 0 && (
-          <Suspense fallback={null}>
-            <FlameWeek week={week} streak={streak} />
-          </Suspense>
-        )}
-
+        {/* R2.1 (audyt P0): pełna karta tygodnia zniknęła z domyślnego Home —
+            szczegół tygodnia żyje w sheecie badge'a w headerze. Hero jest
+            pierwszym merytorycznym modułem po subnavie. */}
         {openSession ? null : suggested ? (
           // F1 (redesign-home.md V4): hero = BIAŁY kafel (nie sand) — hierarchię
           // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.
@@ -221,16 +225,16 @@ export default async function HomePage() {
                 {activeProgram && (
                   <Link
                     href={`/programs/${activeId}`}
-                    className="min-w-0 truncate text-xs font-medium text-primary underline-offset-2 hover:underline"
+                    className="-my-xs flex min-h-11 min-w-0 items-center text-xs font-medium text-primary underline-offset-2 hover:underline"
                   >
-                    {activeProgram.name}
+                    <span className="truncate">{activeProgram.name}</span>
                   </Link>
                 )}
               </div>
               <p className="mt-sm text-2xl font-semibold leading-tight">{suggested.label}</p>
               {activeProgram && activeDays.length > 1 && (
                 <p className="mt-2xs text-xs text-muted-foreground">
-                  Rotacja {formatCycleStructure(activeProgram.cycle_days)} · następny trening po ostatniej ukończonej sesji
+                  Następny w rotacji {formatCycleStructure(activeProgram.cycle_days)}
                 </p>
               )}
               {suggestedMeta && (
@@ -264,8 +268,13 @@ export default async function HomePage() {
                   days={activeDays.map(({ id, label, position }) => ({ id, label, position }))}
                 />
               )}
+              {/* R2.1: hierarchia tekstowa — „Bez planu" jest wyjściem awaryjnym,
+                  nie trzecią równorzędną decyzją, więc schodzi do muted */}
               <form action={startFreestyle} className="ml-auto">
-                <button type="submit" className="min-h-11 underline-offset-2 hover:underline">
+                <button
+                  type="submit"
+                  className="min-h-11 font-normal text-muted-foreground underline-offset-2 hover:underline"
+                >
                   Bez planu
                 </button>
               </form>
@@ -304,6 +313,7 @@ export default async function HomePage() {
             komponent sam pilnuje progu 12 sesji i pamięta zamknięcie */}
         {activeProgram && (
           <ProgramReviewInsight
+            userId={userId}
             programId={activeProgram.id}
             completedSessions={completedSessionsInActiveProgram}
           />

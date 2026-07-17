@@ -1,22 +1,23 @@
 import Link from "next/link";
-import { Flame } from "lucide-react";
+import type { ReactNode } from "react";
 
 /**
- * Header przestrzeni Trening (userflows §3): logo po lewej, kompaktowy badge
- * celu tygodniowego i awatar po prawej. Badge liczy UKOŃCZONE TRENINGI w tym
- * tygodniu (plan §R2) — płomienie FlameWeek niżej pokazują unikalne dni i nie
- * są drugą wersją tego samego licznika. Awatar zastępuje koło zębate; do czasu
- * pełnego ekranu profilu prowadzi do /settings.
+ * Header przestrzeni Trening (userflows §3): logo po lewej, slot celu
+ * tygodniowego i awatar po prawej. Cel na Dziś to interaktywny
+ * `WeeklyGoalBadge` (R2.1 — tap otwiera szczegół tygodnia); Plany świadomie
+ * go nie pokazują (decyzja P2 audytu R2 — badge odpowiada na pytanie ekranu
+ * Dziś). Awatar zastępuje koło zębate; do czasu pełnego ekranu profilu
+ * prowadzi do /settings.
  */
 export function TrainingHeader({
-  goalBadge,
+  goalSlot,
   displayName,
 }: {
-  goalBadge: { done: number; goal: number } | null;
+  /** Interaktywny badge celu (Dziś) albo nic (Plany). */
+  goalSlot?: ReactNode;
   displayName: string | null;
 }) {
   const monogram = (displayName ?? "").trim().charAt(0).toUpperCase() || null;
-  const goalMet = goalBadge != null && goalBadge.done >= goalBadge.goal;
 
   return (
     <header className="flex items-center justify-between border-b px-sm py-sm">
@@ -27,22 +28,7 @@ export function TrainingHeader({
         <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-8 w-auto dark:block" />
       </span>
       <div className="flex items-center gap-xs">
-        {goalBadge && (
-          <span
-            className="flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1"
-            role="status"
-            aria-label={`Cel tygodniowy: ${goalBadge.done} z ${goalBadge.goal} treningów`}
-          >
-            <Flame
-              className={`size-3.5 ${goalMet ? "fill-primary text-primary" : "fill-none text-muted-foreground"}`}
-              strokeWidth={goalMet ? 0 : 1.75}
-              aria-hidden
-            />
-            <span className="text-xs font-semibold tabular-nums">
-              {goalBadge.done}/{goalBadge.goal}
-            </span>
-          </span>
-        )}
+        {goalSlot}
         <Link
           href="/settings"
           aria-label="Profil i ustawienia"

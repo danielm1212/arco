@@ -3,13 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import {
-  formatCycleStructure,
-  formatEquipment,
-  formatFrequency,
-  formatProgramFocus,
-  type ProgramFocus,
-} from "@/lib/programRecommendation";
+import { formatFrequency, type ProgramFocus } from "@/lib/programRecommendation";
 import { ProgramFilters } from "./ProgramFilters";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
@@ -110,7 +104,7 @@ export default async function ProgramsPage({
       {/* R2: Plany są podwidokiem Treningu — wspólny header i lokalna nawigacja
           zamiast strzałki Back (przełączanie przez replace, jak Postępy/Ciało).
           Badge celu zostaje na Dziś — tu odpowiadałby na pytanie innego ekranu. */}
-      <TrainingHeader goalBadge={null} displayName={settings?.display_name ?? null} />
+      <TrainingHeader displayName={settings?.display_name ?? null} />
       <TrainingSubnav active="plans" />
 
       <main className="flex-1 space-y-lg p-md">
@@ -190,33 +184,22 @@ function ProgramRow({
               Pasuje do Twojego kierunku
             </span>
           )}
-          <div className="mt-2xs flex flex-wrap items-center gap-2xs text-xs text-muted-foreground">
-            {kind === "preset" ? (
-              [
-                p.goal,
-                p.focus_key === "lower_body" ? `kierunek: ${formatProgramFocus(p.focus_key)}` : null,
-                `rotacja: ${formatCycleStructure(p.cycle_days)}`,
-                p.frequency_min !== null && p.frequency_max !== null
-                  ? formatFrequency(p.frequency_min, p.frequency_max)
-                  : null,
-                p.estimated_minutes_min !== null && p.estimated_minutes_max !== null
-                  ? `od ${p.estimated_minutes_min} do ${p.estimated_minutes_max} min`
-                  : null,
-                p.required_equipment.length > 0
-                  ? `sprzęt: ${formatEquipment(p.required_equipment, 2)}`
-                  : null,
-              ].filter(Boolean).map((t) => (
-                <span
-                  key={t as string}
-                  className="rounded-full bg-secondary px-2 py-0.5 text-secondary-foreground"
-                >
-                  {t}
-                </span>
-              ))
-            ) : (
-              <span>{p.cycle_days} dni w cyklu · edytuj →</span>
-            )}
-          </div>
+          {/* R2.1 (audyt P1): karta = nazwa + dwa fakty, nie tabela filtrów.
+              Pełna specyfikacja (rotacja, sprzęt, minuty) żyje w szczególe planu. */}
+          <p className="mt-2xs text-xs text-muted-foreground">
+            {kind === "preset"
+              ? [
+                  p.frequency_min !== null && p.frequency_max !== null
+                    ? formatFrequency(p.frequency_min, p.frequency_max)
+                    : null,
+                  p.estimated_minutes_min !== null && p.estimated_minutes_max !== null
+                    ? `${p.estimated_minutes_min}–${p.estimated_minutes_max} min`
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")
+              : `${p.cycle_days} dni w cyklu · edytuj →`}
+          </p>
         </Link>
         <div className="flex items-center px-sm">
           {isActive ? (
@@ -225,7 +208,8 @@ function ProgramRow({
             </span>
           ) : (
             <form action={setActiveProgram.bind(null, p.id)}>
-              <Button variant="outline" type="submit">
+              {/* R2.1: aktywacja podporządkowana wyborowi karty — ghost zamiast outline */}
+              <Button variant="ghost" type="submit" className="text-primary">
                 Ustaw
               </Button>
             </form>

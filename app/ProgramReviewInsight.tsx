@@ -5,38 +5,40 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const STORAGE_KEY = "arco-program-review-dismissed";
-const REVIEW_EVERY = 12;
+import { isReviewDue, reviewStorageKey } from "@/lib/programReview";
 
 const subscribeToNothing = () => () => {};
 
-function readDismissedAt(): number {
-  const raw = window.localStorage.getItem(STORAGE_KEY);
+function readDismissedAt(key: string): number {
+  const raw = window.localStorage.getItem(key);
   const parsed = raw ? Number.parseInt(raw, 10) : NaN;
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
 /**
  * Kontekstowy, dismissowalny insight o przeglądzie planu (plan §R2).
- * Zamknięcie zapamiętuje próg sesji; insight wraca dopiero po kolejnych
- * REVIEW_EVERY ukończonych sesjach w aktywnym planie, więc nie jest stałą
- * kartą, tylko przypomnieniem co cykl.
+ * Stabilność renderu (R2.1): snapshot SSR zakłada „nie zamknięto" (0), więc
+ * dla większości użytkowników sekcja jest w HTML od pierwszego renderu — bez
+ * doklejania po hydratacji. Gdy insight był zamknięty, klient ukrywa go w
+ * renderze hydratacyjnym, przed malowaniem — bez widocznego skoku layoutu.
  */
 export function ProgramReviewInsight({
+  userId,
   programId,
   completedSessions,
 }: {
+  userId: string;
   programId: string;
   completedSessions: number;
 }) {
+  const storageKey = reviewStorageKey(userId, programId);
   const [dismissed, setDismissed] = useState(false);
   const dismissedAt = useSyncExternalStore(
     subscribeToNothing,
-    readDismissedAt,
-    // SSR nie zna localStorage — do hydratacji insight pozostaje ukryty.
-    () => completedSessions,
+    () => readDismissedAt(storageKey),
+    () => 0,
   );
-  const visible = !dismissed && completedSessions >= dismissedAt + REVIEW_EVERY;
+  const visible = !dismissed && isReviewDue(completedSessions, dismissedAt);
 
   if (!visible) return null;
 
@@ -50,7 +52,7 @@ export function ProgramReviewInsight({
         aria-label="Zamknij wskazówkę o przeglądzie planu"
         className="absolute right-2 top-2 grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onClick={() => {
-          window.localStorage.setItem(STORAGE_KEY, String(completedSessions));
+          window.localStorage.setItem(storageKey, String(completedSessions));
           setDismissed(true);
         }}
       >

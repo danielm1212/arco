@@ -73,7 +73,7 @@ export function MonthCalendar({
           c === null ? (
             <span key={`b${i}`} />
           ) : (
-            /* W2 (audyt-wizualny): dzień treningowy = TEN SAM glif ognia co FlameWeek —
+            /* W2 (audyt-wizualny): dzień treningowy = TEN SAM glif ognia co szczegół tygodnia (WeeklyGoalBadge) —
                jeden symbol od home przez historię po przyszły recap. Numer dnia niesie
                pozycja w siatce + sr-only; „dziś" bez zmian (ring). */
             <div

@@ -49,6 +49,26 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-18 · Claude (R2.1: refinement Home/Plany wg audytu R2): ZAKOŃCZONE TECHNICZNIE, lokalnie — czeka przegląd wizualny [Ty].**
+  P0: `FlameWeek` usunięty z Home (i z repo — logika zapłonu `?trained=1` przeniesiona);
+  badge celu = realny przycisk 44 px (`components/WeeklyGoalBadge.tsx`, terracotta przy
+  celu, focus ring, aria-haspopup) otwierający dostępny sheet szczegółu tygodnia
+  (X z Y treningów + copy statusu, 7 płomieni unikalnych dni z objaśnieniem, passa,
+  link do Historii; Escape/overlay/swipe przez wspólny BottomSheet, fokus wraca na badge).
+  P1: hero — copy „Następny w rotacji A → B → C" (bez wewnętrznej mechaniki), nazwa planu
+  jako target min-h-11, „Inny dzień"→„Zmień", „Bez planu" zdegradowane do muted;
+  karty programów — nazwa + 2 fakty (częstotliwość · minuty) zamiast 6 chipsów, „Ustaw"
+  jako ghost; `programs/loading.tsx` z zachowanym TrainingHeader+TrainingSubnav;
+  insight — klucz per userId+programId (`lib/programReview.ts`, userId z cookie-sesji
+  bez rundy sieciowej), SSR-snapshot „widoczny", więc brak doklejania po hydratacji.
+  `TrainingHeader` przyjmuje `goalSlot` (Plany świadomie bez badge'a — decyzja P2 audytu).
+  Weryfikacja: tsc ✓, lint ✓, testy program-review 2/2 ✓ (próg 12, izolacja kont/programów).
+  OGRANICZENIA sesji (sandbox bez lokalnego stacka): bez uruchomienia dev/build i bez
+  zrzutów 320×568/393×852 — przegląd wizualny na localhost i checkpoint urządzeniowy
+  z DoD audytu pozostają [Ty]; testy komponentowe badge/hero/loading wymagają decyzji
+  o infrze testów komponentowych (repo ma tylko node:test) — odnotowane jako otwarte.
+  Czego nie dotknięto: akcji serwerowych, migracji, loggera, Ekipy, duplikatów ikon.
+  NIE wypchnięte (push = deploy) — commit lokalny czeka na Twoje oko.
 - **2026-07-17 · Claude (integracja paczki audytu R2 + odświeżenie HANDOFF): ZAKOŃCZONE.**
   Zakres: commit dokumentów audytu R2 (doc + wpisy Codexa w HANDOFF/README/tym pliku)
   oraz 4 punktowe korekty przeterminowanych fragmentów HANDOFF: stan wdrożenia IA

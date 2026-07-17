@@ -231,7 +231,7 @@
   animation: pr-flash 1.2s ease-out 1;
 }
 
-/* F2 (redesign-home.md §3.1): zapłon płomienia FlameWeek po powrocie z celebracji
+/* F2 (redesign-home.md §3.1): zapłon płomienia WeeklyGoalBadge po powrocie z celebracji
    — overshoot skali, jednorazowo. Dziś-nietrenowany dostaje osobny, spokojny puls. */
 @keyframes flame-ignite {
   0% {

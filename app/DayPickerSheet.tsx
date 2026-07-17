@@ -23,7 +23,7 @@ export function DayPickerSheet({
       onOpenChange={setOpen}
       trigger={
         <button type="button" className="min-h-11 underline-offset-2 hover:underline">
-          Inny dzień
+          Zmień
         </button>
       }
       title={programName}
