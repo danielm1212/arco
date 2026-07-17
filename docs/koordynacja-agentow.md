@@ -49,6 +49,15 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (audyt kodu 4-torowy: security, integralność, wydajność, zdrowie): ZAKOŃCZONE.**
+  Zakres: odczyt całego kodu + nowy `docs/audyt-kodu-2026-07.md`; z kodu dotknięte tylko
+  `public/sw N.js` (33 artefakty synca, gitignored — usunięte). Werdykt: zero P0; RLS,
+  service role, idempotencja i re-rendery loggera potwierdzone czyste. 4×P1: cichy zrzut
+  outboxu przy uszkodzonym JSON, e1RM skopiowany w 4 miejscach (ważne przed Coach),
+  brak testu `repPRs`, guidance blokujący LCP home. P2 w dokumencie z rekomendowaną
+  kolejnością. Sprostowanie po weryfikacji: obrazy idą z Supabase CDN — githubusercontent
+  w `remotePatterns`/CSP to zaszłość do wycięcia, nie aktywny hotlink.
+  Czego nie dotknięto: kodu aplikacji, migracji, testów. Zaległości: jak w dokumencie.
 - **2026-07-17 · [Ty]+Claude (przegląd i zatwierdzenie słownika R5a): ZAKOŃCZONE.**
   Decyzje [Ty]: 8 konwencji §1 zatwierdzonych bez wyjątków; Decline_Push-Up = „Pompki głową
   w dół" (zgodnie z K4, near-dup z Feet-Elevated zostaje do kuracji); sporne nazwy §2 wg
