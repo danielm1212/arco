@@ -14,8 +14,8 @@ Po audycie całej aplikacji przyjęto docelową IA: bottom bar **Trening · Post
 
 Pełny kontrakt jest w `userflows-docelowe-2026-07.md`. Aktywny plan wdrożenia to
 R0–R7 z `plan-sprintow-2026-07.md`, rozbity na R0.5, R1a/R1b, R3a/R3b i R5a/R5b.
-Zastępuje wcześniejszą sekwencję Sprint 17b → H2. R0.5 został zaakceptowany, a fundament
-R1a jest wdrożony lokalnie i czeka na regresję urządzeniową przed publikacją.
+Zastępuje wcześniejszą sekwencję Sprint 17b → H2. Stan wdrożenia: R0.5 zaakceptowany,
+R1a/R1b/R2 na produkcji; R2 czeka na refinement R2.1 (ryzyko 11) przed startem R3a.
 
 ## Sprint 17a — onboarding v3.1 (2026-07-16)
 
@@ -97,7 +97,7 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 Aktualny gate obejmuje:
 
 - lint,
-- 23 testy jednostkowe,
+- 70 testów jednostkowych,
 - walidację danych treningowych,
 - walidację rekomendacji,
 - build produkcyjny,
@@ -115,11 +115,15 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 6. **Analityka:** adapter istnieje, ale produkcyjnie pozostaje no-op do czasu decyzji prawnej i produktowej.
 7. **Ekipy publiczne:** przed otwarciem wymagają zgód, rate limitów, ochrony 8-znakowych kodów, rotacji zaproszeń i dogfoodingu wielokontowego.
 8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. Decyzja podjęta (2026-07-17): zdjęcia dla wszystkich 16 generuje [Ty] w sobotę 2026-07-18; ryzyko zamyka się z ich uploadem.
-9. **Docelowa IA jest wdrożona częściowo:** R0.5 jest zaakceptowany, a R1a wprowadza nowy
-   kontrakt chrome i tab Ekipy. Home oraz huby nadal czekają na R2–R4; R1b musi wcześniej
-   zabezpieczyć jedną aktywną sesję i szkice. `/history/add` nadal wymaga przebudowy wyboru
-   programu oraz pełnej regresji daty i overflow na iOS.
+9. **Docelowa IA jest wdrożona do R2 włącznie** (chrome, integralność sesji, hub Treningu);
+   huby Postępy/Ekipa i logger czekają na R3a–R4. `/history/add` nadal wymaga przebudowy
+   wyboru programu oraz pełnej regresji daty i overflow na iOS.
 10. **Drift danych treningowych:** w produkcji brakuje `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`; zweryfikowany restore ma 905 ćwiczeń, a lokalny zestaw 907. Przed H2 trzeba wykonać precyzyjny sync tych dwóch rekordów zamiast pełnego re-seeda.
+11. **R2 Home/Plany wymaga refinementu przed R3a:** pion ma właściwy szkielet IA,
+    lecz nie domyka zaakceptowanego UX/UI. Pełny `FlameWeek` nadal wyprzedza hero
+    (na 320 × 568 koliduje z floating nav), badge celu nie jest klikany, hero ma
+    zbyt mały target nazwy planu, loading Plany gubi chrome, a karty biblioteki są
+    zbyt gęste. Zakres i Definition of Done R2.1: `audyt-r2-home-plany-2026-07-17.md`.
 
 ## Następny krok
 
@@ -140,9 +144,10 @@ zweryfikowany w przeglądarce (świeży build, zero błędów CSP). Lokalny buck
 (4/4 P1, cała lista P2) poza większymi refactorami odłożonymi jako tło R3–R5
 (agregaty postępów, wspólny typ joinów, formatSet w 3 miejscach, duże komponenty,
 i18n komunikatów, multi-tab outbox — udokumentowane).
-**[Ty] push:** lokalny commit `33dd58e` (4 nowe pliki testów, czysty przyrost, zero
-zmian produkcyjnych) czeka na `git push` → CI + deploy.
-Kod: checkpoint dogfood po R2, potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
+Commit `33dd58e` (testy libów) jest wypchnięty — `origin/main` = `c6d2bac`, całość
+dorobku 2026-07-17 jest na GitHubie.
+Kod: **najpierw R2.1 według `audyt-r2-home-plany-2026-07-17.md`, potem checkpoint
+dogfood i R3a–R4.** Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
 powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie
 4 P1 zamknięte; zostaje P2 jako tło przy R3–R5.

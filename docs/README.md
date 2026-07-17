@@ -1,6 +1,6 @@
 # Dokumentacja Arco
 
-**Aktualizacja:** 2026-07-16
+**Aktualizacja:** 2026-07-17
 
 ## Zacznij tutaj
 
@@ -28,6 +28,8 @@ Tych sześć plików jest dokumentami sterującymi bieżącą pracą. Gdy starsz
 - `audyt-kodu-2026-07.md` — audyt bezpieczeństwa, integralności danych, wydajności i zdrowia kodu po R1a/R1b/R2; findingi P1/P2 z rekomendowaną kolejnością.
 - `userflows-docelowe-2026-07.md` — decyzja nadrzędna wobec wcześniejszych wariantów IA z audytów.
 - `r0-5-wynik-prototypu.md` — wynik klikalnego prototypu, przetestowane flow i decyzje przed implementacją.
+- `audyt-r2-home-plany-2026-07-17.md` — bramka refinementu R2.1: rozbieżności
+  między wdrożonym pionem Home/Plany a zaakceptowanym UX/UI; należy wykonać przed R3a.
 - `konkurencja-hevy.md` oraz `archive/konkurencja-hevy-ux.md` — benchmark konkurencyjny.
 - `monetyzacja.md` — wcześniejsza analiza; wizja v2 rozstrzyga konflikty.
 

@@ -49,6 +49,25 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (integracja paczki audytu R2 + odświeżenie HANDOFF): ZAKOŃCZONE.**
+  Zakres: commit dokumentów audytu R2 (doc + wpisy Codexa w HANDOFF/README/tym pliku)
+  oraz 4 punktowe korekty przeterminowanych fragmentów HANDOFF: stan wdrożenia IA
+  (R1a nie „czeka lokalnie" — R1a/R1b/R2 na produkcji), 23→70 testów jednostkowych,
+  ryzyko 9 przepisane na stan po R2, usunięta nieaktualna prośba o push `33dd58e`
+  (zweryfikowane: origin/main = `c6d2bac`). Zero zmian kodu. Zaległości bez zmian:
+  [Ty] regresja urządzeniowa + checkpoint, R2.1 wg audytu przed R3a, sobota zdjęcia.
+- **2026-07-17 · Codex (audyt jakości R2 Home/Plany): ZAKOŃCZONE, bez zmian kodu.**
+  Zakres: konfrontacja wdrożenia `ac82a18` z `userflows-docelowe-2026-07.md`,
+  planem R2, zasadami Arco Warm oraz ręcznym widokiem mobile 320×568/320×700/393×852.
+  Werdykt: IA ma dobry szkielet, ale wdrożenie jest pionem minimalnym, a nie
+  zamkniętym refinementem. P0: pełny `FlameWeek` zostaje przed hero mimo decyzji
+  produktowej i na 320×568 koliduje z floating nav; badge `Flame + 2/2` jest
+  nieklikalnym statusem. P1: hero ma 16 px target nazwy planu i zbyt techniczne
+  copy, loading Plany usuwa wspólny chrome, karta programu ma za dużo chipsów,
+  insight ma globalny klucz localStorage i może skakać po hydratacji. Źródło
+  prawdy/done R2.1: `docs/audyt-r2-home-plany-2026-07-17.md`. Rezerwacja: brak;
+  nie dotknięto kodu, migracji, testów ani cudzych plików untracked.
+
 - **2026-07-17 · [Ty]+Claude (deploy paczki P2 + testy libów bez pokrycia): ZAKOŃCZONE.**
   [Ty]: `npm run upload:exercise-images` (na LOKALNY bucket — `.env.local` wskazuje stack
   lokalny, nie prod; potwierdzone `3_4_Sit-Up/0.jpg` 400→200) i `git push` paczki P2
