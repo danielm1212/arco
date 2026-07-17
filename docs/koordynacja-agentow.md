@@ -49,6 +49,15 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (audyt kodu: konsolidacja e1RM + testy repPRs, P1.2+P1.3): ZAKOŃCZONE TECHNICZNIE.**
+  Zakres: nowy `lib/exerciseMetrics.ts` (`estimate1RM` Epley + `setMetric` per typ),
+  `app/progress/stats.ts`, `app/exercise/[id]/page.tsx`, `lib/getHomeGuidance.ts`
+  (4 kopie wzoru + 3 identyczne funkcje metryki → jeden import), nowe
+  `tests/rep-prs.test.ts` i `tests/exercise-metrics.test.ts` (commit `37af446`, lokalnie).
+  Zero zmian zapytań i wartości — czysty refactor + siatka testów przed featurem Coach.
+  Weryfikacja: tsc ✓, lint ✓, testy 44/44 ✓ (+7), build ✓. Czego nie dotknięto: migracji,
+  seedów, loggera, duplikatów ikon. Zaległości: [Ty] push `37af446`; następna sesja —
+  P1.4 guidance poza LCP home + indeks `sessions(user_id, started_at desc)` (migracja).
 - **2026-07-17 · Claude (audyt kodu: paczka „trwałość zapisu" P1.1+P2): ZAKOŃCZONE TECHNICZNIE.**
   Zakres: `lib/outbox.ts`, `lib/useSync.ts`, `lib/usePersistentFormDraft.ts`,
   `tests/outbox.test.ts` (commit `e0c4cbf`, lokalnie). Wynik: (1) P1.1 — uszkodzony JSON

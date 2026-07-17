@@ -7,8 +7,8 @@
 ## P1 — do najbliższych sprintów
 
 1. ~~**`lib/outbox.ts` `read()` — cichy zrzut kolejki przy uszkodzonym JSON.**~~ ✅ 2026-07-17 (`e0c4cbf`): surowa wartość ląduje pod `arco-outbox-v1-corrupt` (pierwszy backup wygrywa), klucz główny czyszczony, toast przez event + `pendingOutboxAlerts()`.
-2. **Wzór e1RM (Epley) skopiowany w 4 miejscach:** `app/progress/stats.ts:250`, `app/exercise/[id]/page.tsx:17` i `:110`, `lib/getHomeGuidance.ts:20`. Rozjazd formuły = rozjazd rekordów między widokami. Fix: `estimate1RM()` w `lib/` + import wszędzie. Ważne przed featurem Coach (prognoza e1RM = rdzeń oferty).
-3. **`lib/repPRs.ts` bez testu jednostkowego** — logika PR per-powtórzenia (Pareto) liczona on-the-fly, bez siatki bezpieczeństwa. Fix: `tests/rep-prs.test.ts`. Jw. — przed Coach.
+2. ~~**Wzór e1RM (Epley) skopiowany w 4 miejscach**~~ ✅ 2026-07-17 (`37af446`): `estimate1RM()` + `setMetric()` w `lib/exerciseMetrics.ts`, wszystkie 4 kopie zastąpione importem (przy okazji zniknęły też 3 identyczne funkcje metryki per typ).
+3. ~~**`lib/repPRs.ts` bez testu jednostkowego**~~ ✅ 2026-07-17 (`37af446`): `tests/rep-prs.test.ts` (Pareto: dominacja, sortowanie, brzegi) + `tests/exercise-metrics.test.ts` (wartości Epleya, wybór metryki wg typu).
 4. **Home: guidance blokuje LCP.** `getHomeGuidance()` (3 sekwencyjne rundy DB) siedzi w blokującym batchu `app/page.tsx:53`, a `GuidanceChip` jest na dole strony. Fix: wyjąć z batcha, owinąć `<Suspense>`. Zysk: hero nie czeka ~kilkaset ms na 4G. Przy okazji trasa wróci pod budżet ≤4 zapytań.
 
 ## P2 — kolejka refinementu

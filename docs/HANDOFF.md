@@ -69,6 +69,9 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Paczka „trwałość zapisu" z audytu kodu (P1.1+P2, commit `e0c4cbf`): uszkodzony outbox
   robi backup zamiast cichej utraty serii, pełny storage nie gubi operacji w trakcie życia
   karty (fallback w pamięci + toast), `clearDraft` nie odtwarza już skasowanego szkicu.
+- Konsolidacja e1RM (audyt P1.2+P1.3, commit `37af446`): wzór Epleya i metryka per typ
+  ćwiczenia żyją w jednym `lib/exerciseMetrics.ts` (były 4 kopie), `repPRs` i metryki
+  mają testy jednostkowe — fundament pod prognozę Coach.
 
 ## Technologia i dane
 
@@ -119,13 +122,13 @@ oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
 **[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów — gotowe prompty per ćwiczenie
 w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamera; styl bazowy
 `prompt-fotografia-warm.md`), upload przez `upload:exercise-images` → `sync:exercise-content`.
-**[Ty] push:** lokalny commit `e0c4cbf` (paczka „trwałość zapisu" z audytu — czysty kod
-lib/testy, bez migracji) czeka na push → CI + deploy.
+**[Ty] push:** lokalny commit `37af446` (konsolidacja e1RM + testy repPRs — czysty
+refactor lib/testy, bez migracji) czeka na push → CI + deploy.
 Kod: checkpoint dogfood po R2, potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
-powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Z audytu kodu zostają:
-P1.2 `estimate1RM()` w lib + P1.3 test `repPRs` (przed featurem Coach), P1.4 guidance
-poza LCP home + indeks `sessions(user_id, started_at desc)`.
+powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Z audytu kodu zostaje:
+P1.4 guidance poza LCP home + indeks `sessions(user_id, started_at desc)` (wymaga
+migracji — najlepiej przy najbliższym dotknięciu home/statystyk), potem reszta P2.
 Równolegle: przeniesienie zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
 Procedury wydania, zamknięcia sesji i migracji są od 2026-07-17 skodyfikowane w
 `.claude/skills/` (arco-release, arco-session-close, arco-migration) i wiążące przez `CLAUDE.md`.
