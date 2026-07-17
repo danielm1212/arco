@@ -17,7 +17,7 @@ export interface OutboxSetRow {
   completed: boolean;
 }
 
-export type OutboxOp =
+export type OutboxOp = (
   | { kind: "upsert"; sessionId: string; row: OutboxSetRow }
   | { kind: "delete"; sessionId: string; setId: string }
   | {
@@ -25,7 +25,18 @@ export type OutboxOp =
       sessionId: string;
       sessionExerciseId: string;
       notes: string;
-    };
+    }
+) & {
+  /**
+   * Znacznik wersji operacji. `removeOp` usuwa wpis tylko gdy token się zgadza —
+   * inaczej nowsza operacja zakolejkowana w trakcie wysyłki starszej zostałaby
+   * skasowana bez wysłania (utrata np. `completed: true` ostatniej serii).
+   */
+  token?: string;
+};
+
+const newToken = () =>
+  `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
 const KEY = "arco-outbox-v1";
 
@@ -52,19 +63,25 @@ function write(map: Record<string, OutboxOp>) {
 
 export function enqueueUpsert(sessionId: string, row: OutboxSetRow) {
   const map = read();
-  map[row.id] = { kind: "upsert", sessionId, row };
+  map[row.id] = { kind: "upsert", sessionId, row, token: newToken() };
   write(map);
 }
 
 export function enqueueDelete(sessionId: string, setId: string) {
   const map = read();
-  map[setId] = { kind: "delete", sessionId, setId };
+  map[setId] = { kind: "delete", sessionId, setId, token: newToken() };
   write(map);
 }
 
 export function enqueueNotes(sessionId: string, sessionExerciseId: string, notes: string) {
   const map = read();
-  map[`notes:${sessionExerciseId}`] = { kind: "notes", sessionId, sessionExerciseId, notes };
+  map[`notes:${sessionExerciseId}`] = {
+    kind: "notes",
+    sessionId,
+    sessionExerciseId,
+    notes,
+    token: newToken(),
+  };
   write(map);
 }
 
@@ -76,9 +93,16 @@ export function sessionOps(sessionId: string): OutboxOp[] {
   return allOps().filter((op) => op.sessionId === sessionId);
 }
 
+/**
+ * Usuwa operację z kolejki tylko jeśli wpis nie został w międzyczasie nadpisany
+ * nowszą wersją (porównanie tokenów). Wpisy sprzed wprowadzenia tokenów
+ * (`undefined === undefined`) są usuwane jak dotychczas.
+ */
 export function removeOp(op: OutboxOp) {
   const map = read();
-  delete map[keyOf(op)];
+  const key = keyOf(op);
+  if (map[key]?.token !== op.token) return;
+  delete map[key];
   write(map);
 }
 

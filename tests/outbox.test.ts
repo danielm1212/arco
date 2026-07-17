@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 import {
+  allOps,
   clearSessionOps,
   enqueueDelete,
   enqueueNotes,
   enqueueUpsert,
   pendingCount,
+  removeOp,
   restoreSessionDraft,
   type OutboxSetRow,
 } from "../lib/outbox";
@@ -87,4 +89,37 @@ test("szkic loggera odzyskuje serie i notatki tylko dla właściwej sesji", () =
   clearSessionOps("session-1");
   assert.equal(pendingCount("session-1"), 0);
   assert.equal(pendingCount(), 1);
+});
+
+test("removeOp nie kasuje operacji nadpisanej w trakcie wysyłki (lost update ✓ serii)", () => {
+  // Scenariusz z regresji 2026-07-17: zapis wartości serii wychodzi do serwera,
+  // w trakcie await użytkownik tapie ✓ (completed: true) na tej samej serii.
+  enqueueUpsert("session-1", { ...baseSet, completed: false });
+  const inFlight = allOps()[0]; // snapshot, który flush właśnie wysyła
+
+  enqueueUpsert("session-1", { ...baseSet, completed: true }); // nadpisanie w trakcie
+  removeOp(inFlight); // flush kończy wysyłkę starszej wersji
+
+  // Nowsza operacja MUSI zostać w kolejce — inaczej ✓ nigdy nie trafi na serwer.
+  assert.equal(pendingCount("session-1"), 1);
+  const remaining = allOps()[0];
+  assert.equal(remaining.kind, "upsert");
+  assert.equal(remaining.kind === "upsert" && remaining.row.completed, true);
+
+  // Wysyłka aktualnej wersji zdejmuje wpis normalnie.
+  removeOp(remaining);
+  assert.equal(pendingCount("session-1"), 0);
+});
+
+test("removeOp usuwa wpisy sprzed wprowadzenia tokenów (kompatybilność wstecz)", () => {
+  // Operacja zapisana starą wersją kodu — bez tokenu w localStorage.
+  window.localStorage.setItem(
+    "arco-outbox-v1",
+    JSON.stringify({
+      "set-1": { kind: "upsert", sessionId: "session-1", row: { ...baseSet } },
+    }),
+  );
+  assert.equal(pendingCount(), 1);
+  removeOp(allOps()[0]);
+  assert.equal(pendingCount(), 0);
 });

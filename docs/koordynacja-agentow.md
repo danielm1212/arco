@@ -49,6 +49,20 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (fix: lost update ✓ serii w outboxie — regresja z testu [Ty]): ZAKOŃCZONE TECHNICZNIE.**
+  Zgłoszenie [Ty] z regresji iPhone PWA: po wznowieniu/wejściu do loggera ostatnia ukończona
+  seria jest odznaczona (oba scenariusze: minimalizacja+wznowienie oraz ubicie aplikacji).
+  Przyczyna: `flush` w `lib/useSync.ts` wysyłał snapshot `allOps()`, a `removeOp` kasował
+  wpis po kluczu bez porównania wersji — operacja nadpisana w trakcie `await` (np. ✓ po
+  zapisie wartości tej samej serii) była usuwana bez wysłania. Dodatkowo flush wołany
+  w trakcie flusha był ubijany guardem (nowa operacja czekała do 15 s na interval).
+  Fix: token wersji per operacja w `lib/outbox.ts` + warunkowy `removeOp` (kompatybilny
+  ze starymi wpisami bez tokenu) oraz pętla flusha ze świeżym odczytem kolejki
+  i domówieniem przebiegu (`flushRequested`). Zakres: `lib/outbox.ts`, `lib/useSync.ts`,
+  `tests/outbox.test.ts` (+2 testy, w tym odtworzenie scenariusza regresji).
+  Weryfikacja: tsc ✓, lint ✓, testy outbox 3/3 ✓ (pełny zestaw jednostkowy uruchomi CI).
+  Czego nie dotknięto: Logger.tsx, useSessionMutations, akcje serwerowe, migracje.
+  Zaległość [Ty]: push (uruchomi CI + deploy) i powtórka obu scenariuszy na iPhone PWA.
 - **2026-07-17 · Claude (Cowork: skille procedur + porządki repo i docs): ZAKOŃCZONE.**
   Zakres: `.claude/skills/` (arco-release, arco-session-close, arco-migration), `CLAUDE.md`,
   `docs/HANDOFF.md`, ten plik, `public/icons-3d/`. Wynik: trzy skille zacommitowane

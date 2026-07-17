@@ -32,27 +32,40 @@ export function useSync() {
   const [pending, setPending] = useState(() => (typeof window === "undefined" ? 0 : pendingCount()));
   const [syncing, setSyncing] = useState(false);
   const flushing = useRef(false);
+  const flushRequested = useRef(false);
 
   const flush = useCallback(async () => {
-    if (flushing.current) return;
+    if (flushing.current) {
+      // Trwający flush domówi kolejny przebieg — nowa operacja nie czeka na interval.
+      flushRequested.current = true;
+      return;
+    }
     if (typeof navigator !== "undefined" && !navigator.onLine) return;
-    const ops = allOps();
-    if (ops.length === 0) return;
+    if (allOps().length === 0) return;
 
     flushing.current = true;
     setSyncing(true);
     try {
-      for (const op of ops) {
-        try {
-          if (op.kind === "upsert") await upsertSet(op.sessionId, op.row);
-          else if (op.kind === "delete") await deleteSet(op.sessionId, op.setId);
-          else await updateSessionExerciseNotes(op.sessionId, op.sessionExerciseId, op.notes);
-          removeOp(op);
-          setPending(pendingCount());
-        } catch {
-          break; // brak sieci / błąd — spróbujemy ponownie później
+      let failed = false;
+      do {
+        flushRequested.current = false;
+        // Świeży odczyt w każdym przebiegu: operacje nadpisane w trakcie wysyłki
+        // (token mismatch w removeOp) zostają w kolejce i wychodzą tutaj.
+        const ops = allOps();
+        if (ops.length === 0) break;
+        for (const op of ops) {
+          try {
+            if (op.kind === "upsert") await upsertSet(op.sessionId, op.row);
+            else if (op.kind === "delete") await deleteSet(op.sessionId, op.setId);
+            else await updateSessionExerciseNotes(op.sessionId, op.sessionExerciseId, op.notes);
+            removeOp(op);
+            setPending(pendingCount());
+          } catch {
+            failed = true; // brak sieci / błąd — spróbujemy ponownie później
+            break;
+          }
         }
-      }
+      } while (!failed && (flushRequested.current || pendingCount() > 0));
     } finally {
       flushing.current = false;
       setSyncing(false);
