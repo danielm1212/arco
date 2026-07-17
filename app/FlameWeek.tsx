@@ -19,17 +19,7 @@ export interface WeekDay {
  * i odpoczywaj" na done-screen dokłada ?trained=1, tu odpalamy animację raz
  * i czyścimy URL, żeby odświeżenie strony jej nie powtórzyło.
  */
-export function FlameWeek({
-  week,
-  streak,
-  weeklyDone,
-  weeklyGoal,
-}: {
-  week: WeekDay[];
-  streak: number;
-  weeklyDone: number;
-  weeklyGoal: number;
-}) {
+export function FlameWeek({ week, streak }: { week: WeekDay[]; streak: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [ignite] = useState(() => searchParams.get("trained") === "1");
@@ -46,18 +36,10 @@ export function FlameWeek({
 
   return (
     <section className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
+      {/* Licznik celu przeniesiony do badge'a w headerze (plan §R2) — płomienie
+          pokazują UNIKALNE DNI aktywności, nie drugą wersję licznika treningów. */}
       <div className="mb-sm flex items-center justify-between">
-        <span className="flex items-baseline gap-2">
-          <span className="text-sm font-medium text-muted-foreground">Ten tydzień</span>
-          <span className="text-sm font-semibold tabular-nums">
-            {weeklyDone}/{weeklyGoal}
-            {weeklyDone >= weeklyGoal && (
-              <span className="ml-1 text-primary" aria-label="cel osiągnięty">
-                🎯
-              </span>
-            )}
-          </span>
-        </span>
+        <span className="text-sm font-medium text-muted-foreground">Ten tydzień</span>
         <span className="flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1">
           <Flame className="size-3.5 fill-primary text-primary" aria-hidden />
           <span className="text-base font-semibold tabular-nums text-foreground">{streak}</span>

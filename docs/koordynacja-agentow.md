@@ -49,6 +49,19 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (R2: Trening, Dziś i Plany — pierwszy pion): ZAKOŃCZONE TECHNICZNIE, lokalnie.**
+  Wdrożone: `TrainingHeader` (logo + badge celu = ukończone treningi/tydzień + awatar-monogram
+  → /settings), `TrainingSubnav` Dziś | Plany (replace, wzorzec ProgressSubnav), hero
+  „Następny trening" z rozdzielonymi celami tapnięcia (CTA startu ≠ nazwa planu ≠ podgląd),
+  `/programs` bez strzałki Back — wspólny header + subnav + sekcja „Aktywny plan",
+  usunięte z Home: powitanie, karta „Przeglądaj programy", stała karta Ekipy (komponent
+  zostaje na R3b), „Na dziś wszystko gra"; przegląd planu → `ProgramReviewInsight`
+  (dismissowalny, wraca co 12 sesji); FlameWeek bez licznika celu (badge go przejął, płomienie
+  = unikalne dni); home w JEDNYM batchu zapytań (zagnieżdżony join slotów aktywnego planu,
+  usunięte 2 sekwencyjne rundy + 2 zapytania Ekipy). Weryfikacja: tsc ✓, lint ✓, testy 25/25 ✓,
+  build ✓, kształt zagnieżdżonego joinu przez RLS na lokalnym stacku (user ci-admin) ✓,
+  serwer + redirect + konsola ✓. NIE wypchnięte na origin (push = deploy prod) — czeka na
+  przegląd wizualny [Ty] na localhost:3000. Nie dotknięto: migracji, seedów, loggera, smoke'ów.
 - **2026-07-16 · Claude (naprawa CI po deployu R1b — smoke vs niezmiennik sesji): ZAKOŃCZONE.**
   CI na `9f65a6d` padło w „Sprawdź główny przepływ danych": `smoke-phase1.ts` tworzył drugą
   otwartą sesję przy żywej pierwszej — `sessions_one_open_per_user_idx` z R1b słusznie to

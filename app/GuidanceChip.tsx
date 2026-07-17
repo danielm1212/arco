@@ -24,11 +24,9 @@ function GuidanceIcon({ kind }: { kind: GuidanceItem["kind"] }) {
 export function GuidanceChip({ items }: { items: GuidanceItem[] }) {
   const [open, setOpen] = useState(false);
 
-  if (items.length === 0) {
-    return (
-      <p className="px-2xs text-sm text-muted-foreground">Na dziś wszystko gra 💪</p>
-    );
-  }
+  // Userflows §3: puste wskazówki znikają z domyślnego home — cisza zamiast
+  // wypełniacza „wszystko gra".
+  if (items.length === 0) return null;
 
   const top = items[0];
 

@@ -3,15 +3,16 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, LibraryBig, Settings } from "lucide-react";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeGuidance } from "@/lib/getHomeGuidance";
 import { localDayKey } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
 import { GuidanceChip } from "./GuidanceChip";
 import { FlameWeek } from "./FlameWeek";
-import { TeamHomeCard } from "@/components/TeamHomeCard";
+import { ProgramReviewInsight } from "./ProgramReviewInsight";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
+import { TrainingHeader } from "@/components/TrainingHeader";
+import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 import {
   formatCycleStructure,
   type ProgramCandidate,
@@ -21,11 +22,26 @@ import {
 
 export const dynamic = "force-dynamic";
 
+type ActiveDay = {
+  id: string;
+  label: string;
+  position: number;
+  program_day_slots: {
+    position: number;
+    target_sets: number;
+    rest_seconds: number | null;
+    exercises: { name: string } | null;
+  }[];
+};
+
 export default async function HomePage() {
   const supabase = await createClient();
   const historySince = new Date();
   historySince.setDate(historySince.getDate() - 120);
 
+  // R2: jeden równoległy batch — hero nie może czekać na sekwencyjny waterfall.
+  // Dni i sloty aktywnego planu wchodzą zagnieżdżonym joinem zamiast dwóch
+  // dodatkowych rund (sugerowany dzień + jego metadane).
   const [
     { data: programs },
     { data: active },
@@ -34,13 +50,15 @@ export default async function HomePage() {
     { data: settings },
     { count: sessionCount },
     guidance,
-    { data: teams },
   ] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, slug, name, cycle_days, environment, focus_key, level_min, level_max, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position)")
+      .select("id, slug, name, cycle_days, environment, focus_key, level_min, level_max, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment")
       .order("cycle_days"),
-    supabase.from("user_active_program").select("program_id").maybeSingle(),
+    supabase
+      .from("user_active_program")
+      .select("program_id, programs(program_days(id, label, position, program_day_slots(position, target_sets, rest_seconds, exercises(name))))")
+      .maybeSingle(),
     supabase
       .from("sessions")
       .select("id, started_at")
@@ -56,31 +74,22 @@ export default async function HomePage() {
     supabase.from("user_settings").select("unit_system, weekly_goal, display_name").maybeSingle(),
     supabase.from("sessions").select("id", { count: "exact", head: true }),
     getHomeGuidance(),
-    supabase.from("pods").select("id, name").order("created_at").limit(1),
   ]);
 
-  const homeTeam = teams?.[0] ?? null;
-  const { data: homeTeamMembers } = homeTeam
-    ? await supabase.rpc("get_pod_members", { p_pod_id: homeTeam.id })
-    : { data: [] };
-
   const activeId = active?.program_id ?? null;
-  const teamActivityWindowStart = new Date();
-  teamActivityWindowStart.setHours(teamActivityWindowStart.getHours() - 48);
   const activeProgram = (programs ?? []).find((p) => p.id === activeId) ?? null;
   const presetCount = (programs ?? []).filter((p) => p.slug).length;
-  const activeDays = activeProgram
-    ? ((activeProgram.program_days as { id: string; label: string; position: number }[]) ?? [])
-        .slice()
-        .sort((a, b) => a.position - b.position)
-    : [];
+  const activeDays = (
+    ((active?.programs as unknown as { program_days: ActiveDay[] } | null)?.program_days ?? [])
+  )
+    .slice()
+    .sort((a, b) => a.position - b.position);
   const activeDayIds = new Set(activeDays.map((day) => day.id));
   // 12 sesji to ok. 4–6 tygodni dla najczęstszych rytmów 2–3×/tydz. Nie liczymy
   // freestyle ani poprzednich programów — sugestia ma dotyczyć właśnie tego cyklu.
   const completedSessionsInActiveProgram = (finished ?? []).filter(
     (session) => session.program_day_id && activeDayIds.has(session.program_day_id),
   ).length;
-  const showProgramReview = completedSessionsInActiveProgram >= 12;
 
   // Pasek tygodnia + streak
   const dayKey = localDayKey; // klucz LOKALNY (fix: ring „dziś" wskazywał sobotę w piątek)
@@ -111,58 +120,42 @@ export default async function HomePage() {
     streak++;
     w -= WEEK;
   }
-  // Cel tygodniowy + postęp
+  // Cel tygodniowy + postęp (badge w headerze liczy UKOŃCZONE TRENINGI — plan §R2)
   const weeklyGoal = settings?.weekly_goal ?? 2;
   const thisWeek = wkStart(new Date());
   const weeklyDone = (finished ?? []).filter(
     (s) => wkStart(new Date(s.started_at)) === thisWeek,
   ).length;
 
-  // Sugestia kolejnego dnia (rotacja wg ostatniej zakończonej sesji aktywnego programu)
+  // Sugestia kolejnego dnia: rotacja liczona z już pobranej historii (bez
+  // dodatkowego zapytania). Ostatnia ukończona sesja aktywnego planu → następna
+  // pozycja w cyklu; brak historii w oknie 120 dni → pierwszy dzień.
   let suggested: { dayId: string; label: string } | null = null;
-  if (activeId && programs) {
-    const ap = programs.find((p) => p.id === activeId);
-    const days = (
-      (ap?.program_days as { id: string; label: string; position: number }[]) ?? []
-    )
-      .slice()
-      .sort((a, b) => a.position - b.position);
-    if (days.length) {
-      const { data: last } = await supabase
-        .from("sessions")
-        .select("program_day_id")
-        .not("finished_at", "is", null)
-        .in(
-          "program_day_id",
-          days.map((d) => d.id),
-        )
-        .order("started_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      let idx = 0;
-      if (last?.program_day_id) {
-        const pos = days.findIndex((d) => d.id === last.program_day_id);
-        idx = pos >= 0 ? (pos + 1) % days.length : 0;
-      }
-      suggested = { dayId: days[idx].id, label: days[idx].label };
+  if (activeDays.length) {
+    const lastActive = (finished ?? [])
+      .filter((s) => s.program_day_id && activeDayIds.has(s.program_day_id))
+      .sort((a, b) => +new Date(b.started_at) - +new Date(a.started_at))[0];
+    let idx = 0;
+    if (lastActive?.program_day_id) {
+      const pos = activeDays.findIndex((d) => d.id === lastActive.program_day_id);
+      idx = pos >= 0 ? (pos + 1) % activeDays.length : 0;
     }
+    suggested = { dayId: activeDays[idx].id, label: activeDays[idx].label };
   }
 
-  // Metadane sugerowanego dnia (liczba ćwiczeń, szac. czas, podgląd)
+  // Metadane sugerowanego dnia z zagnieżdżonego joinu
   let suggestedMeta: { count: number; minutes: number; preview: string[] } | null = null;
   if (suggested) {
-    const { data: slots } = await supabase
-      .from("program_day_slots")
-      .select("target_sets, rest_seconds, exercises(name)")
-      .eq("program_day_id", suggested.dayId)
-      .order("position");
-    if (slots?.length) {
+    const slots = (activeDays.find((d) => d.id === suggested.dayId)?.program_day_slots ?? [])
+      .slice()
+      .sort((a, b) => a.position - b.position);
+    if (slots.length) {
       const minutes = Math.round(
         slots.reduce((m, s) => m + s.target_sets * (40 + (s.rest_seconds ?? 90)), 0) / 60,
       );
       const preview = slots
         .slice(0, 3)
-        .map((s) => (s.exercises as unknown as { name: string } | null)?.name ?? "")
+        .map((s) => s.exercises?.name ?? "")
         .filter(Boolean);
       suggestedMeta = { count: slots.length, minutes, preview };
     }
@@ -191,102 +184,77 @@ export default async function HomePage() {
           optional_equipment: p.optional_equipment,
         }))}
       />
-      <header className="flex items-center justify-between border-b px-sm py-sm">
-        <span className="pl-2xs">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Arco" className="h-8 w-auto dark:hidden" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-8 w-auto dark:block" />
-        </span>
-        <nav className="flex items-center">
-          {/* F1 (redesign-home.md §3.4): wylogowanie przeniesione do /settings —
-              raz-na-kwartał akcja nie zasługuje na drugą ikonę w headerze */}
-          <Button variant="ghost" size="icon" aria-label="Ustawienia" asChild>
-            <Link href="/settings">
-              <Settings />
-            </Link>
-          </Button>
-        </nav>
-      </header>
+      <TrainingHeader
+        goalBadge={(sessionCount ?? 0) > 0 ? { done: weeklyDone, goal: weeklyGoal } : null}
+        displayName={settings?.display_name ?? null}
+      />
+      <TrainingSubnav active="today" />
 
       <main className="flex-1 space-y-lg p-md">
-        {/* Powitanie z imieniem (S7) — tylko gdy ustawione */}
-        {settings?.display_name && (
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Cześć, {settings.display_name} 👋
-          </h1>
-        )}
         {/* F2 (redesign-home.md §3.6): FlameWeek ukryty do 1. treningu —
             rząd wygaszonych płomieni na dzień dobry to smutek, nie obietnica */}
         {(sessionCount ?? 0) > 0 && (
           <Suspense fallback={null}>
-            <FlameWeek week={week} streak={streak} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />
+            <FlameWeek week={week} streak={streak} />
           </Suspense>
-        )}
-
-        {activeProgram && showProgramReview && (
-          <section className="space-y-sm rounded-xl border border-primary/20 bg-primary/5 p-md">
-            <p className="text-xs font-medium text-primary">Kolejny krok</p>
-            <h2 className="text-lg font-semibold">Masz już {completedSessionsInActiveProgram} treningów w tym planie</h2>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Jeśli nadal robisz postęp i treningi mieszczą się w Twoim tygodniu, zostań przy planie. Jeśli od 2–3 sesji stoisz w miejscu, zrób lżejszą sesję i porównaj kolejny poziom lub częstotliwość.
-            </p>
-            <div className="grid grid-cols-2 gap-sm">
-              <Button variant="outline" asChild>
-                <Link href={`/programs/${activeProgram.id}`}>Sprawdź plan</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/programs">Porównaj opcje</Link>
-              </Button>
-            </div>
-          </section>
         )}
 
         {openSession ? null : suggested ? (
           // F1 (redesign-home.md V4): hero = BIAŁY kafel (nie sand) — hierarchię
           // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.
+          // R2: karta NIE jest jednym wielkim przyciskiem — osobne cele tapnięcia:
+          // CTA startuje sesję, nazwa planu otwiera szczegół, stopka = podgląd/zmiana.
           <div className="overflow-hidden rounded-xl bg-card text-card-foreground shadow-md">
-            <form action={startSession.bind(null, suggested.dayId)}>
-              <button type="submit" className="block w-full p-md text-left">
-                <div className="flex items-center justify-between gap-sm">
-                  <span className="min-w-0 truncate text-xs font-medium text-muted-foreground">
-                    {activeProgram?.name}
-                  </span>
-                  <span className="shrink-0 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    Zacznij →
-                  </span>
-                </div>
-                <p className="mt-sm text-2xl font-semibold leading-tight">
-                  Dziś · {suggested.label}
+            <div className="p-md">
+              <div className="flex items-center justify-between gap-sm">
+                <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                  Następny trening
+                </span>
+                {activeProgram && (
+                  <Link
+                    href={`/programs/${activeId}`}
+                    className="min-w-0 truncate text-xs font-medium text-primary underline-offset-2 hover:underline"
+                  >
+                    {activeProgram.name}
+                  </Link>
+                )}
+              </div>
+              <p className="mt-sm text-2xl font-semibold leading-tight">{suggested.label}</p>
+              {activeProgram && activeDays.length > 1 && (
+                <p className="mt-2xs text-xs text-muted-foreground">
+                  Rotacja {formatCycleStructure(activeProgram.cycle_days)} · następny trening po ostatniej ukończonej sesji
                 </p>
-                {activeProgram && activeDays.length > 1 && (
-                  <p className="mt-2xs text-xs text-muted-foreground">
-                    Rotacja {formatCycleStructure(activeProgram.cycle_days)} · następny trening po ostatniej ukończonej sesji
+              )}
+              {suggestedMeta && (
+                <>
+                  <p className="mt-2xs text-sm font-medium text-muted-foreground">
+                    {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
                   </p>
-                )}
-                {suggestedMeta && (
-                  <>
-                    <p className="mt-2xs text-sm font-medium text-muted-foreground">
-                      {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
+                  {suggestedMeta.preview.length > 0 && (
+                    <p className="mt-2xs truncate text-xs text-muted-foreground">
+                      {suggestedMeta.preview.join(" · ")}
+                      {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
                     </p>
-                    {suggestedMeta.preview.length > 0 && (
-                      <p className="mt-2xs truncate text-xs text-muted-foreground">
-                        {suggestedMeta.preview.join(" · ")}
-                        {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
-                      </p>
-                    )}
-                  </>
-                )}
-              </button>
-            </form>
+                  )}
+                </>
+              )}
+              <form action={startSession.bind(null, suggested.dayId)} className="mt-md">
+                <Button type="submit" className="w-full">
+                  Zacznij trening
+                </Button>
+              </form>
+            </div>
             {/* F1 (§3.2): stopka hero przejmuje WSZYSTKIE alternatywy jako ciche
                 tekst-linki — koniec z trzema równorzędnymi drogami startu */}
             <div className="flex items-center gap-sm border-t px-md text-xs font-semibold text-primary">
               <Link href={`/programs/${activeId}`} className="flex min-h-11 items-center underline-offset-2 hover:underline">
-                Zobacz ćwiczenia
+                Podgląd ćwiczeń
               </Link>
               {activeDays.length > 1 && (
-                <DayPickerSheet programName={activeProgram!.name} days={activeDays} />
+                <DayPickerSheet
+                  programName={activeProgram?.name ?? "Aktywny plan"}
+                  days={activeDays.map(({ id, label, position }) => ({ id, label, position }))}
+                />
               )}
               <form action={startFreestyle} className="ml-auto">
                 <button type="submit" className="min-h-11 underline-offset-2 hover:underline">
@@ -324,34 +292,16 @@ export default async function HomePage() {
           </div>
         )}
 
+        {/* R2: przegląd planu jako kontekstowy, dismissowalny insight —
+            komponent sam pilnuje progu 12 sesji i pamięta zamknięcie */}
         {activeProgram && (
-          <Link
-            href="/programs"
-            className="flex min-h-14 items-center gap-sm rounded-xl bg-card px-md py-sm text-card-foreground shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
-              <LibraryBig className="size-5" aria-hidden />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold">Przeglądaj programy</span>
-              <span className="block truncate text-xs text-muted-foreground">
-                Porównaj opcje albo zmień aktywny plan
-              </span>
-            </span>
-            <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden />
-          </Link>
+          <ProgramReviewInsight
+            programId={activeProgram.id}
+            completedSessions={completedSessionsInActiveProgram}
+          />
         )}
 
         <GuidanceChip items={guidance} />
-        <TeamHomeCard
-          name={homeTeam?.name ?? null}
-          members={(homeTeamMembers ?? []).map((member) => ({
-            id: member.member_id,
-            name: member.display_name,
-            avatar: member.avatar,
-            active: member.last_workout != null && new Date(member.last_workout).getTime() >= teamActivityWindowStart.getTime(),
-          }))}
-        />
       </main>
     </div>
   );

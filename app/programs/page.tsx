@@ -11,7 +11,8 @@ import {
   type ProgramFocus,
 } from "@/lib/programRecommendation";
 import { ProgramFilters } from "./ProgramFilters";
-import { PageHeader } from "@/components/navigation/PageHeader";
+import { TrainingHeader } from "@/components/TrainingHeader";
+import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 
 export const dynamic = "force-dynamic";
 
@@ -58,13 +59,14 @@ export default async function ProgramsPage({
       .select("id, name, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
-    supabase.from("user_settings").select("training_focus").maybeSingle(),
+    supabase.from("user_settings").select("training_focus, display_name").maybeSingle(),
   ]);
   const activeId = active?.program_id ?? null;
   const preferredFocus = settings?.training_focus ?? "balanced";
-  const own = ((programs as Prog[]) ?? []).filter((p) => p.user_id === user?.id);
+  const activeProgram = ((programs as Prog[]) ?? []).find((p) => p.id === activeId) ?? null;
+  const own = ((programs as Prog[]) ?? []).filter((p) => p.user_id === user?.id && p.id !== activeId);
   const presets = ((programs as Prog[]) ?? [])
-    .filter((p) => p.user_id === null)
+    .filter((p) => p.user_id === null && p.id !== activeId)
     .sort((a, b) => {
       const environmentOrder = { gym: 0, home: 1, bodyweight: 2 } as Record<string, number>;
       return (
@@ -103,9 +105,82 @@ export default async function ProgramsPage({
   const visibleGroups = presetGroups;
   const goals = [...new Set(presets.map((program) => program.goal).filter((goal): goal is string => !!goal))].sort((a, b) => a.localeCompare(b, "pl"));
 
-  function Row({ p, kind }: { p: Prog; kind: "own" | "preset" }) {
-    const isActive = p.id === activeId;
-    return (
+  return (
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col">
+      {/* R2: Plany są podwidokiem Treningu — wspólny header i lokalna nawigacja
+          zamiast strzałki Back (przełączanie przez replace, jak Postępy/Ciało).
+          Badge celu zostaje na Dziś — tu odpowiadałby na pytanie innego ekranu. */}
+      <TrainingHeader goalBadge={null} displayName={settings?.display_name ?? null} />
+      <TrainingSubnav active="plans" />
+
+      <main className="flex-1 space-y-lg p-md">
+        {activeProgram && (
+          <section className="space-y-sm">
+            <h2 className="text-base font-semibold">Aktywny plan</h2>
+            <ProgramRow
+              p={activeProgram}
+              kind={activeProgram.user_id ? "own" : "preset"}
+              isActive
+              preferredFocus={preferredFocus}
+            />
+          </section>
+        )}
+
+        {own.length > 0 && (
+          <section className="space-y-sm">
+            <h2 className="text-base font-semibold">Moje programy</h2>
+            {own.map((p) => (
+              <ProgramRow key={p.id} p={p} kind="own" isActive={false} preferredFocus={preferredFocus} />
+            ))}
+          </section>
+        )}
+
+        <section className="space-y-sm">
+          <div className="flex items-start justify-between gap-sm">
+            <div className="space-y-2xs">
+              <h2 className="text-base font-semibold">Biblioteka programów</h2>
+              <p className="text-sm text-muted-foreground">Porównaj plany i ustaw ten, który realnie pasuje do Twojego tygodnia.</p>
+            </div>
+            <ProgramFilters filters={filters} goals={goals} />
+          </div>
+          {visibleGroups.length === 0 && (
+            <div className="rounded-xl bg-muted p-md text-sm text-muted-foreground">Nie ma jeszcze planu spełniającego te warunki. Wyczyść filtr albo wybierz najbliższy wariant.</div>
+          )}
+          {visibleGroups.map((group) => (
+            <div key={group.rank} className="space-y-sm">
+              <h3 className="pt-xs text-sm font-medium text-muted-foreground">{group.label}</h3>
+              {group.programs.map((p) => (
+                <ProgramRow key={p.id} p={p} kind="preset" isActive={false} preferredFocus={preferredFocus} />
+              ))}
+            </div>
+          ))}
+        </section>
+
+        <section className="space-y-xs border-t pt-md">
+          <p className="text-sm text-muted-foreground">Masz własny plan?</p>
+          <form action={createProgram}>
+            <Button type="submit" variant="outline" className="w-full">
+              Utwórz własny program
+            </Button>
+          </form>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function ProgramRow({
+  p,
+  kind,
+  isActive,
+  preferredFocus,
+}: {
+  p: Prog;
+  kind: "own" | "preset";
+  isActive: boolean;
+  preferredFocus: string;
+}) {
+  return (
       <div className="flex items-stretch rounded-xl bg-card text-card-foreground shadow-sm">
         <Link href={`/programs/${p.id}`} className="block min-w-0 flex-1 p-md">
           {/* Pełna nazwa (N2#1) — zawijanie zamiast ucinania */}
@@ -158,52 +233,4 @@ export default async function ProgramsPage({
         </div>
       </div>
     );
-  }
-
-  return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <PageHeader title="Programy" fallback="/" backLabel="Wróć do treningu" sticky />
-
-      <main className="flex-1 space-y-lg p-md">
-        {own.length > 0 && (
-          <section className="space-y-sm">
-            <h2 className="text-base font-semibold">Moje programy</h2>
-            {own.map((p) => (
-              <Row key={p.id} p={p} kind="own" />
-            ))}
-          </section>
-        )}
-
-        <section className="space-y-sm">
-          <div className="flex items-start justify-between gap-sm">
-            <div className="space-y-2xs">
-              <h2 className="text-base font-semibold">Biblioteka programów</h2>
-              <p className="text-sm text-muted-foreground">Porównaj plany i ustaw ten, który realnie pasuje do Twojego tygodnia.</p>
-            </div>
-            <ProgramFilters filters={filters} goals={goals} />
-          </div>
-          {visibleGroups.length === 0 && (
-            <div className="rounded-xl bg-muted p-md text-sm text-muted-foreground">Nie ma jeszcze planu spełniającego te warunki. Wyczyść filtr albo wybierz najbliższy wariant.</div>
-          )}
-          {visibleGroups.map((group) => (
-            <div key={group.rank} className="space-y-sm">
-              <h3 className="pt-xs text-sm font-medium text-muted-foreground">{group.label}</h3>
-              {group.programs.map((p) => (
-                <Row key={p.id} p={p} kind="preset" />
-              ))}
-            </div>
-          ))}
-        </section>
-
-        <section className="space-y-xs border-t pt-md">
-          <p className="text-sm text-muted-foreground">Masz własny plan?</p>
-          <form action={createProgram}>
-            <Button type="submit" variant="outline" className="w-full">
-              Utwórz własny program
-            </Button>
-          </form>
-        </section>
-      </main>
-    </div>
-  );
 }

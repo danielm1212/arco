@@ -173,7 +173,16 @@ sieci w trakcie edycji. Focus trap bottom sheetów nadal należy do R5b.
 **Done:** nowa osoba potrafi zacząć trening i znaleźć bibliotekę, a główne CTA pojawia się
 stabilnie przed treściami drugorzędnymi.
 
-### Checkpoint dogfood
+**Stan 2026-07-17:** pierwszy pion wdrożony lokalnie (niezacommitowany na origin): wspólny
+header Treningu (logo + badge celu liczący treningi + awatar-monogram → ustawienia), subnav
+Dziś | Plany przez replace, hero „Następny trening" z rozdzielonymi celami tapnięcia (CTA,
+nazwa planu → szczegół, podgląd, inny dzień, bez planu), Plany z sekcją aktywnego planu,
+usunięte stałe karty (powitanie, „Przeglądaj programy", karta Ekipy, pusty stan wskazówek),
+przegląd planu jako dismissowalny insight, home w jednym równoległym batchu zapytań
+(zagnieżdżony join slotów zamiast dwóch sekwencyjnych rund). Weryfikacja: tsc/lint/testy
+25/25/build ✓, kształt joinu przez RLS na izolowanym stacku ✓. Pozostaje: przegląd wizualny
+i copy [Ty] (m.in. etykieta „Inny dzień" vs „Zmień", badge ukryty do 1. treningu), regresja
+urządzeniowa i decyzja o publikacji.
 
 **Czas:** 0,5–1 dnia [Ty + Claude]
 
