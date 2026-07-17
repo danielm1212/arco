@@ -110,7 +110,9 @@ CI zielone). Zaakceptowane po dogfoodzie [Ty]: pion R2 i ekran Done.
 **Najpilniejsze [Ty]: jedna wspólna regresja urządzeniowa na iPhone PWA i Androidzie** —
 start/wznowienie treningu, odzyskanie szkicu, nowy header/subnav Trening, hero, ekran Done
 oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
-**[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów (prompty `prompt-fotografia-warm.md`).
+**[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów — gotowe prompty per ćwiczenie
+w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamera; styl bazowy
+`prompt-fotografia-warm.md`), upload przez `upload:exercise-images` → `sync:exercise-content`.
 Kod: checkpoint dogfood po R2, potem R3a–R4; z toru wyszukiwarki zostają R4–R6 audytu
 (normalizacja diakrytyk, instrumentacja search, kosmetyka) oraz **rozszerzenie `name_pl`
 na pozostałe powierzchnie** (logger, szczegóły programu, historia, done-preview — dziś
