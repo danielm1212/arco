@@ -62,7 +62,7 @@ export async function getSubstitutes(
   async function query(opts: { pattern: boolean; muscles: boolean }) {
     let q = supabase
       .from("exercises")
-      .select("id, name, equipment, mechanic, level, images, primary_muscles, secondary_muscles, movement_pattern")
+      .select("id, name, name_pl, equipment, mechanic, level, images, primary_muscles, secondary_muscles, movement_pattern")
       .neq("id", cur.id)
       .eq("hidden", false) // kuracja 2026-07-08: swap nie proponuje stretching/cardio/przestarzałych
       .limit(60);
@@ -104,7 +104,8 @@ export async function getSubstitutes(
     .slice(0, 5)
     .map(({ row }) => ({
       id: row.id,
-      name: row.name,
+      // R5a: karta kandydata pokazuje polską nazwę, gdy jest w słowniku
+      name: (row.name_pl as string | null) ?? row.name,
       equipment: row.equipment,
       mechanic: row.mechanic,
       level: row.level,

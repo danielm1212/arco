@@ -10,6 +10,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { pathToFileURL } from "node:url";
 import rawExercises from "./data/exercises.json";
 import polishInstructionOverrides from "./data/exercise-instructions-pl.json";
+import polishNames from "./data/exercise-names-pl.json";
 
 config({ path: ".env.local" });
 
@@ -22,6 +23,13 @@ const IMG_PREFIX = customImageBase
     : "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
 
 export const POLISH_INSTRUCTION_OVERRIDES = polishInstructionOverrides as Record<string, string[]>;
+
+// R5a: zatwierdzony słownik nazw PL + aliasów (docs/r5a-slownik-pl-propozycja.md).
+// Seed i migracja 20260717* muszą prowadzić do tego samego stanu — źródłem jest ten JSON.
+export const POLISH_NAMES = polishNames as Record<
+  string,
+  { name_pl: string | null; aliases: string[] }
+>;
 
 // Seed obejmuje kilka tabel i celowo nie korzysta z wygenerowanego schematu
 // aplikacji. Jawny klient bez schematu zachowuje dotychczasową elastyczność,
@@ -234,6 +242,8 @@ export function toSeedExercise(ex: RawExercise) {
     movement_pattern: deriveMovementPattern(ex),
     exercise_type: deriveExerciseType(ex),
     hidden: deriveHidden(ex),
+    name_pl: POLISH_NAMES[ex.id]?.name_pl ?? null,
+    search_aliases: POLISH_NAMES[ex.id]?.aliases ?? [],
   };
 }
 

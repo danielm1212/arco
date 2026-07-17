@@ -15,6 +15,12 @@ import {
   equipmentForGroups,
   musclesForBodyParts,
 } from "@/lib/exerciseFilters";
+import {
+  buildSearchOrFilter,
+  exerciseDisplayName,
+  sanitizeSearchTerm,
+  sortSearchHits,
+} from "@/lib/exerciseSearch";
 import type { MovementPattern } from "@/lib/types";
 
 export interface BrowserHit {
@@ -71,7 +77,7 @@ export function ExerciseBrowser({
     const supabase = createClient();
     supabase
       .from("session_exercises")
-      .select("exercise_id, exercises(name, equipment, images, user_id), sessions!inner(started_at)")
+      .select("exercise_id, exercises(name, name_pl, equipment, images, user_id), sessions!inner(started_at)")
       .order("started_at", { ascending: false, referencedTable: "sessions" })
       .limit(40)
       .then(({ data }) => {
@@ -83,6 +89,7 @@ export function ExerciseBrowser({
           seen.add(r.exercise_id);
           const ex = r.exercises as unknown as {
             name: string;
+            name_pl: string | null;
             equipment: string | null;
             images: string[] | null;
             user_id: string | null;
@@ -90,7 +97,7 @@ export function ExerciseBrowser({
           if (!ex) return;
           out.push({
             id: r.exercise_id,
-            name: ex.name,
+            name: exerciseDisplayName(ex),
             equipment: ex.equipment,
             image: ex.images?.[0] ?? null,
             isCustom: ex.user_id != null,
@@ -104,7 +111,7 @@ export function ExerciseBrowser({
     };
   }, [wantRecent]);
 
-  const queryTerm = q.trim();
+  const queryTerm = sanitizeSearchTerm(q);
   const filtersActive =
     queryTerm.length >= 2 || parts.length > 0 || equip.length > 0 || patterns.length > 0;
 
@@ -117,22 +124,26 @@ export function ExerciseBrowser({
       const supabase = createClient();
       let req = supabase
         .from("exercises")
-        .select("id, name, equipment, images, user_id")
+        .select("id, name, name_pl, search_aliases, equipment, images, user_id")
         .order("name")
         .limit(30);
       // Stopień 1 kuracji (audyt S8 + trenerski 2026-07-08): browse po chipach ukrywa
       // hidden (stretching/cardio/przestarzałe); search po nazwie NADAL znajduje wszystko.
-      if (queryTerm.length >= 2) req = req.ilike("name", `%${queryTerm}%`);
+      // R5a: search po nazwie PL/EN i aliasach potocznych (docs/r5a-slownik-pl-propozycja.md).
+      if (queryTerm.length >= 2) req = req.or(buildSearchOrFilter(queryTerm));
       else req = req.eq("hidden", false);
       if (parts.length) req = req.overlaps("primary_muscles", musclesForBodyParts(parts));
       if (equip.length) req = req.in("equipment", equipmentForGroups(equip));
       if (patterns.length) req = req.in("movement_pattern", patterns);
       const { data } = await req;
       if (cancelled) return;
+      // R3 audytu: przy query ranking trafności zamiast alfabetu; browse zostaje A–Z.
+      const ordered =
+        queryTerm.length >= 2 ? sortSearchHits(data ?? [], queryTerm) : (data ?? []);
       setHits(
-        (data ?? []).map((r) => ({
+        ordered.map((r) => ({
           id: r.id,
-          name: r.name,
+          name: exerciseDisplayName(r),
           equipment: r.equipment,
           image: (r.images as string[] | null)?.[0] ?? null,
           isCustom: r.user_id != null,

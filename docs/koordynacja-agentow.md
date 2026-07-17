@@ -49,6 +49,15 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (R5a implementacja: name_pl + aliasy + ranking wyszukiwarki): W TOKU.**
+  Podstawa: zatwierdzony `docs/r5a-slownik-pl-propozycja.md` (2026-07-17). Zakres: nowy
+  słownik `scripts/data/exercise-names-pl.json`, `scripts/seed.ts` (name_pl, search_aliases),
+  migracja schematu+danych (guard na pusty stan), `components/ExerciseBrowser.tsx` +
+  `lib/exerciseFilters.ts` (query PL/EN/aliasy, ranking, wyświetlanie name_pl), test
+  integralności słownika. NIE dotykam: loggera poza wyświetlaniem nazw, programów, Ekipy,
+  duplikatów ikon. Migracja wg skilla arco-migration (świeża baza + pełne smoke'i — zmiana
+  kontraktu danych).
+
 - **2026-07-17 · Claude (ekran Done — feedback właściciela): ZAKOŃCZONE lokalnie.**
   Na wyraźny feedback [Ty] po dogfoodzie: (1) zdjęta ikona 3D znad liczby-bohatera
   („za dużo się dzieje" — dotyczy wszystkich wariantów: medal/target/fire/tick; medal przy PR

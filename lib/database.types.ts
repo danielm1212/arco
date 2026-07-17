@@ -172,6 +172,8 @@ export type Database = {
             | Database["public"]["Enums"]["movement_pattern"]
             | null
           name: string
+          name_pl: string | null
+          search_aliases: string[]
           primary_muscles: string[]
           secondary_muscles: string[]
           user_id: string | null
@@ -191,6 +193,8 @@ export type Database = {
             | Database["public"]["Enums"]["movement_pattern"]
             | null
           name: string
+          name_pl?: string | null
+          search_aliases?: string[]
           primary_muscles?: string[]
           secondary_muscles?: string[]
           user_id?: string | null
@@ -210,6 +214,8 @@ export type Database = {
             | Database["public"]["Enums"]["movement_pattern"]
             | null
           name?: string
+          name_pl?: string | null
+          search_aliases?: string[]
           primary_muscles?: string[]
           secondary_muscles?: string[]
           user_id?: string | null

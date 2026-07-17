@@ -1,0 +1,1010 @@
+{
+  "Ab_Wheel_Rollout": {
+    "name_pl": "Rozwijanie kółka (ab wheel)",
+    "aliases": [
+      "kółko"
+    ]
+  },
+  "Alternate_Hammer_Curl": {
+    "name_pl": "Uginanie młotkowe naprzemiennie",
+    "aliases": []
+  },
+  "Alternating_Renegade_Row": {
+    "name_pl": "Wiosłowanie w podporze (renegade row)",
+    "aliases": []
+  },
+  "Arnold_Dumbbell_Press": {
+    "name_pl": "Wyciskanie Arnolda",
+    "aliases": [
+      "arnoldki"
+    ]
+  },
+  "Band_Lat_Pulldown": {
+    "name_pl": "Ściąganie gumy szerokim chwytem",
+    "aliases": []
+  },
+  "Barbell_Bench_Press_-_Medium_Grip": {
+    "name_pl": "Wyciskanie sztangi na ławce płaskiej",
+    "aliases": [
+      "ławka",
+      "wyciskanie leżąc",
+      "bench"
+    ]
+  },
+  "Barbell_Curl": {
+    "name_pl": "Uginanie ramion ze sztangą",
+    "aliases": []
+  },
+  "Barbell_Deadlift": {
+    "name_pl": "Martwy ciąg klasyczny",
+    "aliases": [
+      "martwy",
+      "martwy ciąg"
+    ]
+  },
+  "Barbell_Full_Squat": {
+    "name_pl": "Przysiad pełny ze sztangą",
+    "aliases": []
+  },
+  "Barbell_Glute_Bridge": {
+    "name_pl": "Mostek biodrowy ze sztangą",
+    "aliases": [
+      "mostek"
+    ]
+  },
+  "Barbell_Hack_Squat": {
+    "name_pl": "Przysiad hack ze sztangą",
+    "aliases": []
+  },
+  "Barbell_Hip_Thrust": {
+    "name_pl": "Hip thrust ze sztangą",
+    "aliases": [
+      "hip thrust",
+      "biodra"
+    ]
+  },
+  "Barbell_Incline_Bench_Press_-_Medium_Grip": {
+    "name_pl": "Wyciskanie sztangi na ławce skośnej",
+    "aliases": [
+      "skos",
+      "ławka skośna"
+    ]
+  },
+  "Barbell_Lunge": {
+    "name_pl": "Wykroki ze sztangą",
+    "aliases": []
+  },
+  "Barbell_Seated_Calf_Raise": {
+    "name_pl": "Wspięcia siedząc ze sztangą",
+    "aliases": []
+  },
+  "Barbell_Shoulder_Press": {
+    "name_pl": "Wyciskanie sztangi nad głowę siedząc",
+    "aliases": []
+  },
+  "Barbell_Shrug": {
+    "name_pl": "Unoszenie barków ze sztangą (szrugsy)",
+    "aliases": [
+      "szrugsy"
+    ]
+  },
+  "Barbell_Squat": {
+    "name_pl": "Przysiad ze sztangą",
+    "aliases": [
+      "przysiad",
+      "przysiady",
+      "squat"
+    ]
+  },
+  "Barbell_Walking_Lunge": {
+    "name_pl": "Wykroki chodzone ze sztangą",
+    "aliases": []
+  },
+  "Bench_Dips": {
+    "name_pl": "Pompki tricepsowe tyłem na ławce",
+    "aliases": []
+  },
+  "Bent_Over_Barbell_Row": {
+    "name_pl": "Wiosłowanie sztangą w opadzie",
+    "aliases": [
+      "wiosłowanie"
+    ]
+  },
+  "Bent_Over_Two-Dumbbell_Row": {
+    "name_pl": "Wiosłowanie hantlami w opadzie",
+    "aliases": []
+  },
+  "Body_Tricep_Press": {
+    "name_pl": "Bodyweight skullcrusher (przy ławce)",
+    "aliases": []
+  },
+  "Bodyweight_Squat": {
+    "name_pl": "Przysiad bez obciążenia",
+    "aliases": []
+  },
+  "Bodyweight_Walking_Lunge": {
+    "name_pl": "Wykroki chodzone bez obciążenia",
+    "aliases": []
+  },
+  "Box_Squat": {
+    "name_pl": "Przysiad na skrzynię",
+    "aliases": []
+  },
+  "Bulgarian_Split_Squat": {
+    "name_pl": "Przysiad bułgarski",
+    "aliases": [
+      "bułgar",
+      "bułgary"
+    ]
+  },
+  "Butterfly": {
+    "name_pl": "Maszyna motylkowa (pec deck)",
+    "aliases": [
+      "motylek",
+      "pec deck"
+    ]
+  },
+  "Cable_Chest_Press": {
+    "name_pl": "Wyciskanie na wyciągu (klatka)",
+    "aliases": []
+  },
+  "Cable_Crossover": {
+    "name_pl": "Krzyżowanie linek wyciągu (brama)",
+    "aliases": [
+      "brama",
+      "krzyżowanie"
+    ]
+  },
+  "Cable_Crunch": {
+    "name_pl": "Spięcia brzucha na wyciągu w klęku",
+    "aliases": [
+      "allahy"
+    ]
+  },
+  "Cable_Hammer_Curls_-_Rope_Attachment": {
+    "name_pl": "Uginanie młotkowe na wyciągu (lina)",
+    "aliases": []
+  },
+  "Cable_Hip_Adduction": {
+    "name_pl": "Przywodzenie nogi na wyciągu",
+    "aliases": []
+  },
+  "Cable_Incline_Triceps_Extension": {
+    "name_pl": "Prostowanie ramion na wyciągu w skosie",
+    "aliases": []
+  },
+  "Cable_Lying_Triceps_Extension": {
+    "name_pl": "Wyciskanie francuskie na wyciągu leżąc",
+    "aliases": []
+  },
+  "Cable_One_Arm_Tricep_Extension": {
+    "name_pl": "Prostowanie ramienia na wyciągu jednorącz",
+    "aliases": []
+  },
+  "Cable_Preacher_Curl": {
+    "name_pl": "Uginanie na modlitewniku na wyciągu",
+    "aliases": []
+  },
+  "Cable_Rear_Delt_Fly": {
+    "name_pl": "Odwrotne rozpiętki na wyciągu",
+    "aliases": []
+  },
+  "Cable_Reverse_Crunch": {
+    "name_pl": "Odwrotne spięcia na wyciągu",
+    "aliases": []
+  },
+  "Cable_Rope_Overhead_Triceps_Extension": {
+    "name_pl": "Prostowanie ramion zza głowy na wyciągu (lina)",
+    "aliases": []
+  },
+  "Cable_Russian_Twists": {
+    "name_pl": "Skręty rosyjskie na wyciągu",
+    "aliases": []
+  },
+  "Cable_Seated_Crunch": {
+    "name_pl": "Spięcia brzucha na wyciągu siedząc",
+    "aliases": []
+  },
+  "Cable_Seated_Lateral_Raise": {
+    "name_pl": "Wznosy bokiem na wyciągu siedząc",
+    "aliases": []
+  },
+  "Cable_Shrugs": {
+    "name_pl": "Unoszenie barków na wyciągu",
+    "aliases": []
+  },
+  "Cable_Wrist_Curl": {
+    "name_pl": "Uginanie nadgarstków na wyciągu",
+    "aliases": []
+  },
+  "Calf_Press": {
+    "name_pl": "Wspięcia na palce na maszynie (calf press)",
+    "aliases": []
+  },
+  "Calf_Press_On_The_Leg_Press_Machine": {
+    "name_pl": "Wspięcia na suwnicy (leg press)",
+    "aliases": []
+  },
+  "Calf_Raise_On_A_Dumbbell": {
+    "name_pl": "Wspięcia na palce na hantlu",
+    "aliases": [
+      "łydki",
+      "wspięcia"
+    ]
+  },
+  "Chest-Supported_Dumbbell_Row": {
+    "name_pl": "Wiosłowanie hantlami z klatką opartą o ławkę",
+    "aliases": []
+  },
+  "Chin-Up": {
+    "name_pl": "Podciąganie podchwytem",
+    "aliases": []
+  },
+  "Close-Grip_Barbell_Bench_Press": {
+    "name_pl": "Wyciskanie sztangi wąskim chwytem",
+    "aliases": []
+  },
+  "Close-Grip_Dumbbell_Press": {
+    "name_pl": "Wyciskanie hantli wąsko (chwyt neutralny)",
+    "aliases": []
+  },
+  "Close-Grip_EZ_Bar_Curl": {
+    "name_pl": "Uginanie sztangą łamaną wąskim chwytem",
+    "aliases": []
+  },
+  "Close-Grip_Front_Lat_Pulldown": {
+    "name_pl": "Ściąganie drążka wyciągu wąskim chwytem",
+    "aliases": []
+  },
+  "Concentration_Curls": {
+    "name_pl": "Uginanie koncentracyjne hantlem",
+    "aliases": []
+  },
+  "Copenhagen_Plank": {
+    "name_pl": "Deska kopenhaska",
+    "aliases": [
+      "kopenhaga"
+    ]
+  },
+  "Cross_Body_Hammer_Curl": {
+    "name_pl": "Uginanie młotkowe skośne (cross body)",
+    "aliases": []
+  },
+  "Cross-Body_Crunch": {
+    "name_pl": "Brzuszki skrętne (łokieć do kolana)",
+    "aliases": []
+  },
+  "Crunches": {
+    "name_pl": "Brzuszki (spięcia)",
+    "aliases": [
+      "brzuszki"
+    ]
+  },
+  "Curtsy_Lunge": {
+    "name_pl": "Zakroki skrzyżne (curtsy)",
+    "aliases": []
+  },
+  "Dead_Bug": {
+    "name_pl": "Dead bug",
+    "aliases": [
+      "deadbug"
+    ]
+  },
+  "Decline_Barbell_Bench_Press": {
+    "name_pl": "Wyciskanie sztangi głową w dół",
+    "aliases": []
+  },
+  "Decline_Dumbbell_Bench_Press": {
+    "name_pl": "Wyciskanie hantli głową w dół",
+    "aliases": []
+  },
+  "Decline_Dumbbell_Flyes": {
+    "name_pl": "Rozpiętki z hantlami głową w dół",
+    "aliases": []
+  },
+  "Decline_Dumbbell_Triceps_Extension": {
+    "name_pl": "Wyciskanie francuskie hantlami głową w dół",
+    "aliases": []
+  },
+  "Decline_Push-Up": {
+    "name_pl": "Pompki głową w dół",
+    "aliases": []
+  },
+  "Dip_Machine": {
+    "name_pl": "Dipy na maszynie",
+    "aliases": []
+  },
+  "Dips_-_Chest_Version": {
+    "name_pl": "Pompki na poręczach (klatka)",
+    "aliases": []
+  },
+  "Dips_-_Triceps_Version": {
+    "name_pl": "Pompki na poręczach (triceps)",
+    "aliases": [
+      "dipy",
+      "poręcze"
+    ]
+  },
+  "Drag_Curl": {
+    "name_pl": "Uginanie ze sztangą wzdłuż tułowia (drag curl)",
+    "aliases": []
+  },
+  "Dumbbell_Alternate_Bicep_Curl": {
+    "name_pl": "Uginanie ramion z hantlami naprzemiennie",
+    "aliases": []
+  },
+  "Dumbbell_Bench_Press": {
+    "name_pl": "Wyciskanie hantli na ławce płaskiej",
+    "aliases": []
+  },
+  "Dumbbell_Bench_Press_with_Neutral_Grip": {
+    "name_pl": "Wyciskanie hantli chwytem neutralnym",
+    "aliases": []
+  },
+  "Dumbbell_Bicep_Curl": {
+    "name_pl": "Uginanie ramion z hantlami",
+    "aliases": [
+      "biceps",
+      "uginanie"
+    ]
+  },
+  "Dumbbell_Floor_Press": {
+    "name_pl": "Wyciskanie hantli leżąc na podłodze",
+    "aliases": []
+  },
+  "Dumbbell_Flyes": {
+    "name_pl": "Rozpiętki z hantlami",
+    "aliases": [
+      "rozpiętki"
+    ]
+  },
+  "Dumbbell_Hip_Thrust": {
+    "name_pl": "Hip thrust z hantlem",
+    "aliases": [
+      "hip thrust",
+      "biodra"
+    ]
+  },
+  "Dumbbell_Lunges": {
+    "name_pl": "Wykroki z hantlami",
+    "aliases": [
+      "wykroki"
+    ]
+  },
+  "Dumbbell_One-Arm_Shoulder_Press": {
+    "name_pl": "Wyciskanie hantla nad głowę jednorącz",
+    "aliases": []
+  },
+  "Dumbbell_Rear_Lunge": {
+    "name_pl": "Zakroki z hantlami",
+    "aliases": [
+      "zakroki"
+    ]
+  },
+  "Dumbbell_Seated_One-Leg_Calf_Raise": {
+    "name_pl": "Wspięcia siedząc jednonóż z hantlem",
+    "aliases": []
+  },
+  "Dumbbell_Shoulder_Press": {
+    "name_pl": "Wyciskanie hantli nad głowę",
+    "aliases": []
+  },
+  "Dumbbell_Shrug": {
+    "name_pl": "Unoszenie barków z hantlami (szrugsy)",
+    "aliases": [
+      "szrugsy"
+    ]
+  },
+  "Dumbbell_Squat": {
+    "name_pl": "Przysiad z hantlami",
+    "aliases": []
+  },
+  "Dumbbell_Squat_To_A_Bench": {
+    "name_pl": "Przysiad z hantlami na ławkę",
+    "aliases": []
+  },
+  "Dumbbell_Step_Ups": {
+    "name_pl": "Wejścia na skrzynię z hantlami",
+    "aliases": []
+  },
+  "Elevated_Back_Lunge": {
+    "name_pl": "Zakroki z podwyższenia",
+    "aliases": []
+  },
+  "EZ-Bar_Curl": {
+    "name_pl": "Uginanie ramion sztangą łamaną",
+    "aliases": []
+  },
+  "EZ-Bar_Skullcrusher": {
+    "name_pl": "Wyciskanie francuskie sztangą łamaną leżąc",
+    "aliases": [
+      "francuskie",
+      "francuz"
+    ]
+  },
+  "Face_Pull": {
+    "name_pl": "Face pull",
+    "aliases": [
+      "facepull"
+    ]
+  },
+  "Farmers_Walk": {
+    "name_pl": "Spacer farmera",
+    "aliases": [
+      "farmerki",
+      "spacer farmera"
+    ]
+  },
+  "Flat_Bench_Lying_Leg_Raise": {
+    "name_pl": "Unoszenie nóg leżąc na ławce",
+    "aliases": []
+  },
+  "Floor_Press": {
+    "name_pl": "Wyciskanie sztangi leżąc na podłodze",
+    "aliases": []
+  },
+  "Freehand_Jump_Squat": {
+    "name_pl": "Przysiad z wyskokiem",
+    "aliases": []
+  },
+  "Front_Barbell_Squat": {
+    "name_pl": "Przysiad przedni ze sztangą",
+    "aliases": []
+  },
+  "Front_Cable_Raise": {
+    "name_pl": "Wznosy przodem na wyciągu",
+    "aliases": []
+  },
+  "Front_Dumbbell_Raise": {
+    "name_pl": "Wznosy hantli przodem",
+    "aliases": []
+  },
+  "Front_Incline_Dumbbell_Raise": {
+    "name_pl": "Wznosy przodem na ławce skośnej",
+    "aliases": []
+  },
+  "Front_Two-Dumbbell_Raise": {
+    "name_pl": "Wznosy przodem oburącz",
+    "aliases": []
+  },
+  "Full_Range-Of-Motion_Lat_Pulldown": {
+    "name_pl": "Ściąganie drążka pełnym zakresem",
+    "aliases": []
+  },
+  "Glute_Ham_Raise": {
+    "name_pl": "Glute ham raise (GHD)",
+    "aliases": [
+      "ghr"
+    ]
+  },
+  "Glute_Kickback": {
+    "name_pl": "Odmachy nogi w klęku",
+    "aliases": []
+  },
+  "Goblet_Squat": {
+    "name_pl": "Przysiad goblet",
+    "aliases": [
+      "goblet"
+    ]
+  },
+  "Good_Morning": {
+    "name_pl": "Skłony dzień dobry (good morning)",
+    "aliases": [
+      "dzień dobry"
+    ]
+  },
+  "Hack_Squat": {
+    "name_pl": "Przysiad na suwnicy hack",
+    "aliases": [
+      "hack",
+      "hacki"
+    ]
+  },
+  "Hammer_Curls": {
+    "name_pl": "Uginanie ramion chwytem młotkowym",
+    "aliases": [
+      "młotki"
+    ]
+  },
+  "Hammer_Grip_Incline_DB_Bench_Press": {
+    "name_pl": "Wyciskanie hantli chwytem neutralnym na skosie",
+    "aliases": []
+  },
+  "Handstand_Push-Ups": {
+    "name_pl": "Pompki w staniu na rękach",
+    "aliases": []
+  },
+  "Hanging_Knee_Raise": {
+    "name_pl": "Unoszenie kolan w zwisie",
+    "aliases": []
+  },
+  "Hanging_Leg_Raise": {
+    "name_pl": "Unoszenie nóg w zwisie",
+    "aliases": [
+      "unoszenie nóg"
+    ]
+  },
+  "High_Cable_Curls": {
+    "name_pl": "Uginanie ramion na górnym wyciągu",
+    "aliases": []
+  },
+  "Hollow_Body_Hold": {
+    "name_pl": "Hollow body hold",
+    "aliases": [
+      "hollow"
+    ]
+  },
+  "Hyperextensions_Back_Extensions": {
+    "name_pl": "Skłony rzymskie (hyperextensions)",
+    "aliases": [
+      "rzymka",
+      "skłony rzymskie"
+    ]
+  },
+  "Incline_Dumbbell_Curl": {
+    "name_pl": "Uginanie ramion z hantlami na ławce skośnej",
+    "aliases": []
+  },
+  "Incline_Dumbbell_Flyes": {
+    "name_pl": "Rozpiętki z hantlami na ławce skośnej",
+    "aliases": []
+  },
+  "Incline_Dumbbell_Press": {
+    "name_pl": "Wyciskanie hantli na ławce skośnej",
+    "aliases": [
+      "skos",
+      "ławka skośna"
+    ]
+  },
+  "Incline_Hammer_Curls": {
+    "name_pl": "Uginanie młotkowe na ławce skośnej",
+    "aliases": []
+  },
+  "Inverted_Row": {
+    "name_pl": "Wiosłowanie w podporze (australijskie)",
+    "aliases": [
+      "australijskie"
+    ]
+  },
+  "Jackknife_Sit-Up": {
+    "name_pl": "Scyzoryki",
+    "aliases": []
+  },
+  "Kettlebell_One-Legged_Deadlift": {
+    "name_pl": "Martwy ciąg jednonóż z kettlebell",
+    "aliases": []
+  },
+  "Kettlebell_Swing": {
+    "name_pl": "Wymachy kettlebell (swing)",
+    "aliases": [
+      "swing"
+    ]
+  },
+  "Kneeling_High_Pulley_Row": {
+    "name_pl": "Wiosłowanie górnego wyciągu w klęku",
+    "aliases": []
+  },
+  "L-Sit_Hold": {
+    "name_pl": "L-sit",
+    "aliases": []
+  },
+  "Landmine_Press": {
+    "name_pl": "Wyciskanie landmine",
+    "aliases": []
+  },
+  "Leg_Extensions": {
+    "name_pl": "Prostowanie nóg siedząc (maszyna)",
+    "aliases": [
+      "prostowanie nóg"
+    ]
+  },
+  "Leg_Press": {
+    "name_pl": "Wyciskanie nogami (leg press)",
+    "aliases": [
+      "leg press",
+      "nogi maszyna"
+    ]
+  },
+  "Leverage_Chest_Press": {
+    "name_pl": "Wyciskanie na maszynie (chest press)",
+    "aliases": []
+  },
+  "Leverage_High_Row": {
+    "name_pl": "Wiosłowanie na maszynie z góry (high row)",
+    "aliases": []
+  },
+  "Leverage_Incline_Chest_Press": {
+    "name_pl": "Wyciskanie na maszynie w skosie",
+    "aliases": []
+  },
+  "Leverage_Iso_Row": {
+    "name_pl": "Wiosłowanie na maszynie",
+    "aliases": []
+  },
+  "Low_Cable_Crossover": {
+    "name_pl": "Krzyżowanie linek z dołu (brama)",
+    "aliases": []
+  },
+  "Lying_Dumbbell_Tricep_Extension": {
+    "name_pl": "Wyciskanie francuskie hantlami leżąc",
+    "aliases": [
+      "francuskie",
+      "francuz"
+    ]
+  },
+  "Lying_Leg_Curls": {
+    "name_pl": "Uginanie nóg leżąc (maszyna)",
+    "aliases": [
+      "uginanie nóg"
+    ]
+  },
+  "Lying_T-Bar_Row": {
+    "name_pl": "Wiosłowanie T-bar z klatką opartą",
+    "aliases": []
+  },
+  "Machine_Bench_Press": {
+    "name_pl": "Wyciskanie na maszynie leżąc",
+    "aliases": []
+  },
+  "Machine_Hip_Abduction": {
+    "name_pl": "Odwodzenie bioder na maszynie",
+    "aliases": []
+  },
+  "Machine_Preacher_Curls": {
+    "name_pl": "Uginanie ramion na maszynie (modlitewnik)",
+    "aliases": []
+  },
+  "Machine_Shoulder_Military_Press": {
+    "name_pl": "Wyciskanie nad głowę na maszynie",
+    "aliases": []
+  },
+  "Mountain_Climbers": {
+    "name_pl": "Mountain climbers",
+    "aliases": []
+  },
+  "Narrow_Stance_Hack_Squats": {
+    "name_pl": "Przysiad hack wąsko",
+    "aliases": []
+  },
+  "Natural_Glute_Ham_Raise": {
+    "name_pl": "Glute ham raise bez maszyny",
+    "aliases": [
+      "ghr"
+    ]
+  },
+  "Nordic_Hamstring_Curl": {
+    "name_pl": "Nordic curl",
+    "aliases": [
+      "nordiki",
+      "nordic"
+    ]
+  },
+  "Oblique_Crunches": {
+    "name_pl": "Brzuszki skośne",
+    "aliases": []
+  },
+  "One_Arm_Dumbbell_Preacher_Curl": {
+    "name_pl": "Uginanie na modlitewniku jednorącz",
+    "aliases": []
+  },
+  "One_Arm_Lat_Pulldown": {
+    "name_pl": "Ściąganie wyciągu jednorącz",
+    "aliases": []
+  },
+  "One-Arm_Dumbbell_Row": {
+    "name_pl": "Wiosłowanie hantlem jednorącz",
+    "aliases": [
+      "wiosło hantlem"
+    ]
+  },
+  "One-Arm_Kettlebell_Swings": {
+    "name_pl": "Wymachy kettlebell jednorącz",
+    "aliases": []
+  },
+  "One-Legged_Cable_Kickback": {
+    "name_pl": "Odmachy nogi na wyciągu",
+    "aliases": []
+  },
+  "Overhead_Cable_Triceps_Extension": {
+    "name_pl": "Prostowanie ramion na wyciągu zza głowy",
+    "aliases": []
+  },
+  "Pallof_Press": {
+    "name_pl": "Pallof press",
+    "aliases": []
+  },
+  "Palms-Down_Wrist_Curl_Over_A_Bench": {
+    "name_pl": "Uginanie nadgarstków nachwytem na ławce",
+    "aliases": []
+  },
+  "Palms-Up_Barbell_Wrist_Curl_Over_A_Bench": {
+    "name_pl": "Uginanie nadgarstków podchwytem na ławce",
+    "aliases": []
+  },
+  "Pendlay_Row": {
+    "name_pl": "Wiosłowanie Pendlaya",
+    "aliases": []
+  },
+  "Pike_Push-Up": {
+    "name_pl": "Pompki pike",
+    "aliases": []
+  },
+  "Plank": {
+    "name_pl": "Deska (plank)",
+    "aliases": [
+      "deska",
+      "plank"
+    ]
+  },
+  "Plie_Dumbbell_Squat": {
+    "name_pl": "Przysiad sumo z hantlem",
+    "aliases": []
+  },
+  "Preacher_Curl": {
+    "name_pl": "Uginanie ramion na modlitewniku",
+    "aliases": [
+      "modlitewnik"
+    ]
+  },
+  "Pull_Through": {
+    "name_pl": "Pull through (przyciąganie liny między nogami)",
+    "aliases": []
+  },
+  "Pullups": {
+    "name_pl": "Podciąganie nachwytem",
+    "aliases": [
+      "podciąganie",
+      "drążek"
+    ]
+  },
+  "Push_Press": {
+    "name_pl": "Push press",
+    "aliases": []
+  },
+  "Push-Ups_-_Close_Triceps_Position": {
+    "name_pl": "Pompki wąskie (tricepsowe)",
+    "aliases": []
+  },
+  "Push-Ups_With_Feet_Elevated": {
+    "name_pl": "Pompki z nogami na podwyższeniu",
+    "aliases": []
+  },
+  "Pushups": {
+    "name_pl": "Pompki",
+    "aliases": [
+      "pompki"
+    ]
+  },
+  "Reverse_Flyes": {
+    "name_pl": "Odwrotne rozpiętki",
+    "aliases": []
+  },
+  "Reverse_Hyperextension": {
+    "name_pl": "Odwrotne skłony rzymskie",
+    "aliases": []
+  },
+  "Reverse_Machine_Flyes": {
+    "name_pl": "Odwrotne rozpiętki na maszynie",
+    "aliases": []
+  },
+  "Reverse_Nordic_Curl": {
+    "name_pl": "Odwrotny nordic curl",
+    "aliases": []
+  },
+  "Romanian_Deadlift": {
+    "name_pl": "Martwy ciąg rumuński",
+    "aliases": [
+      "rumuński",
+      "rumun",
+      "rdl"
+    ]
+  },
+  "Rope_Crunch": {
+    "name_pl": "Spięcia brzucha z liną wyciągu",
+    "aliases": []
+  },
+  "Russian_Twist": {
+    "name_pl": "Skręty rosyjskie",
+    "aliases": []
+  },
+  "Scapular_Pull-Up": {
+    "name_pl": "Podciąganie łopatkowe",
+    "aliases": []
+  },
+  "Seated_Cable_Rows": {
+    "name_pl": "Wiosłowanie na wyciągu siedząc",
+    "aliases": []
+  },
+  "Seated_Calf_Raise": {
+    "name_pl": "Wspięcia na palce siedząc (maszyna)",
+    "aliases": []
+  },
+  "Seated_Dumbbell_Press": {
+    "name_pl": "Wyciskanie hantli siedząc",
+    "aliases": []
+  },
+  "Seated_Good_Mornings": {
+    "name_pl": "Skłony dzień dobry siedząc",
+    "aliases": []
+  },
+  "Seated_Leg_Curl": {
+    "name_pl": "Uginanie nóg siedząc (maszyna)",
+    "aliases": []
+  },
+  "Side_Lateral_Raise": {
+    "name_pl": "Wznosy hantli bokiem",
+    "aliases": [
+      "wznosy"
+    ]
+  },
+  "Single_Leg_Calf_Raise": {
+    "name_pl": "Wspięcia na palce jednonóż",
+    "aliases": []
+  },
+  "Single_Leg_Glute_Bridge": {
+    "name_pl": "Mostek biodrowy jednonóż",
+    "aliases": [
+      "mostek"
+    ]
+  },
+  "Single-Arm_Push-Up": {
+    "name_pl": "Pompka jednorącz",
+    "aliases": []
+  },
+  "Single-Leg_Hip_Thrust": {
+    "name_pl": "Hip thrust jednonóż",
+    "aliases": []
+  },
+  "Sit-Up": {
+    "name_pl": "Brzuszki pełne (sit-up)",
+    "aliases": []
+  },
+  "Smith_Machine_Bench_Press": {
+    "name_pl": "Wyciskanie na suwnicy Smitha",
+    "aliases": []
+  },
+  "Smith_Machine_Bent_Over_Row": {
+    "name_pl": "Wiosłowanie na suwnicy Smitha",
+    "aliases": []
+  },
+  "Smith_Machine_Close-Grip_Bench_Press": {
+    "name_pl": "Wyciskanie wąsko na suwnicy Smitha",
+    "aliases": []
+  },
+  "Smith_Machine_Incline_Bench_Press": {
+    "name_pl": "Wyciskanie na suwnicy Smitha na ławce skośnej",
+    "aliases": []
+  },
+  "Smith_Machine_Squat": {
+    "name_pl": "Przysiad na suwnicy Smitha",
+    "aliases": [
+      "suwnica smitha",
+      "smith"
+    ]
+  },
+  "Smith_Machine_Stiff-Legged_Deadlift": {
+    "name_pl": "Martwy ciąg na prostych nogach na suwnicy Smitha",
+    "aliases": []
+  },
+  "Split_Squat_with_Dumbbells": {
+    "name_pl": "Przysiad rozdzielny z hantlami",
+    "aliases": []
+  },
+  "Split_Squats": {
+    "name_pl": "Przysiad rozdzielny (split squat)",
+    "aliases": []
+  },
+  "Standing_Biceps_Cable_Curl": {
+    "name_pl": "Uginanie ramion na wyciągu",
+    "aliases": []
+  },
+  "Standing_Calf_Raises": {
+    "name_pl": "Wspięcia na palce stojąc (maszyna)",
+    "aliases": [
+      "łydki",
+      "wspięcia"
+    ]
+  },
+  "Standing_Dumbbell_Press": {
+    "name_pl": "Wyciskanie hantli nad głowę stojąc",
+    "aliases": []
+  },
+  "Standing_Dumbbell_Triceps_Extension": {
+    "name_pl": "Wyciskanie francuskie hantlem stojąc",
+    "aliases": []
+  },
+  "Standing_Dumbbell_Upright_Row": {
+    "name_pl": "Podciąganie hantli wzdłuż tułowia",
+    "aliases": []
+  },
+  "Standing_Military_Press": {
+    "name_pl": "Wyciskanie żołnierskie (OHP)",
+    "aliases": [
+      "ohp",
+      "military",
+      "żołnierskie"
+    ]
+  },
+  "Step-up_with_Knee_Raise": {
+    "name_pl": "Wejście na skrzynię z unoszeniem kolana",
+    "aliases": []
+  },
+  "Stiff-Legged_Dumbbell_Deadlift": {
+    "name_pl": "Martwy ciąg na prostych nogach z hantlami",
+    "aliases": []
+  },
+  "Straight-Arm_Dumbbell_Pullover": {
+    "name_pl": "Przenoszenie hantla za głowę (pullover)",
+    "aliases": []
+  },
+  "Straight-Arm_Pulldown": {
+    "name_pl": "Ściąganie wyciągu prostymi ramionami",
+    "aliases": []
+  },
+  "Sumo_Deadlift": {
+    "name_pl": "Martwy ciąg sumo",
+    "aliases": [
+      "sumo"
+    ]
+  },
+  "Superman": {
+    "name_pl": "Superman (unoszenie rąk i nóg leżąc)",
+    "aliases": []
+  },
+  "T-Bar_Row_with_Handle": {
+    "name_pl": "Wiosłowanie sztangą T (T-bar)",
+    "aliases": [
+      "t-bar"
+    ]
+  },
+  "Thigh_Abductor": {
+    "name_pl": "Odwodzenie nóg na maszynie",
+    "aliases": [
+      "odwodzenie"
+    ]
+  },
+  "Thigh_Adductor": {
+    "name_pl": "Przywodzenie nóg na maszynie",
+    "aliases": [
+      "przywodzenie"
+    ]
+  },
+  "Tibialis_Raise": {
+    "name_pl": "Unoszenie palców stóp (tibialis)",
+    "aliases": []
+  },
+  "Triceps_Pushdown": {
+    "name_pl": "Prostowanie ramion na wyciągu",
+    "aliases": [
+      "triceps linka",
+      "pushdown"
+    ]
+  },
+  "Underhand_Cable_Pulldowns": {
+    "name_pl": "Ściąganie drążka podchwytem",
+    "aliases": []
+  },
+  "Upright_Barbell_Row": {
+    "name_pl": "Podciąganie sztangi wzdłuż tułowia",
+    "aliases": []
+  },
+  "Upright_Cable_Row": {
+    "name_pl": "Podciąganie linki wzdłuż tułowia",
+    "aliases": []
+  },
+  "V-Bar_Pullup": {
+    "name_pl": "Podciąganie chwytem neutralnym (V-bar)",
+    "aliases": []
+  },
+  "Weighted_Crunches": {
+    "name_pl": "Brzuszki z obciążeniem",
+    "aliases": []
+  },
+  "Wide-Grip_Lat_Pulldown": {
+    "name_pl": "Ściąganie drążka wyciągu szerokim chwytem",
+    "aliases": [
+      "ściąganie drążka",
+      "lat pulldown"
+    ]
+  }
+}
