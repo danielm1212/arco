@@ -75,10 +75,13 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Guidance poza LCP home + indeks `sessions(user_id, started_at desc)` (audyt P1.4,
   commit `b790a80`): hero home nie czeka już na 3 rundy DB guidance (Suspense/streaming),
   migracja `20260717213044` przetestowana na świeżej bazie. Wszystkie 4 P1 audytu zamknięte.
-- Paczka P2 audytu (`ab5e3ca`): guard podwójnego tapu „Zakończ" w loggerze, `requireUser()`
-  w akcjach podmiany, limit 100 wystąpień na stronie ćwiczenia, komentarz przy
-  `TeamHomeCard`, CSP/config bez zaszłości `raw.githubusercontent.com`; sprostowanie
+- Paczka P2 audytu (`ab5e3ca`, na prodzie): guard podwójnego tapu „Zakończ" w loggerze,
+  `requireUser()` w akcjach podmiany, limit 100 wystąpień na stronie ćwiczenia, komentarz
+  przy `TeamHomeCard`, CSP/config bez zaszłości `raw.githubusercontent.com`; sprostowanie
   audytu: polityka INSERT `activity_events` była zamknięta już 2026-07-13.
+- Testy dla bibliotek bez pokrycia (`33dd58e`, lokalnie): `format`, `week`,
+  `trainingPriority`, `exerciseFilters` — +26 przypadków, w tym regresja bugu strefy
+  czasowej w `localDayKey`. Ostatni punkt P2 zamknięty.
 
 ## Technologia i dane
 
@@ -129,13 +132,16 @@ oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
 **[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów — gotowe prompty per ćwiczenie
 w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamera; styl bazowy
 `prompt-fotografia-warm.md`), upload przez `upload:exercise-images` → `sync:exercise-content`.
-Deploy paczek audytu (P1.1–P1.4) wykonany 2026-07-17: migracja `20260717213044` na
-prodzie (local == remote), kod `7faac1a..bf2e85d` na origin, prod zweryfikowany
-w przeglądarce. Uwaga: lokalna baza dev została zresetowana i zasiana od zera przy
-teście migracji — lokalne dane dogfoodu z wcześniejszych sesji nie istnieją, a lokalny
-bucket `exercise-images` jest pusty (obrazki lokalnie wrócą po `upload:exercise-images`).
-**[Ty] push:** lokalne commity `ec095d1` (docs) i `ab5e3ca` (paczka P2 — czysty kod,
-bez migracji) czekają na `git push` → CI + deploy.
+Deploy audytu kodu (P1.1–P1.4 + P2) wykonany 2026-07-17: migracja `20260717213044` na
+prodzie (local == remote), kod do `0dfa7e5` na origin, CI oba joby zielone, prod
+zweryfikowany w przeglądarce (świeży build, zero błędów CSP). Lokalny bucket
+`exercise-images` zasiany przez `npm run upload:exercise-images` (na LOKALNY stack —
+`.env.local` wskazuje dev, nie prod). **Cały audyt kodu 2026-07 jest zamknięty**
+(4/4 P1, cała lista P2) poza większymi refactorami odłożonymi jako tło R3–R5
+(agregaty postępów, wspólny typ joinów, formatSet w 3 miejscach, duże komponenty,
+i18n komunikatów, multi-tab outbox — udokumentowane).
+**[Ty] push:** lokalny commit `33dd58e` (4 nowe pliki testów, czysty przyrost, zero
+zmian produkcyjnych) czeka na `git push` → CI + deploy.
 Kod: checkpoint dogfood po R2, potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
 powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie

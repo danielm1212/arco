@@ -49,6 +49,22 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · [Ty]+Claude (deploy paczki P2 + testy libów bez pokrycia): ZAKOŃCZONE.**
+  [Ty]: `npm run upload:exercise-images` (na LOKALNY bucket — `.env.local` wskazuje stack
+  lokalny, nie prod; potwierdzone `3_4_Sit-Up/0.jpg` 400→200) i `git push` paczki P2
+  (`ec095d1`+`ab5e3ca`+`0dfa7e5`). Zweryfikowałem: `origin/main` = HEAD, prod ma świeży
+  build (nowe hashe chunków), login renderuje się, zero błędów CSP mimo wyciętego
+  `raw.githubusercontent.com`; CI na `0dfa7e5` **oba joby zielone** („Kod i treść" +
+  „Baza, offline i Ekipa"). Przy okazji domknięty ostatni punkt P2: 4 nowe pliki testów
+  dla bibliotek bez pokrycia — `format.test.ts`, `week.test.ts`, `training-priority.test.ts`,
+  `exercise-filters.test.ts` (+26 przypadków, w tym regresja bugu strefy czasowej
+  w `localDayKey` i dziura w passie); commit `33dd58e`, lokalnie. Gate: tsc ✓, lint ✓,
+  testy 70/70 ✓, build ✓. Czego nie dotknięto: kodu produkcyjnego (czysty przyrost testów),
+  migracji, seedów. Zaległości: [Ty] push `33dd58e`; z P2 zostają już tylko większe
+  refactory (agregaty `periodStats`/`getStrengthTrends`, wspólny typ joinów, formatSet
+  w 3 miejscach, podział dużych komponentów, centralizacja komunikatów PL, multi-tab
+  outbox) — sensowne jako tło R3–R5, nie osobna sesja. Główny gate dalszej pracy:
+  [Ty] checkpoint regresji urządzeniowej po R2 (blokuje start R3a wg kolejności planu).
 - **2026-07-17 · Claude (audyt kodu: paczka P2 — bezpieczeństwo i drobna integralność): ZAKOŃCZONE TECHNICZNIE.**
   Zakres (commit `ab5e3ca`, lokalnie): Logger — guard in-flight `confirmFinish` + `disabled`
   na „Zakończ" (oba wejścia, także FinishSheet); `substitute.ts` — `requireUser()` w obu

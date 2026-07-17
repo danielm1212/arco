@@ -33,7 +33,7 @@
 **Zdrowie kodu**
 - ~~`components/TeamHomeCard.tsx` — 0 importów bez wyjaśnienia~~ ✅ 2026-07-17: komentarz „zachowany do R3b, nie usuwać" w nagłówku komponentu.
 - ~22 rzutowania `as unknown as {…}` na kształtach joinów Supabase (sesje, PR-y) — jeden współdzielony typ pomocniczy zamiast lokalnych rzutowań.
-- Braki testów: `lib/format.ts`, `lib/week.ts`, `lib/trainingPriority.ts`, `lib/exerciseFilters.ts`.
+- ~~Braki testów: `lib/format.ts`, `lib/week.ts`, `lib/trainingPriority.ts`, `lib/exerciseFilters.ts`~~ ✅ 2026-07-17 (`33dd58e`): 4 nowe pliki testów, +26 przypadków (m.in. regresja bugu strefy czasowej w `localDayKey`, dziura w passie, union mięśni/sprzętu).
 - Formatowanie serii inline w 3 miejscach obok istniejącego `formatSet` — kierować przez helper.
 - Komponenty >300 linii: `WelcomeOverlay` (573!), `ProgramEditor` (440), `Logger` (433), `SettingsForm`, `ExerciseBrowser` — kandydaci do podziału przy najbliższym dotknięciu.
 - ~20 zahardkodowanych komunikatów błędów PL rozsianych po akcjach — scentralizować, jeśli kiedyś i18n.
