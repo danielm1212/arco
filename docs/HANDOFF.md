@@ -72,6 +72,9 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Konsolidacja e1RM (audyt P1.2+P1.3, commit `37af446`): wzór Epleya i metryka per typ
   ćwiczenia żyją w jednym `lib/exerciseMetrics.ts` (były 4 kopie), `repPRs` i metryki
   mają testy jednostkowe — fundament pod prognozę Coach.
+- Guidance poza LCP home + indeks `sessions(user_id, started_at desc)` (audyt P1.4,
+  commit `b790a80`): hero home nie czeka już na 3 rundy DB guidance (Suspense/streaming),
+  migracja `20260717213044` przetestowana na świeżej bazie. Wszystkie 4 P1 audytu zamknięte.
 
 ## Technologia i dane
 
@@ -122,13 +125,15 @@ oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
 **[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów — gotowe prompty per ćwiczenie
 w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamera; styl bazowy
 `prompt-fotografia-warm.md`), upload przez `upload:exercise-images` → `sync:exercise-content`.
-**[Ty] push:** lokalny commit `37af446` (konsolidacja e1RM + testy repPRs — czysty
-refactor lib/testy, bez migracji) czeka na push → CI + deploy.
+**[Ty] deploy (kolejność wg arco-release — baza przed kodem):** (1) `supabase db push` —
+migracja `20260717213044` (indeks `started_at`, czysty dry-run oczekiwany);
+(2) `git push` — lokalne commity `37af446`+`5ccef1d`+`b790a80`+docs (e1RM, testy,
+guidance/LCP). Uwaga: lokalna baza dev została zresetowana i zasiana od zera przy teście
+migracji — lokalne dane dogfoodu z wcześniejszych sesji nie istnieją.
 Kod: checkpoint dogfood po R2, potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
-powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Z audytu kodu zostaje:
-P1.4 guidance poza LCP home + indeks `sessions(user_id, started_at desc)` (wymaga
-migracji — najlepiej przy najbliższym dotknięciu home/statystyk), potem reszta P2.
+powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie
+4 P1 zamknięte; zostaje P2 jako tło przy R3–R5.
 Równolegle: przeniesienie zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
 Procedury wydania, zamknięcia sesji i migracji są od 2026-07-17 skodyfikowane w
 `.claude/skills/` (arco-release, arco-session-close, arco-migration) i wiążące przez `CLAUDE.md`.

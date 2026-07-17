@@ -9,7 +9,7 @@
 1. ~~**`lib/outbox.ts` `read()` — cichy zrzut kolejki przy uszkodzonym JSON.**~~ ✅ 2026-07-17 (`e0c4cbf`): surowa wartość ląduje pod `arco-outbox-v1-corrupt` (pierwszy backup wygrywa), klucz główny czyszczony, toast przez event + `pendingOutboxAlerts()`.
 2. ~~**Wzór e1RM (Epley) skopiowany w 4 miejscach**~~ ✅ 2026-07-17 (`37af446`): `estimate1RM()` + `setMetric()` w `lib/exerciseMetrics.ts`, wszystkie 4 kopie zastąpione importem (przy okazji zniknęły też 3 identyczne funkcje metryki per typ).
 3. ~~**`lib/repPRs.ts` bez testu jednostkowego**~~ ✅ 2026-07-17 (`37af446`): `tests/rep-prs.test.ts` (Pareto: dominacja, sortowanie, brzegi) + `tests/exercise-metrics.test.ts` (wartości Epleya, wybór metryki wg typu).
-4. **Home: guidance blokuje LCP.** `getHomeGuidance()` (3 sekwencyjne rundy DB) siedzi w blokującym batchu `app/page.tsx:53`, a `GuidanceChip` jest na dole strony. Fix: wyjąć z batcha, owinąć `<Suspense>`. Zysk: hero nie czeka ~kilkaset ms na 4G. Przy okazji trasa wróci pod budżet ≤4 zapytań.
+4. ~~**Home: guidance blokuje LCP.**~~ ✅ 2026-07-17 (`b790a80`): `getHomeGuidance()` wyjęte z batcha do async `HomeGuidance` w `<Suspense fallback={null}>` — hero streamuje się bez czekania na 3 rundy guidance.
 
 ## P2 — kolejka refinementu
 
@@ -26,7 +26,7 @@
 - CSP: `script-src 'unsafe-inline'` (świadomy trade-off hydratacji; docelowo nonce'y) oraz zaszłość `raw.githubusercontent.com` w `remotePatterns` i `img-src` — obrazy idą już wyłącznie z Supabase CDN, wpisy do wycięcia przy najbliższym dotknięciu configu.
 
 **Wydajność**
-- Brak indeksu `sessions(user_id, started_at desc)` — wszystkie gorące trasy filtrują/sortują po `started_at`, a jedyny indeks to `(user_id, date)`. Jedna migracja, zysk rośnie ze stażem konta.
+- ~~Brak indeksu `sessions(user_id, started_at desc)`~~ ✅ 2026-07-17 (`b790a80`): migracja `20260717213044_sessions_started_at_index` (świeża baza + seed + walidatory ✓; czeka na `db push` [Ty]).
 - `app/progress/stats.ts` — `periodStats` i `getStrengthTrends` robią po 3 sekwencyjne rundy; kandydat na RPC/agregat (wzorzec: `previous_session_sets_batch`).
 - `app/exercise/[id]/page.tsx:54` — historia ćwiczenia bez `limit` (rośnie bez końca); cap do ostatnich N sesji.
 

@@ -49,6 +49,23 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (audyt kodu: guidance poza LCP + indeks started_at, P1.4): ZAKOŃCZONE TECHNICZNIE.**
+  Zakres: `app/page.tsx` (guidance z blokującego batcha → async `HomeGuidance` w
+  `<Suspense fallback={null}>`; batch home z 7 do 6 równoległych zapytań, 3 rundy guidance
+  streamują się po hero) oraz migracja `20260717213044_sessions_started_at_index`
+  (indeks `sessions(user_id, started_at desc)`; commit `b790a80`, lokalnie).
+  Weryfikacja wg arco-migration: `supabase db reset` na świeżej bazie ✓, seed 308 slotów ✓,
+  `bootstrap:user` ✓, walidatory treningi (16/49 placeholderów) i rekomendacje 60/60 ✓,
+  indeks potwierdzony w pg_indexes ✓, `npm run smoke` ✓ (posprzątał własne sesje);
+  gate: tsc ✓, lint ✓, testy 44/44 ✓, build ✓; przeglądarka (preview `next start`):
+  login → skip onboardingu → home renderuje hero/subnav/bottom nav, konsola i logi czyste.
+  UWAGA dla [Ty]: lokalna baza była ZRESETOWANA i zasiana od zera (wymóg skillu migracji) —
+  wcześniejszy lokalny stan testowy (np. sesje z dogfoodu R2) nie istnieje; konto admin ma
+  świeży profil (onboarding pominięty w teście). `.env.local` wskazuje lokalny stack po IP
+  LAN (192.168.100.16), nie prod — wpis „env wskazuje prod" z 2026-07-17 był nieaktualny.
+  Czego nie dotknięto: loggera, RPC/RLS, seedów, duplikatów ikon. Zaległości: [Ty] wg
+  arco-release NAJPIERW `supabase db push` (indeks, czysty dry-run oczekiwany), POTEM
+  `git push` (`37af446`+`5ccef1d`+`b790a80`+docs); z audytu zostaje reszta P2 jako tło R3–R5.
 - **2026-07-17 · Claude (audyt kodu: konsolidacja e1RM + testy repPRs, P1.2+P1.3): ZAKOŃCZONE TECHNICZNIE.**
   Zakres: nowy `lib/exerciseMetrics.ts` (`estimate1RM` Epley + `setMetric` per typ),
   `app/progress/stats.ts`, `app/exercise/[id]/page.tsx`, `lib/getHomeGuidance.ts`
