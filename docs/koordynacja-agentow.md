@@ -49,6 +49,18 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (Cowork: skille procedur + porządki repo i docs): ZAKOŃCZONE.**
+  Zakres: `.claude/skills/` (arco-release, arco-session-close, arco-migration), `CLAUDE.md`,
+  `docs/HANDOFF.md`, ten plik, `public/icons-3d/`. Wynik: trzy skille zacommitowane
+  (`5e250f6`, `73f21c9`) i wypchnięte; usunięto 6 duplikatów ikon ` 2.png` bitowo
+  identycznych z oryginałami (weryfikacja `cmp`). USTALENIE: R2 (`ac82a18`, `44d66cc`)
+  jest na origin/main — wbrew wpisowi R2 poniżej („NIE wypchnięte") poszło z pushem
+  2026-07-17 rano, więc Vercel zdeployował je na prod bez przeglądu wizualnego [Ty];
+  HANDOFF „Następny krok" zaktualizowany. Czego nie dotknięto: kodu aplikacji, migracji,
+  seedów, `docs/notion-sync-queue.md`, 2 różniących się ikon (`battery`, `target`).
+  Zaległości [Ty]: wspólna regresja urządzeniowa R1b+R2 (iPhone PWA, Android) połączona
+  z przeglądem wizualnym R2 na prodzie; decyzja o `CountUpNumber.tsx` (szkic bez importów)
+  i 2 ikonach; backup poza laptopa.
 - **2026-07-17 · Claude (R2: Trening, Dziś i Plany — pierwszy pion): ZAKOŃCZONE TECHNICZNIE, lokalnie.**
   Wdrożone: `TrainingHeader` (logo + badge celu = ukończone treningi/tydzień + awatar-monogram
   → /settings), `TrainingSubnav` Dziś | Plany (replace, wzorzec ProgressSubnav), hero

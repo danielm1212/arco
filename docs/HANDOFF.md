@@ -1,6 +1,6 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-16
+**Aktualizacja:** 2026-07-17
 
 **Gałąź:** `main`
 
@@ -94,15 +94,17 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 
 ## Następny krok
 
-R1a i R1b są zakończone i **wdrożone na produkcję** (2026-07-16 wieczorem, decyzją właściciela
-przed regresją urządzeniową): migracja `20260716213000_single_open_session` zastosowana na
-prod (local == remote), deploy `9f65a6d` na Vercel zakończony sukcesem, strona logowania i
-service worker zweryfikowane w przeglądarce bez błędów konsoli. **Zaległa pozostaje krótka
-regresja [Ty] na iPhone PWA i Androidzie** — w pierwszej kolejności start/wznowienie treningu
-i odzyskanie szkicu, bo niezmiennik sesji działa już na realnych danych.
-Następnie R2 (Trening, Dziś i Plany), checkpoint dogfood, dalej R3–R5b, R6 i H2 w R7.
+R1a, R1b **oraz R2** są na produkcji. R1a+R1b weszły 2026-07-16 wieczorem (migracja
+`20260716213000_single_open_session` na prod, local == remote, deploy `9f65a6d` zweryfikowany
+w przeglądarce). R2 (`ac82a18`, `44d66cc`) trafiło na origin/main z pushem 2026-07-17 rano —
+**bez wcześniejszego przeglądu wizualnego [Ty] na localhost**, na który czekało wg dziennika.
+**Najpilniejsze [Ty]: jedna wspólna regresja urządzeniowa R1b+R2 na iPhone PWA i Androidzie** —
+start/wznowienie treningu, odzyskanie szkicu, nowy header/subnav Trening i hero z rozdzielonymi
+celami tapnięcia. Potem checkpoint dogfood, dalej R3a–R5b, R6 i H2 w R7.
 Równolegle: przegląd słownika `r5a-slownik-pl-propozycja.md` [Ty] oraz przeniesienie
 zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
+Procedury wydania, zamknięcia sesji i migracji są od 2026-07-17 skodyfikowane w
+`.claude/skills/` (arco-release, arco-session-close, arco-migration) i wiążące przez `CLAUDE.md`.
 
 Nie dokładamy teraz nowej funkcji. Porządkujemy istniejący rdzeń i testujemy jeden spójny model produktu.
 
@@ -112,4 +114,6 @@ Nie dokładamy teraz nowej funkcji. Porządkujemy istniejący rdzeń i testujemy
 - Service role nie może trafić do repo ani logów.
 - Re-seed może zmienić powiązania aktywnego programu. Po seedzie zawsze zweryfikuj konto testowe.
 - Produkcyjne dane treningowe usuwaj wyłącznie po jawnie znanych identyfikatorach.
-- Untracked duplikaty ikon z sufiksem ` 2.png` nie są częścią obecnych zmian i wymagają osobnej decyzji właściciela.
+- Porządki 2026-07-17: usunięto 6 duplikatów ikon ` 2.png` bitowo identycznych z oryginałami.
+  Zostały 2 różniące się (`battery`, `target` — do decyzji [Ty]) oraz niepodpięty
+  `app/session/[id]/done/CountUpNumber.tsx` (szkic celebracji bez importów — dokończyć lub usunąć).
