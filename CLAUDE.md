@@ -33,7 +33,7 @@ Briefy v0.2 i v0.3 są dokumentami historyczno-referencyjnymi. Nie mogą nadpisy
 - Przed większą zmianą sprawdź `docs/HANDOFF.md` i aktywny sprint.
 - Deploy na produkcję wykonuj wyłącznie procedurą z `.claude/skills/arco-release/SKILL.md` — w tym obowiązkowe smoke'i przy zmianie kontraktu danych.
 - Każdą sesję zamykaj procedurą z `.claude/skills/arco-session-close/SKILL.md` — wpis w dzienniku koordynacji, HANDOFF i kolejka Notion.
-- Migracje bazy wykonuj wyłącznie przez `supabase/migrations`.
+- Migracje bazy wykonuj wyłącznie przez `supabase/migrations`, według reguł z `.claude/skills/arco-migration/SKILL.md`.
 - Każda tabela z danymi użytkownika dostaje RLS i test wielokontowy w tej samej zmianie.
 - Service role może występować wyłącznie w skryptach i środowisku serwerowym.
 - Nigdy nie usuwaj hurtowo sesji. Dane testowe kasuj tylko po znanych identyfikatorach.
