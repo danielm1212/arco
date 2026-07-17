@@ -1,3 +1,4 @@
+import { joinMany } from "@/lib/dbJoins";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
@@ -41,7 +42,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
   if (!program) notFound();
 
   const days: EditorDay[] = (
-    (program.program_days as unknown as {
+    joinMany<{
       id: string;
       label: string;
       position: number;
@@ -56,7 +57,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
         notes: string | null;
         exercises: { name: string } | null;
       }[];
-    }[]) ?? []
+    }>(program.program_days)
   )
     .map((d) => ({
       id: d.id,

@@ -1,3 +1,4 @@
+import { joinMaybe } from "@/lib/dbJoins";
 import { Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -91,7 +92,7 @@ export default async function HomePage() {
   const activeProgram = (programs ?? []).find((p) => p.id === activeId) ?? null;
   const presetCount = (programs ?? []).filter((p) => p.slug).length;
   const activeDays = (
-    ((active?.programs as unknown as { program_days: ActiveDay[] } | null)?.program_days ?? [])
+    (joinMaybe<{ program_days: ActiveDay[] }>(active?.programs)?.program_days ?? [])
   )
     .slice()
     .sort((a, b) => a.position - b.position);

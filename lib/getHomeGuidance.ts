@@ -1,4 +1,5 @@
 // server-only: importuje `@/lib/supabase/server` (next/headers) → nie trafia do klienta.
+import { joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { setMetric } from "@/lib/exerciseMetrics";
@@ -54,11 +55,9 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
   (ses ?? []).forEach((se) => {
     const date = sessionDate.get(se.session_id);
     if (!date) return;
-    const ex = se.exercises as unknown as {
-      name: string;
-      exercise_type: ExerciseType;
-      primary_muscles: string[];
-    } | null;
+    const ex = joinMaybe<
+      Pick<ExerciseJoin, "name" | "name_pl" | "exercise_type" | "primary_muscles">
+    >(se.exercises);
     seInfo.set(se.id, {
       date,
       sessionId: se.session_id,

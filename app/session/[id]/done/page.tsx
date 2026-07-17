@@ -6,6 +6,7 @@ import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { CountUpNumber } from "./CountUpNumber";
 import { weekStart, computeStreak } from "@/lib/week";
+import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 
 export const dynamic = "force-dynamic";
 
@@ -50,11 +51,11 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
   const goal = settings?.weekly_goal ?? 2;
 
   const exercises =
-    (session.session_exercises as unknown as {
+    joinMany<{
       id: string;
-      exercises: { exercise_type: ExerciseType; primary_muscles: string[] };
+      exercises: Pick<ExerciseJoin, "exercise_type" | "primary_muscles">;
       session_sets: SessionSet[];
-    }[]) ?? [];
+    }>(session.session_exercises);
 
   const allSets = exercises.flatMap((e) => e.session_sets);
   const completed = allSets.filter((s) => s.completed);

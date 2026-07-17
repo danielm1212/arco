@@ -22,6 +22,7 @@ import {
   sortSearchHits,
 } from "@/lib/exerciseSearch";
 import type { MovementPattern } from "@/lib/types";
+import { joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 
 export interface BrowserHit {
   id: string;
@@ -87,13 +88,9 @@ export function ExerciseBrowser({
         (data ?? []).forEach((r) => {
           if (seen.has(r.exercise_id) || out.length >= 8) return;
           seen.add(r.exercise_id);
-          const ex = r.exercises as unknown as {
-            name: string;
-            name_pl: string | null;
-            equipment: string | null;
-            images: string[] | null;
-            user_id: string | null;
-          } | null;
+          const ex = joinMaybe<
+            Pick<ExerciseJoin, "name" | "name_pl" | "equipment" | "images" | "user_id">
+          >(r.exercises);
           if (!ex) return;
           out.push({
             id: r.exercise_id,

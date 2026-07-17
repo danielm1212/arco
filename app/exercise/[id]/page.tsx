@@ -9,6 +9,7 @@ import { repPRRows } from "@/lib/repPRs";
 import { Sparkline } from "@/components/Sparkline";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
+import { joinMany } from "@/lib/dbJoins";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
@@ -60,10 +61,10 @@ export default async function ExercisePage(props: {
     .order("sessions(started_at)", { ascending: false, nullsFirst: false })
     .limit(100);
 
-  const sessions = ((occurrences as unknown as {
+  const sessions = joinMany<{
     sessions: { started_at: string } | null;
     session_sets: SessionSet[];
-  }[]) ?? [])
+  }>(occurrences)
     .filter((o) => o.sessions && o.session_sets.some((s) => s.completed))
     .map((o) => ({
       date: o.sessions!.started_at,

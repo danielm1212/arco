@@ -11,6 +11,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { MiniBarPosition } from "@/lib/appChrome";
+import { joinMaybe } from "@/lib/dbJoins";
 
 interface OpenSession {
   id: string;
@@ -58,7 +59,7 @@ export function SessionMiniBar({
                 id: data.id,
                 started_at: data.started_at,
                 label:
-                  (data.program_days as unknown as { label: string } | null)?.label ?? null,
+                  joinMaybe<{ label: string }>(data.program_days)?.label ?? null,
               }
             : null,
         );

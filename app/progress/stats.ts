@@ -4,6 +4,7 @@ import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guid
 import { setMetric } from "@/lib/exerciseMetrics";
 import { localDayKey } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
+import { joinMany, joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 
 /**
  * Warstwa danych trasy /progress — S9-cz.2 paczka 4: logika przeniesiona 1:1
@@ -53,7 +54,7 @@ async function periodStats(
     .in("session_id", ids);
   const bySe = new Map<string, { muscles: string[]; cats: MuscleCategory[] }>();
   (ses ?? []).forEach((se) => {
-    const ex = se.exercises as unknown as { primary_muscles: string[] } | null;
+    const ex = joinMaybe<Pick<ExerciseJoin, "primary_muscles">>(se.exercises);
     bySe.set(se.id, {
       muscles: ex?.primary_muscles ?? [],
       cats: categoriesForExercise(se.exercise_id, ex?.primary_muscles ?? []),
@@ -154,7 +155,7 @@ export async function getPersonalRecords(supabase: Supabase): Promise<[string, P
     exercises: { name: string } | null;
   };
   const byExercise = new Map<string, PrEntry>();
-  ((prs as unknown as PrRow[]) ?? []).forEach((p) => {
+  joinMany<PrRow>(prs).forEach((p) => {
     const cur = byExercise.get(p.exercise_id) ?? { name: p.exercises ? exerciseDisplayName(p.exercises) : p.exercise_id };
     if (p.record_type === "max_e1rm") cur.e1rm = p.value;
     if (p.record_type === "max_weight") cur.maxWeight = p.value;
@@ -227,7 +228,7 @@ export async function getStrengthTrends(
     { exerciseId: string; name: string; type: ExerciseType; sessionId: string }
   >();
   (sExs ?? []).forEach((se) => {
-    const ex = se.exercises as unknown as { name: string; name_pl: string | null; exercise_type: ExerciseType } | null;
+    const ex = joinMaybe<Pick<ExerciseJoin, "name" | "name_pl" | "exercise_type">>(se.exercises);
     seMeta.set(se.id, {
       exerciseId: se.exercise_id,
       name: ex ? exerciseDisplayName(ex) : se.exercise_id,

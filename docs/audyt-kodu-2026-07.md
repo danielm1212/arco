@@ -32,9 +32,9 @@
 
 **Zdrowie kodu**
 - ~~`components/TeamHomeCard.tsx` — 0 importów bez wyjaśnienia~~ ✅ 2026-07-17: komentarz „zachowany do R3b, nie usuwać" w nagłówku komponentu.
-- ~22 rzutowania `as unknown as {…}` na kształtach joinów Supabase (sesje, PR-y) — jeden współdzielony typ pomocniczy zamiast lokalnych rzutowań.
+- ~~~22 rzutowania `as unknown as {…}` na kształtach joinów Supabase~~ ✅ 2026-07-18: `lib/dbJoins.ts` — wspólne kształty (`ExerciseJoin`, `DayJoin`) + `joinOne`/`joinMaybe`/`joinMany` w jednym udokumentowanym miejscu; 19 lokalnych rzutowań zastąpionych (w repo został tylko `webkitAudioContext` w `lib/feedback.ts` — inna kategoria).
 - ~~Braki testów: `lib/format.ts`, `lib/week.ts`, `lib/trainingPriority.ts`, `lib/exerciseFilters.ts`~~ ✅ 2026-07-17 (`33dd58e`): 4 nowe pliki testów, +26 przypadków (m.in. regresja bugu strefy czasowej w `localDayKey`, dziura w passie, union mięśni/sprzętu).
-- Formatowanie serii inline w 3 miejscach obok istniejącego `formatSet` — kierować przez helper.
+- ~~Formatowanie serii inline obok istniejącego `formatSet`~~ ✅ 2026-07-18: hint „last set" w `SetRow` przez `formatSet` (jedyna realna inline-kopia; drobna unifikacja: „45s" jak w historii). Pozostałe trafienia z audytu to inne semantyki (target slotu, etykiety statystyk) — nie serie.
 - Komponenty >300 linii: `WelcomeOverlay` (573!), `ProgramEditor` (440), `Logger` (433), `SettingsForm`, `ExerciseBrowser` — kandydaci do podziału przy najbliższym dotknięciu.
 - ~20 zahardkodowanych komunikatów błędów PL rozsianych po akcjach — scentralizować, jeśli kiedyś i18n.
 

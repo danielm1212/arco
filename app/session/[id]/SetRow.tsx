@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { clampNum, LIMITS } from "@/lib/format";
+import { clampNum, formatSet, LIMITS } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { TimedStopwatch } from "./TimedStopwatch";
 
@@ -58,19 +58,22 @@ export const SetRow = memo(function SetRow({
   // Placeholder = poprzedni wynik (szary podpowiadacz). Jednostki opisują nagłówki kolumn.
   const ph = (n: number | null | undefined) => (n != null ? String(n) : undefined);
 
-  // „Last set" — wynik z poprzedniej sesji; tap = skopiuj do pól (Strong/Hevy)
-  const prevText =
-    type === "timed"
-      ? prev?.duration_seconds != null
-        ? `${prev.duration_seconds} s`
-        : null
-      : type === "bodyweight"
-        ? prev?.reps != null
-          ? `${prev.reps} powt.${prev.added_weight ? ` +${prev.added_weight}${unit}` : ""}`
-          : null
-        : prev?.weight != null && prev?.reps != null
-          ? `${prev.weight}${unit} × ${prev.reps}`
-          : null;
+  // „Last set" — wynik z poprzedniej sesji; tap = skopiuj do pól (Strong/Hevy).
+  // Audyt P2: formatowanie przez wspólny formatSet zamiast trzeciej inline-kopii
+  // (jedyna zmiana wizualna: „45s" jak w historii, nie „45 s").
+  const prevFormatted = prev
+    ? formatSet(
+        type,
+        {
+          weight: prev.weight ?? null,
+          reps: prev.reps ?? null,
+          duration_seconds: prev.duration_seconds ?? null,
+          added_weight: prev.added_weight ?? null,
+        },
+        unit,
+      )
+    : null;
+  const prevText = prevFormatted === "Brak wyniku" ? null : prevFormatted;
 
   function fillPrev() {
     if (!prev) return;

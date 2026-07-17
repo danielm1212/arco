@@ -9,6 +9,7 @@ import { DateEditor } from "./DateEditor";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
+import { joinMany, joinMaybe, type DayJoin, type ExerciseJoin } from "@/lib/dbJoins";
 
 export const dynamic = "force-dynamic";
 
@@ -34,19 +35,17 @@ export default async function SessionDetailPage(props: {
   if (!session) notFound();
   const unit: UnitSystem = settings?.unit_system ?? "kg";
 
-  const day = session.program_days as unknown as
-    | { label: string; programs: { name: string } | null }
-    | null;
+  const day = joinMaybe<DayJoin>(session.program_days);
   const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Bez planu";
 
   const exercises = (
-    (session.session_exercises as unknown as {
+    joinMany<{
       id: string;
       position: number;
       superset_group: number | null;
-      exercises: { name: string; exercise_type: ExerciseType; primary_muscles: string[] };
+      exercises: Pick<ExerciseJoin, "name" | "name_pl" | "exercise_type" | "primary_muscles">;
       session_sets: SessionSet[];
-    }[]) ?? []
+    }>(session.session_exercises)
   )
     .slice()
     .sort((a, b) => a.position - b.position);
@@ -86,11 +85,11 @@ export default async function SessionDetailPage(props: {
     max_reps: "powt.",
     max_duration: "czas",
   };
-  const prs = ((prsRaw as unknown as {
+  const prs = joinMany<{
     record_type: string;
     value: number;
-    exercises: { name: string; name_pl: string | null } | null;
-  }[]) ?? []).map((p) => ({
+    exercises: Pick<ExerciseJoin, "name" | "name_pl"> | null;
+  }>(prsRaw).map((p) => ({
     name: p.exercises ? exerciseDisplayName(p.exercises) : "",
     label: PR_LABEL[p.record_type] ?? p.record_type,
     value: p.value,

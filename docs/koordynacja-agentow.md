@@ -49,6 +49,16 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-18 · Claude (zdrowie kodu: wspólne typy joinów + formatSet — ostatnie P2 kodowe audytu): ZAKOŃCZONE TECHNICZNIE, lokalnie.**
+  Nowy `lib/dbJoins.ts`: kształty `ExerciseJoin`/`DayJoin` + `joinOne`/`joinMaybe`/`joinMany`
+  — 19 lokalnych rzutowań `as unknown as` na joinach PostgREST zastąpionych w 12 plikach
+  (sesja, historia ×2, done, programy ×2, exercise, home, stats, guidance, repPRs, mini-bar);
+  w miejscach użycia `Pick<>` dokładnie po kolumnach selecta. Hint „last set" w `SetRow`
+  przez wspólny `formatSet` (drobna unifikacja: „45s" zamiast „45 s"). Weryfikacja: tsc ✓,
+  lint całości ✓, testy skompilowane 10/10 ✓ (repPRs przez alias @/ — pokryje CI).
+  W repo został 1 cast spoza kategorii (webkitAudioContext). Odhaczone w audycie.
+  Czego nie dotknięto: zapytań (kształty selectów bez zmian), migracji, akcji serwerowych.
+  Commit lokalny na tej samej gałęzi co R2.1 — jedzie do przeglądu/pusha razem z nim.
 - **2026-07-18 · Claude (R2.1: refinement Home/Plany wg audytu R2): ZAKOŃCZONE TECHNICZNIE, lokalnie — czeka przegląd wizualny [Ty].**
   P0: `FlameWeek` usunięty z Home (i z repo — logika zapłonu `?trained=1` przeniesiona);
   badge celu = realny przycisk 44 px (`components/WeeklyGoalBadge.tsx`, terracotta przy

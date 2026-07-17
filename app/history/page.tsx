@@ -6,6 +6,7 @@ import { weekStart, computeStreak, localDayKey } from "@/lib/week";
 import { DeleteSessionButton } from "./DeleteSessionButton";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { PageHeader } from "@/components/navigation/PageHeader";
+import { joinMany, joinMaybe, type DayJoin } from "@/lib/dbJoins";
 
 export const dynamic = "force-dynamic";
 
@@ -87,13 +88,11 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
         )}
 
         {sessions.map((s) => {
-          const day = s.program_days as unknown as
-            | { label: string; programs: { name: string } | null }
-            | null;
+          const day = joinMaybe<DayJoin>(s.program_days);
           const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Bez planu";
-          const exs = (s.session_exercises as unknown as {
-            session_sets: { completed: boolean }[];
-          }[]) ?? [];
+          const exs = joinMany<{ session_sets: { completed: boolean }[] }>(
+            s.session_exercises,
+          );
           const doneSets = exs.reduce(
             (n, e) => n + e.session_sets.filter((x) => x.completed).length,
             0,

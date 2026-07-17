@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getRepPRs } from "@/lib/repPRs";
 import { Logger, type LoggerExercise } from "./Logger";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
+import { joinMaybe, joinOne, type DayJoin, type ExerciseJoin } from "@/lib/dbJoins";
 
 export const dynamic = "force-dynamic";
 
@@ -62,13 +63,12 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
   }
 
   const model: LoggerExercise[] = (exercises ?? []).map((e) => {
-    const ex = e.exercises as unknown as {
-      name: string;
-      name_pl: string | null;
-      exercise_type: LoggerExercise["type"];
-      equipment: string | null;
-    };
-    const slot = e.slot as unknown as LoggerExercise["slot"];
+    const ex = joinOne<
+      Pick<ExerciseJoin, "name" | "name_pl" | "equipment"> & {
+        exercise_type: LoggerExercise["type"];
+      }
+    >(e.exercises);
+    const slot = joinOne<LoggerExercise["slot"]>(e.slot);
     const ps = prevSets[e.id] ?? [];
     return {
       sessionExerciseId: e.id,
@@ -87,9 +87,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
     };
   });
 
-  const dayMeta = session.program_days as unknown as
-    | { label: string; programs: { name: string } | null }
-    | null;
+  const dayMeta = joinMaybe<DayJoin>(session.program_days);
 
   // „Arco Warm": logger podąża za motywem apki (forced-dark ZAWIESZONY decyzją
   // 2026-07-04 — właściciel oceni jasną wersję na telefonie; ew. powrót jako opcja).
