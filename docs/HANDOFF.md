@@ -75,6 +75,10 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - Guidance poza LCP home + indeks `sessions(user_id, started_at desc)` (audyt P1.4,
   commit `b790a80`): hero home nie czeka już na 3 rundy DB guidance (Suspense/streaming),
   migracja `20260717213044` przetestowana na świeżej bazie. Wszystkie 4 P1 audytu zamknięte.
+- Paczka P2 audytu (`ab5e3ca`): guard podwójnego tapu „Zakończ" w loggerze, `requireUser()`
+  w akcjach podmiany, limit 100 wystąpień na stronie ćwiczenia, komentarz przy
+  `TeamHomeCard`, CSP/config bez zaszłości `raw.githubusercontent.com`; sprostowanie
+  audytu: polityka INSERT `activity_events` była zamknięta już 2026-07-13.
 
 ## Technologia i dane
 
@@ -128,7 +132,10 @@ w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamer
 Deploy paczek audytu (P1.1–P1.4) wykonany 2026-07-17: migracja `20260717213044` na
 prodzie (local == remote), kod `7faac1a..bf2e85d` na origin, prod zweryfikowany
 w przeglądarce. Uwaga: lokalna baza dev została zresetowana i zasiana od zera przy
-teście migracji — lokalne dane dogfoodu z wcześniejszych sesji nie istnieją.
+teście migracji — lokalne dane dogfoodu z wcześniejszych sesji nie istnieją, a lokalny
+bucket `exercise-images` jest pusty (obrazki lokalnie wrócą po `upload:exercise-images`).
+**[Ty] push:** lokalne commity `ec095d1` (docs) i `ab5e3ca` (paczka P2 — czysty kod,
+bez migracji) czekają na `git push` → CI + deploy.
 Kod: checkpoint dogfood po R2, potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
 powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie

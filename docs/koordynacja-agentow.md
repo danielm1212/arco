@@ -49,6 +49,26 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (audyt kodu: paczka P2 — bezpieczeństwo i drobna integralność): ZAKOŃCZONE TECHNICZNIE.**
+  Zakres (commit `ab5e3ca`, lokalnie): Logger — guard in-flight `confirmFinish` + `disabled`
+  na „Zakończ" (oba wejścia, także FinishSheet); `substitute.ts` — `requireUser()` w obu
+  akcjach; `app/exercise/[id]` — cap historii `order("sessions(started_at)" desc)+limit(100)`
+  (składnia PostgREST zweryfikowana na lokalnym REST, 200); `TeamHomeCard` — komentarz
+  „zachowany do R3b"; `next.config.mjs` — wycięte `raw.githubusercontent.com` z CSP
+  i cały `images.remotePatterns` (next/image tylko lokalne ikony). SPROSTOWANIE audytu:
+  polityka INSERT `activity_events` była zdjęta już w `20260713131500` (pg_policy/grants
+  zweryfikowane) — finding nieaktualny. Weryfikacja: tsc ✓ (po usunięciu duplikatów synca
+  `.next/* 2.*`), lint ✓, testy 44/44 ✓, build ✓; przeglądarka na prod-buildzie: start
+  freestyle → „Zakończ" → Done sesji-zero → sesja testowa usunięta przez UI po ID
+  (`741a8697…`, historia pusta) ✓; strona ćwiczenia z nowym zapytaniem renderuje się,
+  zero błędów CSP w konsoli (szare obrazki = pusty LOKALNY bucket po db reset, żądanie
+  przechodzi — 400 ze storage, nie Refused). Przed buildem ubito 6 osieroconych
+  `next-server` z sesji Codexa (zasada „jeden build naraz"). Czego nie dotknięto: migracji,
+  seedów, RPC/RLS, duplikatów ikon ` 2.png`. Zaległości: [Ty] push `ab5e3ca` (+`ec095d1`
+  docs) — czysty kod, bez migracji; opcjonalnie `upload:exercise-images` na lokalny bucket,
+  jeśli chcesz obrazki ćwiczeń lokalnie. Z P2 zostają: outbox multi-tab (udok.),
+  `periodStats`/`getStrengthTrends` sekwencyjne rundy, wspólny typ joinów, testy libów,
+  formatSet w 3 miejscach, podział dużych komponentów, centralizacja komunikatów PL.
 - **2026-07-17 · [Ty]+Claude (deploy paczek audytu P1.1–P1.4): ZAKOŃCZONE.**
   Kolejność wg arco-release: (1) `npx supabase db push` [Ty] — `20260717213044` na prodzie,
   `migration list` potwierdza local == remote dla wszystkich 38 migracji; (2) `git push` [Ty]

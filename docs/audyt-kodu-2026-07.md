@@ -17,21 +17,21 @@
 - ~~`lib/outbox.ts` `write()` bez try/catch~~ ✅ 2026-07-17 (`e0c4cbf`): quota fallback w pamięci karty (`volatileOps`, flush dalej wysyła) + toast.
 - ~~`lib/usePersistentFormDraft.ts:70` `clearDraft` nie anuluje debounce'owanego timera~~ ✅ 2026-07-17 (`e0c4cbf`): timer w refie, `clearDraft` go ubija.
 - ~~Brak nasłuchu `storage`/BroadcastChannel~~ ✅ 2026-07-17: single-window udokumentowane jako świadome założenie w nagłówku `lib/outbox.ts`; listener do rewizji, gdyby multi-window okazał się realny.
-- `Logger.tsx:262` przycisk „Zakończ" bez guarda in-flight — podwójny tap dubluje `recompute_personal_records` (dane bezpieczne, koszt niepotrzebny).
+- ~~`Logger.tsx:262` przycisk „Zakończ" bez guarda in-flight~~ ✅ 2026-07-17: `confirmFinish` z flagą `finishing` + `disabled` na przycisku (oba wejścia: bezpośrednie i FinishSheet).
 
 **Bezpieczeństwo (defense-in-depth, realnego ryzyka brak)**
-- `app/actions/substitute.ts:31,118` — jedyne akcje bez jawnego `requireUser()` (RLS chroni, ale łamią zasadę repo).
+- ~~`app/actions/substitute.ts:31,118` — jedyne akcje bez jawnego `requireUser()`~~ ✅ 2026-07-17: obie akcje przez `requireUser()` (idiom z session.ts).
 - `join_pod_by_invite` bez rate limitingu prób kodu (40 bitów entropii broni przed brute-force, throttling i tak wypada dodać przed publicznymi Ekipami — spójne z ryzykiem nr 7 HANDOFF).
-- Polityka INSERT na `activity_events` pozwala wstawić własne zdarzenie z pominięciem `emit_workout_activity` (zawyżanie własnej passy; usunąć policy, wpuszczać tylko przez RPC).
-- CSP: `script-src 'unsafe-inline'` (świadomy trade-off hydratacji; docelowo nonce'y) oraz zaszłość `raw.githubusercontent.com` w `remotePatterns` i `img-src` — obrazy idą już wyłącznie z Supabase CDN, wpisy do wycięcia przy najbliższym dotknięciu configu.
+- ~~Polityka INSERT na `activity_events`~~ SPROSTOWANIE 2026-07-17: finding nieaktualny — policy zdjęta i INSERT odwołany już w `20260713131500_team_activity_guard.sql`; zweryfikowane w pg_policy/grants (zostały tylko SELECT policy + RPC).
+- CSP: `script-src 'unsafe-inline'` (świadomy trade-off hydratacji; docelowo nonce'y). ~~Zaszłość `raw.githubusercontent.com` w `remotePatterns` i `img-src`~~ ✅ 2026-07-17: wycięta (remotePatterns w całości — next/image używają tylko lokalne ikony; CSP img-src = self + Supabase).
 
 **Wydajność**
 - ~~Brak indeksu `sessions(user_id, started_at desc)`~~ ✅ 2026-07-17 (`b790a80`): migracja `20260717213044_sessions_started_at_index` (świeża baza + seed + walidatory ✓; czeka na `db push` [Ty]).
 - `app/progress/stats.ts` — `periodStats` i `getStrengthTrends` robią po 3 sekwencyjne rundy; kandydat na RPC/agregat (wzorzec: `previous_session_sets_batch`).
-- `app/exercise/[id]/page.tsx:54` — historia ćwiczenia bez `limit` (rośnie bez końca); cap do ostatnich N sesji.
+- ~~`app/exercise/[id]/page.tsx:54` — historia ćwiczenia bez `limit`~~ ✅ 2026-07-17: `order("sessions(started_at)" desc) + limit(100)` — cap na 100 ostatnich wystąpień.
 
 **Zdrowie kodu**
-- `components/TeamHomeCard.tsx` — 0 importów, celowo czeka na R3b, ale NIC o tym nie mówi. Dodać komentarz „zachowane do R3b", inaczej ktoś skasuje jako martwy kod.
+- ~~`components/TeamHomeCard.tsx` — 0 importów bez wyjaśnienia~~ ✅ 2026-07-17: komentarz „zachowany do R3b, nie usuwać" w nagłówku komponentu.
 - ~22 rzutowania `as unknown as {…}` na kształtach joinów Supabase (sesje, PR-y) — jeden współdzielony typ pomocniczy zamiast lokalnych rzutowań.
 - Braki testów: `lib/format.ts`, `lib/week.ts`, `lib/trainingPriority.ts`, `lib/exerciseFilters.ts`.
 - Formatowanie serii inline w 3 miejscach obok istniejącego `formatSet` — kierować przez helper.
