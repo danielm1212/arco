@@ -125,11 +125,10 @@ oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
 **[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów — gotowe prompty per ćwiczenie
 w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamera; styl bazowy
 `prompt-fotografia-warm.md`), upload przez `upload:exercise-images` → `sync:exercise-content`.
-**[Ty] deploy (kolejność wg arco-release — baza przed kodem):** (1) `supabase db push` —
-migracja `20260717213044` (indeks `started_at`, czysty dry-run oczekiwany);
-(2) `git push` — lokalne commity `37af446`+`5ccef1d`+`b790a80`+docs (e1RM, testy,
-guidance/LCP). Uwaga: lokalna baza dev została zresetowana i zasiana od zera przy teście
-migracji — lokalne dane dogfoodu z wcześniejszych sesji nie istnieją.
+Deploy paczek audytu (P1.1–P1.4) wykonany 2026-07-17: migracja `20260717213044` na
+prodzie (local == remote), kod `7faac1a..bf2e85d` na origin, prod zweryfikowany
+w przeglądarce. Uwaga: lokalna baza dev została zresetowana i zasiana od zera przy
+teście migracji — lokalne dane dogfoodu z wcześniejszych sesji nie istnieją.
 Kod: checkpoint dogfood po R2, potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
 powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie

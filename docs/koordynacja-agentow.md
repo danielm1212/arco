@@ -49,6 +49,13 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · [Ty]+Claude (deploy paczek audytu P1.1–P1.4): ZAKOŃCZONE.**
+  Kolejność wg arco-release: (1) `npx supabase db push` [Ty] — `20260717213044` na prodzie,
+  `migration list` potwierdza local == remote dla wszystkich 38 migracji; (2) `git push` [Ty]
+  — `7faac1a..bf2e85d` (e0c4cbf trwałość zapisu, 37af446 e1RM+testy, b790a80 guidance/LCP
+  +indeks, 2× docs); (3) weryfikacja proda w przeglądarce [Claude]: login renderuje się,
+  konsola bez błędów. Wszystkie 4 P1 audytu kodu są na produkcji. CI na `bf2e85d` do
+  potwierdzenia na GitHubie przy okazji.
 - **2026-07-17 · Claude (audyt kodu: guidance poza LCP + indeks started_at, P1.4): ZAKOŃCZONE TECHNICZNIE.**
   Zakres: `app/page.tsx` (guidance z blokującego batcha → async `HomeGuidance` w
   `<Suspense fallback={null}>`; batch home z 7 do 6 równoległych zapytań, 3 rundy guidance
