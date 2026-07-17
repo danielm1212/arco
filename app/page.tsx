@@ -23,6 +23,15 @@ import {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Guidance poza blokującym batchem home (audyt P1.4): 3 rundy DB tej funkcji
+ * streamują się przez Suspense PO hero — chip i tak żyje na dole strony,
+ * a główne CTA nie czeka na nie ani jednej rundy.
+ */
+async function HomeGuidance() {
+  return <GuidanceChip items={await getHomeGuidance()} />;
+}
+
 type ActiveDay = {
   id: string;
   label: string;
@@ -50,7 +59,6 @@ export default async function HomePage() {
     { data: finished },
     { data: settings },
     { count: sessionCount },
-    guidance,
   ] = await Promise.all([
     supabase
       .from("programs")
@@ -74,7 +82,6 @@ export default async function HomePage() {
       .gte("started_at", historySince.toISOString()),
     supabase.from("user_settings").select("unit_system, weekly_goal, display_name").maybeSingle(),
     supabase.from("sessions").select("id", { count: "exact", head: true }),
-    getHomeGuidance(),
   ]);
 
   const activeId = active?.program_id ?? null;
@@ -302,7 +309,9 @@ export default async function HomePage() {
           />
         )}
 
-        <GuidanceChip items={guidance} />
+        <Suspense fallback={null}>
+          <HomeGuidance />
+        </Suspense>
       </main>
     </div>
   );
