@@ -49,6 +49,14 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · [Ty]+Claude (przegląd i zatwierdzenie słownika R5a): ZAKOŃCZONE.**
+  Decyzje [Ty]: 8 konwencji §1 zatwierdzonych bez wyjątków; Decline_Push-Up = „Pompki głową
+  w dół" (zgodnie z K4, near-dup z Feet-Elevated zostaje do kuracji); sporne nazwy §2 wg
+  propozycji; aliasy „wspięcia" i „hip thrust" rozszerzone o warianty hantlowe; placeholdery
+  §5 na razie zostają — zdjęcia wszystkich 16 generuje [Ty] w sobotę 2026-07-18 (priorytet,
+  przypomnienie ustawione). Dokument ma status ZATWIERDZONE — wykonawca R5a może implementować
+  R1–R3 audytu (migracja `name_pl` + `search_aliases`, query, ranking) bez czekania na zdjęcia.
+  Zakres: wyłącznie `docs/r5a-slownik-pl-propozycja.md` + ten wpis.
 - **2026-07-17 · Claude (fix: lost update ✓ serii w outboxie — regresja z testu [Ty]): ZAKOŃCZONE TECHNICZNIE.**
   Zgłoszenie [Ty] z regresji iPhone PWA: po wznowieniu/wejściu do loggera ostatnia ukończona
   seria jest odznaczona (oba scenariusze: minimalizacja+wznowienie oraz ubicie aplikacji).

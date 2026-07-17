@@ -1,6 +1,6 @@
 # R5a: propozycja słownika `name_pl`, aliasów i decyzji placeholderowych
 
-> **Data:** 2026-07-16 · **Status:** propozycja do przeglądu [Ty] · **Podstawa:** `audyt-wyszukiwarki-2026-07.md` (R1–R2), plan sprintów §R5a („przygotowanie treści równolegle").
+> **Data:** 2026-07-16 · **Status:** ZATWIERDZONE przez [Ty] 2026-07-17 (z poprawkami: decline = „głową w dół", 2 aliasy rozszerzone; zdjęcia placeholderów robi [Ty] w sobotę 2026-07-18). Gotowe do implementacji R5a. · **Podstawa:** `audyt-wyszukiwarki-2026-07.md` (R1–R2), plan sprintów §R5a („przygotowanie treści równolegle").
 > **Co to jest:** kompletny materiał treściowy dla R1+R2 audytu — tłumaczenia top ~200 ćwiczeń, ~50 aliasów potocznych i inwentarz 16 placeholderów zdjęć do decyzji. **Zero kodu** — schemat (`name_pl` nullable, `search_aliases text[]`) i query wchodzą przy implementacji R5a.
 > **Jak przeglądać:** najszybciej sekcję §1 (konwencje) — jeśli konwencje są dobre, tłumaczenia wystarczy przejrzeć po łebkach; wątpliwe wiersze mają dopisek w kolumnie Uwagi.
 
@@ -28,7 +28,7 @@ Kolumna „Sloty" = liczba wystąpień w 308 slotach 15 programów (policzone z 
 | Barbell_Bench_Press_-_Medium_Grip | Barbell Bench Press - Medium Grip | Wyciskanie sztangi na ławce płaskiej | 5 | kanoniczna „ławka" |
 | Push-Ups_With_Feet_Elevated | Push-Ups With Feet Elevated | Pompki z nogami na podwyższeniu | 3 | |
 | Pushups | Pushups | Pompki | 2 | |
-| Decline_Push-Up | Decline Push-Up | Pompki decline | 2 | ⚠️ sprawdzić zdjęcia — możliwy near-dup z „Pompki z nogami na podwyższeniu" |
+| Decline_Push-Up | Decline Push-Up | Pompki głową w dół | 2 | zgodnie z K4 (decyzja [Ty] 2026-07-17); ⚠️ near-dup z „Pompki z nogami na podwyższeniu" — na razie zostają oba, scalenie ewentualnie przy kuracji bazy |
 | Single-Arm_Push-Up | Single-Arm Push-Up | Pompka jednorącz | 1 | |
 | Barbell_Incline_Bench_Press_-_Medium_Grip | Barbell Incline Bench Press - Medium Grip | Wyciskanie sztangi na ławce skośnej | 1 | |
 | Leverage_Chest_Press | Leverage Chest Press | Wyciskanie na maszynie (chest press) | 1 | |
@@ -350,11 +350,11 @@ Zasada z audytu R2: alias łapie pierwszą frazę, którą bywalec realnie wpisu
 | hack, hacki | Hack_Squat |
 | suwnica smitha, smith | Smith_Machine_Squat |
 | leg press, nogi maszyna | Leg_Press |
-| hip thrust, biodra | Barbell_Hip_Thrust |
+| hip thrust, biodra | Barbell_Hip_Thrust, Dumbbell_Hip_Thrust |
 | mostek | Barbell_Glute_Bridge, Single_Leg_Glute_Bridge |
 | wykroki | Dumbbell_Lunges |
 | zakroki | Dumbbell_Rear_Lunge |
-| łydki, wspięcia | Standing_Calf_Raises |
+| łydki, wspięcia | Standing_Calf_Raises, Calf_Raise_On_A_Dumbbell |
 | uginanie nóg | Lying_Leg_Curls |
 | prostowanie nóg | Leg_Extensions |
 | odwodzenie | Thigh_Abductor |
@@ -391,6 +391,10 @@ Policzono z seeda (zgodne z walidatorem: 16 unikalnych / 49 slotów). Wszystkie 
 
 **Rekomendacja: zdjęcie dla wszystkich 16** (spójna fala generowania, ten sam tor co AI-assety), podmiana/ukrycie tylko jako fallback, jeśli dla danego ruchu nie wyjdzie czytelna klatka.
 
+**Decyzja [Ty] 2026-07-17:** placeholdery na razie zostają; generowanie zdjęć dla wszystkich 16
+wykonuje [Ty] w sobotę 2026-07-18 jako priorytet (prompty: `docs/prompt-fotografia-warm.md`).
+To jest świadoma decyzja wymagana bramką H2 — implementacja słownika R5a nie czeka na zdjęcia.
+
 | Ćwiczenie | Sloty | Uwaga |
 |---|---:|---|
 | Bulgarian_Split_Squat | 7 | najwyższy priorytet |
@@ -412,7 +416,7 @@ Policzono z seeda (zgodne z walidatorem: 16 unikalnych / 49 slotów). Wszystkie 
 
 ## 6. Co dalej (poza tym dokumentem)
 
-1. [Ty] zatwierdza §1 (konwencje) → przegląd §2–§4 → poprawki w tym pliku.
+1. ~~[Ty] zatwierdza §1 (konwencje) → przegląd §2–§4 → poprawki w tym pliku.~~ ZROBIONE 2026-07-17: 8 konwencji zatwierdzonych bez wyjątków; sporne nazwy z przeglądu przyjęte wg propozycji (decline wg K4).
 2. Wykonawca R5a implementuje R1+R2+R3 audytu jedną paczką: migracja `name_pl` + `search_aliases`, query po obu kolumnach i aliasach, ranking kliencki; zatwierdzony słownik wchodzi do seeda z tego pliku.
 3. Stały zestaw zapytań krytycznych do testu regresji — naturalny kandydat: wszystkie aliasy z §4 + 20 najczęstszych nazw z §2.
 4. Decyzja placeholderowa (§5) odblokowuje bramkę H2 („placeholdery w widocznych planach mają świadomą decyzję").
