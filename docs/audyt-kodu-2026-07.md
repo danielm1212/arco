@@ -6,7 +6,7 @@
 
 ## P1 — do najbliższych sprintów
 
-1. **`lib/outbox.ts` `read()` — cichy zrzut kolejki przy uszkodzonym JSON.** `catch { return {} }` porzuca CAŁY outbox; serie zalogowane offline, które żyły tylko w kolejce, znikają bez śladu. Fix: przed zwrotem pustej mapy zapisać surową wartość pod klucz backupowy (`arco-outbox-v1-corrupt`) i zgłosić toast/telemetrię. Naturalna paczka z fixem tokenowym z 2026-07-17.
+1. ~~**`lib/outbox.ts` `read()` — cichy zrzut kolejki przy uszkodzonym JSON.**~~ ✅ 2026-07-17 (`e0c4cbf`): surowa wartość ląduje pod `arco-outbox-v1-corrupt` (pierwszy backup wygrywa), klucz główny czyszczony, toast przez event + `pendingOutboxAlerts()`.
 2. **Wzór e1RM (Epley) skopiowany w 4 miejscach:** `app/progress/stats.ts:250`, `app/exercise/[id]/page.tsx:17` i `:110`, `lib/getHomeGuidance.ts:20`. Rozjazd formuły = rozjazd rekordów między widokami. Fix: `estimate1RM()` w `lib/` + import wszędzie. Ważne przed featurem Coach (prognoza e1RM = rdzeń oferty).
 3. **`lib/repPRs.ts` bez testu jednostkowego** — logika PR per-powtórzenia (Pareto) liczona on-the-fly, bez siatki bezpieczeństwa. Fix: `tests/rep-prs.test.ts`. Jw. — przed Coach.
 4. **Home: guidance blokuje LCP.** `getHomeGuidance()` (3 sekwencyjne rundy DB) siedzi w blokującym batchu `app/page.tsx:53`, a `GuidanceChip` jest na dole strony. Fix: wyjąć z batcha, owinąć `<Suspense>`. Zysk: hero nie czeka ~kilkaset ms na 4G. Przy okazji trasa wróci pod budżet ≤4 zapytań.
@@ -14,9 +14,9 @@
 ## P2 — kolejka refinementu
 
 **Integralność danych**
-- `lib/outbox.ts` `write()` bez try/catch — `QuotaExceededError` wyrzuca serię poza kolejkę i trwały zapis; owinąć + toast.
-- `lib/usePersistentFormDraft.ts:70` `clearDraft` nie anuluje debounce'owanego timera zapisu — zaplanowany write może odtworzyć skasowany szkic (dokładny analog race'a z outboxu). Timer do refa, czyścić w clear.
-- Brak nasłuchu `storage`/BroadcastChannel — dwie karty PWA działają last-writer-wins na `arco-outbox-v1` i `arco-draft-*`. Dodać listener albo udokumentować single-window jako założenie.
+- ~~`lib/outbox.ts` `write()` bez try/catch~~ ✅ 2026-07-17 (`e0c4cbf`): quota fallback w pamięci karty (`volatileOps`, flush dalej wysyła) + toast.
+- ~~`lib/usePersistentFormDraft.ts:70` `clearDraft` nie anuluje debounce'owanego timera~~ ✅ 2026-07-17 (`e0c4cbf`): timer w refie, `clearDraft` go ubija.
+- ~~Brak nasłuchu `storage`/BroadcastChannel~~ ✅ 2026-07-17: single-window udokumentowane jako świadome założenie w nagłówku `lib/outbox.ts`; listener do rewizji, gdyby multi-window okazał się realny.
 - `Logger.tsx:262` przycisk „Zakończ" bez guarda in-flight — podwójny tap dubluje `recompute_personal_records` (dane bezpieczne, koszt niepotrzebny).
 
 **Bezpieczeństwo (defense-in-depth, realnego ryzyka brak)**

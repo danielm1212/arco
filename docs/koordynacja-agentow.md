@@ -49,6 +49,23 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (audyt kodu: paczka „trwałość zapisu" P1.1+P2): ZAKOŃCZONE TECHNICZNIE.**
+  Zakres: `lib/outbox.ts`, `lib/useSync.ts`, `lib/usePersistentFormDraft.ts`,
+  `tests/outbox.test.ts` (commit `e0c4cbf`, lokalnie). Wynik: (1) P1.1 — uszkodzony JSON
+  outboxa nie znika po cichu: surowa wartość idzie pod `arco-outbox-v1-corrupt` (pierwszy
+  backup wygrywa), klucz główny czyszczony, toast przez event `arco:outbox-alert` +
+  `pendingOutboxAlerts()` (alert sprzed montażu nie ginie); (2) P2 — `write()` w try/catch:
+  przy QuotaExceededError operacje żyją w module (`volatileOps`), flush dalej je wysyła,
+  toast ostrzega o nietrwałości; (3) P2 — `clearDraft` anuluje zaplanowany debounce
+  (timer w refie), skasowany szkic nie odtwarza się; (4) P2 — założenie single-window
+  udokumentowane w nagłówku outboxa (świadomie bez nasłuchu `storage`). Weryfikacja:
+  tsc ✓, lint ✓, testy 37/37 ✓ (+2: korupcja z backupem, quota fallback), build ✓.
+  Na starcie zweryfikowano też: migracja `20260717163900` JEST na prodzie (migration list
+  local == remote — obawa „kod przed migracją" z wpisu niżej nieaktualna). Czego nie
+  dotknięto: Logger.tsx (guard „Zakończ" zostaje w P2), migracji, seedów, duplikatów ikon,
+  wiszących procesów next-server z poprzednich sesji. Zaległości: [Ty] push `e0c4cbf`
+  (CI + deploy); następna sesja — P1.2 `estimate1RM()` w lib + P1.3 test repPRs
+  (przed Coach), P1.4 guidance poza LCP + indeks `started_at`.
 - **2026-07-17 · Claude (R5a dokończenie: name_pl na wszystkich powierzchniach + diakrytyki R4): ZAKOŃCZONE TECHNICZNIE.**
   Zakres A (powierzchnie): `exerciseDisplayName` zastosowany w loggerze
   (`app/session/[id]/page.tsx` — mapowanie modelu, Logger bez zmian), historii

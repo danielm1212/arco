@@ -63,6 +63,12 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
   zatwierdzonego słownika, wyszukiwanie po PL/EN/aliasach z rankingiem trafności,
   polskie nazwy w pickerze, „ostatnio używanych" i kandydatach podmiany; test regresji
   krytycznych fraz w testach jednostkowych.
+- Dokończenie R5a: polskie nazwy na wszystkich powierzchniach (logger, historia, program,
+  hero, guidance, postępy, strona ćwiczenia) oraz wyszukiwanie bez diakrytyk (R4 audytu,
+  migracja `20260717163900` — potwierdzone local == remote).
+- Paczka „trwałość zapisu" z audytu kodu (P1.1+P2, commit `e0c4cbf`): uszkodzony outbox
+  robi backup zamiast cichej utraty serii, pełny storage nie gubi operacji w trakcie życia
+  karty (fallback w pamięci + toast), `clearDraft` nie odtwarza już skasowanego szkicu.
 
 ## Technologia i dane
 
@@ -113,10 +119,13 @@ oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
 **[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów — gotowe prompty per ćwiczenie
 w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamera; styl bazowy
 `prompt-fotografia-warm.md`), upload przez `upload:exercise-images` → `sync:exercise-content`.
-Kod: checkpoint dogfood po R2, potem R3a–R4; z toru wyszukiwarki zostają R4–R6 audytu
-(normalizacja diakrytyk, instrumentacja search, kosmetyka) oraz **rozszerzenie `name_pl`
-na pozostałe powierzchnie** (logger, szczegóły programu, historia, done-preview — dziś
-polskie nazwy widzi picker, ostatnio używane i kandydaci swapu).
+**[Ty] push:** lokalny commit `e0c4cbf` (paczka „trwałość zapisu" z audytu — czysty kod
+lib/testy, bez migracji) czeka na push → CI + deploy.
+Kod: checkpoint dogfood po R2, potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
+(instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
+powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Z audytu kodu zostają:
+P1.2 `estimate1RM()` w lib + P1.3 test `repPRs` (przed featurem Coach), P1.4 guidance
+poza LCP home + indeks `sessions(user_id, started_at desc)`.
 Równolegle: przeniesienie zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
 Procedury wydania, zamknięcia sesji i migracji są od 2026-07-17 skodyfikowane w
 `.claude/skills/` (arco-release, arco-session-close, arco-migration) i wiążące przez `CLAUDE.md`.
