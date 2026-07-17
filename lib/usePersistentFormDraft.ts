@@ -58,16 +58,30 @@ export function usePersistentFormDraft<T>({
     };
   }, [storageKey]);
 
+  const saveTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
     if (!hydrated) return;
-    const timer = window.setTimeout(() => {
+    saveTimerRef.current = window.setTimeout(() => {
+      saveTimerRef.current = null;
       if (enabled) window.localStorage.setItem(storageKey, serialized);
       else window.localStorage.removeItem(storageKey);
     }, debounceMs);
-    return () => window.clearTimeout(timer);
+    return () => {
+      if (saveTimerRef.current !== null) {
+        window.clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+    };
   }, [debounceMs, enabled, hydrated, serialized, storageKey]);
 
   const clearDraft = useCallback(() => {
+    // Zaplanowany debounce musi umrzeć razem ze szkicem — inaczej odtworzyłby
+    // skasowane dane po zapisie formularza (analog race'a tokenów z outboxa).
+    if (saveTimerRef.current !== null) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
     window.localStorage.removeItem(storageKey);
     setRecovered(false);
   }, [storageKey]);

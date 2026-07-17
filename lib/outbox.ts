@@ -2,6 +2,10 @@
  * Outbox synchronizacji offline (Phase 2.5).
  * Trwała kolejka operacji na seriach (localStorage). Koalescencja per setId:
  * ostatnia operacja na danej serii wygrywa (upsert najnowszych wartości albo delete).
+ *
+ * Założenie: jedna aktywna karta/okno PWA. Druga karta na tym samym kluczu
+ * działa last-writer-wins (bez nasłuchu `storage`/BroadcastChannel) — świadoma
+ * decyzja z audytu 2026-07; do rewizji, gdyby multi-window okazał się realny.
  */
 
 export interface OutboxSetRow {
@@ -39,6 +43,32 @@ const newToken = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
 const KEY = "arco-outbox-v1";
+const CORRUPT_KEY = "arco-outbox-v1-corrupt";
+
+export type OutboxAlertKind = "corrupt" | "quota";
+export const OUTBOX_ALERT_EVENT = "arco:outbox-alert";
+
+/**
+ * Operacje, których nie udało się dopisać do localStorage (np. QuotaExceededError).
+ * Żyją do zamknięcia karty — flush wysyła je normalnie, ale nie przetrwają restartu.
+ */
+let volatileOps: Record<string, OutboxOp> | null = null;
+
+const firedAlerts = new Set<OutboxAlertKind>();
+
+/** Zgłasza problem trwałości raz na życie karty; UI (useSync) zamienia go na toast. */
+function fireAlert(kind: OutboxAlertKind) {
+  if (firedAlerts.has(kind)) return;
+  firedAlerts.add(kind);
+  if (typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
+    window.dispatchEvent(new CustomEvent(OUTBOX_ALERT_EVENT, { detail: { kind } }));
+  }
+}
+
+/** Alerty zgłoszone zanim UI zdążyło podpiąć nasłuch (np. przy pierwszym renderze). */
+export function pendingOutboxAlerts(): OutboxAlertKind[] {
+  return [...firedAlerts];
+}
 
 const keyOf = (op: OutboxOp) =>
   op.kind === "notes"
@@ -49,16 +79,44 @@ const keyOf = (op: OutboxOp) =>
 
 function read(): Record<string, OutboxOp> {
   if (typeof window === "undefined") return {};
-  try {
-    return JSON.parse(window.localStorage.getItem(KEY) || "{}");
-  } catch {
-    return {};
+  let stored: Record<string, OutboxOp> = {};
+  const raw = window.localStorage.getItem(KEY);
+  if (raw) {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("zły kształt kolejki");
+      }
+      stored = parsed as Record<string, OutboxOp>;
+    } catch {
+      // Nie porzucamy kolejki po cichu: surowa wartość zostaje pod kluczem
+      // backupowym (pierwszy backup wygrywa — nie nadpisujemy dowodu kolejną
+      // korupcją), a uszkodzony klucz główny jest czyszczony, żeby każdy
+      // kolejny odczyt nie ponawiał ścieżki awaryjnej.
+      try {
+        if (window.localStorage.getItem(CORRUPT_KEY) === null) {
+          window.localStorage.setItem(CORRUPT_KEY, raw);
+        }
+        window.localStorage.removeItem(KEY);
+      } catch {
+        // backup best-effort — brak miejsca nie może zablokować odczytu
+      }
+      fireAlert("corrupt");
+    }
   }
+  return volatileOps ? { ...stored, ...volatileOps } : stored;
 }
 
 function write(map: Record<string, OutboxOp>) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(KEY, JSON.stringify(map));
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(map));
+    volatileOps = null;
+  } catch {
+    // Pełny storage: operacje zostają w pamięci karty, flush dalej je wysyła.
+    volatileOps = map;
+    fireAlert("quota");
+  }
 }
 
 export function enqueueUpsert(sessionId: string, row: OutboxSetRow) {

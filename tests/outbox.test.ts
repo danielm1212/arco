@@ -15,6 +15,9 @@ import {
 class MemoryStorage implements Storage {
   private data = new Map<string, string>();
 
+  /** Symulacja QuotaExceededError: każdy setItem rzuca. */
+  failWrites = false;
+
   get length() {
     return this.data.size;
   }
@@ -36,6 +39,7 @@ class MemoryStorage implements Storage {
   }
 
   setItem(key: string, value: string) {
+    if (this.failWrites) throw new Error("QuotaExceededError");
     this.data.set(key, value);
   }
 }
@@ -59,7 +63,10 @@ const baseSet: OutboxSetRow = {
   completed: false,
 };
 
-beforeEach(() => localStorage.clear());
+beforeEach(() => {
+  localStorage.clear();
+  localStorage.failWrites = false;
+});
 
 test("szkic loggera odzyskuje serie i notatki tylko dla właściwej sesji", () => {
   enqueueUpsert("session-1", { ...baseSet, weight: 55, completed: true });
@@ -122,4 +129,50 @@ test("removeOp usuwa wpisy sprzed wprowadzenia tokenów (kompatybilność wstecz
   assert.equal(pendingCount(), 1);
   removeOp(allOps()[0]);
   assert.equal(pendingCount(), 0);
+});
+
+test("uszkodzony JSON nie znika po cichu — backup pod kluczem awaryjnym", () => {
+  window.localStorage.setItem("arco-outbox-v1", "{zepsuty json");
+
+  // Odczyt zwraca pustą kolejkę, ale surowa wartość ląduje w backupie,
+  // a uszkodzony klucz główny jest czyszczony (jednorazowa ścieżka awaryjna).
+  assert.equal(pendingCount(), 0);
+  assert.equal(window.localStorage.getItem("arco-outbox-v1-corrupt"), "{zepsuty json");
+  assert.equal(window.localStorage.getItem("arco-outbox-v1"), null);
+
+  // Kolejka działa dalej normalnie.
+  enqueueUpsert("session-1", baseSet);
+  assert.equal(pendingCount(), 1);
+
+  // Kolejna korupcja (poprawny JSON, zły kształt) nie nadpisuje pierwszego dowodu.
+  window.localStorage.setItem("arco-outbox-v1", "[1,2,3]");
+  assert.equal(pendingCount(), 0);
+  assert.equal(window.localStorage.getItem("arco-outbox-v1-corrupt"), "{zepsuty json");
+});
+
+test("pełny storage nie gubi operacji w trakcie życia karty (quota fallback)", () => {
+  localStorage.failWrites = true;
+  enqueueUpsert("session-1", { ...baseSet, weight: 60 });
+
+  // Operacja żyje w pamięci mimo nieudanego zapisu — flush nadal ją widzi.
+  assert.equal(pendingCount(), 1);
+  const inMemory = allOps()[0];
+  assert.equal(inMemory.kind === "upsert" && inMemory.row.weight, 60);
+  assert.equal(window.localStorage.getItem("arco-outbox-v1"), null);
+
+  // Gdy miejsce wraca, kolejny zapis utrwala całą kolejkę i czyści fallback.
+  localStorage.failWrites = false;
+  enqueueNotes("session-1", "exercise-1", "Pilnuj tempa");
+  assert.equal(pendingCount(), 2);
+  const persisted = JSON.parse(window.localStorage.getItem("arco-outbox-v1")!) as Record<
+    string,
+    unknown
+  >;
+  assert.equal(Object.keys(persisted).length, 2);
+
+  // Usunięcie po wysyłce działa trwale (fallback nie wskrzesza operacji).
+  const upsert = allOps().find((op) => op.kind === "upsert")!;
+  removeOp(upsert);
+  assert.equal(pendingCount(), 1);
+  assert.equal(allOps()[0].kind, "notes");
 });

@@ -1,16 +1,27 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { toast } from "sonner";
 import { upsertSet, deleteSet, updateSessionExerciseNotes } from "@/app/actions/sets";
 import {
   allOps,
   enqueueDelete,
   enqueueNotes,
   enqueueUpsert,
+  OUTBOX_ALERT_EVENT,
   pendingCount,
+  pendingOutboxAlerts,
   removeOp,
+  type OutboxAlertKind,
   type OutboxSetRow,
 } from "@/lib/outbox";
+
+const ALERT_MESSAGES: Record<OutboxAlertKind, string> = {
+  corrupt:
+    "Nie udało się odczytać zapisów offline. Kopia danych została zachowana na urządzeniu.",
+  quota:
+    "Pamięć urządzenia jest pełna — zapisy offline mogą nie przetrwać zamknięcia aplikacji.",
+};
 
 /**
  * Silnik synchronizacji offline dla loggera.
@@ -71,6 +82,25 @@ export function useSync() {
       setSyncing(false);
       setPending(pendingCount());
     }
+  }, []);
+
+  // Problemy trwałości outboxa (korupcja JSON, pełny storage) → toast.
+  // Alert może odpalić przed montażem (odczyt w inicjalizatorze stanu),
+  // więc oprócz nasłuchu konsumujemy też zaległe zgłoszenia.
+  const notifiedAlerts = useRef(new Set<OutboxAlertKind>());
+  useEffect(() => {
+    const notify = (kind: OutboxAlertKind) => {
+      if (notifiedAlerts.current.has(kind)) return;
+      notifiedAlerts.current.add(kind);
+      toast.error(ALERT_MESSAGES[kind]);
+    };
+    const onAlert = (event: Event) => {
+      const kind = (event as CustomEvent<{ kind: OutboxAlertKind }>).detail?.kind;
+      if (kind) notify(kind);
+    };
+    window.addEventListener(OUTBOX_ALERT_EVENT, onAlert);
+    for (const kind of pendingOutboxAlerts()) notify(kind);
+    return () => window.removeEventListener(OUTBOX_ALERT_EVENT, onAlert);
   }, []);
 
   useEffect(() => {
