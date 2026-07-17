@@ -30,6 +30,8 @@ Tych sześć plików jest dokumentami sterującymi bieżącą pracą. Gdy starsz
 - `r0-5-wynik-prototypu.md` — wynik klikalnego prototypu, przetestowane flow i decyzje przed implementacją.
 - `audyt-r2-home-plany-2026-07-17.md` — bramka refinementu R2.1: rozbieżności
   między wdrożonym pionem Home/Plany a zaakceptowanym UX/UI; należy wykonać przed R3a.
+- `macierz-regresji-urzadzen.md` — jedna macierz checkpointu urządzeniowego
+  (R1b/R2/R2.1/Done/R5a); wypełniana przy każdej bramce regresji z planu.
 - `konkurencja-hevy.md` oraz `archive/konkurencja-hevy-ux.md` — benchmark konkurencyjny.
 - `monetyzacja.md` — wcześniejsza analiza; wizja v2 rozstrzyga konflikty.
 

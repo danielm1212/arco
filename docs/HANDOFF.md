@@ -108,7 +108,7 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 ## Otwarte ryzyka
 
 1. **Bottom sheet accessibility — refinement:** zachowanie funkcjonalne na PWA jest domknięte; własny dialog wymaga jeszcze pełnego focus trapu i zwrotu fokusu do elementu otwierającego.
-2. **Testy urządzeń:** potrzebna jest jedna uporządkowana macierz regresji na iPhone PWA, Safari, Chromium/Arc, Android i desktop.
+2. **Testy urządzeń:** macierz gotowa — `docs/macierz-regresji-urzadzen.md` (2026-07-18), konsoliduje zaległe checkpointy R1b/R2/R2.1/Done/R5a; czeka na wykonanie [Ty]. Android pozostaje świadomą luką sprzętową.
 3. **Backup poza urządzeniem:** lokalny backup i restore są zweryfikowane. Kopię trzeba jeszcze przenieść do zaszyfrowanej lokalizacji poza laptopem.
 4. **H2:** obecne poprawki pochodzą głównie z dogfoodingu właściciela. Potrzeba testów z 3–5 osobami.
 5. **Konta publiczne:** rejestracja, reset hasła, wersjonowane zgody, eksport/usunięcie danych i ochrona przed nadużyciami nie są jeszcze gotowe.

@@ -49,6 +49,13 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-18 · Claude (macierz regresji urządzeniowej — ryzyko 2 HANDOFF): ZAKOŃCZONE.**
+  Nowy `docs/macierz-regresji-urzadzen.md`: 8 scenariuszy w jednym przebiegu (~30 min
+  na iPhone PWA; Safari/desktop tylko ●; Android = jawna luka), konsoliduje checkpointy
+  R1b (w tym retest fixa outboxu `e855cf0`), R2/R2.1 (badge+sheet, hero, loading, DoD
+  z audytu), Done, R5a (frazy PL + „lawka" bez ogonków) i fundament sheetów. Tabela
+  wyników w pliku = zapis checkpointu. Zakres: tylko docs (macierz + mapa README +
+  ryzyko 2 w HANDOFF). Zaległość: wykonanie [Ty] — bramka przed R3a.
 - **2026-07-18 · Claude (zdrowie kodu: wspólne typy joinów + formatSet — ostatnie P2 kodowe audytu): ZAKOŃCZONE TECHNICZNIE, lokalnie.**
   Nowy `lib/dbJoins.ts`: kształty `ExerciseJoin`/`DayJoin` + `joinOne`/`joinMaybe`/`joinMany`
   — 19 lokalnych rzutowań `as unknown as` na joinach PostgREST zastąpionych w 12 plikach
