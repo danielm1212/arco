@@ -2,9 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
-import { MomentIcon3D, type MomentIconName } from "@/components/MomentIcon3D";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { ReplaceLink } from "@/components/navigation/ReplaceLink";
+import { CountUpNumber } from "./CountUpNumber";
 import { weekStart, computeStreak } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -115,44 +115,44 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
           : pick(HEADLINES.standard);
 
   const goalLeft = Math.max(0, goal - weeklyCount);
+  // Feedback [Ty] 2026-07-17: bez ikony 3D nad liczbą („za dużo się dzieje") —
+  // hierarchię robi animowana liczba-bohater + nagłówek. Sesja bez zaliczonych
+  // serii nie celebruje zer: hero i staty znikają, zostaje nagłówek i CTA.
   const hero = volume > 0
-    ? { value: Math.round(volume).toLocaleString("pl-PL"), unit, label: "tyle dziś uniosłeś" }
+    ? { value: Math.round(volume), unit, label: "tyle dziś uniosłeś" }
     : totalReps > 0
-      ? { value: totalReps.toLocaleString("pl-PL"), unit: "powt.", label: "tyle powtórzeń zrobiłeś" }
-      : { value: totalSeconds.toLocaleString("pl-PL"), unit: "s", label: "tyle czasu pracowałeś" };
-  const celebrationIcon: MomentIconName = hasPR
-    ? "medal"
-    : goalLeft === 0
-      ? "target"
-      : streak >= 2
-        ? "fire"
-        : "tick";
+      ? { value: totalReps, unit: "powt.", label: "tyle powtórzeń zrobiłeś" }
+      : { value: totalSeconds, unit: "s", label: "tyle czasu pracowałeś" };
+  const hasWork = completed.length > 0;
 
   return (
     <div className="bg-brand text-brand-foreground">
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-xl p-lg text-center">
       {/* Hero — liczba-bohater. font-display (Gambarino, 2026-07-11): pierwszy
           z 3 ekranów testowych z roadmap.md (celebracja/kłódka premium/recap) */}
-      <div>
-        <MomentIcon3D name={celebrationIcon} className="mx-auto -mb-sm size-24" priority />
-        <p className="font-display text-6xl leading-none tabular-nums text-primary">
-          {hero.value}
-          <span className="text-2xl font-semibold"> {hero.unit}</span>
-        </p>
-        <p className="mt-sm text-brand-muted">{hero.label}</p>
-      </div>
+      {hasWork && hero.value > 0 && (
+        <div>
+          <p className="font-display text-6xl leading-none tabular-nums text-primary">
+            <CountUpNumber value={hero.value} />
+            <span className="text-2xl font-semibold"> {hero.unit}</span>
+          </p>
+          <p className="mt-sm text-brand-muted">{hero.label}</p>
+        </div>
+      )}
 
       {/* Nagłówek celebracji */}
       <p className="text-balance text-2xl font-semibold leading-tight">{headline}</p>
 
       {/* Pasek statów */}
-      <div className="flex items-center gap-md text-sm">
-        <Stat value={String(completed.length)} label="serie" />
-        <span className="text-border">·</span>
-        <Stat value={`${durationMin} min`} label="czas" />
-        <span className="text-border">·</span>
-        <Stat value={String(exCount)} label="ćwiczenia" />
-      </div>
+      {hasWork && (
+        <div className="flex items-center gap-md text-sm">
+          <Stat value={String(completed.length)} label="serie" />
+          <span className="text-border">·</span>
+          <Stat value={`${durationMin} min`} label="czas" />
+          <span className="text-border">·</span>
+          <Stat value={String(exCount)} label="ćwiczenia" />
+        </div>
+      )}
 
       {/* S13: Muscle Split — co dziś pracowało */}
       {split.length > 0 && (
@@ -173,14 +173,14 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
               dzisiejszego dnia na home, raz, po powrocie z celebracji */}
           <ReplaceLink href="/?trained=1">Wróć na ekran główny</ReplaceLink>
         </Button>
-        {goalLeft > 0 && (
-          <Button asChild variant="outline" size="lg" className="w-full">
-            <ReplaceLink href="/">
-              {weeklyCount} z {goal} w tym tygodniu. {goalLeft === 1 ? "Został jeden" : `Zostały ${goalLeft}`}
-            </ReplaceLink>
-          </Button>
-        )}
-        {goalLeft === 0 && (
+        {/* Feedback [Ty] 2026-07-17: postęp celu to informacja, nie akcja —
+            wcześniejszy outline-button był drugim linkiem na home przebranym
+            za przycisk. Oba stany celu są teraz cichym tekstem statusu. */}
+        {goalLeft > 0 ? (
+          <p className="text-sm font-medium text-brand-muted">
+            {weeklyCount} z {goal} w tym tygodniu. {goalLeft === 1 ? "Został jeden" : `Zostały ${goalLeft}`}
+          </p>
+        ) : (
           <p className="text-sm font-medium text-primary">
             🎯 Cel tygodniowy wykonany: {weeklyCount}/{goal}
           </p>

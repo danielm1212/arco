@@ -49,6 +49,17 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (ekran Done — feedback właściciela): ZAKOŃCZONE lokalnie.**
+  Na wyraźny feedback [Ty] po dogfoodzie: (1) zdjęta ikona 3D znad liczby-bohatera
+  („za dużo się dzieje" — dotyczy wszystkich wariantów: medal/target/fire/tick; medal przy PR
+  może wrócić selektywnie na życzenie); (2) liczba-bohater animowana od 0 (`CountUpNumber`,
+  ease-out ~900 ms, honoruje prefers-reduced-motion); (3) postęp celu „X z Y w tym tygodniu"
+  przestał być outline-buttonem — był drugim linkiem na home przebranym za akcję, teraz cichy
+  tekst statusu jak wariant „cel wykonany"; (4) sesja-zero nie celebruje zer — bez zaliczonych
+  serii hero i pasek statów znikają, zostaje nagłówek i CTA. R2 (wpis niżej) wypchnięte
+  na prod za zgodą [Ty] (`ac82a18`+`44d66cc`). Weryfikacja: lint ✓, tsc ✓, testy 27/27 ✓,
+  build ✓; wygląd Done za loginem — przegląd [Ty] na localhost:3000. Dotknięte tylko
+  `app/session/[id]/done/*`.
 - **2026-07-17 · Claude (audyt kodu 4-torowy: security, integralność, wydajność, zdrowie): ZAKOŃCZONE.**
   Zakres: odczyt całego kodu + nowy `docs/audyt-kodu-2026-07.md`; z kodu dotknięte tylko
   `public/sw N.js` (33 artefakty synca, gitignored — usunięte). Werdykt: zero P0; RLS,
