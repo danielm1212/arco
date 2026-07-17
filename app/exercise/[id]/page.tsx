@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
+import { estimate1RM, setMetric } from "@/lib/exerciseMetrics";
 import { repPRRows } from "@/lib/repPRs";
 import { Sparkline } from "@/components/Sparkline";
 import { PageHeader } from "@/components/navigation/PageHeader";
@@ -13,11 +14,7 @@ import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
   let best: number | null = null;
   for (const s of sets) {
-    let v: number | null = null;
-    if (type === "weighted" && s.weight != null && s.reps != null)
-      v = Math.round(s.weight * (1 + s.reps / 30) * 10) / 10;
-    else if (type === "bodyweight" && s.reps != null) v = s.reps;
-    else if (type === "timed" && s.duration_seconds != null) v = s.duration_seconds;
+    const v = setMetric(type, s);
     if (v != null && (best == null || v > best)) best = v;
   }
   return best;
@@ -108,7 +105,7 @@ export default async function ExercisePage(props: {
       let b: number | null = null;
       for (const s of sets)
         if (s.weight != null && s.reps != null) {
-          const v = Math.round(s.weight * (1 + s.reps / 30) * 10) / 10;
+          const v = estimate1RM(s.weight, s.reps);
           if (b == null || v > b) b = v;
         }
       return b;

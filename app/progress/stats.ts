@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
+import { setMetric } from "@/lib/exerciseMetrics";
 import { localDayKey } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 
@@ -243,16 +244,6 @@ export async function getStrengthTrends(
         .eq("set_type", "working")
         .in("session_exercise_id", sSeIds)
     : { data: [] };
-  const metric = (
-    type: ExerciseType,
-    s: { weight: number | null; reps: number | null; duration_seconds: number | null },
-  ): number | null => {
-    if (type === "weighted" && s.weight != null && s.reps != null)
-      return Math.round(s.weight * (1 + s.reps / 30) * 10) / 10;
-    if (type === "bodyweight" && s.reps != null) return s.reps;
-    if (type === "timed" && s.duration_seconds != null) return s.duration_seconds;
-    return null;
-  };
   const byExSession = new Map<
     string,
     { name: string; type: ExerciseType; perSession: Map<string, number> }
@@ -260,7 +251,7 @@ export async function getStrengthTrends(
   (sStrSets ?? []).forEach((ss) => {
     const m = seMeta.get(ss.session_exercise_id);
     if (!m) return;
-    const v = metric(m.type, ss);
+    const v = setMetric(m.type, ss);
     if (v == null) return;
     let e = byExSession.get(m.exerciseId);
     if (!e) {

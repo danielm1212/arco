@@ -1,6 +1,7 @@
 // server-only: importuje `@/lib/supabase/server` (next/headers) → nie trafia do klienta.
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
+import { setMetric } from "@/lib/exerciseMetrics";
 import type { ExerciseType } from "@/lib/types";
 import {
   balanceFlags,
@@ -11,18 +12,6 @@ import {
   type GuidanceItem,
   type MuscleCategory,
 } from "@/lib/guidance";
-
-/** Najlepsza metryka serii: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
-function setMetric(
-  type: ExerciseType,
-  s: { weight: number | null; reps: number | null; duration_seconds: number | null },
-): number | null {
-  if (type === "weighted" && s.weight != null && s.reps != null)
-    return Math.round(s.weight * (1 + s.reps / 30) * 10) / 10;
-  if (type === "bodyweight" && s.reps != null) return s.reps;
-  if (type === "timed" && s.duration_seconds != null) return s.duration_seconds;
-  return null;
-}
 
 const DAY = 86_400_000;
 
