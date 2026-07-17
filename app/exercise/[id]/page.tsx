@@ -48,13 +48,17 @@ export default async function ExercisePage(props: {
   const unit: UnitSystem = settings?.unit_system ?? "kg";
   const type = exercise.exercise_type as ExerciseType;
 
-  // Agregacja po exercise_id (brief: widok exercise-first)
+  // Agregacja po exercise_id (brief: widok exercise-first).
+  // Cap do 100 ostatnich wystąpień (audyt P2): bez limitu zapytanie rosło bez
+  // końca ze stażem konta; sort po joinie, żeby limit ciął najstarsze.
   const { data: occurrences } = await supabase
     .from("session_exercises")
     .select(
       "id, sessions(started_at), session_sets(set_index, set_type, weight, reps, duration_seconds, added_weight, completed)",
     )
-    .eq("exercise_id", exerciseId);
+    .eq("exercise_id", exerciseId)
+    .order("sessions(started_at)", { ascending: false, nullsFirst: false })
+    .limit(100);
 
   const sessions = ((occurrences as unknown as {
     sessions: { started_at: string } | null;

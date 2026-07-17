@@ -163,6 +163,17 @@ export function Logger({
   const [deletingSession, setDeletingSession] = useState(false);
   // R4: finish-sheet zamiast confirm() — otwierany tylko gdy są niezaliczone serie
   const [finishSheetOpen, setFinishSheetOpen] = useState(false);
+  // Guard in-flight: podwójny tap „Zakończ" dublował recompute_personal_records
+  const [finishing, setFinishing] = useState(false);
+  const confirmFinish = async () => {
+    if (finishing) return;
+    setFinishing(true);
+    try {
+      await handleFinish({ sessionId, exercises, online, flush });
+    } finally {
+      setFinishing(false);
+    }
+  };
   // Blokada wygaszania ekranu na czas aktywnego treningu (jeśli włączona w ustawieniach)
   useWakeLock(!isFinished && getKeepAwake());
 
@@ -263,10 +274,9 @@ export function Logger({
                 size="sm"
                 variant="outline"
                 className="text-primary"
+                disabled={finishing}
                 onClick={() =>
-                  incompleteSets > 0
-                    ? setFinishSheetOpen(true)
-                    : handleFinish({ sessionId, exercises, online, flush })
+                  incompleteSets > 0 ? setFinishSheetOpen(true) : confirmFinish()
                 }
               >
                 Zakończ
@@ -415,7 +425,7 @@ export function Logger({
         doneSets={doneSets}
         incompleteSets={incompleteSets}
         minutes={Math.floor(elapsed / 60)}
-        onConfirm={() => handleFinish({ sessionId, exercises, online, flush })}
+        onConfirm={() => confirmFinish()}
       />
 
       {rest && (

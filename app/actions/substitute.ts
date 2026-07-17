@@ -1,8 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Exercise } from "@/lib/types";
+
+// Zasada repo: każda akcja serwerowa jawnie wymaga usera (RLS chroni dane,
+// ale kontrakt "requireUser w każdej akcji" ma zero wyjątków — audyt 2026-07).
+async function requireUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  return { supabase, user };
+}
 
 export interface Candidate {
   id: string;
@@ -31,7 +43,7 @@ const overlap = (a: string[] | null, b: string[] | null) => {
 export async function getSubstitutes(
   sessionExerciseId: string,
 ): Promise<SubstituteResult> {
-  const supabase = await createClient();
+  const { supabase } = await requireUser();
 
   const { data: se } = await supabase
     .from("session_exercises")
@@ -121,7 +133,7 @@ export async function swapExercise(
   sessionExerciseId: string,
   newExerciseId: string,
 ) {
-  const supabase = await createClient();
+  const { supabase } = await requireUser();
   const { error } = await supabase
     .from("session_exercises")
     .update({ exercise_id: newExerciseId })

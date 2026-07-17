@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { UsersRound } from "lucide-react";
 
+// UWAGA: komponent celowo bez importów od R2 (stała karta Ekipy zeszła z Home).
+// Zachowany do R3b (Ekipa jako hub) — nie usuwać jako martwy kod.
 export function TeamHomeCard({
   name,
   members,

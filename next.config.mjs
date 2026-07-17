@@ -17,10 +17,9 @@ const supabaseOrigin = (() => {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    // Obrazki ćwiczeń z free-exercise-db są hotlinkowane (brief sekcja 12).
-    remotePatterns: [{ protocol: "https", hostname: "raw.githubusercontent.com" }],
-  },
+  // Obrazy ćwiczeń idą wyłącznie z własnego Supabase Storage/CDN (zwykłe <img>);
+  // next/image używają tylko lokalne ikony 3D. Zaszłość hotlinku
+  // raw.githubusercontent.com wycięta (audyt 2026-07).
   // Security headers — zestaw bazowy (docs/bezpieczenstwo.md P1, 2026-07-08).
   // HSTS dokłada Vercel.
   async headers() {
@@ -31,8 +30,8 @@ const nextConfig = {
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      // obrazki: hotlink free-exercise-db + publiczny bucket exercise-photos
-      `img-src 'self' data: blob: https://raw.githubusercontent.com ${supabaseOrigin}`,
+      // obrazki: publiczny bucket exercise-photos na własnym Supabase
+      `img-src 'self' data: blob: ${supabaseOrigin}`,
       `connect-src 'self' ${supabaseOrigin}`,
       "font-src 'self' data:",
       "worker-src 'self'",
