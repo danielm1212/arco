@@ -62,8 +62,10 @@ export default async function BodyPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
+      {/* Tytuł huba nie zmienia się przy przełączaniu podwidoku — kontekst
+          nawigacyjny to wciąż Postępy, aktywny segment komunikuje subnav. */}
       <header className="border-b px-md py-md text-center">
-        <h1 className="font-semibold">Ciało</h1>
+        <h1 className="font-semibold">Postępy</h1>
       </header>
       <ProgressSubnav active="body" />
 
