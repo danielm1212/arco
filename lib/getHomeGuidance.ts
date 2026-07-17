@@ -1,5 +1,6 @@
 // server-only: importuje `@/lib/supabase/server` (next/headers) → nie trafia do klienta.
 import { createClient } from "@/lib/supabase/server";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import type { ExerciseType } from "@/lib/types";
 import {
   balanceFlags,
@@ -50,7 +51,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
 
   const { data: ses } = await supabase
     .from("session_exercises")
-    .select("id, session_id, exercise_id, exercises(name, exercise_type, primary_muscles)")
+    .select("id, session_id, exercise_id, exercises(name, name_pl, exercise_type, primary_muscles)")
     .in("session_id", sessionIds);
   type SeInfo = {
     date: Date;
@@ -73,7 +74,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
       date,
       sessionId: se.session_id,
       exerciseId: se.exercise_id,
-      name: ex?.name ?? se.exercise_id,
+      name: ex ? exerciseDisplayName(ex) : se.exercise_id,
       type: ex?.exercise_type ?? "weighted",
       categories: categoriesForExercise(se.exercise_id, ex?.primary_muscles ?? []),
     });

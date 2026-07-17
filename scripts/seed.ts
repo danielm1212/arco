@@ -11,6 +11,7 @@ import { pathToFileURL } from "node:url";
 import rawExercises from "./data/exercises.json";
 import polishInstructionOverrides from "./data/exercise-instructions-pl.json";
 import polishNames from "./data/exercise-names-pl.json";
+import { withNormalizedAliases } from "../lib/exerciseSearch";
 
 config({ path: ".env.local" });
 
@@ -243,7 +244,8 @@ export function toSeedExercise(ex: RawExercise) {
     exercise_type: deriveExerciseType(ex),
     hidden: deriveHidden(ex),
     name_pl: POLISH_NAMES[ex.id]?.name_pl ?? null,
-    search_aliases: POLISH_NAMES[ex.id]?.aliases ?? [],
+    // Warianty bez diakrytyk obok oryginałów — zgodnie z migracją 20260717163900.
+    search_aliases: withNormalizedAliases(POLISH_NAMES[ex.id]?.aliases ?? []),
   };
 }
 

@@ -4,9 +4,11 @@ import rawExercises from "../scripts/data/exercises.json";
 import polishNames from "../scripts/data/exercise-names-pl.json";
 import {
   buildSearchOrFilter,
+  normalizePolish,
   rankSearchHit,
   sanitizeSearchTerm,
   sortSearchHits,
+  withNormalizedAliases,
   type RankableHit,
 } from "../lib/exerciseSearch";
 
@@ -22,18 +24,22 @@ const byId = new Map(exercises.map((e) => [e.id, e]));
 function searchCatalog(rawQuery: string): RankableHit[] {
   const term = sanitizeSearchTerm(rawQuery);
   const q = term.toLowerCase();
+  const norm = normalizePolish(term);
   const hits = exercises
     .map((e) => ({
       name: e.name,
       name_pl: dict[e.id]?.name_pl ?? null,
-      search_aliases: dict[e.id]?.aliases ?? [],
+      // Jak w bazie po migracji 20260717163900: aliasy z wariantami bez diakrytyk.
+      search_aliases: withNormalizedAliases(dict[e.id]?.aliases ?? []),
       id: e.id,
     }))
     .filter(
       (h) =>
         h.name.toLowerCase().includes(q) ||
         (h.name_pl ?? "").toLowerCase().includes(q) ||
-        h.search_aliases.includes(q),
+        normalizePolish(h.name_pl ?? "").includes(norm) ||
+        h.search_aliases.includes(q) ||
+        h.search_aliases.includes(norm),
     );
   return sortSearchHits(hits, term);
 }
@@ -94,6 +100,48 @@ test("ranking: exact > prefix > alias > początek słowa > substring", () => {
   assert.ok(rankSearchHit(prefix, q2) < rankSearchHit(alias, q2));
   assert.ok(rankSearchHit(alias, q2) < rankSearchHit(wordStart, q2));
   assert.ok(rankSearchHit(wordStart, q2) < rankSearchHit(substring, q2));
+});
+
+test("normalizacja diakrytyk: lawka znajduje ławkę (R4 audytu)", () => {
+  assert.equal(normalizePolish("Żołnierskie"), "zolnierskie");
+  assert.equal(normalizePolish("ŁAWKA skośna"), "lawka skosna");
+  assert.equal(normalizePolish("wznosy hantli bokiem"), "wznosy hantli bokiem");
+
+  assert.deepEqual(withNormalizedAliases(["bułgary", "goblet"]).sort(), [
+    "bulgary",
+    "bułgary",
+    "goblet",
+  ]);
+
+  const cases: [string, string][] = [
+    ["lawka", "Barbell_Bench_Press_-_Medium_Grip"],
+    ["zolnierskie", "Standing_Military_Press"],
+    ["bulgary", "Bulgarian_Split_Squat"],
+    ["rumunski", "Romanian_Deadlift"],
+    ["wspiecia", "Calf_Raise_On_A_Dumbbell"],
+    ["lawce skosnej", "Incline_Dumbbell_Press"],
+  ];
+  for (const [query, expectedId] of cases) {
+    const hits = searchCatalog(query) as (RankableHit & { id: string })[];
+    assert.ok(
+      hits.some((h) => h.id === expectedId),
+      `"${query}" nie znajduje ${expectedId} (trafienia: ${hits.slice(0, 5).map((h) => h.id).join(", ")})`,
+    );
+  }
+
+  // Ranking traktuje frazę bez ogonków jak oryginał: prefix wygrywa z substringiem.
+  const hit: RankableHit = { name: "X", name_pl: "Ławka skośna", search_aliases: [] };
+  assert.equal(rankSearchHit(hit, "lawka"), 1);
+});
+
+test("buildSearchOrFilter zawiera ramię znormalizowane i oba warianty aliasu", () => {
+  const f = buildSearchOrFilter("Żołnierskie");
+  assert.ok(f.includes('name_pl_norm.ilike."%zolnierskie%"'), f);
+  assert.ok(f.includes('search_aliases.cs.{"zolnierskie"}'), f);
+  assert.ok(f.includes('search_aliases.cs.{"żołnierskie"}'), f);
+  // Fraza bez diakrytyk nie dubluje ramienia aliasowego.
+  const g = buildSearchOrFilter("goblet");
+  assert.equal(g.match(/search_aliases/g)?.length, 1, g);
 });
 
 test("sanitizacja frazy: wildcardy ilike i separatory or() nie psują zapytania", () => {

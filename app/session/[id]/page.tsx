@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getRepPRs } from "@/lib/repPRs";
 import { Logger, type LoggerExercise } from "./Logger";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
     supabase
       .from("session_exercises")
       .select(
-        "id, exercise_id, position, slot_id, superset_group, notes, skipped, exercises(name, exercise_type, equipment), slot:program_day_slots(default_exercise_id, target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
+        "id, exercise_id, position, slot_id, superset_group, notes, skipped, exercises(name, name_pl, exercise_type, equipment), slot:program_day_slots(default_exercise_id, target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
       )
       .eq("session_id", sessionId)
       .order("position"),
@@ -63,6 +64,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
   const model: LoggerExercise[] = (exercises ?? []).map((e) => {
     const ex = e.exercises as unknown as {
       name: string;
+      name_pl: string | null;
       exercise_type: LoggerExercise["type"];
       equipment: string | null;
     };
@@ -71,7 +73,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
     return {
       sessionExerciseId: e.id,
       exerciseId: e.exercise_id,
-      name: ex.name,
+      name: exerciseDisplayName(ex),
       type: ex.exercise_type,
       equipment: ex.equipment,
       slot: slot ?? null,

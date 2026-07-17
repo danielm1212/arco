@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { Button } from "@/components/ui/button";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
@@ -23,7 +24,7 @@ export default async function SessionDetailPage(props: {
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, exercise_type, primary_muscles), session_sets(id, set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
+        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, name_pl, exercise_type, primary_muscles), session_sets(id, set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -76,7 +77,7 @@ export default async function SessionDetailPage(props: {
   const { data: prsRaw } = setIds.length
     ? await supabase
         .from("personal_records")
-        .select("record_type, value, exercises(name)")
+        .select("record_type, value, exercises(name, name_pl)")
         .in("session_set_id", setIds)
     : { data: [] };
   const PR_LABEL: Record<string, string> = {
@@ -88,9 +89,9 @@ export default async function SessionDetailPage(props: {
   const prs = ((prsRaw as unknown as {
     record_type: string;
     value: number;
-    exercises: { name: string } | null;
+    exercises: { name: string; name_pl: string | null } | null;
   }[]) ?? []).map((p) => ({
-    name: p.exercises?.name ?? "",
+    name: p.exercises ? exerciseDisplayName(p.exercises) : "",
     label: PR_LABEL[p.record_type] ?? p.record_type,
     value: p.value,
   }));
@@ -185,7 +186,7 @@ export default async function SessionDetailPage(props: {
             }`}
           >
             <p className="font-medium">
-              {ex.exercises.name}
+              {exerciseDisplayName(ex.exercises)}
               {ex.superset_group != null && (
                 <span className="ml-xs rounded-full bg-primary/15 px-2 py-0.5 align-middle text-xs font-medium text-primary">
                   SS{ex.superset_group}

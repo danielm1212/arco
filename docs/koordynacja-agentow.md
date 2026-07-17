@@ -49,6 +49,25 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-17 · Claude (R5a dokończenie: name_pl na wszystkich powierzchniach + diakrytyki R4): ZAKOŃCZONE TECHNICZNIE.**
+  Zakres A (powierzchnie): `exerciseDisplayName` zastosowany w loggerze
+  (`app/session/[id]/page.tsx` — mapowanie modelu, Logger bez zmian), historii
+  (`app/history/[id]/page.tsx` — karty ćwiczeń i PR-y), szczegółach programu, hero home
+  (`app/page.tsx` — preview slotów), guidance (`lib/getHomeGuidance.ts`), postępach
+  (`app/progress/stats.ts` — rekordy i trendy) i stronie ćwiczenia (tytuł + alt).
+  Same rozszerzenia selectów o `name_pl` — bez zmian kształtu zapytań (budżety hot paths
+  nietknięte). Zakres B (diakrytyki, R4 audytu): `normalizePolish()` + `withNormalizedAliases()`
+  w `lib/exerciseSearch.ts`, ramię `name_pl_norm` w or-filterze, ranking porównuje po
+  normalizacji; migracja `20260717163900_search_diacritics_normalization` (kolumna generowana
+  z jawnym mapowaniem wielkich liter + idempotentne warianty aliasów z guardem wg wzorca);
+  seed dopisuje warianty przez `withNormalizedAliases`; `lib/database.types.ts` +`name_pl_norm`.
+  Testy: +2 (normalizacja/krytyczne frazy bez ogonków: lawka, zolnierskie, bulgary, rumunski;
+  kształt or-filtera), emulacja searchCatalog odzwierciedla nową semantykę. Weryfikacja:
+  tsc ✓, lint ✓, testy search 8/8 ✓ (kompilowane, pełny zestaw przejedzie CI).
+  OGRANICZENIE ŚRODOWISKA: sesja bez lokalnego Supabase — `supabase db reset` i smoke'i
+  wykona CI na pushu; migracja czeka na `db push` [Ty] wg arco-release (baza przed kodem!).
+  Czego nie dotknięto: ExerciseBrowser (query bez zmian poza or-filterem z lib), outbox,
+  programy, Ekipa, duplikaty ikon. Zaległości: R5–R6 audytu (instrumentacja, kosmetyka).
 - **2026-07-17 · Claude (R5a: polska wyszukiwarka — name_pl, aliasy, ranking): ZAKOŃCZONE.**
   Zakres: `scripts/data/exercise-names-pl.json` (213 nazw + 94 aliasy wygenerowane
   programowo z zatwierdzonego doca), `scripts/seed.ts`, migracja

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
@@ -57,7 +58,7 @@ export default async function HomePage() {
       .order("cycle_days"),
     supabase
       .from("user_active_program")
-      .select("program_id, programs(program_days(id, label, position, program_day_slots(position, target_sets, rest_seconds, exercises(name))))")
+      .select("program_id, programs(program_days(id, label, position, program_day_slots(position, target_sets, rest_seconds, exercises(name, name_pl))))")
       .maybeSingle(),
     supabase
       .from("sessions")
@@ -155,7 +156,7 @@ export default async function HomePage() {
       );
       const preview = slots
         .slice(0, 3)
-        .map((s) => s.exercises?.name ?? "")
+        .map((s) => (s.exercises ? exerciseDisplayName(s.exercises) : ""))
         .filter(Boolean);
       suggestedMeta = { count: slots.length, minutes, preview };
     }

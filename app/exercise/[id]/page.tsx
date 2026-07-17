@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
 import { repPRRows } from "@/lib/repPRs";
@@ -40,7 +41,7 @@ export default async function ExercisePage(props: {
     supabase
       .from("exercises")
       .select(
-        "name, exercise_type, primary_muscles, secondary_muscles, equipment, level, instructions, images",
+        "name, name_pl, exercise_type, primary_muscles, secondary_muscles, equipment, level, instructions, images",
       )
       .eq("id", exerciseId)
       .maybeSingle(),
@@ -139,7 +140,7 @@ export default async function ExercisePage(props: {
         />
       ) : null}
       <PageHeader
-        title={exercise.name}
+        title={exerciseDisplayName(exercise)}
         fallback={sessionReturnTo ?? "/progress"}
         backLabel={sessionReturnTo ? "Wróć do treningu" : "Wróć do postępów"}
         sticky
@@ -165,7 +166,7 @@ export default async function ExercisePage(props: {
                   <img
                     key={src}
                     src={src}
-                    alt={exercise.name}
+                    alt={exerciseDisplayName(exercise)}
                     loading="lazy"
                     decoding="async"
                     width={800}

@@ -173,6 +173,7 @@ export type Database = {
             | null
           name: string
           name_pl: string | null
+          name_pl_norm: string | null
           search_aliases: string[]
           primary_muscles: string[]
           secondary_muscles: string[]

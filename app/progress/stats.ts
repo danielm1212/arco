@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
 import { localDayKey } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
@@ -140,7 +141,7 @@ export interface PrEntry {
 export async function getPersonalRecords(supabase: Supabase): Promise<[string, PrEntry][]> {
   const { data: prs } = await supabase
     .from("personal_records")
-    .select("exercise_id, record_type, value, reps_context, exercises(name)")
+    .select("exercise_id, record_type, value, reps_context, exercises(name, name_pl)")
     .in("record_type", ["max_e1rm", "max_weight"])
     .order("value", { ascending: false });
 
@@ -153,7 +154,7 @@ export async function getPersonalRecords(supabase: Supabase): Promise<[string, P
   };
   const byExercise = new Map<string, PrEntry>();
   ((prs as unknown as PrRow[]) ?? []).forEach((p) => {
-    const cur = byExercise.get(p.exercise_id) ?? { name: p.exercises?.name ?? p.exercise_id };
+    const cur = byExercise.get(p.exercise_id) ?? { name: p.exercises ? exerciseDisplayName(p.exercises) : p.exercise_id };
     if (p.record_type === "max_e1rm") cur.e1rm = p.value;
     if (p.record_type === "max_weight") cur.maxWeight = p.value;
     byExercise.set(p.exercise_id, cur);
@@ -217,7 +218,7 @@ export async function getStrengthTrends(
   const { data: sExs } = sSessIds.length
     ? await supabase
         .from("session_exercises")
-        .select("id, exercise_id, session_id, exercises(name, exercise_type)")
+        .select("id, exercise_id, session_id, exercises(name, name_pl, exercise_type)")
         .in("session_id", sSessIds)
     : { data: [] };
   const seMeta = new Map<
@@ -225,10 +226,10 @@ export async function getStrengthTrends(
     { exerciseId: string; name: string; type: ExerciseType; sessionId: string }
   >();
   (sExs ?? []).forEach((se) => {
-    const ex = se.exercises as unknown as { name: string; exercise_type: ExerciseType } | null;
+    const ex = se.exercises as unknown as { name: string; name_pl: string | null; exercise_type: ExerciseType } | null;
     seMeta.set(se.id, {
       exerciseId: se.exercise_id,
-      name: ex?.name ?? se.exercise_id,
+      name: ex ? exerciseDisplayName(ex) : se.exercise_id,
       type: ex?.exercise_type ?? "weighted",
       sessionId: se.session_id,
     });

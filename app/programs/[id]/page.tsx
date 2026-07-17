@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { duplicateProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
     supabase
       .from("programs")
       .select(
-        "id, name, user_id, description, goal, level, focus_key, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name)))",
+        "id, name, user_id, description, goal, level, focus_key, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name, name_pl)))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -65,7 +66,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
         .map((s) => ({
           id: s.id,
           exerciseId: s.default_exercise_id,
-          exerciseName: s.exercises?.name ?? s.default_exercise_id,
+          exerciseName: s.exercises ? exerciseDisplayName(s.exercises) : s.default_exercise_id,
           position: s.position,
           targetSets: s.target_sets,
           repsMin: s.target_reps_min,
