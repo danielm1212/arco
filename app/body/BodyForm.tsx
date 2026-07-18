@@ -129,16 +129,6 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
     message: "Pomiar i zdjęcia są zapisane lokalnie jako szkic. Odrzucenie zmian usunie je z tego urządzenia.",
   });
 
-  function reset() {
-    setWeight("");
-    setFat("");
-    setNotes("");
-    setFiles([]);
-    setPreviews([]);
-    clearDrafts();
-    if (fileRef.current) fileRef.current.value = "";
-  }
-
   function save() {
     const normalizedWeight = clampNum(num(weight), { max: LIMITS.bodyWeight });
     if (normalizedWeight == null || normalizedWeight <= 0) {
@@ -172,8 +162,10 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
           if (photoPaths.length) await storage.remove(photoPaths);
           throw error;
         }
-        reset();
-        router.refresh();
+        // R3a: ekran focus → terminalne przejście do /body przez replace.
+        // Czyścimy szkic PRZED nawigacją, żeby recovery nie odpalił na huba.
+        clearDrafts();
+        router.replace("/body");
         toast.success("Zapisano pomiar.");
       } catch (error) {
         toast.error(error instanceof Error && error.message === "UNSUPPORTED_IMAGE" ? "Ten format zdjęcia nie jest obsługiwany. Wybierz JPG, PNG albo WebP." : "Nie udało się zapisać pomiaru. Spróbuj ponownie.");

@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { BodyForm } from "./BodyForm";
 import { DeleteBodyMetricButton } from "./DeleteBodyMetricButton";
 import { BodyPhotoButton } from "./BodyPhotoButton";
+import { Button } from "@/components/ui/button";
 import { Sparkline } from "@/components/Sparkline";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { ProgressSubnav } from "@/components/navigation/ProgressSubnav";
@@ -21,9 +22,6 @@ type Metric = {
 
 export default async function BodyPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const [{ data: metrics }, { data: settings }] = await Promise.all([
     supabase
@@ -70,7 +68,10 @@ export default async function BodyPage() {
       <ProgressSubnav active="body" />
 
       <main className="flex-1 space-y-lg p-md">
-        <BodyForm unit={unit} userId={user?.id ?? ""} />
+        {/* R3a: dodanie pomiaru to osobny ekran focus — Ciało zostaje przeglądem trendu */}
+        <Button asChild className="w-full">
+          <Link href="/body/add">Dodaj pomiar</Link>
+        </Button>
 
         {latest != null && (
           <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
