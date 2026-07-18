@@ -256,9 +256,10 @@ wchodzi dopiero po stabilnym chrome i niezmienniku sesji.
 sekwencją nominalną — właściciel zatwierdził słownik i zdecydował o wdrożeniu: 213 nazw
 `name_pl` + 94 aliasy (migracja `20260717130502`), wyszukiwanie PL/EN/aliasy z rankingiem,
 polskie nazwy w pickerze/ostatnich/swapie, test regresji fraz w unit testach. Zostają:
-normalizacja diakrytyk (R4 audytu), instrumentacja search (R5), kosmetyka (R6),
-rozszerzenie `name_pl` na pozostałe powierzchnie oraz zdjęcia 16 placeholderów
-([Ty], sobota 2026-07-18).
+normalizacja diakrytyk (R4 audytu, WESZŁO `9eb9835`), instrumentacja search (R5),
+kosmetyka (R6), rozszerzenie `name_pl` na pozostałe powierzchnie (WESZŁO `9eb9835`)
+oraz zdjęcia 16 placeholderów — **ODROCZONE przez [Ty] 2026-07-18** (decyzja po audycie;
+wykona w innym terminie; warunek bramki H2, nie R3a).
 
 ### R5b: dostępność i regresja PWA
 

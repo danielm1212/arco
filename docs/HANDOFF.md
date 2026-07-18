@@ -114,7 +114,7 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 5. **Konta publiczne:** rejestracja, reset hasła, wersjonowane zgody, eksport/usunięcie danych i ochrona przed nadużyciami nie są jeszcze gotowe.
 6. **Analityka:** adapter istnieje, ale produkcyjnie pozostaje no-op do czasu decyzji prawnej i produktowej.
 7. **Ekipy publiczne:** przed otwarciem wymagają zgód, rate limitów, ochrony 8-znakowych kodów, rotacji zaproszeń i dogfoodingu wielokontowego.
-8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. Decyzja podjęta (2026-07-17): zdjęcia dla wszystkich 16 generuje [Ty] w sobotę 2026-07-18; ryzyko zamyka się z ich uploadem.
+8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. **Odroczone (2026-07-18):** po audycie [Ty] decyzja o wygenerowaniu 16 zdjęć cofnięta — wykona w innym terminie. Prompty gotowe (`prompty-zdjecia-cwiczen-16.md`). NIE blokuje R3a; pozostaje otwarte jako warunek bramki H2 (placeholdery w widocznych planach muszą mieć świadomą decyzję).
 9. **Docelowa IA jest wdrożona do R2 włącznie** (chrome, integralność sesji, hub Treningu);
    huby Postępy/Ekipa i logger czekają na R3a–R4. `/history/add` nadal wymaga przebudowy
    wyboru programu oraz pełnej regresji daty i overflow na iOS.
@@ -130,12 +130,13 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 Na produkcji są: R1a, R1b, R2, spokojniejszy ekran Done oraz **polska wyszukiwarka R5a**
 (migracja `20260717130502_exercise_polish_names` — local == remote, deploy `6d7c26d`,
 CI zielone). Zaakceptowane po dogfoodzie [Ty]: pion R2 i ekran Done.
-**Najpilniejsze [Ty]: jedna wspólna regresja urządzeniowa na iPhone PWA i Androidzie** —
-start/wznowienie treningu, odzyskanie szkicu, nowy header/subnav Trening, hero, ekran Done
-oraz wyszukiwarka PL w pickerze (frazy: martwy, ohp, wyciskanie, allahy).
-**[Ty] sobota 2026-07-18:** zdjęcia dla 16 placeholderów — gotowe prompty per ćwiczenie
-w `prompty-zdjecia-cwiczen-16.md` (rewizja 2026-07-17: dyptyk, 3:2, stała kamera; styl bazowy
-`prompt-fotografia-warm.md`), upload przez `upload:exercise-images` → `sync:exercise-content`.
+**JEDYNA twarda bramka przed R3a — [Ty]: przejście macierzy regresji urządzeniowej**
+(`docs/macierz-regresji-urzadzen.md`) na iPhone PWA (kolumna A; Android = świadoma luka).
+Pre-check desktop/Chromium wykonany 2026-07-18 (kolumna C, scen. 2/3/5 ✅) — bez zgłoszeń,
+ale nie zastępuje przebiegu na urządzeniu. Zakres: start/wznowienie, odzyskanie szkicu,
+badge+sheet tygodnia, hero, Done, wyszukiwarka PL (frazy: martwy, ohp, wyciskanie, allahy).
+**Zdjęcia 16 placeholderów: ODROCZONE** (decyzja [Ty] 2026-07-18) — patrz ryzyko 8; nie
+blokuje R3a.
 Deploy audytu kodu (P1.1–P1.4 + P2) wykonany 2026-07-17: migracja `20260717213044` na
 prodzie (local == remote), kod do `0dfa7e5` na origin, CI oba joby zielone, prod
 zweryfikowany w przeglądarce (świeży build, zero błędów CSP). Lokalny bucket
@@ -146,10 +147,10 @@ zweryfikowany w przeglądarce (świeży build, zero błędów CSP). Lokalny buck
 i18n komunikatów, multi-tab outbox — udokumentowane).
 Commit `33dd58e` (testy libów) jest wypchnięty — `origin/main` = `c6d2bac`, całość
 dorobku 2026-07-17 jest na GitHubie.
-Kod: **R2.1 zaimplementowane technicznie 2026-07-18 w nocy** (badge celu jako akcja
-z sheetem tygodnia, FlameWeek poza Home, polish hero, odchudzone karty Planów, loading
-z chrome, izolacja insightu per konto+program; wpis w koordynacji) — **czeka na przegląd
-wizualny [Ty] na localhost i push**. Potem checkpoint dogfood i R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
+Kod: **R2.1 na produkcji** (badge celu jako akcja z sheetem tygodnia, FlameWeek poza Home,
+polish hero, odchudzone karty Planów, loading z chrome, izolacja insightu per konto+program).
+Przegląd [Ty] + pre-check wizualny Claude na desktopie: bez zgłoszeń. Zostaje tylko
+checkpoint urządzeniowy (wyżej), potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
 (instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
 powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie
 4 P1 zamknięte; zostaje P2 jako tło przy R3–R5.
