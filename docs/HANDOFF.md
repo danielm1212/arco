@@ -130,8 +130,11 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 Na produkcji są: R1a, R1b, R2, spokojniejszy ekran Done oraz **polska wyszukiwarka R5a**
 (migracja `20260717130502_exercise_polish_names` — local == remote, deploy `6d7c26d`,
 CI zielone). Zaakceptowane po dogfoodzie [Ty]: pion R2 i ekran Done.
-**Checkpoint urządzeniowy ZALICZONY [Ty] 2026-07-18** (iPhone PWA, 8/8, zero zgłoszeń) —
-bramka przed R3a zamknięta. **Następny krok kodowy: R3a (Postępy i Ciało).**
+**Checkpoint urządzeniowy ZALICZONY [Ty] 2026-07-18** (iPhone PWA, 8/8, zero zgłoszeń).
+**R3a (Postępy i Ciało) ZAKOŃCZONE TECHNICZNIE 2026-07-18** — filtr okresu przez replace
++ pomiar jako ekran focus `/body/add`; reszta była gotowa z R1a/R1b. Zweryfikowane
+w przeglądarce, czeka na push i regresję treści [Ty]. **Następny etap kodowy: R3b (Ekipa
+jako hub).**
 **Zdjęcia 16 placeholderów: ODROCZONE** (decyzja [Ty] 2026-07-18) — patrz ryzyko 8; nie
 blokuje R3a, warunek bramki H2.
 Deploy audytu kodu (P1.1–P1.4 + P2) wykonany 2026-07-17: migracja `20260717213044` na

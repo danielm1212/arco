@@ -204,6 +204,12 @@ urządzeniowa i decyzja o publikacji.
 
 **Done:** trend, pomiar i powrót do wcześniejszego kontekstu są zrozumiałe bez pomocy.
 
+**Stan 2026-07-18:** ZAKOŃCZONE TECHNICZNIE (lokalnie). Większość była gotowa z R1a/R1b;
+w tej fali domknięto filtr okresu przez replace (`805f6de`) i migrację pomiaru do ekranu
+focus `/body/add` (chrome focus, strona Ciała = trend+historia+CTA, zapis→replace do /body,
+szkic/dirty guard/recovery z R1b zachowane). tsc/lint/testy 72/72/build ✓, przepływ
+zweryfikowany w przeglądarce. Zostaje regresja treści [Ty] i push. Następny etap: R3b.
+
 ### R3b: Ekipa jako główna przestrzeń
 
 **Czas:** 2–3 dni [Claude] + dogfooding kont testowych [Ty]

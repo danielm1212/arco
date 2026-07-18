@@ -49,6 +49,25 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-18 · Claude (R3a: Postępy i Ciało): ZAKOŃCZONE TECHNICZNIE, lokalnie.**
+  Analiza luk pokazała, że R3a było w ~85% gotowe z R1a/R1b (subnav Trening|Ciało przez
+  ReplaceLink, trend Ciała, pomiar ze zdjęciami+szkicem R1b, origin-aware Back ćwiczenia
+  przez history-first+fallback `/progress`, empty states). Domknięte w tej sesji:
+  (1) filtr okresu Postępów `PeriodTabs` na `ReplaceLink` — zmiana zakresu nie stackuje
+  historii (`805f6de`); (2) **pomiar jako osobny ekran focus `/body/add`** — nowa trasa
+  z chrome focus (bez bottom navu) + reguła w macierzy `appChrome` + case w teście pokrycia;
+  strona Ciała odchudzona do trend+historia+CTA „Dodaj pomiar"; `BodyForm` post-save robi
+  `router.replace("/body")` (terminalne przejście, szkic czyszczony przed nawigacją,
+  usunięty martwy `reset()`); dirty guard i draft recovery z R1b zachowane. Przy okazji
+  wycięte 2 martwe importy `ExerciseType` po refactorze dbJoins. Weryfikacja: tsc ✓, lint ✓
+  (0 warningów), testy 72/72 ✓ (w tym pokrycie chrome dla nowej trasy), build ✓; przeglądarka
+  (prod-build, 375px): Ciało→CTA→ /body/add focus (back „Wróć do postępów", brak bottom navu)
+  →wpis wagi 82.5→ toast „Zapisano pomiar" → replace do /body → trend + historia; konsola
+  czysta. Sprzątanie: testowy pomiar (`360b3cb1-…`) usunięty po ID, baza 0 pomiarów.
+  Commity `805f6de` (replace+lint) i osobny (focus screen). Czego nie dotknięto: akcji
+  serwerowych body, migracji, loggera, Ekipy, duplikatów ikon. Zaległości: [Ty] push
+  (`805f6de`+focus+docs) i regresja treści Postępów/Ciała na urządzeniu (część R3a „+
+  regresja treści [Ty]"); następny etap kodowy: R3b (Ekipa jako hub).
 - **2026-07-18 · [Ty] (checkpoint regresji urządzeniowej — iPhone PWA): ZALICZONY.**
   Wszystkie 8 scenariuszy macierzy działają na iPhone PWA, zero zgłoszeń: nawigacja+subnav,
   badge celu + sheet tygodnia (swipe/safe area), start/wznowienie/minimalizacja sesji,
