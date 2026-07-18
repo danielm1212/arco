@@ -49,6 +49,13 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-18 · [Ty] (checkpoint regresji urządzeniowej — iPhone PWA): ZALICZONY.**
+  Wszystkie 8 scenariuszy macierzy działają na iPhone PWA, zero zgłoszeń: nawigacja+subnav,
+  badge celu + sheet tygodnia (swipe/safe area), start/wznowienie/minimalizacja sesji,
+  odzyskanie szkicu, Done, wyszukiwarka PL (martwy/ohp/wyciskanie/allahy), stary cache po
+  deployu (świeży SW). **Bramka `checkpoint` z planu ZAMKNIĘTA → R3a odblokowane.**
+  Kolumna A macierzy wypełniona. Android (D) zostaje świadomą luką (przy okazji, nie blokuje).
+  Ryzyko nr 2 HANDOFF spada do „Android + powtórki po R3b/R4".
 - **2026-07-18 · Claude (pre-check wizualny R2.1 na desktopie — na prośbę [Ty]): ZAKOŃCZONE.**
   [Ty] potwierdził R2.1 (badge/hero/sheet) i poprosił o niezależny przebieg. Prod-build
   `next start` na localhost, Chromium, 320×568 + 375×812. Zweryfikowane: empty state Home

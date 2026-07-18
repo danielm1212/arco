@@ -90,16 +90,20 @@ W pickerze ćwiczeń (logger → dodaj ćwiczenie) wpisz kolejno:
 
 ## Wyniki
 
+**CHECKPOINT ZALICZONY — [Ty], iPhone PWA, 2026-07-18.** Wszystkie scenariusze działają,
+zero zgłoszeń. Bramka `checkpoint` z planu zamknięta → R3a odblokowane. Android (D)
+pozostaje świadomą luką do sprawdzenia przy okazji (nie blokuje).
+
 | # | Scenariusz | A (iPhone PWA) | B (Safari) | C (Desktop) | D (Android) | Notatki |
 |---|---|---|---|---|---|---|
-| 1 | Chrome i nawigacja | | | ⚠️ część | luka | C: subnav Dziś\|Plany, bottom bar, header trwa przy ładowaniu ✓; Postępy Trening\|Ciało i deep-link Back nie sprawdzone |
-| 2 | Badge + sheet tygodnia | | | ✅ | luka | C: badge 44px + aria-label pełny, sheet (1/2, 7 płomieni, passa, link Historia), Escape zamyka, fokus wraca. Swipe/overlay tylko na dotyku |
-| 3 | Hero i start | | | ✅ | luka | C: empty state (dumbbell 3D, „Bez planu" muted) + start freestyle → logger. Hero „Następny w rotacji" nie pokryty (brak aktywnego planu na świeżej bazie) |
-| 4 | Integralność sesji | | — | — | luka | |
-| 5 | Ekran Done | | — | ✅ | luka | C: Done sesji-zero — status jako cichy tekst, nie przycisk ✓ |
-| 6 | Wyszukiwarka PL | | | | luka | |
-| 7 | Sheety i safe area | | — | ⚠️ część | luka | C: sheet tygodnia — overlay przyciemnia tło, Escape zamyka ✓; safe area tylko na urządzeniu |
-| 8 | Insight planu | | — | — | luka | |
+| 1 | Chrome i nawigacja | ✅ | | ⚠️ część | luka | A: nawigacja + subnav OK [Ty] |
+| 2 | Badge + sheet tygodnia | ✅ | | ✅ | luka | A: badge + sheet, swipe/safe area OK [Ty]; C: aria/Escape/fokus ✓ |
+| 3 | Hero i start | ✅ | | ✅ | luka | A: start/wznowienie/minimalizacja OK [Ty] |
+| 4 | Integralność sesji | ✅ | — | — | luka | A: odzyskanie szkicu OK [Ty] |
+| 5 | Ekran Done | ✅ | — | ✅ | luka | A: OK [Ty]; C: status jako cichy tekst ✓ |
+| 6 | Wyszukiwarka PL | ✅ | | | luka | A: frazy martwy/ohp/wyciskanie/allahy OK [Ty] |
+| 7 | Sheety i safe area | ✅ | — | ⚠️ część | luka | A: swipe + safe area OK [Ty]; C: overlay/Escape ✓ |
+| 8 | Insight planu | ✅ | — | — | luka | A: stary cache po deployu / świeży SW OK [Ty] |
 
 **Pre-check C (Claude, 2026-07-18):** desktop/Chromium na prod-buildzie (`next start`),
 320×568 i 375×812, konsola czysta na wszystkich ekranach, brak przewijania poziomego,

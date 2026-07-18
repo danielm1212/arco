@@ -108,7 +108,7 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 ## Otwarte ryzyka
 
 1. **Bottom sheet accessibility — refinement:** zachowanie funkcjonalne na PWA jest domknięte; własny dialog wymaga jeszcze pełnego focus trapu i zwrotu fokusu do elementu otwierającego.
-2. **Testy urządzeń:** macierz gotowa — `docs/macierz-regresji-urzadzen.md` (2026-07-18), konsoliduje zaległe checkpointy R1b/R2/R2.1/Done/R5a; czeka na wykonanie [Ty]. Android pozostaje świadomą luką sprzętową.
+2. **Testy urządzeń:** checkpoint iPhone PWA **ZALICZONY [Ty] 2026-07-18** (8/8 scenariuszy, zero zgłoszeń — `docs/macierz-regresji-urzadzen.md` kol. A). Zostaje: Android (świadoma luka sprzętowa) oraz powtórki macierzy po R3b i R4 zgodnie z planem.
 3. **Backup poza urządzeniem:** lokalny backup i restore są zweryfikowane. Kopię trzeba jeszcze przenieść do zaszyfrowanej lokalizacji poza laptopem.
 4. **H2:** obecne poprawki pochodzą głównie z dogfoodingu właściciela. Potrzeba testów z 3–5 osobami.
 5. **Konta publiczne:** rejestracja, reset hasła, wersjonowane zgody, eksport/usunięcie danych i ochrona przed nadużyciami nie są jeszcze gotowe.
@@ -130,13 +130,10 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 Na produkcji są: R1a, R1b, R2, spokojniejszy ekran Done oraz **polska wyszukiwarka R5a**
 (migracja `20260717130502_exercise_polish_names` — local == remote, deploy `6d7c26d`,
 CI zielone). Zaakceptowane po dogfoodzie [Ty]: pion R2 i ekran Done.
-**JEDYNA twarda bramka przed R3a — [Ty]: przejście macierzy regresji urządzeniowej**
-(`docs/macierz-regresji-urzadzen.md`) na iPhone PWA (kolumna A; Android = świadoma luka).
-Pre-check desktop/Chromium wykonany 2026-07-18 (kolumna C, scen. 2/3/5 ✅) — bez zgłoszeń,
-ale nie zastępuje przebiegu na urządzeniu. Zakres: start/wznowienie, odzyskanie szkicu,
-badge+sheet tygodnia, hero, Done, wyszukiwarka PL (frazy: martwy, ohp, wyciskanie, allahy).
+**Checkpoint urządzeniowy ZALICZONY [Ty] 2026-07-18** (iPhone PWA, 8/8, zero zgłoszeń) —
+bramka przed R3a zamknięta. **Następny krok kodowy: R3a (Postępy i Ciało).**
 **Zdjęcia 16 placeholderów: ODROCZONE** (decyzja [Ty] 2026-07-18) — patrz ryzyko 8; nie
-blokuje R3a.
+blokuje R3a, warunek bramki H2.
 Deploy audytu kodu (P1.1–P1.4 + P2) wykonany 2026-07-17: migracja `20260717213044` na
 prodzie (local == remote), kod do `0dfa7e5` na origin, CI oba joby zielone, prod
 zweryfikowany w przeglądarce (świeży build, zero błędów CSP). Lokalny bucket
