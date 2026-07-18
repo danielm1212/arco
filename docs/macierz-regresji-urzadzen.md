@@ -92,14 +92,19 @@ W pickerze ćwiczeń (logger → dodaj ćwiczenie) wpisz kolejno:
 
 | # | Scenariusz | A (iPhone PWA) | B (Safari) | C (Desktop) | D (Android) | Notatki |
 |---|---|---|---|---|---|---|
-| 1 | Chrome i nawigacja | | | | luka | |
-| 2 | Badge + sheet tygodnia | | | | luka | |
-| 3 | Hero i start | | | | luka | |
+| 1 | Chrome i nawigacja | | | ⚠️ część | luka | C: subnav Dziś\|Plany, bottom bar, header trwa przy ładowaniu ✓; Postępy Trening\|Ciało i deep-link Back nie sprawdzone |
+| 2 | Badge + sheet tygodnia | | | ✅ | luka | C: badge 44px + aria-label pełny, sheet (1/2, 7 płomieni, passa, link Historia), Escape zamyka, fokus wraca. Swipe/overlay tylko na dotyku |
+| 3 | Hero i start | | | ✅ | luka | C: empty state (dumbbell 3D, „Bez planu" muted) + start freestyle → logger. Hero „Następny w rotacji" nie pokryty (brak aktywnego planu na świeżej bazie) |
 | 4 | Integralność sesji | | — | — | luka | |
-| 5 | Ekran Done | | — | — | luka | |
+| 5 | Ekran Done | | — | ✅ | luka | C: Done sesji-zero — status jako cichy tekst, nie przycisk ✓ |
 | 6 | Wyszukiwarka PL | | | | luka | |
-| 7 | Sheety i safe area | | — | — | luka | |
+| 7 | Sheety i safe area | | — | ⚠️ część | luka | C: sheet tygodnia — overlay przyciemnia tło, Escape zamyka ✓; safe area tylko na urządzeniu |
 | 8 | Insight planu | | — | — | luka | |
+
+**Pre-check C (Claude, 2026-07-18):** desktop/Chromium na prod-buildzie (`next start`),
+320×568 i 375×812, konsola czysta na wszystkich ekranach, brak przewijania poziomego,
+badge mieści się na 320 px. To NIE zastępuje bramki — **A (iPhone PWA) pozostaje wymagane
+[Ty]**; pre-check tylko wychwytuje problemy desktop-level przed przebiegiem urządzeniowym.
 
 **Po przejściu:** wynik + data do dziennika koordynacji (jedna linia), ❌/⚠️ jako
 zgłoszenia do naprawy przed R3a. Wypełniona macierz = zamknięty checkpoint z planu

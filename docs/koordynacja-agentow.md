@@ -49,6 +49,20 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-18 · Claude (pre-check wizualny R2.1 na desktopie — na prośbę [Ty]): ZAKOŃCZONE.**
+  [Ty] potwierdził R2.1 (badge/hero/sheet) i poprosił o niezależny przebieg. Prod-build
+  `next start` na localhost, Chromium, 320×568 + 375×812. Zweryfikowane: empty state Home
+  (badge ukryty przy 0 sesji, FlameWeek usunięty, „Bez planu" muted); po freestyle sesji-zero
+  badge „🔥 1/2" w headerze = przycisk z pełnym aria-label; sheet „Twój tydzień" (1 z 2,
+  copy „został 1 trening do niedzieli", 7 płomieni z So=dziś wypełnione, objaśnienie dni
+  odpoczynku, passa, link Historia), Escape zamyka + fokus wraca na badge; Done sesji-zero
+  (status cichy tekst); Plany — karty nazwa + 2 fakty, „Ustaw" ghost, brak badge (decyzja
+  audytu). 320 px: badge się mieści, zero overflow, konsola czysta wszędzie. Wynik wpisany
+  w kolumnę C `macierz-regresji-urzadzen.md` (scen. 2,3,5 ✅; 1,7 ⚠️ część). NIE zastępuje
+  bramki — iPhone PWA (kol. A) zostaje [Ty]. Sprzątanie: lokalna sesja-zero
+  (`81088635-…`) usunięta po ID, baza wróciła do 0 sesji. Zakres: tylko
+  `docs/macierz-regresji-urzadzen.md` + ten wpis; zero kodu. Werdykt: R2.1 czysty
+  na desktopie, brak zgłoszeń.
 - **2026-07-18 · Claude (macierz regresji urządzeniowej — ryzyko 2 HANDOFF): ZAKOŃCZONE.**
   Nowy `docs/macierz-regresji-urzadzen.md`: 8 scenariuszy w jednym przebiegu (~30 min
   na iPhone PWA; Safari/desktop tylko ●; Android = jawna luka), konsoliduje checkpointy
