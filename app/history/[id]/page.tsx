@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { Button } from "@/components/ui/button";
-import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
+import type { SessionSet, UnitSystem } from "@/lib/types";
 import { formatSet } from "@/lib/format";
 import { DateEditor } from "./DateEditor";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";

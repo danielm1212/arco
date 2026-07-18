@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { Button } from "@/components/ui/button";
 import { Flame } from "lucide-react";
 import { Sparkline } from "@/components/Sparkline";
@@ -43,7 +44,9 @@ export function PeriodTabs({ activeKey }: { activeKey: string }) {
   return (
     <div className="flex gap-2xs">
       {PERIODS.map((p) => (
-        <Link
+        // Filtr okresu przez replace (R3a): zmiana zakresu nie stackuje historii,
+        // więc Back z Postępów wychodzi do huba, nie cofa po zakładkach okresu.
+        <ReplaceLink
           key={p.key}
           href={p.key === "7" ? "/progress" : `/progress?okres=${p.key}`}
           aria-current={p.key === activeKey ? "page" : undefined}
@@ -54,7 +57,7 @@ export function PeriodTabs({ activeKey }: { activeKey: string }) {
           }`}
         >
           {p.label}
-        </Link>
+        </ReplaceLink>
       ))}
     </div>
   );
