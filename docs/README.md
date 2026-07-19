@@ -52,6 +52,7 @@ Tych sześć plików jest dokumentami sterującymi bieżącą pracą. Gdy starsz
 - `bezpieczenstwo.md` — zasady i bramki bezpieczeństwa.
 - `optymalizacja.md` — budżety wydajności.
 - `instrumentacja-metryk.md` — architektura pomiaru.
+- `backup-i-restore.md` — procedura backupu bazy i Storage oraz test odtworzenia (bramka Sprintu 16).
 - `kalendarz-wykonawczy.md` — orientacyjny harmonogram.
 - `notion-sync-queue.md` — kolejka zmian do ręcznej synchronizacji na żądanie.
 - `koordynacja-agentow.md` — rezerwacja obszarów i log pracy równoległych sesji.
