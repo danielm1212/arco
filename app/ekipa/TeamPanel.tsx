@@ -15,6 +15,7 @@ import {
   renameTeam,
 } from "@/app/actions/team";
 import { formatTeamInviteCode, normalizeTeamInviteCode, TEAM_AVATARS } from "@/lib/team";
+import { formatGoalSentence } from "@/lib/programRecommendation";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -241,7 +242,8 @@ export function TeamPanel({
         <ul className="divide-y">
           {members.map((member) => {
             const own = member.id === currentUserId;
-            const progressLabel = `${member.weeklyDone} z ${member.weeklyGoal} treningów`;
+            // Audyt P0 4.1: "6/5" wygląda jak błąd — nadwyżka to bonus (formatGoalSentence).
+            const progressLabel = formatGoalSentence(member.weeklyDone, member.weeklyGoal);
             return (
               <li key={member.id} className="flex items-center gap-sm px-md py-sm">
                 <span className={`grid size-11 shrink-0 place-items-center rounded-full text-lg ${member.lastWorkout ? "bg-primary/15" : "bg-muted"}`}>{member.avatar}</span>

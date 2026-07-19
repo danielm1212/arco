@@ -32,17 +32,19 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
   const period = PERIODS.find((p) => p.key === searchParams.okres) ?? PERIODS[0];
 
   const [{ data: settings }, { count: totalSessions }] = await Promise.all([
-    supabase.from("user_settings").select("unit_system").maybeSingle(),
+    supabase.from("user_settings").select("unit_system, weekly_goal").maybeSingle(),
     supabase.from("sessions").select("id", { count: "exact", head: true }),
   ]);
   const fresh = (totalSessions ?? 0) === 0; // świeże konto — inny stan niż pusty okres
   const unit: UnitSystem = settings?.unit_system ?? "kg";
+  // F0.6: passa w pasku aktywności liczy tygodnie spełniające cel planu (D4).
+  const weeklyGoal = settings?.weekly_goal ?? 2;
 
   const [{ cur, volInsight, balanceInsight, deltas }, prRows, { strip, streak }, strength] =
     await Promise.all([
       getPeriodOverview(supabase, period),
       getPersonalRecords(supabase),
-      getActivity(supabase),
+      getActivity(supabase, weeklyGoal),
       getStrengthTrends(supabase, unit),
     ]);
   const muscleRows = [...cur.setsPerMuscle.entries()].sort((a, b) => b[1] - a[1]);

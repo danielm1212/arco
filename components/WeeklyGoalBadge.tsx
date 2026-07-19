@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Flame } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { formatGoalRatio, formatGoalSentence } from "@/lib/programRecommendation";
 
 export interface WeekDay {
   key: string;
@@ -63,7 +64,7 @@ export function WeeklyGoalBadge({
           ref={badgeRef}
           type="button"
           aria-haspopup="dialog"
-          aria-label={`Cel tygodniowy: ${done} z ${goal} treningów. Pokaż szczegóły tygodnia`}
+          aria-label={`Cel tygodniowy: ${formatGoalSentence(done, goal)}. Pokaż szczegóły tygodnia`}
           className={`flex min-h-11 min-w-11 items-center gap-1 rounded-full px-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
             goalMet
               ? "bg-primary/15 text-primary hover:bg-primary/25"
@@ -78,7 +79,8 @@ export function WeeklyGoalBadge({
             aria-hidden
           />
           <span className="text-xs font-semibold tabular-nums">
-            {done}/{goal}
+            {/* Audyt P0 4.1: "6/5" wygląda jak błąd — nadwyżka to bonus (formatGoalRatio). */}
+            {formatGoalRatio(done, goal)}
           </span>
         </button>
       }
@@ -88,7 +90,7 @@ export function WeeklyGoalBadge({
       <div className="space-y-md">
         <div>
           <p className="text-2xl font-semibold leading-tight tabular-nums">
-            {done} z {goal} treningów
+            {formatGoalSentence(done, goal)}
           </p>
           <p className="mt-2xs text-sm text-muted-foreground">
             {goalMet

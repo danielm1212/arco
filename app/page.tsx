@@ -7,7 +7,7 @@ import { startSession, startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeGuidance } from "@/lib/getHomeGuidance";
-import { localDayKey } from "@/lib/week";
+import { localDayKey, weekStart, computeStreak, addWarsawDays, weeksMeetingGoal } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
 import { GuidanceChip } from "./GuidanceChip";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
@@ -103,41 +103,32 @@ export default async function HomePage() {
     (session) => session.program_day_id && activeDayIds.has(session.program_day_id),
   ).length;
 
-  // Pasek tygodnia + streak
-  const dayKey = localDayKey; // klucz LOKALNY (fix: ring „dziś" wskazywał sobotę w piątek)
+  // Pasek tygodnia + streak — F0.5: dzielone z lib/week (Europe/Warsaw, bezpieczne pod
+  // DST i niezależne od strefy środowiska Node; fix ring „dziś" wskazywał sobotę w piątek,
+  // oraz dalszy bug przesunięcia po deployu na Vercel/UTC).
+  const dayKey = localDayKey;
   const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
-  const monday = new Date();
-  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-  monday.setHours(0, 0, 0, 0);
+  const mondayEpoch = weekStart(new Date());
   const todayKey = dayKey(new Date());
   const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
   const week = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    const key = dayKey(d);
+    const key = dayKey(new Date(addWarsawDays(mondayEpoch, i)));
     return { key, on: doneDays.has(key), today: key === todayKey, dow: DOW[i] };
   });
-  const wkStart = (d: Date) => {
-    const x = new Date(d);
-    x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
-    x.setHours(0, 0, 0, 0);
-    return x.getTime();
-  };
-  const weeks = new Set((finished ?? []).map((s) => wkStart(new Date(s.started_at))));
-  const WEEK = 7 * 86_400_000;
-  let streak = 0;
-  let w = wkStart(new Date());
-  if (!weeks.has(w)) w -= WEEK;
-  while (weeks.has(w)) {
-    streak++;
-    w -= WEEK;
-  }
   // Cel tygodniowy + postęp (badge w headerze liczy UKOŃCZONE TRENINGI — plan §R2)
   const weeklyGoal = settings?.weekly_goal ?? 2;
-  const thisWeek = wkStart(new Date());
+  const thisWeek = mondayEpoch;
   const weeklyDone = (finished ?? []).filter(
-    (s) => wkStart(new Date(s.started_at)) === thisWeek,
+    (s) => weekStart(new Date(s.started_at)) === thisWeek,
   ).length;
+  // F0.6 (audyt 2026-07-18, D4 — wersja surowa): tydzień liczy się do passy tylko,
+  // gdy osiągnął cel planu — 1 z 2 wymaganych treningów już NIE utrzymuje passy
+  // (wcześniej wystarczał ≥1 trening niezależnie od celu).
+  const weeks = weeksMeetingGoal(
+    (finished ?? []).map((s) => s.started_at),
+    weeklyGoal,
+  );
+  const streak = computeStreak(weeks);
 
   // Sugestia kolejnego dnia: rotacja liczona z już pobranej historii (bez
   // dodatkowego zapytania). Ostatnia ukończona sesja aktywnego planu → następna

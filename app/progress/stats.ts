@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
 import { setMetric } from "@/lib/exerciseMetrics";
-import { localDayKey } from "@/lib/week";
+import { localDayKey, computeStreak, dayOfWeek, weeksMeetingGoal } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 import { joinMany, joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 
@@ -164,35 +164,29 @@ export async function getPersonalRecords(supabase: Supabase): Promise<[string, P
   return [...byExercise.entries()].sort((a, b) => (b[1].e1rm ?? 0) - (a[1].e1rm ?? 0));
 }
 
-/** Aktywność / streak (zakończone sesje z ~120 dni): pasek 14 dni + passa tygodniowa. */
-export async function getActivity(supabase: Supabase) {
+/** Aktywność / streak (zakończone sesje z ~120 dni): pasek 14 dni + passa tygodniowa.
+ *  `weeklyGoal` — F0.6 (D4, wersja surowa): tydzień liczy się do passy tylko, gdy
+ *  osiągnął cel planu, nie przy samym fakcie treningu. */
+export async function getActivity(supabase: Supabase, weeklyGoal: number) {
   const { data: finished } = await supabase
     .from("sessions")
     .select("started_at")
     .not("finished_at", "is", null)
     .gte("started_at", new Date(Date.now() - 120 * 86_400_000).toISOString());
-  const dayKey = localDayKey; // klucz LOKALNY (spójnie z home; fix przesunięcia dnia)
+  // F0.5: dayKey/weekStart/streak dzielone z lib/week (Europe/Warsaw, bezpieczne pod DST
+  // i niezależne od strefy środowiska Node — patrz komentarz w lib/week.ts).
+  const dayKey = localDayKey;
   const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
   const DOW = ["N", "P", "W", "Ś", "C", "P", "S"];
   const strip = Array.from({ length: 14 }, (_, idx) => {
     const d = new Date(Date.now() - (13 - idx) * 86_400_000);
-    return { key: dayKey(d), on: doneDays.has(dayKey(d)), dow: DOW[d.getDay()] };
+    return { key: dayKey(d), on: doneDays.has(dayKey(d)), dow: DOW[dayOfWeek(d)] };
   });
-  const weekStart = (d: Date) => {
-    const x = new Date(d);
-    x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
-    x.setHours(0, 0, 0, 0);
-    return x.getTime();
-  };
-  const weeks = new Set((finished ?? []).map((s) => weekStart(new Date(s.started_at))));
-  const WEEK = 7 * 86_400_000;
-  let streak = 0;
-  let w = weekStart(new Date());
-  if (!weeks.has(w)) w -= WEEK; // bieżący tydzień bez treningu nie zeruje passy
-  while (weeks.has(w)) {
-    streak++;
-    w -= WEEK;
-  }
+  const weeks = weeksMeetingGoal(
+    (finished ?? []).map((s) => s.started_at),
+    weeklyGoal,
+  );
+  const streak = computeStreak(weeks);
   return { strip, streak };
 }
 

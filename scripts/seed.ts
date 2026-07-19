@@ -455,7 +455,9 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 55,
     required_equipment: ["dumbbell"],
     optional_equipment: ["bands", "body only", "pull-up bar", "other"],
-    content_version: 2,
+    // F3.3 (audyt biblioteki 2026-07-18, §5.2): Dzień C oznaczony jako opcjonalny
+    // finisher przy ostatnich trzech ćwiczeniach — patrz notatki w Dniu C.
+    content_version: 3,
     days_per_week: 3,
     days: [
       {
@@ -487,9 +489,9 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Bent_Over_Two-Dumbbell_Row", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Dumbbell_Hip_Thrust", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
-          { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
-          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
-          { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 12, rest: 60, notes: "Opcjonalny finisher — pomiń przy braku czasu." },
+          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 12, rest: 60, notes: "Opcjonalny finisher — pomiń przy braku czasu." },
+          { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "Opcjonalny finisher, na stronę — pomiń przy braku czasu." },
         ],
       },
     ],
@@ -727,7 +729,10 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 70,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 2,
+    // F3.3 (audyt biblioteki 2026-07-18, §6.1): Upper B miała 26 serii roboczych —
+    // realnie dłużej niż deklarowane 50–70 min. Ścięte do ok. 20 serii bez usuwania
+    // ćwiczeń (bezpieczne pod istniejący sync — patrz seedPrograms/SAFE SEED STOP).
+    content_version: 3,
     days_per_week: 4,
     days: [
       {
@@ -756,14 +761,14 @@ export const PROGRAMS: Program[] = [
       {
         label: "Upper B · hipertrofia",
         slots: [
-          { exercise_id: "Incline_Dumbbell_Press", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
-          { exercise_id: "Seated_Cable_Rows", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Pullups", sets: 3, repsMin: 6, repsMax: 10, rest: 120 },
-          { exercise_id: "Dumbbell_Shoulder_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
-          { exercise_id: "Cable_Seated_Lateral_Raise", sets: 3, repsMin: 12, repsMax: 20, rest: 60 },
-          { exercise_id: "Face_Pull", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
+          { exercise_id: "Dumbbell_Shoulder_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Cable_Seated_Lateral_Raise", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
+          { exercise_id: "Face_Pull", sets: 2, repsMin: 15, repsMax: 20, rest: 60 },
           { exercise_id: "Dips_-_Triceps_Version", sets: 3, repsMin: 8, repsMax: 12, rest: 60 },
-          { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Incline_Dumbbell_Curl", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
         ],
       },
       {
@@ -795,7 +800,9 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 65,
     required_equipment: ["dumbbell"],
     optional_equipment: ["body only", "pull-up bar", "other"],
-    content_version: 2,
+    // F3.3 (audyt biblioteki 2026-07-18, §6.2): Upper B miała 26 serii — za dużo na
+    // deklarowane 45–65 min w domu. Ścięte do ok. 19 serii bez usuwania ćwiczeń.
+    content_version: 3,
     days_per_week: 4,
     days: [
       {
@@ -824,14 +831,14 @@ export const PROGRAMS: Program[] = [
       {
         label: "Upper B · hipertrofia",
         slots: [
-          { exercise_id: "Incline_Dumbbell_Press", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
-          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 4, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
           { exercise_id: "Chin-Up", sets: 3, repsMin: 6, repsMax: 10, rest: 120 },
-          { exercise_id: "Seated_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
-          { exercise_id: "Side_Lateral_Raise", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
-          { exercise_id: "Reverse_Flyes", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
-          { exercise_id: "Lying_Dumbbell_Tricep_Extension", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
-          { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Side_Lateral_Raise", sets: 2, repsMin: 15, repsMax: 20, rest: 60 },
+          { exercise_id: "Reverse_Flyes", sets: 2, repsMin: 15, repsMax: 20, rest: 60 },
+          { exercise_id: "Lying_Dumbbell_Tricep_Extension", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Incline_Dumbbell_Curl", sets: 2, repsMin: 10, repsMax: 12, rest: 60 },
         ],
       },
       {
@@ -999,7 +1006,13 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 75,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 2,
+    // F3.3 (audyt biblioteki 2026-07-18, §7.1): Pull A (deadlift) i Legs A (squat+RDL)
+    // wypadają dzień po dniu i oba mocno obciążają plecy/tylną taśmę. Deadlift zostaje
+    // jako sygnaturowy ciężki ruch Pull A (przenoszenie go do Legs A nałożyłoby się na
+    // squat+RDL tego samego dnia), a systemowe zmęczenie zredukowane po obu stronach:
+    // mniej serii wioseł w Pull A i mniej serii RDL/leg curl w Legs A. Do potwierdzenia
+    // przez trenera-konsultanta (decyzja D2) — na testy ze znajomymi wystarczające.
+    content_version: 3,
     days_per_week: 6,
     days: [
       {
@@ -1018,20 +1031,20 @@ export const PROGRAMS: Program[] = [
         slots: [
           { exercise_id: "Barbell_Deadlift", sets: 3, repsMin: 3, repsMax: 5, rest: 180 },
           { exercise_id: "Pullups", sets: 4, repsMin: 5, repsMax: 8, rest: 150 },
-          { exercise_id: "Bent_Over_Barbell_Row", sets: 4, repsMin: 6, repsMax: 10, rest: 150 },
-          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 3, repsMin: 10, repsMax: 12, rest: 120 },
+          { exercise_id: "Bent_Over_Barbell_Row", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
+          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 2, repsMin: 10, repsMax: 12, rest: 120 },
           { exercise_id: "Face_Pull", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
-          { exercise_id: "Barbell_Curl", sets: 3, repsMin: 8, repsMax: 12, rest: 60 },
-          { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Barbell_Curl", sets: 2, repsMin: 8, repsMax: 12, rest: 60 },
+          { exercise_id: "Incline_Dumbbell_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
         label: "Legs A · ciężki",
         slots: [
           { exercise_id: "Barbell_Squat", sets: 4, repsMin: 4, repsMax: 6, rest: 180 },
-          { exercise_id: "Romanian_Deadlift", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
+          { exercise_id: "Romanian_Deadlift", sets: 3, repsMin: 6, repsMax: 8, rest: 150 },
           { exercise_id: "Leg_Press", sets: 3, repsMin: 10, repsMax: 15, rest: 120 },
-          { exercise_id: "Lying_Leg_Curls", sets: 4, repsMin: 10, repsMax: 15, rest: 90 },
+          { exercise_id: "Lying_Leg_Curls", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Standing_Calf_Raises", sets: 4, repsMin: 8, repsMax: 12, rest: 60 },
           { exercise_id: "Seated_Calf_Raise", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
           { exercise_id: "Ab_Wheel_Rollout", sets: 3, repsMin: 8, repsMax: 12, rest: 60, notes: "z kolan; zatrzymaj zakres przed utratą pozycji miednicy" },

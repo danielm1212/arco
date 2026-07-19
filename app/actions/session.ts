@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect, RedirectType } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { localDayKey } from "@/lib/week";
+import { clampWeeklyGoal } from "@/lib/programRecommendation";
 
 async function requireUser() {
   const supabase = await createClient();
@@ -14,13 +15,38 @@ async function requireUser() {
   return { supabase, user };
 }
 
-/** Zapisz aktywny program bez wymuszania nawigacji (np. onboarding). */
+/** Zapisz aktywny program bez wymuszania nawigacji (np. onboarding).
+ *  F0.1 (audyt 2026-07-18, D1): cel tygodniowy jest częścią kontraktu planu, nie
+ *  niezależnym wyborem — plan 2-3 dni nie może współistnieć z celem 5 (bug „6/5").
+ *  Przy każdej zmianie planu cel jest natychmiast ścinany do jego zakresu, żeby
+ *  Dziś/Historia/Ekipa nigdy nie pokazały sprzecznego stanu, nawet bez wizyty
+ *  w Ustawieniach. */
 export async function saveActiveProgram(programId: string) {
   const { supabase, user } = await requireUser();
-  const { error } = await supabase
-    .from("user_active_program")
-    .upsert({ user_id: user.id, program_id: programId }, { onConflict: "user_id" });
+  const [{ error }, { data: program }, { data: settings }] = await Promise.all([
+    supabase
+      .from("user_active_program")
+      .upsert({ user_id: user.id, program_id: programId }, { onConflict: "user_id" }),
+    supabase
+      .from("programs")
+      .select("frequency_min, frequency_max")
+      .eq("id", programId)
+      .maybeSingle(),
+    supabase.from("user_settings").select("weekly_goal").eq("user_id", user.id).maybeSingle(),
+  ]);
   if (error) throw new Error(error.message);
+
+  const clamped = clampWeeklyGoal(
+    settings?.weekly_goal,
+    program?.frequency_min ?? null,
+    program?.frequency_max ?? null,
+  );
+  if (clamped !== settings?.weekly_goal) {
+    await supabase
+      .from("user_settings")
+      .update({ weekly_goal: clamped, updated_at: new Date().toISOString() })
+      .eq("user_id", user.id);
+  }
   revalidatePath("/");
 }
 

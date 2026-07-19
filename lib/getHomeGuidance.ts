@@ -3,6 +3,7 @@ import { joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { setMetric } from "@/lib/exerciseMetrics";
+import { weekStart } from "@/lib/week";
 import type { ExerciseType } from "@/lib/types";
 import {
   balanceFlags,
@@ -16,12 +17,8 @@ import {
 
 const DAY = 86_400_000;
 
-const weekStartMs = (d: Date): number => {
-  const x = new Date(d);
-  x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
-  x.setHours(0, 0, 0, 0);
-  return x.getTime();
-};
+// F0.5: weekStart dzielony z lib/week (Europe/Warsaw) — była to trzecia niezależna
+// kopia tej samej logiki z tym samym bugiem strefy czasowej po deployu na Vercel/UTC.
 
 /**
  * Buduje podpowiedzi guidance na home (Faza A: balans push/pull + staleness partii).
@@ -77,7 +74,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
     .eq("completed", true)
     .eq("set_type", "working");
 
-  const thisWeek = weekStartMs(new Date());
+  const thisWeek = weekStart(new Date());
   const weekByCat: Partial<Record<MuscleCategory, number>> = {};
   const lastTrainedByCat: Partial<Record<MuscleCategory, number>> = {};
   // Deload: najlepsza metryka per ćwiczenie per sesja → seria chronologiczna.
@@ -88,7 +85,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
   (sets ?? []).forEach((s) => {
     const info = seInfo.get(s.session_exercise_id);
     if (!info) return;
-    const inThisWeek = weekStartMs(info.date) === thisWeek;
+    const inThisWeek = weekStart(info.date) === thisWeek;
     for (const cat of info.categories) {
       if (inThisWeek) weekByCat[cat] = (weekByCat[cat] ?? 0) + 1;
       const t = info.date.getTime();

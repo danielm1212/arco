@@ -73,6 +73,9 @@ export function SettingsForm({
   rest,
   equipment,
   weeklyGoal,
+  goalMin,
+  goalMax,
+  goalConstrainedByPlan,
   displayName,
   priority,
   focus,
@@ -82,6 +85,10 @@ export function SettingsForm({
   rest: number;
   equipment: string[];
   weeklyGoal: number;
+  /** F0.1 (D1): zakres dopuszczalnych wartości celu — z aktywnego planu albo awaryjny. */
+  goalMin: number;
+  goalMax: number;
+  goalConstrainedByPlan: boolean;
   displayName: string;
   priority: TrainingPriority;
   focus: ProgramFocus;
@@ -301,18 +308,36 @@ export function SettingsForm({
         <h2 className="text-sm font-medium text-muted-foreground">
           Cel tygodniowy
         </h2>
-        <div className="flex gap-xs">
-          {[2, 3, 4, 5].map((n) => (
-            <Button
-              key={n}
-              variant={goal === n ? "default" : "outline"}
-              aria-pressed={goal === n}
-              onClick={() => setGoal(n)}
-            >
-              {n}
-            </Button>
-          ))}
-        </div>
+        {goalConstrainedByPlan && goalMin === goalMax ? (
+          // F0.1 (D1): plan ma jedną deklarowaną częstotliwość — nie ma tu
+          // wyboru. Zmiana celu wymaga zmiany planu, nie osobnego ustawienia.
+          <div className="rounded-xl border border-input bg-muted/40 p-sm">
+            <p className="text-sm font-medium text-foreground">{goalMin} treningi w tygodniu</p>
+            <p className="mt-2xs text-xs text-muted-foreground">
+              Wynika z aktywnego planu. Żeby zmienić cel, wybierz inny plan w bibliotece.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-xs">
+              {Array.from({ length: goalMax - goalMin + 1 }, (_, i) => goalMin + i).map((n) => (
+                <Button
+                  key={n}
+                  variant={goal === n ? "default" : "outline"}
+                  aria-pressed={goal === n}
+                  onClick={() => setGoal(n)}
+                >
+                  {n}
+                </Button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {goalConstrainedByPlan
+                ? "Zakres wynika z aktywnego planu — dodatkowe treningi ponad ten cel zawsze liczą się jako bonus."
+                : "Bez aktywnego planu to orientacyjny cel. Ustawienie planu z biblioteki dopasuje ten zakres automatycznie."}
+            </p>
+          </>
+        )}
       </section>
 
       <section className="space-y-sm">

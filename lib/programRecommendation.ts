@@ -181,6 +181,56 @@ export function formatFrequency(min: number, max: number) {
   return min === max ? `${min} dni/tydz.` : `od ${min} do ${max} dni/tydz.`;
 }
 
+// F0.1 (audyt 2026-07-18, decyzja D1): cel tygodniowy nie może być wolnym wyborem
+// niezależnym od planu — użytkownik z planem 2-3 dni nie może ustawić celu 5.
+// Zakres awaryjny obowiązuje tylko, gdy plan nie deklaruje częstotliwości (własny
+// program bez frequency_min/max) albo gdy nie ma aktywnego planu.
+export const FALLBACK_GOAL_MIN = 2;
+export const FALLBACK_GOAL_MAX = 5;
+
+/** Domyślny/dopuszczalny zakres celu dla danego planu (albo zakres awaryjny). */
+export function goalRangeForProgram(
+  frequencyMin: number | null,
+  frequencyMax: number | null,
+): { min: number; max: number; constrained: boolean } {
+  if (frequencyMin == null || frequencyMax == null) {
+    return { min: FALLBACK_GOAL_MIN, max: FALLBACK_GOAL_MAX, constrained: false };
+  }
+  return { min: frequencyMin, max: frequencyMax, constrained: true };
+}
+
+/** Ścina cel do zakresu aktywnego planu. Domyślnie (brak wcześniejszej wartości)
+ *  wybiera dolną granicę — najbezpieczniejszy, najłatwiejszy do dotrzymania cel. */
+export function clampWeeklyGoal(
+  goal: number | null | undefined,
+  frequencyMin: number | null,
+  frequencyMax: number | null,
+): number {
+  const { min, max } = goalRangeForProgram(frequencyMin, frequencyMax);
+  if (goal == null) return min;
+  return Math.min(Math.max(goal, min), max);
+}
+
+/** Audyt P0 (4.1): „6/5" wygląda jak błąd systemu rekomendacji, nie jak sukces
+ *  użytkownika. Nadwyżka ponad cel to bonus — pokazujemy go osobno, nie jako
+ *  większy licznik przy tym samym mianowniku. Wariant zwarty (bez słowa
+ *  „bonus") do małych powierzchni jak badge/lista Ekipy. */
+export function formatGoalRatio(done: number, goal: number): string {
+  return done <= goal ? `${done}/${goal}` : `${goal}/${goal}+${done - goal}`;
+}
+
+/** Wariant pełny (ze słowem „bonus") do tekstu — ekran Done, opis w sheetach. */
+export function formatGoalProgress(done: number, goal: number): string {
+  return done <= goal ? `${done}/${goal}` : `${goal}/${goal} +${done - goal} bonus`;
+}
+
+/** „X z Y treningów" — jak formatGoalProgress, ale w formie zdania (Ekipa, sheet celu). */
+export function formatGoalSentence(done: number, goal: number): string {
+  return done <= goal
+    ? `${done} z ${goal} treningów`
+    : `${goal} z ${goal} treningów + ${done - goal} bonus`;
+}
+
 export function formatEstimatedMinutes(min: number | null, max: number | null) {
   if (min === null || max === null) return null;
   return min === max ? `${min} min` : `od ${min} do ${max} min`;

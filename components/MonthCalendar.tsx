@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import { Flame } from "lucide-react";
+import { localDayKey } from "@/lib/week";
 
 const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
 const MONTHS = [
   "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
   "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień",
 ];
-const localKey = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+// F0.5: klucz dzielony z lib/week (Europe/Warsaw) zamiast lokalnej kopii opartej
+// o gettery przeglądarki — `trainingDays` z serwera już liczy klucze w tej strefie,
+// więc urządzenie ustawione na inną strefę (np. podróż) nie rozjeżdżałoby się z danymi.
+const localKey = localDayKey;
 
-/** Kalendarz miesięczny z dniami treningowymi (klucze LOKALNE — spójnie z home/progress). */
+/** Kalendarz miesięczny z dniami treningowymi (klucze Europe/Warsaw — spójnie z home/progress). */
 export function MonthCalendar({
   trainingDays,
   streak,

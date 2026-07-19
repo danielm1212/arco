@@ -5,8 +5,9 @@ import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import type { SessionSet, UnitSystem } from "@/lib/types";
 import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { CountUpNumber } from "./CountUpNumber";
-import { weekStart, computeStreak } from "@/lib/week";
+import { weekStart, computeStreak, weeksMeetingGoal } from "@/lib/week";
 import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
+import { formatGoalProgress } from "@/lib/programRecommendation";
 
 export const dynamic = "force-dynamic";
 
@@ -89,11 +90,12 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
     : { count: 0 };
   const hasPR = (prCount ?? 0) > 0;
 
-  // Passa + cel + powrót po przerwie
+  // Passa + cel + powrót po przerwie — F0.6 (D4, wersja surowa): tydzień liczy
+  // się do passy tylko, gdy osiągnął cel planu, nie przy samym fakcie treningu.
   const finishedTimes = (allFinished ?? [])
     .map((s) => +new Date(s.started_at))
     .sort((a, b) => a - b);
-  const weeks = new Set(finishedTimes.map((t) => weekStart(new Date(t))));
+  const weeks = weeksMeetingGoal(finishedTimes, goal);
   const streak = computeStreak(weeks);
   const thisWeek = weekStart(new Date());
   const weeklyCount = finishedTimes.filter((t) => weekStart(new Date(t)) === thisWeek).length;
@@ -183,7 +185,9 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
           </p>
         ) : (
           <p className="text-sm font-medium text-primary">
-            🎯 Cel tygodniowy wykonany: {weeklyCount}/{goal}
+            {/* Audyt P0 4.1: "6/5" wygląda jak błąd systemu — nadwyżka to bonus,
+                nie inny mianownik (formatGoalProgress). */}
+            🎯 Cel tygodniowy wykonany: {formatGoalProgress(weeklyCount, goal)}
           </p>
         )}
       </div>
