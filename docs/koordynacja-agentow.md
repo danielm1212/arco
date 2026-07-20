@@ -49,6 +49,19 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-20 · Claude (F0.1 na prod + seria fiksów overflow/safe-area + test regresyjny): ZAKOŃCZONE (prod, urządzeniowo potwierdzone [Ty]).**
+  Zakres: dowiezienie F0.1 (clamp `weekly_goal`, pakiet z 2026-07-18) na prod + 4 fiksy layoutu + refactor nagłówka + infra testowa. Pliki: `app/programs/[id]/page.tsx`, `app/history/add/HistoricalWorkoutForm.tsx`, `components/navigation/PageHeader.tsx` + nowy `components/navigation/stickyHeader.ts`, `app/session/[id]/Logger.tsx`, `app/globals.css`, `tests/e2e/overflow.test.ts`, `package.json`, `.github/workflows/quality.yml`. Kod pakietu F0.1 nie pisany w tej sesji — zweryfikowany i dowieziony.
+  Wynik / commity (`1e2b458`→`ffcb89a`, 7 szt.):
+  • `19758f2` F0.1 — migracja `20260718165434_clamp_weekly_goal_to_plan` na prod (local==remote), backfill + niezmiennik przy zapisie/zmianie planu, „6/5”→„+N bonus”.
+  • `4320572` reps z długim `notes` zawija się (`programs/[id]`).
+  • `eefa618` fieldset kart „Trening po fakcie” — `min-w-0` (domyślny `min-content` fieldsetu rozpychał widok, 429→361px).
+  • `6e8630d` sticky `PageHeader` kryje pas safe-area (F0.4 — topbar bez tła).
+  • `0ba3422` `STICKY_HEADER_SAFE_AREA` — jedno źródło prawdy (PageHeader + Logger; koniec zduplikowanego `before:`).
+  • `bea0df7` `test:overflow` (Playwright, 360px, realny CSS buildu) + krok w CI po buildzie; 4 przypadki + kontrola negatywna.
+  • `ffcb89a` iOS `datetime-local` `appearance:none` (iOS-scoped `@supports`), karta „Kiedy trenowałeś?”.
+  Weryfikacja: lint ✓, `test:unit` 85/85 ✓, `validate:training`/`recommendations` ✓ (60/60), build ✓; smoke seed+phase1/2/offline/team 4/4 ✓ (lokalny Supabase); `test:overflow` 4/4 ✓. Prod: migracja local==remote, deploy live, login renderuje się, konsola czysta. **[Ty] na iPhonie PWA potwierdził**: karty „Trening po fakcie” mieszczą się + topbar z tłem, długi opis serii zawija, `datetime-local` mieści się, brak „6/5”.
+  Czego nie dotknięto: akcji serwerowych poza F0.1, RLS, seeda (poza uruchomieniem), Ekipy, nagłówków nie-sticky (`progress`/`body`/`TrainingHeader` — bez bugu), duplikatów `public/icons-3d/* 2.png` (zostawione, artefakt synca).
+  Zaległości: brak blokujących. Infra: `test:overflow` w CI wymaga `npx playwright install chromium` (dodane do `quality.yml`) — pierwszy przebieg na GitHub Actions warto zerknąć czy zielony. iOS `datetime-local` (`ffcb89a`) potwierdzony urządzeniowo, ale NIEreprodukowalny w headless chromium — świadomie poza `test:overflow`.
 - **2026-07-18 · Claude (R3a: Postępy i Ciało): ZAKOŃCZONE TECHNICZNIE, lokalnie.**
   Analiza luk pokazała, że R3a było w ~85% gotowe z R1a/R1b (subnav Trening|Ciało przez
   ReplaceLink, trend Ciała, pomiar ze zdjęciami+szkicem R1b, origin-aware Back ćwiczenia

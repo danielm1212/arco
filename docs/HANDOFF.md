@@ -1,6 +1,6 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-17
+**Aktualizacja:** 2026-07-20
 
 **Gałąź:** `main`
 
@@ -39,6 +39,9 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 
 ## Ostatnio domknięte
 
+- **F0.1 (audyt 2026-07-18, D1) na prodzie:** cel tygodniowy ścięty do zakresu aktywnego planu (migracja `20260718165434` local==remote), niezmiennik pilnowany przy zapisie ustawień i zmianie planu; sprzeczne „6/5” zastąpione „+N bonus”.
+- **Seria fiksów layoutu (zgłoszenia urządzeniowe), na prodzie, potwierdzone na iPhonie PWA:** długi opis serii w widoku programu zawija się zamiast rozpychać stronę; karty wyboru dnia w „Trening po fakcie” mieszczą się w wrapperze (fieldset `min-w-0`); sticky topbar kryje pas safe-area (F0.4 — treść nie prześwituje); natywny `datetime-local` nie rozpycha karty na iOS (`appearance:none`, reguła iOS-scoped).
+- **Higiena i regresja:** wzorzec sticky-headera safe-area scalony w jedno źródło prawdy (`STICKY_HEADER_SAFE_AREA`, koniec duplikatu PageHeader/Logger); dodany test regresyjny overflow na wąskim viewportcie (Playwright `npm run test:overflow`, wpięty w CI po buildzie).
 - Naprawiono przepływ porzucenia treningu uruchomionego z ekranu głównego.
 - Ustabilizowano bottom sheety w przeglądarce i iOS PWA: bez skoku widoku, klikania pod overlayem i przewijania tła.
 - Dodano zamykanie bottom sheetu gestem przeciągnięcia w dół.
