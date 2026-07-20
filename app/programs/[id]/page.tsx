@@ -175,29 +175,42 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           <section key={day.id} className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
             <p className="font-medium">{day.label}</p>
             <ul className="mt-xs space-y-2xs text-sm">
-              {day.slots.map((s) => (
-                <li key={s.id} className="flex items-center justify-between gap-sm">
-                  {/* ⓘ podgląd „jak wykonać" (N2#2) — tap na nazwie otwiera sheet */}
-                  <ExerciseInfoSheet exerciseId={s.exerciseId}>
-                    <button
-                      type="button"
-                      className="flex min-h-11 min-w-0 items-center text-left underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      aria-label={`Jak wykonać: ${s.exerciseName}`}
+              {day.slots.map((s) => {
+                // Token liczbowy (np. „4 × 8-10") zostaje kompaktowy i bez zawijania.
+                // Gdy slot nie ma zakresu, prawa kolumna pokazuje wolny tekst `notes`
+                // (np. „Zrób prawie maksymalną liczbę powtórzeń") — musi się zwężać
+                // i zawijać, inaczej `shrink-0` rozpycha wiersz w poziomie (bug Androida).
+                const isNumericReps = s.repsMin != null;
+                const prescription = isNumericReps
+                  ? s.repsMax && s.repsMax !== s.repsMin
+                    ? `${s.repsMin}-${s.repsMax}`
+                    : `${s.repsMin}`
+                  : s.notes ?? "Brak zakresu";
+                return (
+                  <li key={s.id} className="flex items-center justify-between gap-sm">
+                    {/* ⓘ podgląd „jak wykonać" (N2#2) — tap na nazwie otwiera sheet */}
+                    <ExerciseInfoSheet exerciseId={s.exerciseId}>
+                      <button
+                        type="button"
+                        className="flex min-h-11 min-w-0 items-center text-left underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        aria-label={`Jak wykonać: ${s.exerciseName}`}
+                      >
+                        {s.exerciseName}{" "}
+                        <Info className="inline size-3.5 align-[-2px] text-muted-foreground" />
+                      </button>
+                    </ExerciseInfoSheet>
+                    <span
+                      className={`text-right text-muted-foreground ${
+                        isNumericReps
+                          ? "shrink-0 whitespace-nowrap tabular-nums"
+                          : "min-w-0 shrink break-words"
+                      }`}
                     >
-                      {s.exerciseName}{" "}
-                      <Info className="inline size-3.5 align-[-2px] text-muted-foreground" />
-                    </button>
-                  </ExerciseInfoSheet>
-                  <span className="shrink-0 text-muted-foreground tabular-nums">
-                    {s.targetSets} ×{" "}
-                    {s.repsMin != null
-                      ? s.repsMax && s.repsMax !== s.repsMin
-                        ? `${s.repsMin}-${s.repsMax}`
-                        : s.repsMin
-                      : s.notes ?? "Brak zakresu"}
-                  </span>
-                </li>
-              ))}
+                      {s.targetSets} × {prescription}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         ))}
