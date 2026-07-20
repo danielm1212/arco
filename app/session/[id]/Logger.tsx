@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LOGGER_STICKY_HEADER_SAFE_AREA } from "@/components/navigation/stickyHeader";
+import { STICKY_HEADER_SAFE_AREA } from "@/components/navigation/stickyHeader";
 import type { ExerciseType, SessionSet, TrainingPriority, UnitSystem } from "@/lib/types";
 import { trainingPriorityMeta } from "@/lib/trainingPriority";
 import { useWakeLock } from "@/lib/useWakeLock";
@@ -230,7 +230,7 @@ export function Logger({
     (hh > 0 ? `${hh}:${String(mm).padStart(2, "0")}` : `${mm}`) + `:${String(ss).padStart(2, "0")}`;
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
+    <div className="-mt-[var(--safe-area-top)] mx-auto flex min-h-dvh max-w-md flex-col pb-28">
       <ScreenChrome
         screenType={isFinished || isHistorical ? "session-edit" : "session-live"}
         showBottomNav={false}
@@ -238,7 +238,7 @@ export function Logger({
         showSessionMiniBar={false}
         miniBarPosition="safe-bottom"
       />
-      <header className={cn(LOGGER_STICKY_HEADER_SAFE_AREA, "relative z-10 border-b bg-background px-md pb-sm")}>
+      <header className={cn(STICKY_HEADER_SAFE_AREA, "relative z-10 border-b bg-background px-md py-sm")}>
         <div className="flex items-center justify-between gap-sm">
           <div className="flex min-w-0 items-center gap-2xs">
             {/* 44px pełnowymiarowy target (było: mikro-tekst "← Trening") */}

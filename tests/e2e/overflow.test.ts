@@ -15,10 +15,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { chromium, type Browser } from "@playwright/test";
-import {
-  LOGGER_STICKY_HEADER_SAFE_AREA,
-  STICKY_HEADER_SAFE_AREA,
-} from "../../components/navigation/stickyHeader";
+import { STICKY_HEADER_SAFE_AREA } from "../../components/navigation/stickyHeader";
 
 const ROOT = process.cwd();
 const CSS_DIR = join(ROOT, ".next/static/css");
@@ -125,12 +122,15 @@ test("sticky header (F0.4): ::before kryje pas safe-area — treść nie prześw
   }
 });
 
-test("logger: safe-area nie odkłada nagłówka drugi raz", async () => {
-  // Logger jest wewnątrz globalnego `body pt-safe`. Tło ma zaczynać się od górnej
-  // krawędzi, ale jego treść nadal musi zostać pod notch/status barem.
-  const body = `<header class="${LOGGER_STICKY_HEADER_SAFE_AREA} relative bg-background px-md pb-sm">
-    <div data-header-content class="h-11">Własny trening</div>
-  </header>`;
+test("logger: safe-area jest kompensowane przed sticky, nie wewnątrz nagłówka", async () => {
+  // Globalny body ma pt-safe. Logger kasuje je na KONTENERZE, a header używa
+  // standardowego offsetu sticky — dzięki temu cały header pozostaje widoczny po scrollu.
+  const body = `<div class="-mt-[var(--safe-area-top)]">
+    <header class="${STICKY_HEADER_SAFE_AREA} relative min-h-[60px] bg-background px-md py-sm">
+      <div data-header-content class="h-11">Własny trening</div>
+    </header>
+    <div style="height:900px"></div>
+  </div>`;
   const ctx = await browser.newContext({ viewport: VIEWPORT });
   try {
     const p = await ctx.newPage();
@@ -138,12 +138,13 @@ test("logger: safe-area nie odkłada nagłówka drugi raz", async () => {
       pageHtml(body).replace("body{margin:0}", "body{margin:0;padding-top:var(--safe-area-top)}"),
       { waitUntil: "load" },
     );
+    await p.evaluate(() => window.scrollTo(0, 100));
     const positions = await p.evaluate(() => {
       const header = document.querySelector("header")!.getBoundingClientRect();
       const content = document.querySelector("[data-header-content]")!.getBoundingClientRect();
       return { headerTop: header.top, contentTop: content.top };
     });
-    assert.equal(positions.headerTop, 0, "nagłówek Loggera zostawia pusty pas nad sobą");
+    assert.equal(positions.headerTop, 47, "nagłówek Loggera nie przykleił się pod status barem");
     assert.ok(positions.contentTop >= 47, "treść Loggera weszła pod status bar");
   } finally {
     await ctx.close();

@@ -49,6 +49,15 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-20 · Codex (hotfix sticky Loggera po regresji na urządzeniu): GOTOWE LOKALNIE.**
+  Poprzedni refinement `aab5f1a` błędnie kompensował safe-area ujemnym marginesem na samym
+  elemencie sticky, przez co przy scrollu górna część nagłówka wychodziła poza viewport.
+  Kompensacja jest teraz na kontenerze Loggera, a header wraca do wspólnego kontraktu
+  `STICKY_HEADER_SAFE_AREA`: po scrollu pozostaje w całości pod status barem, jego pseudo-tło
+  kryje notch i nie ma pustego pasa na wejściu. Regresja symuluje `body pt-safe` oraz realny
+  scroll, nie tylko stan początkowy. Weryfikacja: lint ✓, 91 testów ✓, build ✓,
+  `test:overflow` 5/5 ✓. Produkcja jeszcze nietknięta.
+
 - **2026-07-20 · Codex (refinement własnego treningu po dogfoodzie): GOTOWE LOKALNIE.**
   Zakres: logger własnego treningu nie dokłada już safe-area drugi raz nad sticky nagłówkiem:
   tło zaczyna się przy górnej krawędzi, a treść pozostaje pod status barem. Nazwa „Bez planu”
