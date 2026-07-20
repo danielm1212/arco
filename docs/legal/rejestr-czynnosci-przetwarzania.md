@@ -5,7 +5,7 @@
 > nowe funkcje społecznościowe).
 
 **Administrator:** Daniel Muszyński, ul. Kubusia Puchatka 13, 75-710 Koszalin,
-NIP 6692579490. Kontakt: [E-MAIL DO SPRAW DANYCH].
+NIP 6692579490. Kontakt: prywatnosc@trainarco.com [DO URUCHOMIENIA].
 Inspektor Ochrony Danych: nie wyznaczono (brak obowiązku — skala jednoosobowej
 działalności; zweryfikować przy istotnym wzroście skali).
 

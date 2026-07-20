@@ -10,8 +10,9 @@ Administratorem Twoich danych osobowych jest **Daniel Muszyński**, prowadzący
 działalność gospodarczą pod adresem ul. Kubusia Puchatka 13, 75-710 Koszalin,
 NIP 6692579490 (dalej: „Administrator").
 
-Kontakt w sprawach danych osobowych: **[E-MAIL DO SPRAW DANYCH — docelowo dedykowany
-alias; tymczasowo: daniel.muszynski98@gmail.com]**.
+Kontakt w sprawach danych osobowych: **prywatnosc@trainarco.com**
+[DO URUCHOMIENIA — skonfigurować skrzynkę/przekierowanie przed publikacją;
+do tego czasu kontakt: daniel.muszynski98@gmail.com].
 
 ## 2. Czym jest Arco
 

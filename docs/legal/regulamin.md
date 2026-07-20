@@ -10,7 +10,8 @@
    siłowych dostępnego jako aplikacja webowa (PWA) oraz docelowo aplikacja mobilna.
 2. Usługodawcą jest **Daniel Muszyński**, ul. Kubusia Puchatka 13, 75-710 Koszalin,
    NIP 6692579490 (dalej: „Usługodawca").
-3. Kontakt: **[E-MAIL KONTAKTOWY]**.
+3. Kontakt: **kontakt@trainarco.com** [DO URUCHOMIENIA — skonfigurować
+   skrzynkę/przekierowanie przed publikacją].
 4. Zasady przetwarzania danych osobowych opisuje odrębna **Polityka prywatności**.
 
 ## §2. Usługa
