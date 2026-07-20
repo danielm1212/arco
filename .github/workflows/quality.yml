@@ -53,6 +53,12 @@ jobs:
       - name: Zbuduj wersję produkcyjną
         run: npm run build
 
+      - name: Zainstaluj chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+
+      - name: Regresja layoutu (overflow, wąski viewport)
+        run: npm run test:overflow
+
   integration-quality:
     name: Baza, offline i Ekipa
     runs-on: ubuntu-latest
