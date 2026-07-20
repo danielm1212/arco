@@ -15,7 +15,10 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { chromium, type Browser } from "@playwright/test";
-import { STICKY_HEADER_SAFE_AREA } from "../../components/navigation/stickyHeader";
+import {
+  LOGGER_STICKY_HEADER_SAFE_AREA,
+  STICKY_HEADER_SAFE_AREA,
+} from "../../components/navigation/stickyHeader";
 
 const ROOT = process.cwd();
 const CSS_DIR = join(ROOT, ".next/static/css");
@@ -117,6 +120,31 @@ test("sticky header (F0.4): ::before kryje pas safe-area — treść nie prześw
     assert.equal(before.height, SAFE_AREA, "::before nie kryje pełnego pasa safe-area");
     assert.equal(before.position, "absolute");
     assert.notEqual(before.bg, "rgba(0, 0, 0, 0)", "::before bez tła — treść będzie prześwitywać");
+  } finally {
+    await ctx.close();
+  }
+});
+
+test("logger: safe-area nie odkłada nagłówka drugi raz", async () => {
+  // Logger jest wewnątrz globalnego `body pt-safe`. Tło ma zaczynać się od górnej
+  // krawędzi, ale jego treść nadal musi zostać pod notch/status barem.
+  const body = `<header class="${LOGGER_STICKY_HEADER_SAFE_AREA} relative bg-background px-md pb-sm">
+    <div data-header-content class="h-11">Własny trening</div>
+  </header>`;
+  const ctx = await browser.newContext({ viewport: VIEWPORT });
+  try {
+    const p = await ctx.newPage();
+    await p.setContent(
+      pageHtml(body).replace("body{margin:0}", "body{margin:0;padding-top:var(--safe-area-top)}"),
+      { waitUntil: "load" },
+    );
+    const positions = await p.evaluate(() => {
+      const header = document.querySelector("header")!.getBoundingClientRect();
+      const content = document.querySelector("[data-header-content]")!.getBoundingClientRect();
+      return { headerTop: header.top, contentTop: content.top };
+    });
+    assert.equal(positions.headerTop, 0, "nagłówek Loggera zostawia pusty pas nad sobą");
+    assert.ok(positions.contentTop >= 47, "treść Loggera weszła pod status bar");
   } finally {
     await ctx.close();
   }

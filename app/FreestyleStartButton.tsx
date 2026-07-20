@@ -26,7 +26,7 @@ export function FreestyleStartButton({ variant }: { variant: "inline" | "card" }
             : "flex w-full items-center gap-sm rounded-xl bg-card p-md text-left text-sm font-semibold shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         }
       >
-        <Dumbbell className="size-4 shrink-0" aria-hidden />
+        {variant === "card" && <Dumbbell className="size-4 shrink-0" aria-hidden />}
         <span>
           Własny trening
           {variant === "card" && (

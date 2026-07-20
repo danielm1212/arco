@@ -49,6 +49,15 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-20 · Codex (refinement własnego treningu po dogfoodzie): GOTOWE LOKALNIE.**
+  Zakres: logger własnego treningu nie dokłada już safe-area drugi raz nad sticky nagłówkiem:
+  tło zaczyna się przy górnej krawędzi, a treść pozostaje pod status barem. Nazwa „Bez planu”
+  została spójnie zastąpiona przez „Własny trening” w loggerze i Historii. Link na Home jest
+  teraz samym tekstem ze strzałką, bez ikony. Dodano przeglądarkową regresję dla układu
+  `body pt-safe` + sticky loggera. Weryfikacja: lint ✓, 91 testów jednostkowych ✓, build ✓,
+  `test:overflow` 5/5 ✓. Produkcja nietknięta. Ustalony refinement R4: po ukończeniu
+  własnej sesji dyskretne CTA zapisu jako edytowalnego, jednodniowego programu.
+
 - **2026-07-20 · Codex (świadomy własny trening i ochrona pustej sesji): GOTOWE LOKALNIE.**
   Zakres: Home nie pokazuje już niejasnego „Bez planu”. Używa jawnej akcji „Własny trening”
   z ikoną, strzałką i lekkim potwierdzeniem, które wyjaśnia, że aktywny plan zostaje bez zmian.

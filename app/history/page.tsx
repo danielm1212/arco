@@ -89,7 +89,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
 
         {sessions.map((s) => {
           const day = joinMaybe<DayJoin>(s.program_days);
-          const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Bez planu";
+          const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Własny trening";
           const exs = joinMany<{ session_sets: { completed: boolean }[] }>(
             s.session_exercises,
           );

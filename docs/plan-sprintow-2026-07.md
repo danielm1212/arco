@@ -300,6 +300,9 @@ signupu.
 - własny trening jest nazwanym, interaktywnym wyjściem z Home z krótkim potwierdzeniem;
   zakończenie sesji bez zaliczonej serii prowadzi do decyzji „Wróć” albo „Usuń”, a serwer
   nie dopuści takiej sesji do historii;
+- po ukończonym własnym treningu pojawia się ciche, drugorzędne CTA „Zapisz jako własny
+  trening”. Zapis tworzy edytowalny jednodniowy własny program z ćwiczeń sesji, nigdy nie
+  zmienia automatycznie aktywnego planu ani nie pyta przy pustej sesji;
 - sheet Inny plan: ostatnie, własne, biblioteka i wyszukiwanie;
 - brak domyślnie zaznaczonej odpowiedzi i czytelny błąd pobierania;
 - trening po fakcie korzysta z niezmiennika oraz szkicu wdrożonych w R1b.

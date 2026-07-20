@@ -101,7 +101,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
       <Logger
         key={loggerKey}
         sessionId={session.id}
-        title={dayMeta?.label ?? "Bez planu"}
+        title={dayMeta?.label ?? "Własny trening"}
         programName={dayMeta?.programs?.name ?? null}
         isFinished={!!session.finished_at}
         startedAt={session.started_at}

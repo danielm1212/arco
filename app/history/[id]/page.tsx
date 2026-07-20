@@ -36,7 +36,7 @@ export default async function SessionDetailPage(props: {
   const unit: UnitSystem = settings?.unit_system ?? "kg";
 
   const day = joinMaybe<DayJoin>(session.program_days);
-  const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Bez planu";
+  const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Własny trening";
 
   const exercises = (
     joinMany<{
