@@ -98,7 +98,7 @@ Wnioski: (a) na iOS **wibracje nie zadziałają po deployu i to nie jest bug** �
 
 ## 8. Czego świadomie NIE robić (anty-rekomendacje)
 
-- **Nie ruszać majorów przed launchem** (React 19 / Next 16 / Tailwind 4 / TS 6) — zero korzyści funkcjonalnej, realne ryzyko regresji; decyzja w S9 po launchu (potwierdzam rekomendację z planu jako architekt).
+- **Nie ruszać majorów przed launchem** (React 19 / Next 16 / Tailwind 4 / TS 6) — zero korzyści funkcjonalnej, realne ryzyko regresji; decyzję odnowić po H2, gdy pojawi się konkretny zysk produktowy.
 - **Nie wchodzić w React Native/Expo teraz** — most Capacitor istnieje i jest tańszy (§3).
 - **Nie wdrażać sync-engine** (PowerSync/Electric) bez wyzwalacza z §5.
 - **Nie self-hostować Supabase** — ops-koszt zabija oszczędność przy naszej skali.
@@ -113,4 +113,4 @@ Wnioski: (a) na iOS **wibracje nie zadziałają po deployu i to nie jest bug** �
 
 ---
 
-*Powiązane: `deploy-n1-instrukcja.md` (wykonanie deployu + koszty) · `roadmap.md` (bramka multi-user/RODO) · `plan-sprintow-2026-07.md` (S9 majory, S10 offline/longevity). Audyt powtórzyć przy wejściu w H4 (native+push) — wtedy decyzje z §3 i §6 przechodzą z „przyszłość" do „teraz".*
+*Powiązane: `roadmap.md` (bramki do publiczności) i `plan-sprintow-2026-07.md` (bieżąca kolejność). Instrukcja dawnego deployu N1 pozostaje w historii Git. Audyt powtórzyć przed wejściem w native lub push — wtedy decyzje z §3 i §6 przechodzą z „przyszłość" do „teraz".*

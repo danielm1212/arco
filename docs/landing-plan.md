@@ -1,7 +1,9 @@
 # Landing + lista oczekujących — plan
 
-> **Data:** 2026-07-08 · **Cel:** landing = (1) lista oczekujących pod cichy launch (Krok 3 wizji), (2) poligon testu cenowego A/B (wizja §10.3), (3) **pierwszy pełny pokaz retro-analog Warm** — warstwa komunikacji dostaje wreszcie własną scenę.
-> **Podstawa:** `wizja-i-plan-produktu-v2.md` §1.2/§5/§10, `tone-of-voice.md`, `prompt-ikony-3d-clay.md`, backlog (retro display typo), `instrumentacja-metryk.md`.
+> **Data:** 2026-07-08 · **Rebaseline:** 2026-07-20. Landing służy rekrutacji do pilota,
+> eksperymentowi IMPORT-01 i później płatnej becie. Jest też pełnym pokazem warstwy Warm.
+> **Podstawa po rebaseline:** `wizja-i-strategia-v3.md`, `roadmap.md`, `tone-of-voice.md`,
+> `prompt-ikony-3d-clay.md` i `instrumentacja-metryk.md`.
 
 ---
 
@@ -18,7 +20,8 @@
 
 1. **Domeny od początku pod docelową strukturę:** landing na domenie głównej (np. `arco.app` / `arcoapp.pl` — decyzja #1), apka na `app.…`. Przenosiny później = utrata SEO i QR-kodów z siłowni.
 2. **E-maile listy NIE mieszkają we Framer Forms.** Lista oczekujących to aktywo biznesowe i obowiązek RODO — trzyma je dedykowany ESP z UE/DPA (rekomendacja #2 niżej); Framer form tylko POST-uje do ESP. Inaczej: eksport CSV z Framera jako „baza marketingowa" to proszenie się o kłopoty.
-3. **PostHog embed od dnia zero** (custom code, cookieless) — bez tego test cenowy A/B nie ma pomiaru, a landing nie zasili pulpitu B1–B4.
+3. **Pomiar po decyzji prawnej** — landing ma zasilać PAY-1 i eksperyment IMPORT-01, ale wybór
+   narzędzia i zgody następują przed publikacją, nie „od dnia zero” bez kontraktu prywatności.
 
 Alternatywa odrzucona (świadomie): strona w repo Next/Astro — taniej o subskrypcję, ale wolniejsze iteracje, miesza warstwy i dokłada utrzymanie. Wraca na stół dopiero, gdyby Framer dusił (np. i18n przy ekspansji EN).
 
@@ -49,7 +52,8 @@ Zasada: **cały landing = warstwa komunikacji** (ziarno, display, krem), ale scr
 ## 4. Test cenowy A/B (wizja §10.3 — rozstrzygany TUTAJ)
 
 - **Wariant A:** 14,99 zł/mies · 99 zł/rok · **Wariant B:** 9,90 zł/mies · 79 zł/rok. Split 50/50 (A/B Framera lub PostHog feature flag — jedno źródło prawdy, nie oba).
-- Mierzymy: `waitlist_signup` per wariant (czy cena na landingu zmienia skłonność do zapisu) + w mailu powitalnym 1 pytanie („Co by Cię skłoniło do płacenia? guidance / wykresy / programy" — spina się z B2 ze scenariusza H2, większa próbka).
+- Mierzymy: `waitlist_signup` per wariant, `import_interest` oraz jedno pytanie o najmocniejszą
+  obietnicę. Wynik wspiera PAY-1, ale zapis na listę nie zastępuje zakupu.
 - Uczciwość: na liście oczekujących NIE obiecujemy ceny wiążąco („cena startowa, dla listy gwarantowana przez 12 mies." — grandfathering w duchu Z3). Founder's edition (249 zł, decyzja §10.2 wizji): dopiero przy launchu, do listy, nie na landing v1.
 - Eventy (rozszerzenie taksonomii przy wdrożeniu): `landing_viewed {variant}`, `waitlist_signup {variant, source_utm}`, `waitlist_confirmed` (double opt-in domknięty).
 

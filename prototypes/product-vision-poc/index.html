@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f7f7" />
+    <title>Arco — POC docelowego produktu</title>
+    <link rel="icon" href="../../public/icon.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <aside class="prototype-rail" aria-label="Informacje o prototypie">
+      <span class="prototype-tag">POC 2026.07</span>
+      <h1>Arco po refinements</h1>
+      <p>Klikalny kręgosłup produktu przed implementacją R2.2–R6.</p>
+      <ol>
+        <li>Zacznij planowany trening.</li>
+        <li>Wpisz wynik i zalicz serię.</li>
+        <li>Zminimalizuj i wróć mini-barem.</li>
+        <li>Sprawdź własny trening i zapis jako plan.</li>
+        <li>Otwórz Plany, Historię i Ekipę.</li>
+      </ol>
+      <p class="prototype-hint">Przycisk „Stan POC” pozwala szybko przełączać scenariusze.</p>
+    </aside>
+
+    <div class="phone" id="phone">
+      <div class="system-bar" aria-hidden="true">
+        <span>9:41</span>
+        <span class="system-icons">▮▮▮ ◉ 100</span>
+      </div>
+      <div class="viewport" id="app" aria-live="polite"></div>
+      <div id="chrome-root"></div>
+      <div id="sheet-root"></div>
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+      <button class="prototype-trigger" type="button" data-action="scenario" aria-label="Otwórz scenariusze prototypu">
+        Stan POC
+      </button>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

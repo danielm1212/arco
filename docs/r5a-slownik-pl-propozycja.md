@@ -1,6 +1,8 @@
 # R5a: propozycja słownika `name_pl`, aliasów i decyzji placeholderowych
 
-> **Data:** 2026-07-16 · **Status:** ZATWIERDZONE przez [Ty] 2026-07-17 (z poprawkami: decline = „głową w dół", 2 aliasy rozszerzone; zdjęcia placeholderów robi [Ty] w sobotę 2026-07-18). Gotowe do implementacji R5a. · **Podstawa:** `audyt-wyszukiwarki-2026-07.md` (R1–R2), plan sprintów §R5a („przygotowanie treści równolegle").
+> **Data:** 2026-07-16 · **Status po rebaseline:** słownik i aliasy zatwierdzone oraz wdrożone
+> 2026-07-17. Dokument pozostaje wersjonowanym źródłem pochodzenia danych R5a. Otwarte media
+> i bezpieczeństwo treści są w `backlog-produktu.md`, nie w tym pliku.
 > **Co to jest:** kompletny materiał treściowy dla R1+R2 audytu — tłumaczenia top ~200 ćwiczeń, ~50 aliasów potocznych i inwentarz 16 placeholderów zdjęć do decyzji. **Zero kodu** — schemat (`name_pl` nullable, `search_aliases text[]`) i query wchodzą przy implementacji R5a.
 > **Jak przeglądać:** najszybciej sekcję §1 (konwencje) — jeśli konwencje są dobre, tłumaczenia wystarczy przejrzeć po łebkach; wątpliwe wiersze mają dopisek w kolumnie Uwagi.
 

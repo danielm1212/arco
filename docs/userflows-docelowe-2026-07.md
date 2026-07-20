@@ -2,7 +2,7 @@
 
 **Data:** 2026-07-16
 
-**Status:** kierunek zaakceptowany po refinements, bez zmian w kodzie
+**Status:** kontrakt zaakceptowany; baseline R0–R3a wdrożony, luki R3b/R4/R5b są w aktywnym planie
 
 **Nadrzędna zasada:** Arco ma prowadzić do wykonania treningu, a nie prezentować katalog funkcji.
 

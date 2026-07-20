@@ -1,5 +1,9 @@
 # Audyt bazy ćwiczeń (S8) — wynik skanu + propozycja kuracji
 
+> **Rebaseline 2026-07-20:** wcześniejszy audyt potwierdza strukturę, widoczność i dobór bazy,
+> ale nie jest zatwierdzeniem wszystkich zdjęć ani instrukcji technicznych. Aktualna bramka
+> bezpieczeństwa mediów i opisów ma ID CONTENT-01–04 w `backlog-produktu.md`.
+
 > **Raport historyczny.** Aktualną poprawność i liczby rekordów potwierdza `npm run validate:training`; roadmapa i backlog nie są utrzymywane w tym pliku.
 
 > Data: 2026-07-04. Skan `scripts/data/exercises.json` (873 wpisy z free-exercise-db) + weryfikacja obrazków + użycie w apce. Kuracja = **propozycja do akceptacji [Ty]** (§3); nic nie ukrywam bez zgody.
@@ -15,7 +19,8 @@
 | Wpisy bez instrukcji | było 5 → **naprawione** (Iron Cross, One-Arm KB Swings, Push Press, Side Bridge, Side Jackknife — SQL + trwały `INSTRUCTION_OVERRIDES` w `seed.ts`) |
 | Krótkie instrukcje (<80 znaków) | 2 (kosmetyka, zostawione) |
 
-**Wniosek:** punktu „martwe obrazki / duplikaty / śmieci" z planu w praktyce **nie ma** — upstream jest porządny. Realny temat to **szum kategorii** w pickerze (§2) i docelowo self-host obrazków (S11, bez zmian).
+**Wniosek historyczny:** upstream był technicznie porządny. Self-host jest wdrożony; aktualnym
+ryzykiem jest jakość techniki, wariantu i opisu, obsługiwana przez CONTENT-01–04.
 
 ## 2. Rozkład kategorii (co siedzi w 873)
 
@@ -84,7 +89,7 @@ Hip thrusty (Barbell/Dumbbell/Single-Leg), Frog Pump, Cable Pull-Through, KB Swi
 1. ✅ Lokalny `npm run seed`: 907 ćwiczeń + 8 programów / 173 sloty; bezpieczny sync zachował ID i aktywny program.
 2. ✅ `npm run validate:training`: 0 błędów typów, wzorców, sprzętu i integralności presetów.
 3. ⏳ [Ty] QA na telefonie: zmienione presety + podmiany bridge/machine.
-4. ⏳ Docelowe zdjęcia dla 34 nowych (placeholder → asset pipeline; self-host obrazków = S11 bez zmian).
+4. ⏳ Docelowe zdjęcia dla brakujących rekordów według priorytetu CONTENT-01–04.
 
 ### 5.6 Status po Sprincie P3 (2026-07-13)
 

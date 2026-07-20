@@ -1,194 +1,105 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-20
-
-**Gałąź:** `main`
-
+**Aktualizacja:** 2026-07-21
+**Gałąź docelowa:** `main`
+**Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
+**Najbliższy etap:** Q1 → R2.2 → R4 → R3b
 
-Ten plik opisuje stan na dziś. Historia zmian jest w Git, a kolejność dalszej pracy w `plan-sprintow-2026-07.md`.
+Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
+`plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
 
-## Refinement architektury i user flows (2026-07-16)
+## 1. Stan produktu
 
-Po audycie całej aplikacji przyjęto docelową IA: bottom bar **Trening · Postępy · Historia · Ekipa**, podwidoki **Dziś | Plany** w Treningu i **Trening | Ciało** w Postępach, profil przez awatar oraz kompaktowy cel tygodniowy w headerze. Hero Home ma jawne cele tapnięcia; aktywny trening nie prowadzi do biblioteki. Back, minimalizacja sesji i zamknięcie zadania mają odrębną semantykę.
+Arco jest działającą PWA na kontach testowych. Obsługuje:
 
-Pełny kontrakt jest w `userflows-docelowe-2026-07.md`. Aktywny plan wdrożenia to
-R0–R7 z `plan-sprintow-2026-07.md`, rozbity na R0.5, R1a/R1b, R3a/R3b i R5a/R5b.
-Zastępuje wcześniejszą sekwencję Sprint 17b → H2. Stan wdrożenia: R0.5 zaakceptowany,
-R1a/R1b/R2/R2.1/R3a i F0.1 są na produkcji. F0.7, F0.2–F0.3 i SQL Ekipy L9/L10 są gotowe
-lokalnie; po wspólnym wdrożeniu otwierają R3b — Ekipę jako prawdziwy hub.
+- onboarding ze stanem ukończenia zapisanym na koncie;
+- aktywację i zmianę programu, bibliotekę, filtry i własne programy;
+- logger z timerem, seriami, rozgrzewką, podmianą, ćwiczeniami własnymi, offline i szkicem;
+- jedną niezakończoną sesję, minimalizację, mini-bar, wznowienie, usunięcie i finish;
+- świadomy start „Własnego treningu” i blokadę pustej sesji w UI oraz na serwerze;
+- Historię, edycję zakończonego treningu i trening po fakcie z prawdziwą datą/czasem;
+- rekordy, guidance, Postępy/Ciało oraz pomiary z wagą, notatką i maks. dwoma zdjęciami;
+- polskie nazwy i aliasy wyszukiwania;
+- Ekipę v0: kod 8 znaków, jawna zgoda, członkowie, wiele ekip w UI, check-iny, reakcje i nudge.
 
-## Sprint 17a — onboarding v3.1 (2026-07-16)
+Docelowa IA działa: **Trening · Postępy · Historia · Ekipa**, lokalnie **Dziś | Plany** oraz
+**Trening | Ciało**, profil przez awatar. Floating nav ma równy margines 12 px i respektuje
+safe area.
 
-Zamknięte obie pułapki P1 z `docs/audyt-onboardingu-2026-07.md` przed H2: fallback E6 (brak sugestii) ma teraz dwa uczciwe wyjścia — „Przejdź do biblioteki" realnie nawiguje na `/programs` (był to znany bug od 2026-07-11), „Wybiorę później" zapisuje profil i wraca na home. Globalny „Pomiń" od E5 zapisuje zebrany profil zamiast go gubić; na E6 jest ukryty (są już dwa jawne wyjścia). Plus O3–O9: poprawna odmiana liczebnika w zdaniu-uzasadnieniu („5 treningów", nie „5 treningi"), „Pomiń ten krok" na E4, i pięć poprawek copy (żargon „deficyt", nagłówek E3, „bezpieczny"→„pasujący" plan, kontekst przy imieniu, hint o zamiennikach bez drążka). Zweryfikowane w Preview na świeżym koncie (0 sesji): pełny flow E0→E7, obie gałęzie E6, skip na każdym kroku, tsc/build czyste. O10 (test klawiatury na telefonie) zostaje przy [Ty]; O11 (a11y radiogroup) w backlogu.
+## 2. Co jest wdrożone
 
-## Stan produktu
+Na `main` i w migracjach są:
 
-Arco działa jako responsywna PWA i obsługuje pełny rdzeń treningowy:
+- R0/R0.5, R1a/R1b, R2/R2.1 i R3a;
+- F0.1–F0.7, w tym `onboarding_completed_at`, badge `0/N` i wpływ sprzętu na kolejność planów;
+- F0.2/F0.3: poprzedni wynik tylko dla tego samego ćwiczenia, zakresy serii, potwierdzenie
+  anomalii i e1RM tylko dla 1–10 powtórzeń;
+- L9/L10: cel i passa Ekipy liczone z sesji w tygodniu `Europe/Warsaw`;
+- R5a core: 213 nazw PL, 94 aliasy, normalizacja diakrytyk i ranking;
+- backup bazy/Storage i zweryfikowany restore;
+- self-hosted obrazy ćwiczeń w Supabase Storage/CDN;
+- CI: lint, unit, walidatory, build, overflow oraz smoke bazy/offline/Ekipy.
 
-- onboarding i logowanie na przygotowanych kontach,
-- wybór oraz zmianę programu z biblioteki,
-- prowadzenie treningu, timer przerwy, podmiany i własne ćwiczenia,
-- zakończenie, porzucenie i wznowienie aktywnej sesji,
-- dodanie zapomnianego treningu z prawdziwą datą, godziną i czasem trwania,
-- edycję zakończonego treningu i korektę ciężaru lub powtórzeń,
-- historię, rekordy, guidance i widoki postępów,
-- pomiary ciała z wymaganą wagą, notatką i maksymalnie dwoma zdjęciami,
-- Ekipę v0 na kontach testowych: kod 8 znaków, członkowie, check-iny, reakcje i nudge.
+Ostatni fix `61717e6` przywraca sticky nagłówek loggera przy globalnym safe area. Automatyczna
+regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
-Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowane jako bottom sheet. Floating navigation ma 12 px marginesu po bokach i od dolnej safe area.
+## 3. Stan planu
 
-## Ostatnio domknięte
+### Zamknięte
 
-- **F0.1 (audyt 2026-07-18, D1) na prodzie:** cel tygodniowy ścięty do zakresu aktywnego planu (migracja `20260718165434` local==remote), niezmiennik pilnowany przy zapisie ustawień i zmianie planu; sprzeczne „6/5” zastąpione „+N bonus”.
-- **Seria fiksów layoutu (zgłoszenia urządzeniowe), na prodzie, potwierdzone na iPhonie PWA:** długi opis serii w widoku programu zawija się zamiast rozpychać stronę; karty wyboru dnia w „Trening po fakcie” mieszczą się w wrapperze (fieldset `min-w-0`); sticky topbar kryje pas safe-area (F0.4 — treść nie prześwituje); natywny `datetime-local` nie rozpycha karty na iOS (`appearance:none`, reguła iOS-scoped).
-- **Higiena i regresja:** wzorzec sticky-headera safe-area scalony w jedno źródło prawdy (`STICKY_HEADER_SAFE_AREA`, koniec duplikatu PageHeader/Logger); dodany test regresyjny overflow na wąskim viewportcie (Playwright `npm run test:overflow`, wpięty w CI po buildzie).
-- Naprawiono przepływ porzucenia treningu uruchomionego z ekranu głównego.
-- **Lokalnie, oczekuje na wspólną paczkę:** „Bez planu” ma teraz jednoznaczną akcję „Własny
-  trening” z potwierdzeniem. Pusta sesja nie trafia do historii: przy zakończeniu proponuje
-  powrót albo usunięcie, a zapis jest zablokowany także po stronie serwera.
-- Ustabilizowano bottom sheety w przeglądarce i iOS PWA: bez skoku widoku, klikania pod overlayem i przewijania tła.
-- Dodano zamykanie bottom sheetu gestem przeciągnięcia w dół.
-- Poprawiono safe area dla sticky barów, nagłówków i toastów.
-- Dodano edycję przeszłych treningów oraz czytelny przepływ treningu po fakcie.
-- Skrócono kod Ekipy do 8 znaków.
-- Obrazy ćwiczeń przeniesiono z GitHuba do Supabase Storage/CDN.
-- CI działa dla zmian na `main` i pull requestów.
-- Dodano dwa kierunkowe plany „Pośladki i nogi" oraz doprecyzowano rytm tygodniowy i rotację wszystkich programów.
-- Odświeżono scenariusz H2 i metodologię pomiaru; onboarding v3.1 usuwa znane pułapki przed testem.
-- Wykonano produkcyjny backup bazy i Storage oraz pełny restore do odizolowanej bazy; dowód i liczby są w `backup-i-restore.md`.
-- Wdrożono fundament nowej nawigacji: centralną macierz chrome, cztery taby
-  Trening/Postępy/Historia/Ekipa, wspólny Back z fallbackiem, osobną minimalizację aktywnego
-  treningu i poprawne replace dla filtrów oraz ekranów terminalnych.
-- R2: header Treningu (badge celu liczący treningi + awatar), subnav Dziś | Plany, hero
-  „Następny trening" z rozdzielonymi celami tapnięcia, Plany z sekcją aktywnego planu,
-  odchudzony Home (bez powitania, stałych kart i pustych wskazówek), home w jednym
-  równoległym batchu zapytań.
-- Spokojniejszy ekran Done po feedbacku właściciela: bez ikony 3D, liczba-bohater
-  animowana od 0, postęp celu jako tekst zamiast przycisku, sesja-zero bez celebracji zer.
-- Polska wyszukiwarka ćwiczeń (R5a): 213 nazw `name_pl` + 94 aliasy potoczne z
-  zatwierdzonego słownika, wyszukiwanie po PL/EN/aliasach z rankingiem trafności,
-  polskie nazwy w pickerze, „ostatnio używanych" i kandydatach podmiany; test regresji
-  krytycznych fraz w testach jednostkowych.
-- Dokończenie R5a: polskie nazwy na wszystkich powierzchniach (logger, historia, program,
-  hero, guidance, postępy, strona ćwiczenia) oraz wyszukiwanie bez diakrytyk (R4 audytu,
-  migracja `20260717163900` — potwierdzone local == remote).
-- Paczka „trwałość zapisu" z audytu kodu (P1.1+P2, commit `e0c4cbf`): uszkodzony outbox
-  robi backup zamiast cichej utraty serii, pełny storage nie gubi operacji w trakcie życia
-  karty (fallback w pamięci + toast), `clearDraft` nie odtwarza już skasowanego szkicu.
-- Konsolidacja e1RM (audyt P1.2+P1.3, commit `37af446`): wzór Epleya i metryka per typ
-  ćwiczenia żyją w jednym `lib/exerciseMetrics.ts` (były 4 kopie), `repPRs` i metryki
-  mają testy jednostkowe — fundament pod prognozę Coach.
-- Guidance poza LCP home + indeks `sessions(user_id, started_at desc)` (audyt P1.4,
-  commit `b790a80`): hero home nie czeka już na 3 rundy DB guidance (Suspense/streaming),
-  migracja `20260717213044` przetestowana na świeżej bazie. Wszystkie 4 P1 audytu zamknięte.
-- Paczka P2 audytu (`ab5e3ca`, na prodzie): guard podwójnego tapu „Zakończ" w loggerze,
-  `requireUser()` w akcjach podmiany, limit 100 wystąpień na stronie ćwiczenia, komentarz
-  przy `TeamHomeCard`, CSP/config bez zaszłości `raw.githubusercontent.com`; sprostowanie
-  audytu: polityka INSERT `activity_events` była zamknięta już 2026-07-13.
-- Testy dla bibliotek bez pokrycia (`33dd58e`, lokalnie): `format`, `week`,
-  `trainingPriority`, `exerciseFilters` — +26 przypadków, w tym regresja bugu strefy
-  czasowej w `localDayKey`. Ostatni punkt P2 zamknięty.
+- R0–R3a i integralność F0;
+- funkcjonalne zachowanie bottom sheetów: overlay, scroll lock, scroll wnętrza i swipe;
+- iPhone checkpoint z 2026-07-18 dla wcześniejszej macierzy 8/8;
+- polskie wyszukiwanie i podstawowy kontrakt treści programów.
 
-## Technologia i dane
+### Częściowe
 
-- Next.js 16.2, React 19.2, TypeScript, Tailwind CSS 3.
-- Supabase Auth, Postgres, Storage i RLS.
-- Serwist dla PWA/offline.
-- Vercel w regionie zbliżonym do Supabase Frankfurt.
-- Walidator potwierdza 907 ćwiczeń, 767 widocznych, 15 programów i 308 slotów. Liczby zawsze weryfikuje `npm run validate:training`.
-- Publiczny signup pozostaje wyłączony. Nie traktujemy obecnej Ekipy jako funkcji gotowej do publicznego multi-user.
+- **R3b:** istnieje dużo v0, ale hub nie ma jeszcze trwałego ostatniego wyboru, unread na tabie,
+  jednego kontekstowego zdarzenia Home i finalnego dogfoodu dwóch kont.
+- **R4:** rdzeń loggera, edycji i backfillu działa. Brakuje prowadzenia pierwszej sesji,
+  wyróżnienia zaliczenia serii, CTA finish na dole, zapisu własnej sesji jako programu,
+  pełnoekranowych mediów i części zachowania scrolla/kontekstu Historii.
+- **R5b:** brakuje pełnego focus trapu/zwrotu fokusu, radiogroup oraz pełnej macierzy Android.
 
-## Automatyczna jakość
+## 4. Otwarte ryzyka
 
-Aktualny gate obejmuje:
+1. **Treści ćwiczeń:** zdjęcia Barbell Hip Thrust budzą zastrzeżenia techniczne, a Chin-Up
+   wymaga review wariantu. Opisy i media widocznych ruchów muszą przejść bramkę treści przed H2.
+2. **PWA:** ostatni fix sticky wymaga potwierdzenia na iPhone PWA i przy starym cache.
+3. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
+4. **Android:** brak pełnego checkpointu systemowego Back/PWA.
+5. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
+6. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
+7. **Publiczność:** signup, RODO, eksport/usunięcie, abuse protection i publiczna Ekipa są zamknięte.
+8. **Badania:** większość wiedzy pochodzi z dogfoodu właściciela; wymagane są H2-Lab oraz
+   trzytygodniowy H2-Field, zanim ruszą publiczne konta i premium.
+9. **Prawo:** commity `2aa4191` i `d10e51e` dodały drafty w `docs/legal/` oraz docelową domenę;
+   nie zaliczają PRIV-1 bez review prawnego, eksportu/usunięcia, audytu RLS i weryfikacji
+   dostawców/regionu.
+10. **Sklepy:** obecny dynamiczny Next.js nie jest gotowym bundle'em Capacitor. PWA pozostaje
+    drogą do H2-F/PAY-01; decyzja Expo/React Native kontra lokalny Capacitor jest w MOBILE-0.
 
-- lint,
-- 70 testów jednostkowych,
-- walidację danych treningowych,
-- walidację rekomendacji,
-- build produkcyjny,
-- izolowane testy integracyjne z Supabase dla treningu, offline, rekordów i RLS Ekipy.
+## 5. Dane i technologia
 
-Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny z `package.json`.
+- Next.js 16.2, React 19.2, TypeScript, Tailwind CSS 3;
+- Supabase Auth/Postgres/Storage/RLS, Serwist i Vercel;
+- 907 rekordów ćwiczeń lokalnie; bieżące liczby potwierdza `npm run validate:training`;
+- publiczna rejestracja wyłączona;
+- migracje produkcyjne do `20260720153000_team_streak_warsaw.sql` zostały zastosowane.
 
-## Otwarte ryzyka
+## 6. Najbliższa praca
 
-1. **Bottom sheet accessibility — refinement:** zachowanie funkcjonalne na PWA jest domknięte; własny dialog wymaga jeszcze pełnego focus trapu i zwrotu fokusu do elementu otwierającego.
-2. **Testy urządzeń:** checkpoint iPhone PWA **ZALICZONY [Ty] 2026-07-18** (8/8 scenariuszy, zero zgłoszeń — `docs/macierz-regresji-urzadzen.md` kol. A). Zostaje: Android (świadoma luka sprzętowa) oraz powtórki macierzy po R3b i R4 zgodnie z planem.
-3. **Backup poza urządzeniem:** lokalny backup i restore są zweryfikowane. Kopię trzeba jeszcze przenieść do zaszyfrowanej lokalizacji poza laptopem.
-4. **H2:** obecne poprawki pochodzą głównie z dogfoodingu właściciela. Potrzeba testów z 3–5 osobami.
-5. **Konta publiczne:** rejestracja, reset hasła, wersjonowane zgody, eksport/usunięcie danych i ochrona przed nadużyciami nie są jeszcze gotowe.
-6. **Analityka:** adapter istnieje, ale produkcyjnie pozostaje no-op do czasu decyzji prawnej i produktowej.
-7. **Ekipy publiczne:** przed otwarciem wymagają zgód, rate limitów, ochrony 8-znakowych kodów, rotacji zaproszeń i dogfoodingu wielokontowego.
-8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. **Odroczone (2026-07-18):** po audycie [Ty] decyzja o wygenerowaniu 16 zdjęć cofnięta — wykona w innym terminie. Prompty gotowe (`prompty-zdjecia-cwiczen-16.md`). NIE blokuje R3a; pozostaje otwarte jako warunek bramki H2 (placeholdery w widocznych planach muszą mieć świadomą decyzję).
-9. **Docelowa IA jest wdrożona do R3a włącznie** (chrome, integralność sesji, hub Treningu,
-   Postępy i Ciało). R3b buduje Ekipę jako hub; R4 domyka Logger/Historię. `/history/add`
-   ma już naprawione overflow i iOS datetime, ale nadal wymaga dopracowania wyboru programu.
-10. **Drift danych treningowych:** w produkcji brakuje `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`; zweryfikowany restore ma 905 ćwiczeń, a lokalny zestaw 907. Przed H2 trzeba wykonać precyzyjny sync tych dwóch rekordów zamiast pełnego re-seeda.
-11. **Ciągłość konta i zaufanie do ustawień (P0):** onboarding jest obecnie kwalifikowany
-    przez liczbę sesji i flagę localStorage. Usunięcie całej historii albo nowe urządzenie może
-    więc błędnie otworzyć onboarding. Stan ukończenia musi przejść do ustawień konta; przy tej
-    zmianie badge celu zacznie być widoczny od `0/N`. Ustawienie sprzętu ma też wpływać na
-    bibliotekę/rekomendacje po onboardingu, nie tylko podczas niego. Zakres: F0.7.
-12. **Integralność przed Ekipą (P0/P1):** podmiana może odziedziczyć wynik po innym ćwiczeniu;
-    walidacja anomalii nie chroni jeszcze rekordów; Ekipa ma osobne SQL dla passy i granicy
-    tygodnia, niespójne z Warszawą i minimalnym celem planu. Zakres: F0.3.
+1. Q1: regresja sticky/F0.7 oraz review treści Hip Thrust/Chin-Up i ruchów początkujących.
+2. R2.2: filtr „Tylko z moim sprzętem”.
+3. R4: domknąć logger, Historię i drabinę wartości.
+4. R3b → R5b → R6 → H2-Lab → trzytygodniowy H2-Field.
 
-## Następny krok
+## 7. Reguły operacyjne
 
-Na produkcji są: R1a, R1b, R2, spokojniejszy ekran Done oraz **polska wyszukiwarka R5a**
-(migracja `20260717130502_exercise_polish_names` — local == remote, deploy `6d7c26d`,
-CI zielone). Zaakceptowane po dogfoodzie [Ty]: pion R2 i ekran Done.
-**Checkpoint urządzeniowy ZALICZONY [Ty] 2026-07-18** (iPhone PWA, 8/8, zero zgłoszeń).
-**R3a (Postępy i Ciało) oraz R2.1 są na produkcji.** R3a: filtr okresu przez replace i pomiar
-jako ekran focus `/body/add`; waga jest wymagana, notatka widoczna, zdjęcia ograniczone do
-dwóch. **F0.7.1–F0.7.4 są gotowe lokalnie:** trwały onboarding konta, badge `0/N`, uczciwe
-porządkowanie biblioteki po sprzęcie i CTA po zmianie ustawień; migracja + smoke lokalne ✓.
-Zostaje F0.7.5 (świeże konto i iPhone PWA). **Następny etap kodowy: R3b, Ekipa jako hub.**
-Dopiero potem R3b — Ekipa jako hub,
-multi-ekipa, nieprzeczytany stan, jedno zdarzenie na Home i dogfooding dwóch kont.
-
-**F0.2 i F0.3 są gotowe lokalnie:** po podmianie w tym samym slocie poprzedni wynik wymaga
-teraz zgodnego ćwiczenia, więc 100 kg ze starego ruchu nie pokaże się w nowym. Logger prosi
-o potwierdzenie serii roboczej ponad 300 lub 1,5× poprzedni prawidłowy wynik, z mocniejszym
-komunikatem powyżej 500; baza chroni zakres `0–1000 kg` i `1–100` powtórzeń, a e1RM liczy
-wyłącznie serie 1–10. Migracje i smoke
-z celowanymi regresjami są zielone lokalnie. **L9/L10 są również gotowe lokalnie:** Ekipa
-liczy ukończone sesje, a nie check-iny, stosuje `weekly_goal` sprzężony z planem i wyznacza
-tydzień przez `Europe/Warsaw`; smoke dwóch kont potwierdza 1/2 → passa 0 oraz 2/2 → passa 1.
-Następne: R3b.
-**Zdjęcia 16 placeholderów: ODROCZONE** (decyzja [Ty] 2026-07-18) — patrz ryzyko 8; nie
-blokuje R3a, warunek bramki H2.
-Deploy audytu kodu (P1.1–P1.4 + P2) wykonany 2026-07-17: migracja `20260717213044` na
-prodzie (local == remote), kod do `0dfa7e5` na origin, CI oba joby zielone, prod
-zweryfikowany w przeglądarce (świeży build, zero błędów CSP). Lokalny bucket
-`exercise-images` zasiany przez `npm run upload:exercise-images` (na LOKALNY stack —
-`.env.local` wskazuje dev, nie prod). **Cały audyt kodu 2026-07 jest zamknięty**
-(4/4 P1, cała lista P2) poza większymi refactorami odłożonymi jako tło R3–R5
-(agregaty postępów, wspólny typ joinów, formatSet w 3 miejscach, duże komponenty,
-i18n komunikatów, multi-tab outbox — udokumentowane).
-Commit `33dd58e` (testy libów) jest wypchnięty — `origin/main` = `c6d2bac`, całość
-dorobku 2026-07-17 jest na GitHubie.
-Kod: **R2.1 na produkcji** (badge celu jako akcja z sheetem tygodnia, FlameWeek poza Home,
-polish hero, odchudzone karty Planów, loading z chrome, izolacja insightu per konto+program).
-Przegląd [Ty] + pre-check wizualny Claude na desktopie: bez zgłoszeń. Zostaje tylko
-checkpoint urządzeniowy (wyżej), potem R3a–R4. Z toru wyszukiwarki zostają R5–R6 audytu
-(instrumentacja search, kosmetyka) — R4 (diakrytyki) i `name_pl` na wszystkich
-powierzchniach weszły 2026-07-17 (`9eb9835`, migracja na prodzie). Audyt kodu: wszystkie
-4 P1 zamknięte; zostaje P2 jako tło przy R3–R5.
-Równolegle: przeniesienie zweryfikowanego backupu do zaszyfrowanej lokalizacji poza laptopem.
-Procedury wydania, zamknięcia sesji i migracji są od 2026-07-17 skodyfikowane w
-`.claude/skills/` (arco-release, arco-session-close, arco-migration) i wiążące przez `CLAUDE.md`.
-
-Nie dokładamy teraz nowej funkcji. Porządkujemy istniejący rdzeń i testujemy jeden spójny model produktu.
-
-## Operacyjnie
-
-- Migracje tylko przez `supabase/migrations`.
-- Service role nie może trafić do repo ani logów.
-- Re-seed może zmienić powiązania aktywnego programu. Po seedzie zawsze zweryfikuj konto testowe.
-- Produkcyjne dane treningowe usuwaj wyłącznie po jawnie znanych identyfikatorach.
-- Porządki 2026-07-17: usunięto 6 duplikatów ikon ` 2.png` bitowo identycznych z oryginałami.
-  Zostały 2 różniące się (`battery`, `target` — do decyzji [Ty]) oraz niepodpięty
-  `app/session/[id]/done/CountUpNumber.tsx` (szkic celebracji bez importów — dokończyć lub usunąć).
+- Migracje wyłącznie przez `supabase/migrations`; każda tabela użytkownika ma RLS i test wielokontowy.
+- Produkcyjne dane testowe usuwamy tylko po znanych ID.
+- Jeden build Next.js naraz.
+- Deploy i zamknięcie sesji zgodnie z `.claude/skills/`.
+- Każda zmiana stanu aktualizuje HANDOFF, backlog/plan i `koordynacja-agentow.md`.
+- Notion synchronizujemy wyłącznie na wyraźną prośbę.

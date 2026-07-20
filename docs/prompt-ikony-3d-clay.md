@@ -1,6 +1,8 @@
 # Ikony 3D clay — źródło, kolorowanie, prompty
 
-> **Data:** 2026-07-08 · **Podstawa:** `wizja-i-plan-produktu-v2.md` §1.2 (ikony matowe/clay w terracotta/krem, metalik odrzucony; zestaw kurowany; użycie TYLKO empty states / onboarding / celebracje — nie nawigacja) + `paleta-arco-warm.md` (wartości kolorów).
+> **Data:** 2026-07-08 · **Podstawa po rebaseline:** `wizja-i-strategia-v3.md`,
+> `decyzje-produktowe.md` D-16 i `paleta-arco-warm.md`. Ikony 3D są kuratorowane i służą
+> tylko onboardingowi, empty states i celebracjom — nie nawigacji ani loggerowi.
 > **Status:** tor assetów [Ty]; prompty gotowe do użycia.
 
 ---
@@ -81,6 +83,6 @@ Zasady serii: generuj po 4–6 wariantów na obiekt, wybieraj **jeden wspólny j
 | Calendar/Fire (3dicons) | passa, historia empty state |
 | Lock (3dicons) | kłódka historii (fala 2) — z copy z `tone-of-voice.md` §3 |
 | Kettlebell / Ławka / Talerz | onboarding (wybór środowiska: dom/siłownia/masa ciała), celebracje |
-| Bell (3dicons) | nudge / skrzynka (ekipy, Krok 4) |
+| Bell (3dicons) | wyłącznie przyszły kanał nudge po danych GROW-1; nie w bieżącym UI |
 
 **Twardy limit z wizji:** ikony 3D nie wchodzą do nawigacji dziennej ani list. Jak coś potrzebuje ikony w UI narzędzia → lucide (płaskie), nie clay.

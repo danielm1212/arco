@@ -28,7 +28,7 @@ Dojrzały (od ~2019), cross-platform (iOS/Android/web), logger siłowy z **pełn
    - To wciąż jest social (nadal chcemy być social!) — tylko kameralny i pozytywny, nie broadcast/vanity.
 
 **Wsparcie (retencja, nie moat):**
-5. **Charakter/marka** — celebracja po treningu, retro-analog Warm (kierunek 2026-07-08, `wizja-i-plan-produktu-v2.md` §1.2), rytuał. Hevy jest płaski.
+5. **Charakter/marka** — celebracja po treningu, retro-analog Warm (`wizja-i-strategia-v3.md`), rytuał. Hevy jest płaski.
 6. **„Nic nigdy nie kasujemy"** — 🔄 rewizja 2026-07-08 (wizja v2 §8): „dane bez limitów" wypada jako wyróżnik (model hybrydowy wprowadza limit 12 tyg. historii we free). Uczciwa wersja limitu Hevy: **dane czekają w całości, premium sięga głębiej; eksport zawsze darmowy** (Z3).
 
 ## Ocena (uczciwie) — zrewidowana 2026-07-08 (wizja v2 §8)

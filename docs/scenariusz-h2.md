@@ -1,22 +1,29 @@
 # Scenariusz H2 — testy z użytkownikami (skrypt sesji, kompletny)
 
-> **Data:** 2026-07-08 · **Odświeżenie:** 2026-07-16 (Sprint 17) — pod aktualny UI (onboarding v3.1) i kanon `wizja-i-strategia-v3.md`: persony Paweł/Kasia/Radek, **trzy filary premium** (cel z prognozą · diagnoza stagnacji · pełna historia), yearly-first (99/rok), teaser stagnacji. Dodana §0.5 z operacyjnymi definicjami pomiaru i dwiema bramkami.
-> **Podstawa:** `wizja-i-strategia-v3.md` §2–3 (persony, model) · `wizja-i-plan-produktu-v2.md` Krok 1 + §7 (bramki) + Z1–Z3 (§2) · `usability-audit.md` §C (zadania) · `feedback-uzytkownikow.md` #1 (first-click).
-> **Format:** 1 sesja moderowana × 3–5 osób, ~70 min. Moderator: Ty. Ten plik = skrypt do wydruku/drugiego ekranu.
-> **Status 2026-07-16:** metodologia pozostaje ważna, ale opis kroków odzwierciedla obecny UI. Nie używać jako finalnego skryptu przed wdrożeniem R0.5–R5b; w R6 aktualizujemy nazwy, ścieżki i dane startowe pod `userflows-docelowe-2026-07.md`, a następnie wykonujemy pilot.
+> **Data:** 2026-07-08 · **Refinement:** 2026-07-20. Scenariusz obejmuje aktualny UI,
+> persony Paweł/Kasia/Radek, trzy filary premium, dokładną cenę i rozdzielenie H2-U/H2-V/H2-E.
+> **Podstawa:** `wizja-i-strategia-v3.md`, `decyzje-produktowe.md`, `roadmap.md`,
+> `userflows-docelowe-2026-07.md` i `feedback-uzytkownikow.md`. Finalną wersję pod aktualny
+> interfejs przygotowujemy w R6.
+> **Format docelowy:** H2-U = 5 moderowanych sesji użyteczności; H2-V = osobne 5–8
+> rozmów z ICP płacącym; H2-E = 3 prawdziwe pary. Moduły poniżej można łączyć logistycznie,
+> ale ich wyników nie wolno zlewać w jeden wskaźnik.
+> **Status po rebaseline 2026-07-20:** metodologia pozostaje ważna, lecz dokument nie jest
+> finalnym skryptem przed zamknięciem Q1–R5b. W R6 aktualizujemy nazwy, ścieżki, dane startowe
+> i kanał feedbacku pod aktualny build, a następnie wykonujemy pilot.
 
 ---
 
 ## 0. Cel i bramka
 
-Testujemy trzy rzeczy naraz: **(a) usability rdzenia** (zadania §3), **(b) willingness-to-pay** (moduł §4), **(c) tezę ekipową** (moduł §5).
-
-**B1 zielona = obie bramki z §0.5 zielone** (użyteczność rdzenia I wartość+ekipa). Skrót: rdzeń bez porażek/bloków S4 · **≥3/5** wskazuje prowadzenie lub dane jako „warte dychy" · **≥3/5** ma „swojego Radka".
-**B1 czerwona:** czerwony rdzeń = STOP (napraw rdzeń, zanim wrócisz z testem). Czerwona wartość przy zielonym rdzeniu = iteracja **packagingu, nie ceny**, przed bramką RODO (Krok 2).
+Badamy trzy różne ryzyka: **(a) użyteczność rdzenia** (§3), **(b) kierunek wartości premium**
+(§4) i **(c) zrozumienie Ekipy** (§5). Tylko użyteczność ma w H2-U twardą bramkę.
+WTP i Ekipa generują hipotezy do H2-V, H2-E i trzytygodniowego H2-F.
 
 ## 0.5. Definicje pomiaru i dwie bramki *(dodane 2026-07-16 — czytaj PRZED pilotem)*
 
-n=3–5 to badanie **jakościowe**. Progi liczbowe niżej są STOP-lightami do dyskusji, nie dowodem statystycznym — jedna spójna, dosłowna wypowiedź („nie wiedziałem, czy to się zapisało") waży więcej niż słupek. Rozstrzygnięcie B1 czytasz z **wzorców i cytatów**, nie z arytmetyki na pięciu osobach.
+n=5 to badanie **jakościowe**. Progi użyteczności są STOP-lightami, nie dowodem statystycznym.
+Jedna spójna, dosłowna wypowiedź („nie wiedziałem, czy to się zapisało”) waży więcej niż słupek.
 
 **Wynik zadania (zapisuj dla każdego Z1–Z5):**
 - ✅ **Sukces** — ukończone bez pomocy, sensowną ścieżką (niekoniecznie „naszą").
@@ -29,15 +36,24 @@ n=3–5 to badanie **jakościowe**. Progi liczbowe niżej są STOP-lightami do d
 
 **Bramka A · Użyteczność rdzenia (twarda, niezależna od WTP).** Rdzeń = **Z1–Z3** (pierwszy trening, logowanie serii, podmiana) — to jest „rdzeń pętli" z Z1 zasad, świętość produktu. **Zielona:** 0 porażek i 0 problemów S4 na Z1–Z3 u **≥4/5** osób. Czerwony rdzeń unieważnia całą resztę — nie ma sensu pytać o cenę produktu, w którym nie da się zalogować serii.
 
-**Bramka B · Wartość + ekipa (sygnał gotowości do Kroku 2).** Multi-sygnał, obie połówki muszą być zielone:
-- **Wartość:** ≥3/5 w B2 (wybór wymuszony) wskazuje **prowadzenie** LUB **dane/historię** jako „warte dychy" (NIE „programy bez limitu" — to hygiena, nie hak). Wzmocnienie: mediana „okazji" z Van Westendorpa ≥ 14,99 **i** „za drogo" wyraźnie > 14,99 (cena nie odbija się od sufitu grupy).
-- **Ekipa:** ≥3/5 ma konkretnego „Radka" (C1). Wzmocnienie behawioralne (mocniejsze niż deklaracja): ≥3/5 zgadza się na kontakt przy testach ekip (pytanie 3 zamknięcia).
+**Sygnał B · Wartość premium.** B2, Van Westendorp i reakcja na cenę służą do wyboru
+obietnicy oraz języka. Nie zatwierdzają ceny ani płatności. Prognoza pokazywana wyłącznie
+jako koncept nie może samodzielnie wygrać bramki PREMIUM-01.
 
-**Gdy bramki się rozjeżdżają:** A czerwona → STOP, iteracja rdzenia. B-wartość czerwona (A zielona) → packaging wartości przed Krokiem 2 (nie ruszaj ceny — B1 czerwona w tym sensie NIE znaczy „za drogo", znaczy „nie sprzedaliśmy po co to"). B-ekipa czerwona → ekipa spada do retencji, wzrost wraca do contentu (tabela bramek `roadmap.md`).
+**Sygnał C · Ekipa.** Konkretna osoba i zgoda na dalszy kontakt pozwalają rekrutować pary do
+H2-E. Dopiero realne zaproszenie, reakcja i nudge są dowodem zachowania.
+
+**Gdy wyniki się rozjeżdżają:** A czerwona zatrzymuje interpretację WTP. A zielona i słaby
+sygnał wartości oznaczają pracę nad time-to-value oraz packagingiem, nie automatyczną obniżkę
+ceny. Słaba Ekipa pozostaje funkcją retencji, a nie argumentem płatnym.
 
 ## 1. Rekrutacja i logistyka
 
-- **Kto (3–5 osób):** min. 1 **początkujący** (trenuje <1 rok lub wraca po przerwie), min. 2 **trenujących poważnie** (≥2 lata, zna progresję), min. 1 osoba **używająca Hevy/Stronga** (porównanie z zakotwiczenia), min. 1 **kobieta** (kierunek inkluzywny z kanonu). Nie rekrutuj wyłącznie bliskich znajomych — będą mili.
+- **H2-U, 5 osób:** min. 1 początkująca lub wracająca, min. 2 regularnie trenujące,
+  min. 1 używająca innego loggera i min. 1 kobieta. Nie rekrutuj wyłącznie znajomych.
+- **H2-V, 5–8 innych lub wyraźnie oznaczonych osób:** trenują regularnie, zapisują wyniki
+  i mają realny problem progresji. Ich odpowiedzi nie są uśredniane z początkującymi.
+- **H2-E:** trzy pary, które znają się przed badaniem. Moderator nie dobiera obcych osób.
 - **Sprzęt:** **telefon uczestnika** (nie Twój!), prod (arco-olive). **DWA konta per osoba** (przygotuj skryptem przed sesjami): (a) **demo** — 2–3 tyg. historii + ≥1 flaga guidance (do Z0, Z4, Z5), (b) **świeże** (do Z1–Z3).
 - **⚠️ Przełączenia kont — wpisane w skrypt, robi je MODERATOR (nie uczestnik):** demo → świeże (po Z0) i świeże → demo (po Z3). Przygotuj hasła pod ręką, przećwicz na pilocie — każde przełączenie >60 s zjada bufor i rozprasza uczestnika. (Wyjście awaryjne: drugi telefon Twój z kontem demo tylko do Z4–Z5, jeśli logowanie na procie okaże się wolne.)
 - **Zgody:** ustna zgoda na notatki + (jeśli nagrywasz ekran) osobna zgoda. Zero danych osobowych w notatkach — P1…P5.
@@ -103,13 +119,16 @@ Pokaż kartę „Wskazówki" na home (przygotuj dane demo tak, żeby była ≥1 
 4. „…że **za drogo, odpadam**?"
 📏 4 liczby per osoba (arkusz §7).
 
-**B4 · Test kotwicy (yearly-first — v3):** „Arco Coach — **99 zł za rok** (albo 14,99 zł/mies.); logowanie i ekipy zawsze darmowe. Pierwsza reakcja?" *(obserwuj twarz zanim odpowie; kotwica prowadzi rocznym — 99/rok to ~8,25 zł/mies., ma wyglądać na okazję)*. Follow-up: „Wolałbyś płacić rok z góry czy miesięcznie?" *(v3 stawia na roczny — sprawdź, czy zobowiązanie na rok nie odstrasza początkującego)*. Jeśli zna Hevy: „Hevy Pro to ~13 zł/mies. — zmienia coś?"
+**B4 · Test dokładnej ceny (yearly-first — v3):** „Arco Coach — **99 zł za rok** albo
+**14,99 zł miesięcznie**. Logowanie i Ekipa zostają darmowe. Pierwsza reakcja?” Obserwuj reakcję
+przed follow-upem. Zapytaj: „Rok czy miesiąc i dlaczego?” Jeśli zna konkurenta, poproś o
+porównanie z ceną, którą rzeczywiście zna; moderator nie podaje niezweryfikowanej kotwicy.
 
 **B5 · Limit historii (fala 2, uczciwy test):** „W darmowej wersji widzisz 12 ostatnich tygodni historii; starsze dane czekają nietknięte i wracają w płatnej. Fair czy wkurzające? Dlaczego?"
 
 ## 5. Część C — moduł ekipy (10 min)
 
-**C1 · Radek (pytanie z wizji, dosłownie):** „**Z kim trenujesz albo kto miałby Cię pilnować, żebyś nie odpuszczał(a)?** Konkretna osoba — kto to jest?" 📏 **ma Radka: tak/nie** (liczy się do B1) + kim jest (partner/kumpel/siostra…).
+**C1 · Radek (pytanie z wizji, dosłownie):** „**Z kim trenujesz albo kto miałby Cię pilnować, żebyś nie odpuszczał(a)?** Konkretna osoba — kto to jest?” 📏 **ma Radka: tak/nie** + kim jest (partner/kumpel/siostra…).
 
 **C2 · Koncept (przeczytaj, bez pokazywania UI):**
 > „Wyobraź sobie: Ty i paru znajomych (max 6 osób w ekipie) widzicie nawzajem tylko tyle: »Radek trenował dziś, 4. tydzień z rzędu«. Możecie przybić 💪 i szturchnąć: »Ania przypomina Ci o treningu«. Żadnych ciężarów, wyników, komentarzy, feedu."
@@ -145,22 +164,37 @@ Pytania: „Kogo byś zaprosił(a)? Wyślesz takie szturchnięcie? A jak Ty je d
 | Zamknięcie: **zgoda na kontakt przy testach ekip? (tak/nie)** | |
 | Cytat sesji (jeden, najmocniejszy): | |
 
-## 8. Po sesjach — rozstrzygnięcie B1 (dwie bramki z §0.5)
+## 8. Po sesjach — rozstrzygnięcie H2-Lab
 
 **Krok 1 — Bramka A (rdzeń).** Z Z1–Z3: policz porażki i problemy S4. **Zielona:** 0 porażek + 0 S4 u ≥4/5. Czerwona → **STOP**: napraw rdzeń, dopiero potem czytaj resztę (WTP produktu, w którym nie da się zalogować serii, jest bez znaczenia).
-**Krok 2 — Bramka B (wartość + ekipa), tylko jeśli A zielona.** Policz: B2 (prowadzenie LUB dane ≥3/5) · Radek C1 (≥3/5) **+** zgody na kontakt (pytanie 3 zamknięcia — sygnał behawioralny, mocniejszy niż deklaracja C2) · mediany Van Westendorpa vs 14,99/99. Obie połówki zielone = B1 zielona.
-**Krok 3 — czytaj wzorce, nie tylko liczby.** Na n=5 jedna dosłowna wypowiedź waży więcej niż słupek. Wyciągnij max 5 najmocniejszych cytatów per bramka.
-Wynik + surowe cytaty + lista dotkliwości (S3/S4 → P0/P1) → **`docs/wyniki-h2.md`** → decyzje: zielone = Krok 2 (konta+RODO) rusza; czerwone = ścieżki z tabeli bramek (`roadmap.md`). Feedback o home z Z0 → decyzja o hierarchii (obiecana w `feedback-uzytkownikow.md`). Sygnał z B2a (teaser stagnacji) i z filaru „cel z prognozą" → priorytet budowy tych funkcji przed launchem.
+**Krok 2 — kierunek wartości, tylko jeśli A zielona.** Grupuj cytaty H2-V według realnego
+problemu, obietnicy, zaufania, ceny i alternatywy. Van Westendorp pozostaje opisem kierunku.
+Wybierz najwyżej jedną obietnicę do dalszego pilota; nie uruchamiaj płatności.
+**Krok 3 — Ekipa.** Zwerbuj trzy pary i wykonaj H2-E. Deklaracja z C1 nie zastępuje zachowania.
+**Krok 4 — synteza.** Na małej próbie cytat i powtarzalny wzorzec ważą więcej niż słupek.
+Wynik, cytaty i dotkliwość trafiają do **`docs/wyniki-h2.md`**. Zielona H2-U pozwala wejść
+do H2-F, nie bezpośrednio do publicznych kont i płatności.
 
 ## 9. Przed pierwszą prawdziwą sesją
 
 **Twarde prerekwizyty (blokują sesję, jeśli nie domknięte):**
-- [ ] **Fix wyszukiwarki ćwiczeń** (R5a planu; lokalne fazy R1–R2 z `audyt-wyszukiwarki-2026-07.md`: `name_pl` top-200 + aliasy). **Z2/Z3 testują picker** — search tylko po nazwach EN da 0 wyników na „wyciskanie" i wywali podmianę (Z3). Bez tego Bramka A prawie na pewno czerwona z powodu, który znamy.
+- [x] **Polska wyszukiwarka ćwiczeń** — `name_pl`, aliasy, ranking i normalizacja diakrytyk
+  są wdrożone. R6 aktualizuje wyłącznie dane demo i krytyczne zapytania pod bieżący build.
 - [ ] **16 ćwiczeń z placeholderem zdjęcia (49 slotów)** — uzupełnić zdjęciami albo świadomie wyłączyć z widocznych programów, żeby Z3/podgląd nie trafił na pusty placeholder. Decyzja per ćwiczenie [Ty]: swap na wariant ze zdjęciem / AI-zdjęcie / hidden.
-- [ ] 5 punktów P0/P1 z `usability-audit.md` §E domknięte (zoom, dark, focus-visible…).
+- [ ] Bramka Q1–R6 z `plan-sprintow-2026-07.md` domknięta; znane P0/P1 = 0.
 
 **Przygotowanie:**
-- [ ] **Pilot (sesja 0)** na życzliwej osobie — mierzy czas i łata skrypt; jej wyników nie liczysz do B1.
+- [ ] **Pilot (sesja 0)** na życzliwej osobie — mierzy czas i łata skrypt; jej wyników nie liczysz do H2-U.
 - [ ] Skrypt danych demo (konto z 2–3 tyg. historii + ≥1 flaga guidance/stagnacji) — [Claude, na żądanie].
 - [ ] Dwa konta per osoba (demo + świeże), hasła pod ręką, przełączenia przećwiczone na pilocie.
 - [ ] Wydrukowany arkusz §7 × liczba osób + ten skrypt.
+
+## 10. H2-F — skrót protokołu terenowego
+
+- 8–12 zarządzanych kont, trzy tygodnie i prawdziwe treningi;
+- feature freeze poza P0/P1;
+- cotygodniowe pytania: co pomogło, co przeszkodziło, co użytkownik zrobił poza Arco;
+- notować pierwszy i drugi trening, powrót w trzecim tygodniu, użycie guidance i Ekipy;
+- po minimum trzech sesjach pokazać dokładną cenę i zebrać jawną rezerwację płatnej bety;
+- eksperyment importu jest fake-doorem i analizą kilku CSV, nie implementacją;
+- wynik czytać według zamrożonych progów z `backlog-produktu.md`.

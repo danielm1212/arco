@@ -1,7 +1,7 @@
 # Arco — audyt biznesowy i strategiczny
 
-> **Data:** 2026-07-08 · **Autor:** agent-analityk biznesowy (brief: `brief-audyt-biznesowy.md`, 2026-07-07)
-> **Podstawa:** `monetyzacja.md`, `konkurencja-hevy.md`, `roadmap.md` + weryfikacja rynkowa (web, 2026-07-08).
+> **Data:** 2026-07-08 · **Autor:** agent-analityk biznesowy. Brief źródłowy z 2026-07-07 pozostaje w historii Git.
+> **Podstawa:** ówczesna analiza monetyzacji (zachowana w historii Git), `konkurencja-hevy.md`, `roadmap.md` + weryfikacja rynkowa (web, 2026-07-08).
 > **Zastrzeżenie wejściowe:** `CLAUDE.md`, `HANDOFF.md` i pliki Priorytetu 3 nie były dostępne w tej sesji — audyt opiera się na trzech plikach Priorytetu 1 i opisie stanu produktu z briefu §1. Wnioski zależne od stanu kodu/długu technicznego oznaczam jako [ZAŁOŻENIE]. Zero danych użytkowych (single-account, przed H2) — każdy wniosek ilościowy to hipoteza z jawnym uzasadnieniem.
 > **Legenda oznaczeń:** [DANE] = zweryfikowane źródło zewnętrzne · [DOCS] = liczba z kanonu, niezweryfikowana niezależnie · [ZAŁOŻENIE] = mój szacunek z uzasadnieniem.
 
@@ -13,8 +13,8 @@
 
 Siedem kluczowych wniosków:
 
-1. **Największa ślepa plamka kanonu: Hevy Coach istnieje.** `konkurencja-hevy.md` audytuje Hevy jako consumer-loggera i nie wspomina, że Hevy prowadzi dojrzałą platformę trenerską (Hevy Coach: 1–500 podopiecznych, 30 dni triala, podopieczny loguje w apce Hevy **za darmo** i dostaje gratis Hevy Pro) [DANE]. Teza z `monetyzacja.md`, że „strukturalna przewaga = podopieczny już loguje granularne dane", jest **dokładnie modelem Hevy Coach** — tyle że u nich działa na bazie 2M+ userów od lat. Przewaga nie jest strukturalna. Jest co najwyżej **lokalizacyjna** (Hevy Coach wspiera wyłącznie angielski [DANE], zero PL-native GTM, faktur, kontekstu VAT).
-2. **Consumer premium PL to lifestyle business z twardym sufitem — i kanon ma rację, że to etap, nie destination.** Matematyka sufitu z `monetyzacja.md` (15–30k zł MRR) broni się po weryfikacji; moim zdaniem jest wręcz optymistyczna w części MAU (§3.3).
+1. **Największa ślepa plamka kanonu: Hevy Coach istnieje.** `konkurencja-hevy.md` audytuje Hevy jako consumer-loggera i nie wspomina, że Hevy prowadzi dojrzałą platformę trenerską (Hevy Coach: 1–500 podopiecznych, 30 dni triala, podopieczny loguje w apce Hevy **za darmo** i dostaje gratis Hevy Pro) [DANE]. Teza z ówczesnej analizy monetyzacji, że „strukturalna przewaga = podopieczny już loguje granularne dane", jest **dokładnie modelem Hevy Coach** — tyle że u nich działa na bazie 2M+ userów od lat. Przewaga nie jest strukturalna. Jest co najwyżej **lokalizacyjna** (Hevy Coach wspiera wyłącznie angielski [DANE], zero PL-native GTM, faktur, kontekstu VAT).
+2. **Consumer premium PL to lifestyle business z twardym sufitem — i kanon ma rację, że to etap, nie destination.** Matematyka sufitu z ówczesnej analizy monetyzacji (15–30k zł MRR) broni się po weryfikacji; moim zdaniem jest wręcz optymistyczna w części MAU (§3.3).
 3. **Warstwa trenerska ~55k zł MRR jest policzona na nierealnym założeniu 10% penetracji.** Realistycznie, dla solo-foundera bez marki, w 24 miesiące: 2–4% × 7 000 trenerów = **11–22k zł MRR** z trenerów. Nadal najlepszy segment planu — ale to nie jest „silnik", to drugi silniczek. Razem z consumer: 25–50k zł MRR w optymistycznym scenariuszu 2–3 lat. To dobre jednoosobowe biznesowe życie, nie startup.
 4. **Teza „anti-Hevy" broni się jako strategia retencji, nie jako moat płatniczy.** Guidance rule-based jest kopiowalny w jeden kwartał przez zespół Hevy (13 osób [DANE]) — tabela moatów w `konkurencja-hevy.md` zakłada „sprzeczne z DNA", ale Hevy Coach dowodzi, że Hevy wychodzi poza DNA „księgi", gdy widzi przychód. Prawdziwa obrona Arco to nisza + język + relacja z trenerem, nie feature.
 5. **Build-before-validate to obecnie największe ryzyko wykonawcze** — większe niż konkurencja. Rdzeń jest dopracowany na poziomie, którego nie zweryfikował ani jeden obcy użytkownik. H2 (3–5 osób) jest zaplanowany dobrze, ale testuje usability, nie willingness-to-pay ani tezę trenerską. Trzy najtańsze walidacje (§9) redukują więcej niepewności niż kolejne 3 sprinty kodu.
@@ -34,7 +34,7 @@ Uzasadnienie skali:
 - **W górę ogranicza Cię rynek i model.** PL-first + dziennik siłowy + subskrypcja consumer to kategoria, w której nawet lider globalny (Hevy) po ~7 latach robi ~$600–800k/mies [DANE: Sensor Tower ~$600k/mies; doniesienia o ~$800k MRR na pocz. 2026] na 2M+ userach i całym świecie. Polska to ułamek tego TAM, a Ty startujesz bez efektu sieciowego i bez zespołu.
 - **W dół chroni Cię koszt.** Stack (Vercel + Supabase) przy Twojej skali kosztuje grosze, akwizycja organiczna, zero payrollu. Break-even jest niski — to biznes, który może być rentowny przy 2–3k zł MRR. Wysoka odporność, niski upside: klasyczny profil bootstrap.
 - **Fitatu jako precedens się broni, ale słabo transferuje.** Zweryfikowane: ~26,8 mln zł przychodu, ~2,96 mln zł zysku netto (2023) [DANE: KRS/BizRaport]. Tylko że Fitatu gra w kategorii „liczenie kalorii", gdzie (a) TAM to każdy odchudzający się Polak, nie bywalec siłowni z ambicją progresji, (b) monetyzują też reklamami, które świadomie odrzuciłeś. Fitatu dowodzi, że PL-first health app może być biznesem — nie dowodzi, że dziennik siłowy nim będzie.
-- **Czy to hobby z aspiracjami?** Nie — na to produkt jest za dojrzały, a plan monetyzacji za konkretny. Ale granica między „lifestyle business" a „hobby, które zwraca koszty" przebiega dokładnie na bramce z `monetyzacja.md` (konwersja >2%) i na tym, czy znajdziesz 30 płacących trenerów w pierwszych 6 miesiącach etapu 2.
+- **Czy to hobby z aspiracjami?** Nie — na to produkt jest za dojrzały, a plan monetyzacji za konkretny. Ale granica między „lifestyle business" a „hobby, które zwraca koszty" przebiega dokładnie na bramce z ówczesnej analizy (konwersja >2%) i na tym, czy znajdziesz 30 płacących trenerów w pierwszych 6 miesiącach etapu 2.
 
 Pytanie zwrotne (patrz §10): **jaki MRR czyni to dla Ciebie sensownym głównym zajęciem** obok/zamiast kontraktu JDG? Bez tej liczby „warto/nie warto" jest niedomknięte — przy progu 20k zł/mies plan jest realistyczny; przy progu 60k zł/mies wymaga wariantu B i sporo szczęścia.
 
@@ -59,7 +59,7 @@ Pytanie zwrotne (patrz §10): **jaki MRR czyni to dla Ciebie sensownym głównym
 **Consumer (dziennik siłowy):**
 - TAM: 3,1 mln członków klubów [DANE] + szara strefa garaży/domów — zaokrąglijmy do ~3,5 mln trenujących siłowo [ZAŁOŻENIE].
 - SAM: osoby, które trenują na tyle poważnie, żeby *cokolwiek* logować (papier, notatki, apka) — w badaniach zachowań siłownianych to typowo 15–25% regularnych [ZAŁOŻENIE, brak twardej PL-danej]: **~450–750k osób**.
-- SOM (2–3 lata, solo, organicznie): 30–60k MAU z `monetyzacja.md` to **górna granica** SOM, nie środek. Bez budżetu marketingowego i bez efektu sieci realistyczny środek to 10–30k MAU [ZAŁOŻENIE]. Stąd moja korekta sufitu w §3.3.
+- SOM (2–3 lata, solo, organicznie): 30–60k MAU z ówczesnej analizy to **górna granica** SOM, nie środek. Bez budżetu marketingowego i bez efektu sieci realistyczny środek to 10–30k MAU [ZAŁOŻENIE]. Stąd moja korekta sufitu w §3.3.
 
 **Trenerski (B2B):**
 - TAM: ~7 000 aktywnych trenerów [DANE 2021] — ale uwaga: tylko część prowadzi klientów w modelu, gdzie appka ma sens (programowanie + zdalny nadzór). Trener „godzinowy na sali", który nie pisze programów, nie potrzebuje Arco.
@@ -189,7 +189,7 @@ Metoda: wartość dla retencji/WTP vs koszt utrzymania (solo). [ZAŁOŻENIE] tam
 **0–3 miesiące (lipiec–wrzesień 2026):**
 - H1 dokończ zgodnie z planem (S9-cz.2 → S10, Sprint 5 poprawność offline przed wszystkim innym płatnościowym).
 - **Równolegle, timebox 2 tyg.: smoke test trenerski (§9.1).** Bez kodu.
-- H2: testy z 3–5 osobami wg `usability-audit.md` + dołóż moduł wywiadu o WTP (§9.3) do tej samej sesji — masz już ludzi w pokoju, wykorzystaj ich podwójnie.
+- H2: testy z 3–5 osobami wg bieżącego `scenariusz-h2.md` + dołóż moduł wywiadu o WTP (§9.3) do tej samej sesji — masz już ludzi w pokoju, wykorzystaj ich podwójnie.
 - Decyzja bramkowa #1 (koniec września): sygnał trenerski gorący/letni/martwy × wynik H2. Gorący → wciągnij minimalny dashboard trenera do planu Q4. Martwy → czyste A, akceptujesz sufit.
 
 **3–6 miesięcy (październik–grudzień 2026):**
@@ -240,4 +240,4 @@ Bramki celowo z liczbami niższymi niż kanoniczne „2%/55k" — mierzą **kier
 
 ---
 
-*Raport wyprodukowany zgodnie z §7 briefu. Żadne źródła prawdy (`roadmap.md`, `monetyzacja.md`, `CLAUDE.md`) nie zostały zmienione; wszystkie propozycje zmian w kanonie (m.in. dopisanie Hevy Coach do `konkurencja-hevy.md`, korekta matematyki sufitu i założenia 10% penetracji trenerów w `monetyzacja.md`) są do decyzji właściciela.*
+*Raport wyprodukowany zgodnie z §7 briefu. Ówczesne źródła prawdy nie zostały zmienione; analiza monetyzacji jest dostępna w historii Git. Wszystkie propozycje zmian w kanonie (m.in. dopisanie Hevy Coach do `konkurencja-hevy.md`, korekta matematyki sufitu i założenia 10% penetracji trenerów) były kierowane do decyzji właściciela.*

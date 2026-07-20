@@ -1,6 +1,6 @@
 # Arco — wizja i strategia v3 (KANON — zaakceptowane [Ty] 2026-07-16)
 
-> **Data:** 2026-07-16 · **Status:** ✅ KANON (akceptacja [Ty] 2026-07-16) — zastępuje wizję, persony i model biznesowy z §1 i §3 `wizja-i-plan-produktu-v2.md` oraz §1–§3 `strategia-marketingowa.md`. **Zasady Z1–Z3 z §2 v2 pozostają wiążące.** Sekwencja wykonawcza (Kroki/bramki) i roadmapa H0–H5 — bez zmian, żyją w `roadmap.md`.
+> **Data:** 2026-07-16 · **Rebaseline:** 2026-07-20 · **Status:** ✅ KANON (akceptacja [Ty] 2026-07-16). Ten plik zawiera całą obowiązującą wizję i zasady nadrzędne. Sekwencja i bramki żyją w `roadmap.md`, a rozstrzygnięcia wykonawcze w `decyzje-produktowe.md`.
 > **Źródła:** wizja v2 + monetyzacja + ekipa-koncepcja + audyt paywalla (A–H) + rozmowy [Ty] 12–16.07 (3 rampy, trener-kanał, mapa wirali, okładki, „duma z liczb").
 
 ---
@@ -35,7 +35,16 @@ Cztery filary doświadczenia (trzy z v2 + czwarty awansowany z audytów):
 
 ## 3. Model biznesowy (po audycie paywalla 2026-07-16)
 
-**Zasady niepodważalne Z1–Z3 (bez zmian):** rdzeń logowania zawsze darmowy · silnik wzrostu (ekipa, zaproszenia, nudge, udostępnianie) zawsze darmowy · limitujemy dostęp, nie dane.
+**Zasady niepodważalne:**
+
+1. **Rdzeń logowania zawsze darmowy.** Start, zapis serii, timer, offline, historia w ramach
+   uczciwie komunikowanego zakresu i eksport nie mogą stać się zakładnikiem subskrypcji.
+2. **Silnik wzrostu zawsze darmowy.** Ekipa, zaproszenia, reakcje, nudge i podstawowe
+   udostępnianie nie mogą mieć paywalla, który zatrzymuje pętlę.
+3. **Limitujemy dostęp, nie dane.** Nie kasujemy ani nie fałszujemy historii po zakończeniu
+   triala; płatność odblokowuje analizę, prowadzenie i dłuższy dostęp, nie własność danych.
+4. **Prywatność i bezpieczeństwo wygrywają z retencją.** Social nie ujawnia ciężarów,
+   notatek ani zdjęć bez jawnej zgody; materiały techniczne ćwiczeń wymagają review człowieka.
 
 **Free (na zawsze):** pełny logger, 15 programów, 2 własne plany, 10 custom, 12 tyg. historii, guidance-lite, staty podstawowe, passa, ekipa w całości, **cel siłowy + pasek postępu** *(nowe, G)*.
 
@@ -45,23 +54,33 @@ Cztery filary doświadczenia (trzy z v2 + czwarty awansowany z audytów):
 - **Pamięta całą Twoją drogę** — pełna historia, trendy, muscle split w czasie, „Rok w żelazie".
 Plus lekkie bonusy (nigdy argument główny): ochrona passy, **motywy Warm + ikony apki** *(H — zatwierdzone [Ty] 2026-07-16)*.
 
-**Mechanika konwersji:** reverse trial 21 dni bez karty → **teaser stagnacji** *(A — ✅ zaakceptowane 2026-07-16: pierwsza diagnoza gratis dla każdego, w momencie bólu)* → fala 1 (koniec triala + trigger) → fala 2 (kłódka historii, mies. 3–4) → fala 3 sezonowa („Rok w żelazie", grudzień). Bramka B2 skalibrowana do rynku opt-in: trial→paid **≥10%** lub całkowita ≥1,5% *(B — ✅ zaakceptowane 2026-07-16; benchmark bez karty: 8,9–18,2%)*.
+**Mechanika konwersji:** reverse trial 21 dni bez karty, uruchamiany po pierwszym ukończonym
+treningu → **teaser stagnacji** *(A — ✅ zaakceptowane 2026-07-16: pierwsza diagnoza gratis dla
+każdego, w momencie bólu)* → fala 1 (koniec triala + trigger) → fala 2 (kłódka historii,
+mies. 3–4) → fala 3 sezonowa („Rok w żelazie", grudzień). Bramka **PAY-1** jest hipotezą
+startową: trial→paid **≥10%** lub całkowita ≥1,5%. Przed płatną betą potwierdzamy, że trial
+faktycznie zdążył pokazać działającą wartość, a nie wyłącznie upłynął czas.
 
-**Sufit świadomy:** PL-only consumer ≈ 15–30k zł MRR — etap walidacji, nie destination; gate ekspansji (EN/B2B wellness) po B4.
+**Sufit świadomy:** PL-only consumer ≈ 15–30k zł MRR — etap walidacji, nie destination;
+bramka ekspansji **SCALE-1** dopiero po realnych danych płatnej bety.
 
 ## 4. Strategia wzrostu — trzy rampy, trzy wirale
 
 **Rampy akwizycji:** (1) content K1 → Kasia i Paweł; (2) pętla ekipy → Radek; (3) trenerzy K5 → podopieczni *(po funkcji udostępniania)*.
 
 **Mapa wirali (wspólny mechanizm: link niesie instalację):**
-1. **Zaproszenie do ekipy** (motyw: relacja) — Krok 4, rdzeń;
+1. **Zaproszenie do ekipy** (motyw: relacja) — GROW-1;
 2. **Udostępnij plan** (motyw: treść; user→kumpel i trener→podopieczny; kopia nie live-sync, link prywatny, podgląd bez konta) — po launchu;
 3. **Share-cardy / recap** (motyw: duma; warstwa retro na stories) — H5.
-Każda pętla mierzona osobno (k per pętla); B3 dotyczy pętli 1.
+Każda pętla mierzona osobno (k per pętla); **GROW-1** dotyczy pętli 1.
 
 ## 5. Świadomie poza zakresem / odłożone (bez zmian)
 
-Warstwa trenerska odłożona (re-otwarcie: B2 zielona + organiczny popyt mierzony udostępnieniami + apetyt [Ty]) · natyw poza zakresem (wyjątek TWA/Capacitor przy duszeniu pętli przez iOS) · trwale poza: AI auto-programming, dieta, wearables, feed/komentarze/DM, marketplace, reklamy, lifetime jako model, hard paywall.
+Warstwa trenerska odłożona (re-otwarcie: PAY-1 zielona + organiczny popyt mierzony
+udostępnieniami + apetyt [Ty]) · migracja mobilna dopiero przez MOBILE-0 po PAY-1, z wyjątkiem
+udowodnionej blokady PWA w H2-F · osobne pełne aplikacje Swift/Kotlin poza zakresem bez
+zmierzonego ograniczenia React Native · trwale poza: AI auto-programming, dieta, wearables,
+feed/komentarze/DM, marketplace, reklamy, lifetime jako model, hard paywall.
 
 ## 6. Strategia marketingowa (refresh)
 
@@ -100,5 +119,6 @@ Warstwa trenerska odłożona (re-otwarcie: B2 zielona + organiczny popyt mierzon
 ## 8. Log decyzji (2026-07-16, [Ty])
 
 1. ✅ v3 zaakceptowane jako kanon (§1–3 v2 i §1–3 strategii → noty o nadpisaniu).
-2. ✅ A teaser stagnacji · ✅ B próg B2 trial→paid ≥10% (naniesione w wizji v2 §7) · ✅ C yearly-first · ✅ G cele z prognozą · ✅ H kosmetyka premium.
+2. ✅ A teaser stagnacji · ✅ B próg PAY-1 trial→paid ≥10% jako hipoteza płatnej bety ·
+   ✅ C yearly-first · ✅ G cele z prognozą · ✅ H kosmetyka premium.
 3. ✅ Slogany: „Trenuj. Zapisuj. Nie odpuszczaj." = master (landing/hero); pozostałe = język tła do postów/stories/K1.

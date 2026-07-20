@@ -9,6 +9,6 @@ Jeżeli dokument w archiwum przeczy aktualnym plikom, obowiązuje kolejność:
 1. `../HANDOFF.md`
 2. `../plan-sprintow-2026-07.md`
 3. `../roadmap.md`
-4. `../wizja-i-plan-produktu-v2.md`
+4. `../decyzje-produktowe.md`
 
 Do archiwum trafiają wyłącznie materiały o trwałej wartości badawczej lub decyzyjnej. Zwykły raport „co wdrożono” powinien zostać zapisany w kodzie, testach, changelogu Git i krótkim bieżącym handoffie.

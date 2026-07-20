@@ -2,7 +2,10 @@
 
 > ⚠️ **2026-07-16: §1–§3 NADPISANE przez `wizja-i-strategia-v3.md`** (persony z drugim komunikatem Pawła, Trener Michał, messaging house z 4. filarem, slogany). Aktualne poniżej: §4 lejek + mapa wirali, §5 kampania launchowa, dalej kanały/kalendarz.
 
-> **Data:** 2026-07-08 · **Relacja do innych doków:** to jest warstwa STRATEGII (kto, z jakim komunikatem, dlaczego my, kiedy). Taktyka kanałów = `plan-dystrybucji.md`; głos = `tone-of-voice.md`; terminy = `kalendarz-wykonawczy.md`; landing = `landing-plan.md`. Uwzględnia korektę z 2026-07-08: **Hevy ma polską lokalizację** — klin nie stoi na języku.
+> **Data:** 2026-07-08 · **Relacja po rebaseline:** kanon komunikatu =
+> `wizja-i-strategia-v3.md`; taktyka = `plan-dystrybucji.md`; głos = `tone-of-voice.md`;
+> bramki = `roadmap.md`; landing = `landing-plan.md`. Hevy ma polską lokalizację — klin
+> nie stoi na języku.
 > **Budżet:** 0 zł + Twój czas (koszty stałe: domena, Framer, ESP ~150–250 zł/mies. łącznie). Wszystko niżej jest policzone pod ten budżet.
 
 ---
@@ -55,12 +58,12 @@
 | Awareness | content K1, społeczności K3, build-in-public K4 | plan-dystrybucji | sesje landinga per źródło (UTM) |
 | Acquisition | landing → lista → (od launchu) signup | landing-plan | konwersja wejście→zapis 10–25%; `waitlist_signup` |
 | Activation | onboarding → 1. trening → celebracja → instalacja PWA | WelcomeOverlay, done-page, prompt §5 wizji | % ukończonego 1. treningu; `pwa_install_*` |
-| Retention | guidance, passa, cel tygodniowy → **ekipy** | rdzeń + Krok 4 | W1/W4; % w ekipach |
-| Revenue | fala 1 (trial+stagnacja), fala 2 (kłódka historii) | Krok 3 | konwersja_trial / konwersja_historia |
-| Referral | zaproszenia do ekip + (backlog) udostępnij plan + karty recap | Krok 4, backlog, recap | k-współczynnik ≥1,15 (B3); saves/share |
+| Retention | guidance, passa, cel tygodniowy → **Ekipy** | rdzeń + GROW-1 | W1/W4; % w Ekipach |
+| Revenue | fala 1 (trial+stagnacja), fala 2 (kłódka historii) | PAY-1 | konwersja_trial / konwersja_historia |
+| Referral | zaproszenia do ekip + (backlog) udostępnij plan + karty recap | publiczna Ekipa, backlog, recap | k-współczynnik ≥1,15 (GROW-1); saves/share |
 
 **Mapa wirali (zapis 2026-07-16, [Ty]):** trzy pętle o różnych motywach, wspólny mechanizm — link niesie instalację:
-1. **Zaproszenie do ekipy** (motyw: relacja/odpowiedzialność) — „trenujcie razem" → instalacja → własna ekipa. Rdzeń, Krok 4.
+1. **Zaproszenie do ekipy** (motyw: relacja/odpowiedzialność) — „trenujcie razem" → instalacja → własna Ekipa. GROW-1.
 2. **Udostępnij plan** (motyw: treść; dwie twarze: user→kumpel, trener→podopieczny) — link → podgląd planu BEZ konta (mini-landing) → „Zapisz w Arco". Backlog po launchu; podwójna rola: akwizycja + czujnik popytu na warstwę trenerską.
 3. **Share-cardy / recap** (motyw: duma) — sesja/PR/„Rok w żelazie" jako obrazek na stories w warstwie retro. H5.
 Kolejność wdrażania = kolejność powyżej; każda pętla mierzona osobno (k per pętla), nie zbiorczo.
@@ -80,7 +83,7 @@ Wniosek strategiczny: marketing płatny nie istnieje w tym lejku — **awareness
 - Kontent stycznia w K1 gotowy PRZED świętami: „Postanowienie: siłownia. Plan, który przetrwa luty" (fraza sezonowa!).
 **Cel launchu (spójny z wizją):** sygnał konwersji, nie tłum — 100–300 aktywowanych userów w styczniu, z czego mierzalny % w trialu.
 
-**Faza 3 · lut–kwi 2027 (post-launch):** rytm z plan-dystrybucji (20% czasu) + start ekip jako „druga premiera" (osobny mini-launch: „przyprowadź swojego Radka") + pierwsze case'y userów w K1. B2 rozstrzyga się na danych, nie na wrażeniach.
+**Faza 3 · lut–kwi 2027 (post-launch):** rytm z plan-dystrybucji (20% czasu) + start ekip jako „druga premiera" (osobny mini-launch: „przyprowadź swojego Radka") + pierwsze case'y userów w K1. PAY-1 rozstrzyga się na danych, nie na wrażeniach.
 
 ## 6. Kalendarz contentu K1 (pierwsze 10 artykułów — drafty piszę na hasło)
 
@@ -101,7 +104,11 @@ Zero: kupionych obserwujących, przeklejanych motywacyjnych grafik, „before/af
 
 ## 8. KPI strategii (przegląd co miesiąc, 30 min — razem z przeglądem kanałów)
 
-Pre-launch: lista (cel 300–500) · konwersja landinga · ruch K1 m/m. Launch+90: aktywowani userzy · W4 · konwersja_trial (próg B2: ≥25% trial→paid lub ≥1,5% całkowita) · % z listy → aktywni. Od ekip: k-współczynnik, % w ekipach (B3). **Jedna metryka gwiazdy północnej: liczba userów z ≥4 treningami w miesiącu** — wszystko inne jej służy.
+Pre-launch: lista (cel 300–500) · konwersja landinga · ruch K1 m/m. Launch+90: aktywowani
+użytkownicy · W4 · PAY-1 (hipoteza startowa: ≥10% trial→paid lub ≥1,5% całkowita) · % z listy
+→ aktywni. Od Ekip: k-współczynnik i % w Ekipach (GROW-1). **North Star:** liczba użytkowników,
+którzy realizują własny cel w minimum 3 z 4 ostatnich pełnych tygodni. Definicja i guardraile
+są w `roadmap.md`.
 
 ## 9. Decyzje [Ty]
 

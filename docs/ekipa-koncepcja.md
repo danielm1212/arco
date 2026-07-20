@@ -12,8 +12,10 @@
 - **Definicja:** prywatna grupa Ty + 1–5 znajomych (**max 6 osób**) · user w **max 3 ekipach od v1** (obie liczby: decyzja [Ty] 2026-07-12 — było Ty+1–3 i 1 ekipa/user); zaproszenie linkiem/kodem; zero feedu, komentarzy, DM (wizja §4).
 - **Widoczność:** check-in („trenował dziś") + passa tygodni + reakcje. NIE: ćwiczenia, ciężary, logi, ciało. Technicznie: `activity_events`, nigdy `sessions` (schemat §1.4).
 - **Interakcje:** reakcje z whitelisty 💪🔥👏🎯 + nudge 1 tap/dzień/parę osób; trzy kanały dostarczania (push → skrzynka → e-mail), quiet hours 22–7, okno wg typowej pory treningu odbiorcy.
-- **Rola strategiczna:** silnik wzrostu (Z2: w całości darmowy, na zawsze), bramka B3 (≥30% aktywnych w ekipie; k ≥1,15), fast-follow 4–8 tyg. po launchu (Krok 4).
-- **Walidacja:** ~~concierge-test na WhatsAppie~~ **ODWOŁANY (decyzja [Ty] 2026-07-12 — brak możliwości organizacyjnej).** Zastępuje go: H2 moduł C (koncept-test C1–C3) + **dogfooding od dnia 1 Kroku 4** (pierwsza ekipa = Daniel + własny krąg, oceniana kryteriami 🟢🟡🔴 z concierge-doku po 3 tyg.) + bramka B3 bez zmian.
+- **Rola strategiczna:** silnik wzrostu (Z2: w całości darmowy, na zawsze), bramka GROW-1
+  (≥30% aktywnych w Ekipie; k ≥1,15), fast-follow po płatnej becie.
+- **Walidacja:** dawny concierge-test na WhatsAppie został odwołany. Zastępują go H2-E z trzema
+  prawdziwymi parami, H2-F oraz późniejszy publiczny dogfood oceniany bramką GROW-1.
 - **Model danych:** kompletny design (schemat §4–5) z RLS, anty-spamem, rotacją invite-code i pułapką rekursji rozbrojoną.
 - **Onboarding z zaproszenia:** wariant „Radek Cię zaprosił" z jawną zgodą przed dołączeniem. Szczegółowy flow wraca w Sprincie 21 przed publiczną Ekipą.
 
@@ -102,21 +104,29 @@ Nie jest stałą kartą nawigacyjną. Pojawia się tylko po nowym check-inie, re
 - **Czekający na pierwszego zaproszonego:** „Link wysłany. Gdy Radek zrobi pierwszy trening — zobaczysz to tutaj."
 
 ### 5.4 Awatary bez zdjęć — ✅ DECYZJA [Ty] 2026-07-12: **emoji (wariant B)**
-Zero uploadów zdjęć profilowych w v1 (moderacja, RODO, tarcie). User wybiera **emoji-awatar z whitelisty** (kurowany zestaw ~20–30, spójny z ToV — zwierzaki/siłownia/charaktery, zero twarzy-memów) na tle z palety ramp (deterministycznie z user_id). Strażnik ToV: zestaw kurowany tak, żeby nie wpaść w infantylność. **Docelowo (backlog): kreator awatara** — do re-oceny po launchu, nie w Kroku 4.
+Zero uploadów zdjęć profilowych w v1 (moderacja, RODO, tarcie). Dawna decyzja o whitelistcie
+emoji pozostaje wariantem, lecz implementację rozstrzyga AVATAR-01 po H2-E/H2-F. Do tego czasu
+używamy najprostszego spójnego identyfikatora i nie budujemy kreatora wyglądu.
 
 ### 5.5 Copy (rejestr 2, przykłady do przekazania przy budowie)
 Zaproszenie (share-sheet): „Radek zaprasza Cię do swojej ekipy w Arco — trenujcie razem, pilnujcie się nawzajem." · Check-in: „Radek trenował dziś — 6. tydzień 🔥" · Nudge: „Radek przypomina Ci o treningu 💪" · Digest: „Twoja ekipa w tym tygodniu: Ania 3/3 · Ty 2/3 · Radek 1/3" · Po reakcji: „Ania widziała Twój trening. 💪 od niej." Metafora-wsparcie w głębszym copy: asekuracja/spotter („ekipa Cię asekuruje").
 
-## 6. Etapowanie (spójne z Krokami wizji)
+## 6. Etapowanie po rebaseline
 
-- **v0 — walidacja:** H2 moduł C sprawdza zrozumienie i atrakcyjność koncepcji. Publiczną Ekipę dogfoodujemy przez trzy tygodnie na realnych małych grupach. Ocenimy aktywność w trzecim tygodniu względem pierwszego, spontaniczne reakcje i nudge, powroty po nudge oraz deklarację „brakowałoby mi tego". Digest pozostaje siatką bezpieczeństwa, a ryzyko rozmycia odpowiedzialności mierzymy względem rozmiaru ekipy.
-- **v1 — Krok 4 (6–8 tyg., po decyzjach 2026-07-12 bliżej górnej granicy):** schemat §4 + RLS + check-in/reakcje/nudge + tab `/ekipa` ze switcherem (multi-3) + kontekstowe zdarzenie na Home + wybór ekipy w zaproszeniu + emoji-awatary + push/e-mail + pętla instalacji + **digest tygodniowy (✅ w v1)** + eventy fazy 3 instrumentacji. Pełna skrzynka pozostaje zależna od danych.
-- **v1.x — po B3-danych:** kalibracja progu nudge, warianty copy nudge'a (wzorzec Duolingo: wariantowość utrzymuje świeżość), ochrona-passy × ekipa (komunikacja choroby/urlopu).
+- **v0/R3b — konta testowe:** hub, RLS, check-in, reakcje, nudge, multi-3, unread i jedno
+  zdarzenie Home. Walidacja zachowania w H2-E i H2-F.
+- **v1/GROW-1 — publiczna Ekipa:** utwardzenie kodów i zgód, quiet hours, wybrane kanały
+  dostarczania, pętla instalacji i instrumentacja. Push/e-mail, digest i awatary wchodzą tylko,
+  jeśli dane wskażą konkretną potrzebę; nie jako pakiet obowiązkowy.
+- **v1.x — po danych GROW-1:** kalibracja progu nudge, warianty copy nudge'a, ochrona passy
+  × Ekipa i komunikacja choroby/urlopu.
 - **v2 — tylko jeśli dane każą:** matchmaking obcych (WYŁĄCZNIE jeśli dane pokażą ekipy żyjące bez wcześniejszej relacji — po odwołaniu concierge tę tezę sprawdzą dopiero metryki v1), TWA gdy iOS dusi pętlę. (Multi-ekipa przeniesiona do v1 decyzją [Ty].)
 
 ## 7. Metryki (mapowanie na istniejącą instrumentację)
 
-Faza 3 z `instrumentacja-metryk.md` pokrywa: `pod_created/joined` (% aktywnych w ekipie — B3), `nudge_sent/delivered` (delivery rate per kanał), `reaction_sent` (żywotność). **Dodać (PROPOZYCJA):** `pod_weekly_alive` (ekipa z ≥2 aktywnymi członkami w tygodniu — realny puls B3 lepszy niż samo członkostwo) i `invite_sent → joined → first_workout` jako lejek k-współczynnika.
+Faza 3 z `instrumentacja-metryk.md` pokrywa: `pod_created/joined` (% aktywnych w Ekipie —
+GROW-1), `nudge_sent/delivered` i `reaction_sent`. Propozycje: `pod_weekly_alive` (Ekipa z ≥2
+aktywnymi członkami w tygodniu) i `invite_sent → joined → first_workout` jako lejek.
 
 ## 8. Decyzje — rozstrzygnięte 2026-07-12 [Ty]
 
@@ -125,6 +135,7 @@ Faza 3 z `instrumentacja-metryk.md` pokrywa: `pod_created/joined` (% aktywnych w
 3. **Wyrzucanie przez twórcę** — ✅ TAK, cicho (§3.3).
 4. **Miejsce w IA** — ✅ tab Ekipa; Home tylko kontekstowo. **Rozmiar/liczebność:** ✅ ekipa max 6 osób, user w max 3 ekipach od v1 (§2 — koszty i mitygacje).
 5. **Progi afordancji nudge** — ✅ zaakceptowane (≥3 dni + zagrożony cel); kalibracja po dogfoodingu v1.
-6. **Concierge-test ODWOŁANY** — ✅ (brak możliwości organizacyjnej). Walidacja: H2 moduł C + dogfooding od dnia 1 Kroku 4 + B3. Uzasadnienie [Ty] limitów 6/3 doprecyzowane: **max 6 = sufit inkluzji** (nie rozbijać np. szóstki z klasy), nie target — realne ekipy będą 2–3-osobowe; **multi-3 = rozłączne kręgi życia** (klasa/praca/rodzina — te osoby się nie znają, jedna wspólna grupa byłaby martwa z definicji).
+6. **Concierge-test ODWOŁANY** — ✅. Walidacja: H2-E + H2-F + GROW-1. Uzasadnienie limitów
+   pozostaje: max 6 to sufit inkluzji, a multi-3 obsługuje rozłączne kręgi życia.
 
 **Otwarte pozostają:** kalibracja progów po dogfoodingu, zakres publicznych powiadomień oraz to, czy po danych potrzebna jest pełna skrzynka. Miejsce Ekipy w bottom barze jest rozstrzygnięte.

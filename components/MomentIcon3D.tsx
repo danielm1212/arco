@@ -14,17 +14,9 @@ const MOMENT_ICONS = {
     light: "/icons-3d/production/target-light.webp",
     dark: "/icons-3d/production/target-dark.webp",
   },
-  fire: {
-    light: "/icons-3d/production/fire-light.webp",
-    dark: "/icons-3d/production/fire-dark.webp",
-  },
   calendar: {
     light: "/icons-3d/icon-3d-calendar-date-light.png",
     dark: "/icons-3d/icon-3d-calendar-date-dark.png",
-  },
-  medal: {
-    light: "/icons-3d/icon-3d-medal-light.png",
-    dark: "/icons-3d/icon-3d-medal-dark.png",
   },
   tick: {
     light: "/icons-3d/icon-3d-tick-light.png",

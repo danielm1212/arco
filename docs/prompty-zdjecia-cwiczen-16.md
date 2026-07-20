@@ -1,7 +1,12 @@
 # Prompty: zdjęcia instruktażowe — 16 ćwiczeń z placeholderem
 
-> **Data:** 2026-07-17 (rewizja po przeglądzie) · **Źródło listy:** skan `scripts/data/exercises.json` + presety w `seed.ts` (16 unikalnych ćwiczeń z `/exercise-placeholder.svg` użytych w programach, 49 slotów). Zgodne z `audyt-bazy-cwiczen.md` §5.6.
-> **Styl:** rozszerzenie systemu z `prompt-fotografia-warm.md` — ale to warstwa **instruktażowa**, nie editorial: pozycja czytelna technicznie (posed-for-clarity, nie candid), pełna sylwetka, zero motion blur. Świadomy kompromis: obecna baza to stockowe zdjęcia z ~2010 (chłodne tony, loga na strojach), więc nowa 16-tka i tak będzie odstawać — odstaje w stronę docelowego stylu, a nie od niego (S11 = docelowo wymiana całej biblioteki tym systemem).
+> **Data:** 2026-07-17 · **Status po rebaseline:** materiał roboczy. Prompt ani estetyczny
+> przegląd nie zatwierdzają techniki. Każda para przed użyciem wymaga zgodności z wariantem,
+> źródła/licencji i review człowieka lub trenera zgodnie z CONTENT-01–04 w backlogu.
+> **Źródło listy:** skan `scripts/data/exercises.json` + presety w `seed.ts`.
+> **Styl:** rozszerzenie systemu z `prompt-fotografia-warm.md`, ale to warstwa instruktażowa,
+> nie editorial. Pełna wymiana biblioteki nie jest aktywnym sprintem; kolejność ustala
+> CONTENT-01–04, a technikę zatwierdza człowiek.
 > **Konwencja:** każde ćwiczenie = **2 zdjęcia**: `0` (pozycja startowa) i `1` (pozycja końcowa) — jak w free-exercise-db. Nazewnictwo: `{Exercise_Id}/0.jpg`, `{Exercise_Id}/1.jpg`.
 
 ---

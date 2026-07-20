@@ -2,7 +2,8 @@
 
 **Utworzono:** 2026-07-20 · **Status: DRAFT — wymaga przeglądu prawnego przed publicznym startem.**
 
-Drafty przygotowane pod bramkę „konta + RODO" (ryzyko nr 7 w HANDOFF). Pisane pod
+Drafty przygotowane pod PRIV-1 (ryzyko nr 7 w HANDOFF). Nie zaliczają bramki bez review
+prawnika i działających przepływów eksportu/usunięcia. Pisane pod
 stan obecny produktu (darmowa PWA, rejestracja zamknięta, bez analytics i płatności);
 sekcje przyszłościowe są jawnie oznaczone jako ZAREZERWOWANE.
 
@@ -18,11 +19,11 @@ sekcje przyszłościowe są jawnie oznaczone jako ZAREZERWOWANE.
 - **Administrator:** Daniel Muszyński, ul. Kubusia Puchatka 13, 75-710 Koszalin, NIP 6692579490.
 - **Logowanie docelowe:** e-mail+hasło, Google Sign-In, **Apple Sign-In** (obowiązkowy
   w App Store przy jakimkolwiek innym logowaniu społecznościowym — to wymóg, nie opcja).
-- **Analytics:** na dziś BRAK. Docelowo tak — rekomendacja: rozwiązanie cookieless
-  (Plausible/Umami self-host lub Vercel Analytics), NIE GA4. Powód: bez cookies
-  marketingowych nie potrzeba banera zgód, polityka zostaje krótka, a store'owe
-  privacy labels proste. Po decyzji: odblokować sekcję w polityce + wpis w rejestrze.
-- **Płatności (Coach):** dokumenty NIE obejmują płatności. Przy monetyzacji trzeba
+- **Analytics:** na dziś brak. Wybór narzędzia pozostaje otwarty; wymagania produktowe i
+  kandydaci są w `../instrumentacja-metryk.md`. Cookieless nie rozstrzyga samodzielnie
+  obowiązku zgody. Przed uruchomieniem wymagane są decyzja prawna, aktualizacja polityki,
+  rejestru i store'owych privacy labels.
+- **Płatności (Coach):** dokumenty nie obejmują PAY-01. Przy monetyzacji trzeba
   zaktualizować: politykę (dane rozliczeniowe, procesor płatności), regulamin
   (ceny, odstąpienie, konsument), rejestr. Pilnuje tego pozycja w `notion-sync-queue.md`.
 

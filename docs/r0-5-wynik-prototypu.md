@@ -2,24 +2,13 @@
 
 **Data:** 2026-07-16
 
-**Status:** prototyp i test techniczny zakończone; pozostaje krótka akceptacja właściciela
-na realnym telefonie.
+**Status:** zakończone i zastąpione produkcyjnym interfejsem; dokument jest referencją decyzji.
 
 ## Artefakt
 
-Prototyp znajduje się w `prototypes/r0-5/`. Jest izolowany od produkcyjnego kodu i nie łączy
-się z bazą.
-
-Uruchomienie lokalne:
-
-```bash
-python3 -m http.server 4173 --directory prototypes/r0-5
-```
-
-Adres: `http://127.0.0.1:4173/`
-
-Przycisk **Stan** pozwala przełączyć: podstawowy, brak planu, aktywną sesję, offline, błąd
-danych i długie nazwy.
+Klikalny prototyp spełnił rolę decyzyjną i po wdrożeniu R0–R3a został usunięty z bieżącego
+drzewa w ramach rebaseline 2026-07-20. Kod pozostaje w historii Git. Ten dokument zachowuje
+wyniki testu i decyzje, które nadal obowiązują.
 
 ## Sprawdzone przepływy
 

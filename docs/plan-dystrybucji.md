@@ -15,7 +15,7 @@
 - **Horyzont zwrotu:** 4–8 mies. — dlatego startuje RAZEM z landingiem, nie z launchem. To najtańsza rzecz, która procentuje w dniu premiery.
 
 ### K2 · Pętla produktu (po launchu — silnik z wizji)
-- Zaproszenia do ekip + prompt instalacji na celebracji + (backlog) karty recap do udostępnienia. Mierzone k-współczynnikiem z B3. To jest silnik — ale silnik nie zapala się sam: K1/K3 dostarczają pierwszych 100 userów, pętla ich mnoży (albo nie — concierge-test ODWOŁANY 2026-07-12; tezę sprawdzają H2 moduł C + dogfooding w Kroku 4 + B3).
+- Zaproszenia do ekip + prompt instalacji na celebracji + (backlog) karty recap do udostępnienia. Mierzone k-współczynnikiem z GROW-1. To jest silnik, ale nie zapala się sam: K1/K3 dostarczają pierwszych użytkowników, a pętlę sprawdzają H2-E, H2-F i publiczny dogfood.
 
 ### K3 · Społeczności PL (ręczne, taktowne)
 - **Gdzie:** subreddity PL fitness, forum SFD, grupy FB („trening siłowy", „siłownia dla początkujących", grupy kobiece — kierunek inkluzywny), Wykop (#silownia).
@@ -32,7 +32,7 @@
 
 ## 2. Czego NIE robimy (i dlaczego)
 
-- **Paid ads przed PMF** — palenie pieniędzy przy nieznanej konwersji; wraca najwcześniej po zielonym B2.
+- **Paid ads przed PMF** — palenie pieniędzy przy nieznanej konwersji; wraca najwcześniej po zielonym PAY-1.
 - **Cold DM / masowe posty w grupach** — sprzeczne z ToV i grozi banami, które bolą latami.
 - **TikTok/YouTube long-form** — koszt produkcji > pojemność solo. Re-ocena przy trakcji.
 - **Product Hunt / HackerNews** — audience nie-PL; strata amunicji. Ew. przy ekspansji EN.
