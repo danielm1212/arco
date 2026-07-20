@@ -190,7 +190,9 @@ export function HistoricalWorkoutForm({
           </div>
         </div>
 
-        <fieldset className="space-y-xs">
+        {/* min-w-0 zdejmuje domyślny `min-inline-size: min-content` z <fieldset> —
+            bez tego `truncate` (nowrap) w kartach rozpycha je poza wrapper (bug Androida). */}
+        <fieldset className="min-w-0 space-y-xs">
           <legend className="sr-only">Rodzaj treningu</legend>
           <label
             className={`flex min-h-14 cursor-pointer items-center justify-between rounded-lg border px-sm transition-colors ${
