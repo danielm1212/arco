@@ -33,6 +33,16 @@ async function main() {
   const userId = auth.user!.id;
   ok(`login jako ${EMAIL}`);
 
+  // F0.7.1: stan onboardingu musi być dostępny po RLS jako część ustawień
+  // konta. To łapie migrację pominiętą na lokalnym stacku przed deployem.
+  const { error: onboardingStateError } = await sb
+    .from("user_settings")
+    .select("onboarding_completed_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (onboardingStateError) fail(`stan onboardingu: ${onboardingStateError.message}`);
+  ok("serwerowy stan onboardingu jest dostępny");
+
   // 1. Przełączanie programu — stabilny slug, bo user-facing nazwa nie jest identyfikatorem.
   const { data: prevActive } = await sb
     .from("user_active_program")
@@ -123,6 +133,37 @@ async function main() {
   if (!pr || pr.weight !== 100 || pr.reps !== 8)
     return fail(`poprzedni wynik nieprawidłowy: ${JSON.stringify(prev)}`);
   ok(`"poprzedni wynik" RPC zwraca ${pr.weight}kg × ${pr.reps}`);
+
+  // F0.2 / L3: swap zachowuje slot, ale absolutnie nie może przenieść wyniku
+  // starego ruchu na nowy. Ten sam slot Squata z Bench Pressem nie może odziedziczyć 100 × 8.
+  const swappedExerciseId = slots!.find((slot) => slot.default_exercise_id !== squatSe.exercise_id)
+    ?.default_exercise_id;
+  if (!swappedExerciseId) return fail("fixture podmiany: brak drugiego ćwiczenia w dniu programu");
+  const { data: swapped, error: swappedInsertError } = await sb
+    .from("session_exercises")
+    .insert({
+      session_id: s2!.id,
+      slot_id: squatSe.slot_id!,
+      exercise_id: swappedExerciseId,
+      position: 0,
+    })
+    .select("id")
+    .single();
+  if (swappedInsertError || !swapped) {
+    return fail(`fixture podmiany: ${swappedInsertError?.message ?? "brak ćwiczenia"}`);
+  }
+  const [{ data: swappedPrevious }, { data: swappedBatch }] = await Promise.all([
+    sb.rpc("previous_working_set", {
+      p_slot: squatSe.slot_id!,
+      p_exercise: swappedExerciseId,
+      p_session: s2!.id,
+    }),
+    sb.rpc("previous_session_sets_batch", { p_session: s2!.id }),
+  ]);
+  if ((swappedPrevious?.length ?? 0) > 0 || (swappedBatch ?? []).some((row) => row.session_exercise_id === swapped.id)) {
+    return fail(`podmiana odziedziczyła poprzedni wynik: ${JSON.stringify({ swappedPrevious, swappedBatch })}`);
+  }
+  ok("podmiana nie przenosi poprzedniego ciężaru między ćwiczeniami");
 
   // 5. Edycja i usuwanie seta
   const editSet = insertedSets!.find((set) => set.session_exercise_id === squatSe.id && set.set_index === 1)!;

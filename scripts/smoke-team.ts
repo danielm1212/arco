@@ -36,6 +36,18 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
+/** Dzień kalendarzowy testu zgodny z kontraktem aplikacji, niezależnie od UTC. */
+function warsawDay(): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Warsaw",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.year}-${byType.month}-${byType.day}`;
+}
+
 async function ensureUser(email: string, name: string) {
   const { data: listed, error: listError } = await admin.auth.admin.listUsers();
   if (listError) throw new Error(`listUsers: ${listError.message}`);
@@ -75,7 +87,7 @@ async function main() {
   try {
     for (const person of people) ids.push(await ensureUser(person.email, person.name));
     const [alfa, beta, gamma] = await Promise.all(people.map((person) => signIn(person.email)));
-    const today = new Date().toISOString().slice(0, 10);
+    const today = warsawDay();
     const { data: created, error: createError } = await alfa.client.rpc("create_pod", {
       p_name: teamName,
       p_display_name: people[0].name,
@@ -144,6 +156,30 @@ async function main() {
       p_session_id: visibleSession.id,
     });
     assert(!visibleEmitError, `emit bieżącego check-inu: ${visibleEmitError?.message}`);
+
+    // L9: cel 2 oznacza, że pojedyncza sesja nie buduje passy. Druga sesja
+    // tego samego dnia musi podnieść weekly_done do 2 — check-in pozostaje
+    // jeden na dzień, ale cel treningowy liczy SESJE, nie check-iny.
+    const { data: oneSessionOverview, error: oneSessionOverviewError } = await beta.client.rpc("get_pod_members", { p_pod_id: pod.pod_id });
+    const alfaAfterOne = oneSessionOverview?.find((member) => member.member_id === alfa.id);
+    assert(!oneSessionOverviewError && alfaAfterOne?.weekly_done === 1 && alfaAfterOne.streak_weeks === 0,
+      "jedna sesja przy celu 2 błędnie zalicza passę albo licznik Ekipy");
+    const { data: secondVisibleSession, error: secondVisibleSessionError } = await alfa.client
+      .from("sessions")
+      .insert({ user_id: alfa.id, program_day_id: null, date: today, finished_at: new Date().toISOString() })
+      .select("id")
+      .single();
+    assert(!secondVisibleSessionError && secondVisibleSession, `druga sesja bieżącego tygodnia: ${secondVisibleSessionError?.message ?? "brak sesji"}`);
+    const { error: secondVisibleEmitError } = await alfa.client.rpc("emit_workout_activity", {
+      p_session_id: secondVisibleSession.id,
+    });
+    assert(!secondVisibleEmitError, `emit drugiej sesji: ${secondVisibleEmitError?.message}`);
+    const { data: twoSessionOverview, error: twoSessionOverviewError } = await beta.client.rpc("get_pod_members", { p_pod_id: pod.pod_id });
+    const alfaAfterTwo = twoSessionOverview?.find((member) => member.member_id === alfa.id);
+    assert(!twoSessionOverviewError && alfaAfterTwo?.weekly_done === 2 && alfaAfterTwo.streak_weeks === 1,
+      "dwie sesje przy celu 2 nie budują spójnego licznika/passsy Ekipy");
+    ok("cel Ekipy liczy ukończone sesje, a passa rusza dopiero po osiągnięciu minimum planu");
+
     const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
     const { error: directEventError } = await alfa.client.from("activity_events").insert({ user_id: alfa.id, kind: "workout_done", occurred_on: tomorrow, streak_weeks: 0 });
     assert(directEventError, "klient mógł dodać check-in bez ukończenia treningu");

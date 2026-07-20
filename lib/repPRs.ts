@@ -1,6 +1,7 @@
 // server-only: używany w server components (supabase klient z next/headers).
 import type { createClient } from "@/lib/supabase/server";
 import { joinOne } from "@/lib/dbJoins";
+import { LIMITS } from "@/lib/format";
 
 /** exerciseId → (liczba powtórzeń → najlepszy ciężar). */
 export type RepPRMap = Record<string, Record<number, number>>;
@@ -31,7 +32,16 @@ export async function getRepPRs(
   const out: RepPRMap = {};
   (data ?? []).forEach((s) => {
     const se = joinOne<{ exercise_id: string }>(s.session_exercises);
-    if (s.weight == null || s.reps == null) return;
+    if (
+      s.weight == null ||
+      s.reps == null ||
+      s.weight < 0 ||
+      s.weight > LIMITS.weight ||
+      !Number.isInteger(s.reps) ||
+      s.reps < 1 ||
+      s.reps > LIMITS.reps
+    )
+      return;
     const m = (out[se.exercise_id] ??= {});
     if (s.weight > (m[s.reps] ?? 0)) m[s.reps] = s.weight;
   });

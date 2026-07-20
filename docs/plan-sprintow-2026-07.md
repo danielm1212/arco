@@ -1,6 +1,6 @@
 # Arco: aktywny backlog i plan refinementu
 
-**Aktualizacja:** 2026-07-16
+**Aktualizacja:** 2026-07-20
 
 **Status:** kierunek zaakceptowany, plan dopracowany po refinements
 
@@ -32,11 +32,12 @@ Docelowy model produktu opisuje `userflows-docelowe-2026-07.md`:
 
 ## 3. Zrealizowana baza
 
-### Sprint 15: stabilność PWA i regresja UX ✅
+### Sprint 15: stabilność PWA i regresja UX ✅ funkcjonalnie
 
 - zamknięte skoki i scrollowanie tła pod overlayem;
 - poprawne zamykanie, swipe, sticky header, toasty, floating nav i safe area;
-- focus trap, zwrot fokusu i pełna macierz urządzeń wracają w R5b.
+- focus trap, pełny zwrot fokusu i pełna macierz urządzeń wracają w R5b; przy R3b/R4
+  sprawdzamy też dokładne odtworzenie scrolla po zamknięciu sheeta z podglądu treningu.
 
 ### Sprint 16: restore i bezpieczeństwo operacyjne 🔄
 
@@ -173,16 +174,12 @@ sieci w trakcie edycji. Focus trap bottom sheetów nadal należy do R5b.
 **Done:** nowa osoba potrafi zacząć trening i znaleźć bibliotekę, a główne CTA pojawia się
 stabilnie przed treściami drugorzędnymi.
 
-**Stan 2026-07-17:** pierwszy pion wdrożony lokalnie (niezacommitowany na origin): wspólny
-header Treningu (logo + badge celu liczący treningi + awatar-monogram → ustawienia), subnav
-Dziś | Plany przez replace, hero „Następny trening" z rozdzielonymi celami tapnięcia (CTA,
-nazwa planu → szczegół, podgląd, inny dzień, bez planu), Plany z sekcją aktywnego planu,
-usunięte stałe karty (powitanie, „Przeglądaj programy", karta Ekipy, pusty stan wskazówek),
-przegląd planu jako dismissowalny insight, home w jednym równoległym batchu zapytań
-(zagnieżdżony join slotów zamiast dwóch sekwencyjnych rund). Weryfikacja: tsc/lint/testy
-25/25/build ✓, kształt joinu przez RLS na izolowanym stacku ✓. Pozostaje: przegląd wizualny
-i copy [Ty] (m.in. etykieta „Inny dzień" vs „Zmień", badge ukryty do 1. treningu), regresja
-urządzeniowa i decyzja o publikacji.
+**Stan 2026-07-20: ZAKOŃCZONE na produkcji, razem z refinementem R2.1.** Header, subnav,
+hero, aktywny plan i biblioteka są wdrożone; badge jest klikalny i otwiera sheet tygodnia,
+Home nie dubluje wznowienia aktywnej sesji, a karty bibliotek są odchudzone. iPhone PWA
+checkpoint został zaliczony. Zmieniamy jedną wcześniejszą decyzję produktu: badge nie będzie
+więcej zależał od istnienia historii. Po trwałym ukończeniu onboardingu pokazuje cel również
+przy `0/N` — to osobny P0 w F0.7.
 
 **Czas:** 0,5–1 dnia [Ty + Claude]
 
@@ -204,11 +201,70 @@ urządzeniowa i decyzja o publikacji.
 
 **Done:** trend, pomiar i powrót do wcześniejszego kontekstu są zrozumiałe bez pomocy.
 
-**Stan 2026-07-18:** ZAKOŃCZONE TECHNICZNIE (lokalnie). Większość była gotowa z R1a/R1b;
-w tej fali domknięto filtr okresu przez replace (`805f6de`) i migrację pomiaru do ekranu
-focus `/body/add` (chrome focus, strona Ciała = trend+historia+CTA, zapis→replace do /body,
-szkic/dirty guard/recovery z R1b zachowane). tsc/lint/testy 72/72/build ✓, przepływ
-zweryfikowany w przeglądarce. Zostaje regresja treści [Ty] i push. Następny etap: R3b.
+**Stan 2026-07-20: ZAKOŃCZONE na produkcji.** Filtr okresu używa replace, pomiar jest
+ekranem focus `/body/add`, a Ciało pozostaje trendem, historią i jasnym CTA. Waga jest
+wymagana, notatka widoczna, zdjęcia ograniczone do dwóch. Pozostaje zwykła regresja treści
+przy następnej rundzie urządzeniowej, nie blokuje dalszej pracy.
+
+### F0.7: ciągłość konta i zaufanie do ustawień 🔴 przed R3b
+
+**Czas:** 1–1,5 dnia [Claude] + krótki dogfood [Ty]
+
+**Cel:** historia jest historią, a nie ukrytym wskaźnikiem skonfigurowania konta. Odpowiedzi
+użytkownika mają widoczny skutek w produkcie.
+
+**Podział wykonawczy:**
+
+1. **F0.7.1 — stan konta:** migracja `onboarding_completed_at`, ostrożny backfill kont z
+   dowodem wcześniejszej konfiguracji (plan, historia albo imię), aktualizacja typów.
+2. **F0.7.2 — zapis flow:** jedna serwerowa akcja kończąca onboarding, użyta zarówno po
+   pełnym flow, jak i po pominięciu; klient nie uznaje `localStorage` za źródło prawdy.
+3. **F0.7.3 — Home i cel `0/N`:** Home pobiera stan konta, nie liczbę sesji; badge jest
+   dostępny od razu po ukończeniu onboardingu i nie renderuje się pod otwartą nakładką.
+4. **F0.7.4 — sprzęt jako obietnica:** biblioteka oznacza kompatybilność, pokazuje najpierw
+   pasujące plany i po zmianie ustawień daje CTA „Zobacz plany pasujące do Twojego sprzętu".
+   Nie zmienia samoczynnie aktywnego planu.
+5. **F0.7.5 — regresja i dogfood:** świeże konto, skip/finish, usunięcie ostatniej sesji,
+   nowe urządzenie i zmiana sprzętu; dodatkowo 320/393 px oraz iPhone PWA.
+
+**Stan 2026-07-20:** F0.7.1–F0.7.4 są gotowe w kodzie. Migracja została zastosowana i
+sprawdzona na lokalnym stacku przez smoke warstwy danych; lint, 88 testów jednostkowych i
+build są zielone. F0.7.5 pozostaje checkpointem produktu: świeże konto i urządzenie/PWA.
+
+**Done:** ani historia, ani cache przeglądarki nie definiują tożsamości konta; użytkownik widzi,
+że zmiana sprzętu coś zmienia, lecz nie traci samoczynnie aktywnego planu.
+
+### F0.2–F0.3 + L9/L10: integralność danych przed Ekipą ✅ gotowe lokalnie
+
+**Czas:** 2–3 dni [Claude] + smoke dwóch kont [Ty]
+
+Ta fala domyka zaległe pozycje F0 przed rozszerzeniem powierzchni społecznej.
+
+- **F0.2 z audytu danych — podmiana:** poprzedni wynik może zostać podpowiedziany wyłącznie
+  dla tego samego ćwiczenia; zamiana nie może odziedziczyć ciężaru po poprzednim slocie;
+- **F0.3 z audytu danych — anomalie:** rozsądne granice wejścia, e1RM liczone tylko dla
+  właściwego zakresu powtórzeń, jednoznaczne potwierdzenie nienaturalnego wyniku i regresja
+  rekordów po korekcie/usunięciu;
+- **L9:** SQL Ekipy liczy passę według minimalnego celu aktywnego planu, tak jak własny widok;
+- **L10:** SQL Ekipy wyznacza tydzień jawnie w `Europe/Warsaw`, nie według domyślnej strefy
+  serwera;
+- migracje `SECURITY DEFINER` przechodzą świeżą bazę, test RLS i `smoke:team`; dogfood obejmuje
+  dwa konta oraz granicę tygodnia.
+
+**Done:** wynik, rekord, tygodniowy cel i passa nie mogą różnić się między loggerem, Historią,
+Home i Ekipą.
+
+**Stan 2026-07-20:** F0.2, F0.3 oraz L9/L10 są gotowe lokalnie. F0.2 wymaga zgodnego `exercise_id`
+także wtedy, gdy istnieje `slot_id`; smoke obejmuje identyczny slot z innym realnym ćwiczeniem
+i potwierdza brak odziedziczonego ciężaru. F0.3 dodaje granice `0–1000` dla ciężaru i `1–100`
+dla powtórzeń (klient, server actions i constraint bazy), potwierdzenie serii roboczej ponad
+300 lub 1,5× poprzedni prawidłowy wynik oraz mocniejsze potwierdzenie powyżej 500; e1RM jest
+liczone wyłącznie dla 1–10 powtórzeń. Przeliczanie
+PR dalej bierze tylko serie robocze i odfiltrowuje stare anomalie; smoke potwierdza, że 20
+powtórzeń nie tworzy e1RM, a 101 jest odrzucone przez bazę. L9/L10 liczą w SQL ukończone
+`sessions` (nie dzienne check-iny), używają `weekly_goal` już sprzężonego z planem i wyznaczają
+„dziś” w `Europe/Warsaw`; smoke dwóch kont sprawdza 1/2 → passa 0 i 2/2 → passa 1. Następny
+etap: R3b.
 
 ### R3b: Ekipa jako główna przestrzeń
 
@@ -223,6 +279,11 @@ zweryfikowany w przeglądarce. Zostaje regresja treści [Ty] i push. Następny e
 - bez osobnego dzwonka na tym etapie;
 - test scenariusza z co najmniej dwoma kontami testowymi.
 
+**Rozszerzenie wymagane przez kanon Ekipy:** finalny pion obejmuje hub, a nie tylko kartę
+członków: multi-ekipę (max 3), zapamiętany switcher, nieprzeczytany stan, jedno kontekstowe
+zdarzenie na Home i dogfooding dwóch kont. Bez dzwonka, feedu, komentarzy ani publicznego
+signupu.
+
 **Uwaga:** publiczne zaproszenia, dostarczanie powiadomień i hardening pozostają za bramką H2.
 
 ### R4: Logger, Historia i trening po fakcie
@@ -236,9 +297,26 @@ zweryfikowany w przeglądarce. Zostaje regresja treści [Ty] i push. Następny e
 - Historia zachowuje stronę, filtry i scroll;
 - `/history/add` bez bottom baru, poziomego overflow i rozjazdu datetime na iOS;
 - progresywny wybór: Własny trening, dni aktywnego planu i Inny plan;
+- własny trening jest nazwanym, interaktywnym wyjściem z Home z krótkim potwierdzeniem;
+  zakończenie sesji bez zaliczonej serii prowadzi do decyzji „Wróć” albo „Usuń”, a serwer
+  nie dopuści takiej sesji do historii;
 - sheet Inny plan: ostatnie, własne, biblioteka i wyszukiwanie;
 - brak domyślnie zaznaczonej odpowiedzi i czytelny błąd pobierania;
 - trening po fakcie korzysta z niezmiennika oraz szkicu wdrożonych w R1b.
+
+**Refinement loggera i biblioteki, który wchodzi do tego etapu:**
+
+- po uzupełnieniu wyniku seria ma wyraźny, ale nie automatyczny następny krok „Zalicz serię";
+  po drugim polu stosujemy jeden subtelny sygnał i sensowną kolejność fokusu, bez zapisywania
+  serii za użytkownika;
+- pierwszy trening dostaje jednorazowe, możliwe do pominięcia podpowiedzi w kontekście loggera:
+  wpisanie wyniku → zaliczenie → timer/minimalizacja oraz gdzie zmienić ćwiczenie;
+- panel podmiany pokazuje propozycje przed długą listą filtrów; wyszukiwarka i skrót filtrów są
+  dostępne od razu, a partie/sprzęt/wzorzec trafiają do „Więcej filtrów";
+- edytor własnego programu pozwala utworzyć własne ćwiczenie bez wcześniejszego wyboru pozycji
+  z biblioteki; używa tej samej walidacji i polskiego wyszukiwania co logger;
+- domknięcie sheeta szczegółów z podglądu treningu zachowuje dokładną pozycję scrolla. To jest
+  osobny test regresji na PWA, niezależnie od ogólnego scroll-locku.
 
 **QA:** 320/375/393 px, długie nazwy, Safari/PWA, Android/Chromium, klawiatura i offline.
 
@@ -285,6 +363,9 @@ wykona w innym terminie; warunek bramki H2, nie R3a).
 
 - realistyczne dane demo i czyste konta;
 - aktualizacja `scenariusz-h2.md` po zamrożeniu interfejsu;
+- osobna, pięciominutowa próba zrozumienia onboardingu: badany własnymi słowami wyjaśnia cel,
+  kierunek, sprzęt, częstotliwość i to, jaki plan zostanie aktywowany; bez podpowiadania przez
+  moderatora;
 - automatyczna regresja scenariuszy z `userflows-docelowe-2026-07.md`;
 - pilot na realnym telefonie;
 - poprawa instrukcji testu, bez tłumaczenia interfejsu badanym;
@@ -305,13 +386,13 @@ wykona w innym terminie; warunek bramki H2, nie R3a).
 ## 5. Kolejność, zależności i rytm dostarczania
 
 ```text
-R0 → R0.5 → R1a → R1b → R2 → checkpoint → R3a → R3b → R4 → R5a → R5b → R6 → R7
+R0 → R0.5 → R1a → R1b → R2/R2.1 → checkpoint → R3a → F0.7 → F0.2–F0.3 + L9/L10 → R3b → R4 → R5b → R6 → R7
 ```
 
 Reguły wykonania:
 
 - każdy etap kończy się działającym pionowym wycinkiem na preview;
-- po R1a, R1b, R2, R3b i R4 wykonujemy krótką regresję urządzeniową;
+- po F0.7, F0.2–F0.3 + L9/L10, R3b i R4 wykonujemy krótką regresję urządzeniową;
 - właściciel rezerwuje dwa stałe sloty regresji urządzeniowej w tygodniu, żeby checkpointy
   iPhone PWA/Android Back nie kumulowały się dopiero przed releasem;
 - nie łączymy całej zmiany IA w jeden deploy;

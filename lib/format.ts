@@ -11,8 +11,11 @@ export function clampNum(
 
 /** Górne limity pól liczbowych — żeby fat-finger (np. 2222 kg) nie wchodził. */
 export const LIMITS = {
-  weight: 2000,
-  reps: 999,
+  // Nie obcinamy po cichu nietypowego wyniku do 500 kg. Powyżej 300 kg logger
+  // prosi o potwierdzenie, a powyżej 500 komunikuje mocniejsze ostrzeżenie.
+  // 1000 kg to wyłącznie granica techniczna chroniąca przed błędnymi danymi.
+  weight: 1000,
+  reps: 100,
   duration: 86_400,
   rpe: 10,
   bodyWeight: 1000,

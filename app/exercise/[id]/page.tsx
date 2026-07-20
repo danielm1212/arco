@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
-import { formatSet } from "@/lib/format";
-import { estimate1RM, setMetric } from "@/lib/exerciseMetrics";
+import { formatSet, LIMITS } from "@/lib/format";
+import { setMetric } from "@/lib/exerciseMetrics";
 import { repPRRows } from "@/lib/repPRs";
 import { Sparkline } from "@/components/Sparkline";
 import { PageHeader } from "@/components/navigation/PageHeader";
@@ -79,7 +79,16 @@ export default async function ExercisePage(props: {
   sessions
     .flatMap((s) => s.sets)
     .forEach((s) => {
-      if (s.set_type !== "working" || s.weight == null || s.reps == null) return;
+      if (
+        s.set_type !== "working" ||
+        s.weight == null ||
+        s.reps == null ||
+        s.weight < 0 ||
+        s.weight > LIMITS.weight ||
+        s.reps < 1 ||
+        s.reps > LIMITS.reps
+      )
+        return;
       if (s.weight > (repBest[s.reps] ?? 0)) repBest[s.reps] = s.weight;
     });
   const repRows = repPRRows(repBest);
@@ -97,25 +106,43 @@ export default async function ExercisePage(props: {
       : "e1rm";
 
   function seriesValue(sets: SessionSet[]): number | null {
+    const workingSets = sets.filter((s) => s.set_type === "working");
     if (isWeighted) {
       if (sel === "weight") {
         let b: number | null = null;
-        for (const s of sets) if (s.weight != null && (b == null || s.weight > b)) b = s.weight;
+        for (const s of workingSets)
+          if (
+            s.weight != null &&
+            s.weight >= 0 &&
+            s.weight <= LIMITS.weight &&
+            (b == null || s.weight > b)
+          )
+            b = s.weight;
         return b;
       }
       if (sel === "vol") {
-        const v = sets.reduce((m, s) => m + (s.weight ?? 0) * (s.reps ?? 0), 0);
+        const v = workingSets.reduce(
+          (m, s) =>
+            s.weight != null &&
+            s.weight >= 0 &&
+            s.weight <= LIMITS.weight &&
+            s.reps != null &&
+            s.reps >= 1 &&
+            s.reps <= LIMITS.reps
+              ? m + s.weight * s.reps
+              : m,
+          0,
+        );
         return v > 0 ? Math.round(v) : null;
       }
       let b: number | null = null;
-      for (const s of sets)
-        if (s.weight != null && s.reps != null) {
-          const v = estimate1RM(s.weight, s.reps);
-          if (b == null || v > b) b = v;
-        }
+      for (const s of workingSets) {
+        const v = setMetric("weighted", s);
+        if (v != null && (b == null || v > b)) b = v;
+      }
       return b;
     }
-    return bestMetric(type, sets);
+    return bestMetric(type, workingSets);
   }
 
   const metricLabel = isWeighted

@@ -127,7 +127,12 @@ export async function getSubstitutes(
   return { loose, items: ranked };
 }
 
-/** Podmiana ćwiczenia w sesji — exercise_id zmienia się, slot_id zostaje (progres slotu). */
+/**
+ * Podmiana zachowuje slot, bo struktura sesji i prescription należą do planu.
+ * F0.2: poprzedni wynik nie jest jednak już identyfikowany samym slotem — RPC
+ * wymaga także zgodnego exercise_id, więc ciężar starego ruchu nie przejdzie na
+ * nowy ruch.
+ */
 export async function swapExercise(
   sessionId: string,
   sessionExerciseId: string,

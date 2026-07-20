@@ -42,9 +42,36 @@ export async function updateSettings(values: {
 
   const { error } = await supabase
     .from("user_settings")
-    .update({ ...patch, updated_at: new Date().toISOString() })
-    .eq("user_id", user.id);
+    // F0.7: świeże konto może nie mieć jeszcze wiersza ustawień. Upsert zachowuje
+    // dotychczasowe pola przy zwykłej edycji, a przy pierwszym onboardingu tworzy
+    // rekord z bezpiecznymi domyślnymi wartościami bazy.
+    .upsert(
+      { user_id: user.id, ...patch, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" },
+    );
   if (error) throw new Error(error.message);
   revalidatePath("/settings");
+  revalidatePath("/");
+}
+
+/**
+ * F0.7: onboarding jest ukończony na poziomie konta. Osobna akcja celowo nie
+ * przyjmuje timestampu od klienta i działa także dla ścieżki „Pomiń wszystko".
+ */
+export async function completeOnboarding() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Brak sesji");
+
+  const now = new Date().toISOString();
+  const { error } = await supabase
+    .from("user_settings")
+    .upsert(
+      { user_id: user.id, onboarding_completed_at: now, updated_at: now },
+      { onConflict: "user_id" },
+    );
+  if (error) throw new Error(error.message);
   revalidatePath("/");
 }

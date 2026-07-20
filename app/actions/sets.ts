@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { SetType } from "@/lib/types";
+import { assertValidSetNumbers } from "@/lib/setValidation";
 
 async function db() {
   const supabase = await createClient();
@@ -54,6 +55,7 @@ export async function addSet(
   sessionExerciseId: string,
   values: SetValues = {},
 ) {
+  assertValidSetNumbers(values);
   const supabase = await db();
   const { count } = await supabase
     .from("session_sets")
@@ -97,6 +99,7 @@ export async function upsertSet(
     completed: boolean;
   },
 ) {
+  assertValidSetNumbers(row);
   const supabase = await db();
   const { error } = await supabase.from("session_sets").upsert(row, { onConflict: "id" });
   if (error) throw new Error(error.message);
@@ -105,6 +108,7 @@ export async function upsertSet(
 
 /** Zaktualizuj wartości serii. */
 export async function updateSet(sessionId: string, setId: string, values: SetValues) {
+  assertValidSetNumbers(values);
   const supabase = await db();
   const { error } = await supabase.from("session_sets").update(values).eq("id", setId);
   if (error) throw new Error(error.message);

@@ -18,6 +18,7 @@ import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseCard } from "./ExerciseCard";
 import { FinishSheet } from "./FinishSheet";
+import { EmptySessionSheet } from "./EmptySessionSheet";
 import type { PrevSet } from "./SetRow";
 import { useRestTimer } from "./useRestTimer";
 import { useSessionOutbox } from "./useSessionOutbox";
@@ -26,6 +27,7 @@ import { handleFinish, handleDeleteSession } from "./finish";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { useNavigationHistory } from "@/components/navigation/NavigationHistory";
 import { pendingCount, restoreSessionDraft } from "@/lib/outbox";
+import type { SetWeightReview } from "@/lib/setValidation";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -106,12 +108,20 @@ export function Logger({
     useRestTimer(defaultRest);
   const { online, pending, syncing, flush, saveSet, removeSet, saveNotes } =
     useSessionOutbox(sessionId);
+  // Przed zaliczeniem wyniku mogącego utworzyć nieoczekiwany PR prosimy o
+  // świadome potwierdzenie. Stan przechowuje pełny wiersz tylko na czas sheeta.
+  const [weightReview, setWeightReview] = useState<{
+    ex: LoggerExercise;
+    set: SessionSet;
+    review: SetWeightReview;
+  } | null>(null);
   const {
     prSets,
     patchSetLocal,
     persistNotes,
     handleAddSet,
     handleToggle,
+    commitToggle,
     handleTimedComplete,
     persistSet,
     handleDeleteSet,
@@ -128,6 +138,7 @@ export function Logger({
     saveNotes,
     startRest,
     allowRest: !isFinished,
+    requestWeightReview: (request) => setWeightReview(request),
   });
 
   // R6b: lista nazw+grup dla pickera "Połącz w superset" w ⋯ karty. Referencyjnie
@@ -165,6 +176,8 @@ export function Logger({
   const [deletingSession, setDeletingSession] = useState(false);
   // R4: finish-sheet zamiast confirm() — otwierany tylko gdy są niezaliczone serie
   const [finishSheetOpen, setFinishSheetOpen] = useState(false);
+  const [emptySessionSheetOpen, setEmptySessionSheetOpen] = useState(false);
+  const [deletingEmptySession, setDeletingEmptySession] = useState(false);
   // Guard in-flight: podwójny tap „Zakończ" dublował recompute_personal_records
   const [finishing, setFinishing] = useState(false);
   const confirmFinish = async () => {
@@ -277,9 +290,15 @@ export function Logger({
                 variant="outline"
                 className="text-primary"
                 disabled={finishing}
-                onClick={() =>
-                  incompleteSets > 0 ? setFinishSheetOpen(true) : confirmFinish()
-                }
+                onClick={() => {
+                  if (doneSets === 0) {
+                    setEmptySessionSheetOpen(true);
+                  } else if (incompleteSets > 0) {
+                    setFinishSheetOpen(true);
+                  } else {
+                    confirmFinish();
+                  }
+                }}
               >
                 Zakończ
               </Button>
@@ -429,6 +448,68 @@ export function Logger({
         minutes={Math.floor(elapsed / 60)}
         onConfirm={() => confirmFinish()}
       />
+
+      <EmptySessionSheet
+        open={emptySessionSheetOpen}
+        onOpenChange={setEmptySessionSheetOpen}
+        deleting={deletingEmptySession}
+        onDelete={async () => {
+          setDeletingEmptySession(true);
+          const deleted = await handleDeleteSession({ sessionId, online });
+          if (deleted) {
+            router.replace("/");
+            return;
+          }
+          setDeletingEmptySession(false);
+        }}
+      />
+
+      <BottomSheet
+        open={weightReview != null}
+        onOpenChange={(open) => {
+          if (!open) setWeightReview(null);
+        }}
+        title="Sprawdzić wynik?"
+        description="Nietypowy wynik wymaga potwierdzenia przed zaliczeniem serii"
+      >
+        {weightReview && (
+          <div className="space-y-md">
+            <p className="text-sm text-muted-foreground">
+              Chcesz zaliczyć <span className="font-semibold text-foreground">{weightReview.set.weight} {unit} × {weightReview.set.reps ?? "—"}</span> w ćwiczeniu {weightReview.ex.name}.
+            </p>
+            <ul className="space-y-xs rounded-lg bg-warning/10 p-sm text-sm text-warning">
+              {weightReview.review.reasons.includes("high_weight") && (
+                <li>To więcej niż {300} {unit}. Sprawdź, czy ciężar jest wpisany poprawnie.</li>
+              )}
+              {weightReview.review.reasons.includes("very_high_weight") && (
+                <li>To więcej niż 500 {unit}. Zapisz go tylko, jeśli na pewno nie ma pomyłki.</li>
+              )}
+              {weightReview.review.reasons.includes("large_jump") && (
+                <li>
+                  To ponad 50% więcej niż Twój dotychczasowy prawidłowy wynik
+                  {weightReview.review.previousWeight != null
+                    ? ` (${weightReview.review.previousWeight} ${unit})`
+                    : ""}.
+                </li>
+              )}
+            </ul>
+            <Button
+              className="w-full"
+              onClick={() => {
+                commitToggle(weightReview.ex, weightReview.set);
+                setWeightReview(null);
+              }}
+            >
+              {weightReview.review.reasons.includes("very_high_weight")
+                ? "Na pewno zapisz ten wynik"
+                : "Wynik jest poprawny, zalicz serię"}
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => setWeightReview(null)}>
+              Wróć do edycji
+            </Button>
+          </div>
+        )}
+      </BottomSheet>
 
       {rest && (
         <RestTimer

@@ -280,3 +280,13 @@ export function formatEquipment(items: string[], limit = 4) {
   if (labels.length <= limit) return labels.join(" · ");
   return `${labels.slice(0, limit).join(" · ")} +${labels.length - limit}`;
 }
+
+/**
+ * F0.7.4: jedna definicja zgodności planu z zapisanym sprzętem. Brakujący
+ * element nie ukrywa planu — użytkownik może świadomie go obejrzeć — ale
+ * biblioteka dzięki temu może najpierw pokazać realne opcje.
+ */
+export function missingProgramEquipment(required: string[] | null, available: string[] | null) {
+  const availableSet = new Set(available ?? []);
+  return (required ?? []).filter((item) => !availableSet.has(item));
+}

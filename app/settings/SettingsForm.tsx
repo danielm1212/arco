@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore, useTransition } from "react";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { updateSettings } from "@/app/actions/settings";
@@ -103,6 +104,7 @@ export function SettingsForm({
   const [trainingFocus, setTrainingFocus] = useState<ProgramFocus>(focus);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [equipmentSaved, setEquipmentSaved] = useState(false);
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(subscribeToNothing, () => true, () => false);
   const [baseline, setBaseline] = useState<SettingsDraft>(() => ({
@@ -155,6 +157,9 @@ export function SettingsForm({
 
   function save() {
     setSaved(false);
+    setEquipmentSaved(false);
+    const equipmentChanged =
+      JSON.stringify([...eq].sort()) !== JSON.stringify([...baseline.equipment].sort());
     startTransition(async () => {
       try {
         await updateSettings({
@@ -169,7 +174,12 @@ export function SettingsForm({
         setBaseline(draft);
         clearDraft();
         setSaved(true);
-        toast.success("Ustawienia zapisane.");
+        setEquipmentSaved(equipmentChanged);
+        toast.success(
+          equipmentChanged
+            ? "Sprzęt zapisany. Biblioteka pokaże najpierw pasujące plany."
+            : "Ustawienia zapisane.",
+        );
       } catch {
         toast.error("Nie udało się zapisać ustawień. Spróbuj ponownie.");
       }
@@ -342,7 +352,7 @@ export function SettingsForm({
 
       <section className="space-y-sm">
         <h2 className="text-sm font-medium text-muted-foreground">
-          Sprzęt dostępny do zamian
+          Twój sprzęt
         </h2>
         <div className="flex flex-wrap gap-2xs">
           {EQUIPMENT.map(([value, label]) => {
@@ -364,6 +374,17 @@ export function SettingsForm({
             );
           })}
         </div>
+        <p className="text-xs text-muted-foreground">
+          Używamy go przy podmianach i do ustawienia kolejności planów w bibliotece.
+        </p>
+        {equipmentSaved && (
+          <Link
+            href="/programs"
+            className="flex min-h-11 items-center text-sm font-semibold text-primary underline-offset-2 hover:underline"
+          >
+            Zobacz plany pasujące do Twojego sprzętu →
+          </Link>
+        )}
       </section>
 
       <div className="flex items-center gap-sm">

@@ -49,6 +49,77 @@
 
 ## Log sesji (dopisuj na górze)
 
+- **2026-07-20 · Codex (świadomy własny trening i ochrona pustej sesji): GOTOWE LOKALNIE.**
+  Zakres: Home nie pokazuje już niejasnego „Bez planu”. Używa jawnej akcji „Własny trening”
+  z ikoną, strzałką i lekkim potwierdzeniem, które wyjaśnia, że aktywny plan zostaje bez zmian.
+  Zakończenie bez ani jednej zaliczonej serii otwiera sheet „Wróć do treningu” albo „Usuń
+  pusty trening”; ta sama reguła jest zabezpieczona po stronie serwera, więc odświeżenie lub
+  druga karta nie dopiszą pustej sesji do historii. Dotknięte: `app/page.tsx`, nowy
+  `FreestyleStartButton`, Logger, nowy `EmptySessionSheet` i `finishSession`. Weryfikacja:
+  lint ✓, 91 testów jednostkowych ✓, build ✓ i regresja wąskiego viewportu ✓. Produkcja
+  nietknięta.
+
+- **2026-07-20 · Codex (L9/L10: passa Ekipy i Warszawa): GOTOWE LOKALNIE.**
+  Zakres: migracja `20260720153000_team_streak_warsaw.sql` i rozszerzony `smoke-team.ts`.
+  SQL Ekipy liczy teraz ukończone `sessions`, nie dzienne check-iny, wobec tego samego
+  `weekly_goal`, którego F0.1 pilnuje względem aktywnego planu. `get_pod_members`, nudge i
+  snapshot check-inu mają jawną datę `now() at time zone 'Europe/Warsaw'`; licznik tygodnia,
+  liczba pozostałych dni i antyspam nie zależą już od UTC sesji Postgresa. Nowa funkcja
+  `team_member_streak_weeks` zachowuje semantykę `lib/week.ts`: nieukończony bieżący tydzień
+  nie zrywa passy, lecz 1 z 2 wymaganych treningów nie tworzy jej. Nie ujawnia też sesji sprzed
+  wspólnego członkostwa. Weryfikacja: migracja lokalna ✓, lint ✓, 91 testów ✓, build ✓,
+  `smoke:team` ✓ na trzech jednorazowych kontach (1/2 → 0, 2/2 → 1; RLS/prywatność i cleanup ✓).
+  Produkcja nietknięta. Następne: R3b albo wspólny deploy kompletnej paczki F0 po F0.7.5.
+
+- **2026-07-20 · Codex (F0.3: anomalie i wiarygodne rekordy): GOTOWE LOKALNIE.**
+  Zakres: `20260720150000_validate_sets_and_safe_prs.sql`, wspólny kontrakt
+  `lib/setValidation.ts`, logger, server actions, e1RM/rep-PR-y, widok ćwiczenia i smoke
+  Phase 2. Ciężar ma techniczną granicę 0–1000, powtórzenia 1–100; client, server actions
+  oraz nowe constrainty bazy wymuszają ten sam kontrakt. Zaliczenie nietypowej serii roboczej
+  (>300 albo >1,5× poprzedni prawidłowy ciężar) zatrzymuje się przed zapisem w sheetcie z
+  jasnym CTA; powyżej 500 ma mocniejsze potwierdzenie, a rozgrzewka i cofnięcie zaliczenia
+  nie wywołują dialogu. e1RM działa wyłącznie dla
+  1–10 powtórzeń, a `recompute_personal_records` nadal bierze wyłącznie zaliczone serie
+  robocze i odrzuca stare anomalie. Weryfikacja: lint ✓, 91 testów ✓, build ✓, migracja
+  lokalna ✓, `smoke:phase2` ✓ (20 powt. nie tworzy e1RM; 101 jest odrzucone). Produkcja
+  nietknięta. Kolejny krok po tej pozycji: L9/L10 SQL Ekipy, potem wspólny deploy paczki F0.
+
+- **2026-07-20 · Codex (F0.2: poprzedni wynik po podmianie): GOTOWE LOKALNIE.**
+  Zakres: migracja `20260720143000_fix_previous_sets_after_swap.sql`, kontrakt akcji
+  podmiany i regresja `smoke-phase1.ts`. `previous_working_set` oraz
+  `previous_session_sets` wymagają teraz zawsze zgodnego `exercise_id`; `slot_id` jest
+  dodatkowym kontekstem planu, nigdy samodzielnym identyfikatorem ruchu. Standardowy wynik
+  100 kg × 8 nadal wraca dla tego samego ćwiczenia; ten sam slot z innym, realnym ćwiczeniem
+  zwraca pusty wynik w obu RPC. Weryfikacja: lint ✓, 88 testów ✓, build ✓, migracja lokalna
+  ✓, smoke ✓. Pierwszy smoke zatrzymał się wyłącznie na nieistniejącym identyfikatorze
+  fixture'u; osierocona lokalna sesja została zamknięta po konkretnym ID, następny przebieg
+  posprzątał dane. Produkcja nietknięta. Następne: F0.3 anomalie.
+
+- **2026-07-20 · Codex (F0.7.1–F0.7.4: ciągłość konta i sprzęt): GOTOWE LOKALNIE.**
+  Zakres: migracja `20260720140000_onboarding_account_state`, akcje ustawień, Home,
+  onboarding, biblioteka planów, ustawienia, helper/test sprzętu oraz smoke. Stan
+  ukończenia onboardingu to `user_settings.onboarding_completed_at`, backfill chroni
+  konta istniejące przed deployem, a `updateSettings` tworzy rekord na prawdziwie świeżym
+  koncie. Home nie liczy już sesji, aby zdecydować o onboardingu; po ukończeniu pokazuje
+  badge `0/N`. Biblioteka sortuje kompatybilne plany przed pozostałymi, a brak sprzętu
+  komunikuje bez ukrywania planu; po zmianie ustawień jest CTA do biblioteki. Weryfikacja:
+  lint ✓, 88 testów ✓, build ✓, migracja zastosowana lokalnie, `smoke` ✓ z asercją kolumny.
+  Ręczny browser check zatrzymany na ekranie logowania — bez używania danych użytkownika.
+  `smoke:team` nie uruchomił się, bo lokalne środowisko nie ma `TEAM_TEST_PASSWORD`; nie
+  dotyczy zakresu F0.7, ale L9/L10 będzie wymagało jego uzupełnienia. Następne: F0.7.5
+  (fresh account/iPhone) albo F0.2 swap. Nie dotknięto produkcji ani nieśledzonych ikon.
+
+- **2026-07-20 · Codex (refinement planu po notatkach właściciela): ZAKOŃCZONE, tylko dokumentacja.**
+  Zakres: `docs/plan-sprintow-2026-07.md`, `docs/HANDOFF.md`, `docs/README.md` i ten wpis.
+  Skorygowano drift statusów: R2.1, R3a i F0.1 są na produkcji, więc nie mogą już figurować
+  jako lokalne albo blokujące R3a. Zweryfikowano notatki z kodem: P0 ciągłości onboardingu
+  (`sessionCount` + `localStorage`), częściowe zastosowanie sprzętu (onboarding tak,
+  późniejsza biblioteka nie), brak tworzenia własnego ćwiczenia w edytorze planu, istniejący
+  scroll-restore sheeta bez celowanego testu, niezamknięte potwierdzenie serii i brak touru
+  pierwszego treningu. Ustalona kolejność: F0.7 ciągłość konta/zaufanie do sprzętu → F0.2–F0.3
+  + SQL Ekipy L9-L10 → R3b hub Ekipy → R4 Logger/Historia z refinementami.
+  Nie dotknięto kodu, migracji, danych, assetów ani dwóch nieśledzonych ikon ` 2.png`.
+
 - **2026-07-20 · Claude (F0.1 na prod + seria fiksów overflow/safe-area + test regresyjny): ZAKOŃCZONE (prod, urządzeniowo potwierdzone [Ty]).**
   Zakres: dowiezienie F0.1 (clamp `weekly_goal`, pakiet z 2026-07-18) na prod + 4 fiksy layoutu + refactor nagłówka + infra testowa. Pliki: `app/programs/[id]/page.tsx`, `app/history/add/HistoricalWorkoutForm.tsx`, `components/navigation/PageHeader.tsx` + nowy `components/navigation/stickyHeader.ts`, `app/session/[id]/Logger.tsx`, `app/globals.css`, `tests/e2e/overflow.test.ts`, `package.json`, `.github/workflows/quality.yml`. Kod pakietu F0.1 nie pisany w tej sesji — zweryfikowany i dowieziony.
   Wynik / commity (`1e2b458`→`ffcb89a`, 7 szt.):

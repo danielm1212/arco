@@ -65,6 +65,47 @@ async function main() {
     return fail(`PR max_e1rm = ${e1rm}, oczekiwano ${expectedE1rm}`);
   ok(`PR: max_weight 120kg, e1RM ${e1rm}kg (Epley)`);
 
+  // F0.3: długa seria jest prawidłowym logiem, ale nie może zostać użyta jako
+  // e1RM. Constraint bazy ma też odrzucić wartość poza zakresem produktu.
+  const { error: highRepErr } = await sb.from("session_sets").insert({
+    session_exercise_id: se!.id,
+    set_index: 1,
+    set_type: "working",
+    weight: 100,
+    reps: 20,
+    completed: true,
+  });
+  if (highRepErr) return fail(`insert 20 reps: ${highRepErr.message}`);
+  const { error: recomputeAfterHighRep } = await sb.rpc("recompute_personal_records");
+  if (recomputeAfterHighRep) return fail(`rpc recompute high reps: ${recomputeAfterHighRep.message}`);
+  const { data: afterHighRep } = await sb
+    .from("personal_records")
+    .select("value")
+    .eq("exercise_id", "Barbell_Squat")
+    .eq("record_type", "max_e1rm")
+    .maybeSingle();
+  if (Number(afterHighRep?.value) !== expectedE1rm)
+    return fail(`e1RM po 20 powt. = ${afterHighRep?.value}, oczekiwano ${expectedE1rm}`);
+  const { error: invalidRepsErr } = await sb.from("session_sets").insert({
+    session_exercise_id: se!.id,
+    set_index: 2,
+    set_type: "working",
+    weight: 100,
+    reps: 101,
+    completed: true,
+  });
+  if (!invalidRepsErr) return fail("constraint reps: 101 powt. nie zostało odrzucone");
+  const { error: invalidWeightErr } = await sb.from("session_sets").insert({
+    session_exercise_id: se!.id,
+    set_index: 3,
+    set_type: "working",
+    weight: 1001,
+    reps: 1,
+    completed: true,
+  });
+  if (!invalidWeightErr) return fail("constraint weight: 1001 kg nie zostało odrzucone");
+  ok("F0.3: 20 powt. nie tworzy e1RM, 101 powt. i 1001 kg odrzucone przez bazę");
+
   // 3. Silnik podmiany — tier 1 (pełny sprzęt) zwraca kandydatów
   const { data: bench } = await sb
     .from("exercises")
@@ -102,7 +143,7 @@ async function main() {
   await sb.rpc("recompute_personal_records");
   ok("posprzątano");
 
-  console.log("\n✅ Smoke Phase 2: podmiana+fallback, PR/e1RM, plate calc — OK.");
+  console.log("\n✅ Smoke Phase 2: podmiana+fallback, PR/e1RM, F0.3 — OK.");
 }
 
 main().catch((e) => fail(e.message));

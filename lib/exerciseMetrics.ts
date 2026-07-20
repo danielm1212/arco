@@ -1,5 +1,10 @@
 import type { ExerciseType } from "@/lib/types";
 
+/** Epley jest wiarygodnym wskaźnikiem dla krótkich serii, nie dla AMRAP-ów. */
+export function isE1rmRepRange(reps: number): boolean {
+  return Number.isInteger(reps) && reps >= 1 && reps <= 10;
+}
+
 /**
  * Szacunkowy 1RM wg Epleya: weight × (1 + reps/30), zaokrąglony do 0,1.
  * Jedno źródło wzoru dla postępów, guidance, strony ćwiczenia i (docelowo)
@@ -17,7 +22,12 @@ export function setMetric(
   type: ExerciseType,
   s: { weight: number | null; reps: number | null; duration_seconds: number | null },
 ): number | null {
-  if (type === "weighted" && s.weight != null && s.reps != null) {
+  if (
+    type === "weighted" &&
+    s.weight != null &&
+    s.reps != null &&
+    isE1rmRepRange(s.reps)
+  ) {
     return estimate1RM(s.weight, s.reps);
   }
   if (type === "bodyweight" && s.reps != null) return s.reps;

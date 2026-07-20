@@ -157,6 +157,18 @@ export async function finishSession(sessionId: string) {
   if (existingError || !existing) {
     throw new Error(existingError?.message ?? "Nie znaleziono sesji.");
   }
+  // UI prowadzi użytkownika do „Wróć” albo „Usuń pusty trening”, ale serwerowy
+  // guard domyka regułę także dla odświeżenia, drugiej karty i przyszłych klientów.
+  const { data: completedSets, error: completedSetsError } = await supabase
+    .from("session_sets")
+    .select("id, session_exercises!inner(session_id)")
+    .eq("completed", true)
+    .eq("session_exercises.session_id", sessionId)
+    .limit(1);
+  if (completedSetsError) throw new Error(completedSetsError.message);
+  if ((completedSets?.length ?? 0) === 0) {
+    throw new Error("Nie możesz zakończyć treningu bez ani jednej zaliczonej serii.");
+  }
   if (!existing.finished_at) {
     const finishedAt =
       existing.is_historical && existing.recorded_duration_seconds

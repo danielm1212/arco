@@ -3,7 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
-import { formatFrequency, type ProgramFocus } from "@/lib/programRecommendation";
+import {
+  formatEquipment,
+  formatFrequency,
+  missingProgramEquipment,
+  type ProgramFocus,
+} from "@/lib/programRecommendation";
 import { ProgramFilters } from "./ProgramFilters";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
@@ -53,10 +58,11 @@ export default async function ProgramsPage({
       .select("id, name, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
-    supabase.from("user_settings").select("training_focus, display_name").maybeSingle(),
+    supabase.from("user_settings").select("training_focus, display_name, available_equipment").maybeSingle(),
   ]);
   const activeId = active?.program_id ?? null;
   const preferredFocus = settings?.training_focus ?? "balanced";
+  const availableEquipment = settings?.available_equipment ?? [];
   const activeProgram = ((programs as Prog[]) ?? []).find((p) => p.id === activeId) ?? null;
   const own = ((programs as Prog[]) ?? []).filter((p) => p.user_id === user?.id && p.id !== activeId);
   const presets = ((programs as Prog[]) ?? [])
@@ -64,6 +70,8 @@ export default async function ProgramsPage({
     .sort((a, b) => {
       const environmentOrder = { gym: 0, home: 1, bodyweight: 2 } as Record<string, number>;
       return (
+        Number(missingProgramEquipment(a.required_equipment, availableEquipment).length > 0) -
+          Number(missingProgramEquipment(b.required_equipment, availableEquipment).length > 0) ||
         (a.level_min ?? 9) - (b.level_min ?? 9) ||
         (preferredFocus === "lower_body"
           ? Number(b.focus_key === preferredFocus) - Number(a.focus_key === preferredFocus)
@@ -116,6 +124,7 @@ export default async function ProgramsPage({
               kind={activeProgram.user_id ? "own" : "preset"}
               isActive
               preferredFocus={preferredFocus}
+              missingEquipment={missingProgramEquipment(activeProgram.required_equipment, availableEquipment)}
             />
           </section>
         )}
@@ -133,7 +142,7 @@ export default async function ProgramsPage({
           <div className="flex items-start justify-between gap-sm">
             <div className="space-y-2xs">
               <h2 className="text-base font-semibold">Biblioteka programów</h2>
-              <p className="text-sm text-muted-foreground">Porównaj plany i ustaw ten, który realnie pasuje do Twojego tygodnia.</p>
+              <p className="text-sm text-muted-foreground">Najpierw pokazujemy plany zgodne z Twoim sprzętem i tygodniem.</p>
             </div>
             <ProgramFilters filters={filters} goals={goals} />
           </div>
@@ -144,7 +153,14 @@ export default async function ProgramsPage({
             <div key={group.rank} className="space-y-sm">
               <h3 className="pt-xs text-sm font-medium text-muted-foreground">{group.label}</h3>
               {group.programs.map((p) => (
-                <ProgramRow key={p.id} p={p} kind="preset" isActive={false} preferredFocus={preferredFocus} />
+                <ProgramRow
+                  key={p.id}
+                  p={p}
+                  kind="preset"
+                  isActive={false}
+                  preferredFocus={preferredFocus}
+                  missingEquipment={missingProgramEquipment(p.required_equipment, availableEquipment)}
+                />
               ))}
             </div>
           ))}
@@ -168,11 +184,13 @@ function ProgramRow({
   kind,
   isActive,
   preferredFocus,
+  missingEquipment = [],
 }: {
   p: Prog;
   kind: "own" | "preset";
   isActive: boolean;
   preferredFocus: string;
+  missingEquipment?: string[];
 }) {
   return (
       <div className="flex items-stretch rounded-xl bg-card text-card-foreground shadow-sm">
@@ -200,6 +218,11 @@ function ProgramRow({
                   .join(" · ")
               : `${p.cycle_days} dni w cyklu · edytuj →`}
           </p>
+          {kind === "preset" && missingEquipment.length > 0 && (
+            <p className="mt-2xs text-xs text-amber-800 dark:text-amber-300">
+              Potrzebujesz: {formatEquipment(missingEquipment, 2)}
+            </p>
+          )}
         </Link>
         <div className="flex items-center px-sm">
           {isActive ? (

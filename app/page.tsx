@@ -3,12 +3,13 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
-import { startSession, startFreestyle } from "@/app/actions/session";
+import { startSession } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeGuidance } from "@/lib/getHomeGuidance";
 import { localDayKey, weekStart, computeStreak, addWarsawDays, weeksMeetingGoal } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
+import { FreestyleStartButton } from "./FreestyleStartButton";
 import { GuidanceChip } from "./GuidanceChip";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
@@ -62,7 +63,6 @@ export default async function HomePage() {
     { data: openSession },
     { data: finished },
     { data: settings },
-    { count: sessionCount },
   ] = await Promise.all([
     supabase
       .from("programs")
@@ -84,8 +84,10 @@ export default async function HomePage() {
       .select("started_at, program_day_id")
       .not("finished_at", "is", null)
       .gte("started_at", historySince.toISOString()),
-    supabase.from("user_settings").select("unit_system, weekly_goal, display_name").maybeSingle(),
-    supabase.from("sessions").select("id", { count: "exact", head: true }),
+    supabase
+      .from("user_settings")
+      .select("unit_system, weekly_goal, display_name, onboarding_completed_at")
+      .maybeSingle(),
   ]);
 
   const activeId = active?.program_id ?? null;
@@ -167,7 +169,7 @@ export default async function HomePage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <WelcomeOverlay
-        eligible={(sessionCount ?? 0) === 0}
+        completed={!!settings?.onboarding_completed_at}
         unit={settings?.unit_system ?? "kg"}
         weeklyGoal={settings?.weekly_goal ?? 2}
         programs={(programs ?? []).map((p): ProgramCandidate => ({
@@ -189,7 +191,7 @@ export default async function HomePage() {
       />
       <TrainingHeader
         goalSlot={
-          (sessionCount ?? 0) > 0 ? (
+          settings?.onboarding_completed_at ? (
             <Suspense fallback={null}>
               <WeeklyGoalBadge done={weeklyDone} goal={weeklyGoal} week={week} streak={streak} />
             </Suspense>
@@ -260,16 +262,7 @@ export default async function HomePage() {
                   days={activeDays.map(({ id, label, position }) => ({ id, label, position }))}
                 />
               )}
-              {/* R2.1: hierarchia tekstowa — „Bez planu" jest wyjściem awaryjnym,
-                  nie trzecią równorzędną decyzją, więc schodzi do muted */}
-              <form action={startFreestyle} className="ml-auto">
-                <button
-                  type="submit"
-                  className="min-h-11 font-normal text-muted-foreground underline-offset-2 hover:underline"
-                >
-                  Bez planu
-                </button>
-              </form>
+              <FreestyleStartButton variant="inline" />
             </div>
           </div>
         ) : (
@@ -287,17 +280,7 @@ export default async function HomePage() {
                 <Link href="/programs">Wybierz program →</Link>
               </Button>
             </div>
-            <form action={startFreestyle}>
-              <button
-                type="submit"
-                className="block w-full rounded-xl bg-card p-md text-left text-sm font-medium shadow-sm"
-              >
-                Bez planu
-                <span className="block text-xs font-normal text-muted-foreground">
-                  Zacznij bez planu i dodawaj ćwiczenia w trakcie
-                </span>
-              </button>
-            </form>
+            <FreestyleStartButton variant="card" />
           </div>
         )}
 

@@ -1,11 +1,12 @@
 # Dokumentacja Arco
 
-**Aktualizacja:** 2026-07-17
+**Aktualizacja:** 2026-07-20
 
 ## Zacznij tutaj
 
 - `HANDOFF.md` — co działa, co jest na produkcji i jakie są aktualne ryzyka.
-- `plan-sprintow-2026-07.md` — aktywny backlog i kolejność następnych sprintów.
+- `plan-sprintow-2026-07.md` — aktywny backlog i kolejność następnych sprintów; po R3a
+  najpierw F0.7 oraz F0.2/F0.3 (ciągłość konta i integralność), potem R3b Ekipa oraz R4 Logger/Historia.
 - `userflows-docelowe-2026-07.md` — docelowa architektura informacji, przepływy i kontrakt chrome.
 - `roadmap.md` — horyzonty rozwoju i bramki decyzyjne.
 - `wizja-i-strategia-v3.md` — **kanon misji, person, modelu, strategii i języka marki (2026-07-16)**.

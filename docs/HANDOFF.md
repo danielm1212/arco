@@ -15,7 +15,8 @@ Po audycie całej aplikacji przyjęto docelową IA: bottom bar **Trening · Post
 Pełny kontrakt jest w `userflows-docelowe-2026-07.md`. Aktywny plan wdrożenia to
 R0–R7 z `plan-sprintow-2026-07.md`, rozbity na R0.5, R1a/R1b, R3a/R3b i R5a/R5b.
 Zastępuje wcześniejszą sekwencję Sprint 17b → H2. Stan wdrożenia: R0.5 zaakceptowany,
-R1a/R1b/R2 na produkcji; R2 czeka na refinement R2.1 (ryzyko 11) przed startem R3a.
+R1a/R1b/R2/R2.1/R3a i F0.1 są na produkcji. F0.7, F0.2–F0.3 i SQL Ekipy L9/L10 są gotowe
+lokalnie; po wspólnym wdrożeniu otwierają R3b — Ekipę jako prawdziwy hub.
 
 ## Sprint 17a — onboarding v3.1 (2026-07-16)
 
@@ -43,6 +44,9 @@ Biblioteka programów ma własny, widoczny punkt wejścia. Filtry są prezentowa
 - **Seria fiksów layoutu (zgłoszenia urządzeniowe), na prodzie, potwierdzone na iPhonie PWA:** długi opis serii w widoku programu zawija się zamiast rozpychać stronę; karty wyboru dnia w „Trening po fakcie” mieszczą się w wrapperze (fieldset `min-w-0`); sticky topbar kryje pas safe-area (F0.4 — treść nie prześwituje); natywny `datetime-local` nie rozpycha karty na iOS (`appearance:none`, reguła iOS-scoped).
 - **Higiena i regresja:** wzorzec sticky-headera safe-area scalony w jedno źródło prawdy (`STICKY_HEADER_SAFE_AREA`, koniec duplikatu PageHeader/Logger); dodany test regresyjny overflow na wąskim viewportcie (Playwright `npm run test:overflow`, wpięty w CI po buildzie).
 - Naprawiono przepływ porzucenia treningu uruchomionego z ekranu głównego.
+- **Lokalnie, oczekuje na wspólną paczkę:** „Bez planu” ma teraz jednoznaczną akcję „Własny
+  trening” z potwierdzeniem. Pusta sesja nie trafia do historii: przy zakończeniu proponuje
+  powrót albo usunięcie, a zapis jest zablokowany także po stronie serwera.
 - Ustabilizowano bottom sheety w przeglądarce i iOS PWA: bez skoku widoku, klikania pod overlayem i przewijania tła.
 - Dodano zamykanie bottom sheetu gestem przeciągnięcia w dół.
 - Poprawiono safe area dla sticky barów, nagłówków i toastów.
@@ -118,15 +122,18 @@ Przed wydaniem uruchom pełny zestaw skryptem CI lub równoważny zestaw lokalny
 6. **Analityka:** adapter istnieje, ale produkcyjnie pozostaje no-op do czasu decyzji prawnej i produktowej.
 7. **Ekipy publiczne:** przed otwarciem wymagają zgód, rate limitów, ochrony 8-znakowych kodów, rotacji zaproszeń i dogfoodingu wielokontowego.
 8. **Materiały ćwiczeń:** walidator wykazuje 16 unikalnych ćwiczeń z placeholderem zdjęcia w 49 slotach programów. **Odroczone (2026-07-18):** po audycie [Ty] decyzja o wygenerowaniu 16 zdjęć cofnięta — wykona w innym terminie. Prompty gotowe (`prompty-zdjecia-cwiczen-16.md`). NIE blokuje R3a; pozostaje otwarte jako warunek bramki H2 (placeholdery w widocznych planach muszą mieć świadomą decyzję).
-9. **Docelowa IA jest wdrożona do R2 włącznie** (chrome, integralność sesji, hub Treningu);
-   huby Postępy/Ekipa i logger czekają na R3a–R4. `/history/add` nadal wymaga przebudowy
-   wyboru programu oraz pełnej regresji daty i overflow na iOS.
+9. **Docelowa IA jest wdrożona do R3a włącznie** (chrome, integralność sesji, hub Treningu,
+   Postępy i Ciało). R3b buduje Ekipę jako hub; R4 domyka Logger/Historię. `/history/add`
+   ma już naprawione overflow i iOS datetime, ale nadal wymaga dopracowania wyboru programu.
 10. **Drift danych treningowych:** w produkcji brakuje `Band_Lat_Pulldown` i `Single_Leg_Calf_Raise`; zweryfikowany restore ma 905 ćwiczeń, a lokalny zestaw 907. Przed H2 trzeba wykonać precyzyjny sync tych dwóch rekordów zamiast pełnego re-seeda.
-11. **R2 Home/Plany wymaga refinementu przed R3a:** pion ma właściwy szkielet IA,
-    lecz nie domyka zaakceptowanego UX/UI. Pełny `FlameWeek` nadal wyprzedza hero
-    (na 320 × 568 koliduje z floating nav), badge celu nie jest klikany, hero ma
-    zbyt mały target nazwy planu, loading Plany gubi chrome, a karty biblioteki są
-    zbyt gęste. Zakres i Definition of Done R2.1: `audyt-r2-home-plany-2026-07-17.md`.
+11. **Ciągłość konta i zaufanie do ustawień (P0):** onboarding jest obecnie kwalifikowany
+    przez liczbę sesji i flagę localStorage. Usunięcie całej historii albo nowe urządzenie może
+    więc błędnie otworzyć onboarding. Stan ukończenia musi przejść do ustawień konta; przy tej
+    zmianie badge celu zacznie być widoczny od `0/N`. Ustawienie sprzętu ma też wpływać na
+    bibliotekę/rekomendacje po onboardingu, nie tylko podczas niego. Zakres: F0.7.
+12. **Integralność przed Ekipą (P0/P1):** podmiana może odziedziczyć wynik po innym ćwiczeniu;
+    walidacja anomalii nie chroni jeszcze rekordów; Ekipa ma osobne SQL dla passy i granicy
+    tygodnia, niespójne z Warszawą i minimalnym celem planu. Zakres: F0.3.
 
 ## Następny krok
 
@@ -134,10 +141,23 @@ Na produkcji są: R1a, R1b, R2, spokojniejszy ekran Done oraz **polska wyszukiwa
 (migracja `20260717130502_exercise_polish_names` — local == remote, deploy `6d7c26d`,
 CI zielone). Zaakceptowane po dogfoodzie [Ty]: pion R2 i ekran Done.
 **Checkpoint urządzeniowy ZALICZONY [Ty] 2026-07-18** (iPhone PWA, 8/8, zero zgłoszeń).
-**R3a (Postępy i Ciało) ZAKOŃCZONE TECHNICZNIE 2026-07-18** — filtr okresu przez replace
-+ pomiar jako ekran focus `/body/add`; reszta była gotowa z R1a/R1b. Zweryfikowane
-w przeglądarce, czeka na push i regresję treści [Ty]. **Następny etap kodowy: R3b (Ekipa
-jako hub).**
+**R3a (Postępy i Ciało) oraz R2.1 są na produkcji.** R3a: filtr okresu przez replace i pomiar
+jako ekran focus `/body/add`; waga jest wymagana, notatka widoczna, zdjęcia ograniczone do
+dwóch. **F0.7.1–F0.7.4 są gotowe lokalnie:** trwały onboarding konta, badge `0/N`, uczciwe
+porządkowanie biblioteki po sprzęcie i CTA po zmianie ustawień; migracja + smoke lokalne ✓.
+Zostaje F0.7.5 (świeże konto i iPhone PWA). **Następny etap kodowy: R3b, Ekipa jako hub.**
+Dopiero potem R3b — Ekipa jako hub,
+multi-ekipa, nieprzeczytany stan, jedno zdarzenie na Home i dogfooding dwóch kont.
+
+**F0.2 i F0.3 są gotowe lokalnie:** po podmianie w tym samym slocie poprzedni wynik wymaga
+teraz zgodnego ćwiczenia, więc 100 kg ze starego ruchu nie pokaże się w nowym. Logger prosi
+o potwierdzenie serii roboczej ponad 300 lub 1,5× poprzedni prawidłowy wynik, z mocniejszym
+komunikatem powyżej 500; baza chroni zakres `0–1000 kg` i `1–100` powtórzeń, a e1RM liczy
+wyłącznie serie 1–10. Migracje i smoke
+z celowanymi regresjami są zielone lokalnie. **L9/L10 są również gotowe lokalnie:** Ekipa
+liczy ukończone sesje, a nie check-iny, stosuje `weekly_goal` sprzężony z planem i wyznacza
+tydzień przez `Europe/Warsaw`; smoke dwóch kont potwierdza 1/2 → passa 0 oraz 2/2 → passa 1.
+Następne: R3b.
 **Zdjęcia 16 placeholderów: ODROCZONE** (decyzja [Ty] 2026-07-18) — patrz ryzyko 8; nie
 blokuje R3a, warunek bramki H2.
 Deploy audytu kodu (P1.1–P1.4 + P2) wykonany 2026-07-17: migracja `20260717213044` na

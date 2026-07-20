@@ -12,6 +12,8 @@ import { getAutoRest } from "@/lib/prefs";
 import { ensureOnline } from "@/lib/offlineGuard";
 import { vibrate } from "@/lib/feedback";
 import { uuid } from "@/lib/uuid";
+import { reviewWorkingSetWeight, type SetWeightReview } from "@/lib/setValidation";
+import { LIMITS } from "@/lib/format";
 import type { LoggerExercise } from "./Logger";
 
 const SAVE_ERR = "Nie udało się zapisać. Sprawdź internet i spróbuj ponownie.";
@@ -33,6 +35,7 @@ export function useSessionMutations({
   saveNotes,
   startRest,
   allowRest,
+  requestWeightReview,
 }: {
   sessionId: string;
   setExercises: Dispatch<SetStateAction<LoggerExercise[]>>;
@@ -43,6 +46,11 @@ export function useSessionMutations({
   startRest: (ex: LoggerExercise, label?: string) => void;
   /** W trybie edycji historii nie uruchamiamy timera przerw. */
   allowRest: boolean;
+  requestWeightReview: (request: {
+    ex: LoggerExercise;
+    set: SessionSet;
+    review: SetWeightReview;
+  }) => void;
 }) {
   // S12: serie, które pobiły rep-PR w tej sesji (badge „PR" na wierszu)
   const [prSets, setPrSets] = useState<Record<string, boolean>>({});
@@ -130,13 +138,22 @@ export function useSessionMutations({
     startRest(ex, "Przerwa po supersecie");
   }
 
-  function handleToggle(ex: LoggerExercise, set: SessionSet) {
-    const next = !set.completed;
-    patchSetLocal(ex.sessionExerciseId, set.id, { completed: next });
-    if (next) maybeStartRest(ex);
+  function previousValidWeight(ex: LoggerExercise): number | null {
+    const candidates = [
+      ...Object.values(ex.repPRs),
+      ...ex.previousSets
+        .filter((s) => s.reps != null && Number.isInteger(s.reps) && s.reps >= 1 && s.reps <= 100)
+        .map((s) => s.weight),
+    ].filter((weight): weight is number => weight != null && weight >= 0 && weight <= LIMITS.weight);
+    return candidates.length ? Math.max(...candidates) : null;
+  }
+
+  function commitToggle(ex: LoggerExercise, set: SessionSet) {
+    patchSetLocal(ex.sessionExerciseId, set.id, { completed: !set.completed });
+    if (!set.completed) maybeStartRest(ex);
     // S12: mikro-celebracja rep-PR — w momencie zaliczenia, nie na ekranie końcowym
     if (
-      next &&
+      !set.completed &&
       ex.type === "weighted" &&
       set.set_type === "working" &&
       set.weight != null &&
@@ -150,7 +167,26 @@ export function useSessionMutations({
         vibrate([80, 40, 80]); // krótszy niż koniec przerwy; no-op bez HTTPS
       }
     }
-    saveSet(set, { completed: next });
+    saveSet(set, { completed: !set.completed });
+  }
+
+  function handleToggle(ex: LoggerExercise, set: SessionSet) {
+    // Cofnięcie zaliczenia nie potrzebuje dialogu. Przy zaliczeniu nietypowego
+    // wyniku zatrzymujemy zapis przed zmianą stanu — to jest realne potwierdzenie,
+    // a nie toast pojawiający się już po utworzeniu rekordu.
+    if (!set.completed) {
+      const review = reviewWorkingSetWeight({
+        type: ex.type,
+        setType: set.set_type,
+        weight: set.weight,
+        previousWeight: previousValidWeight(ex),
+      });
+      if (review) {
+        requestWeightReview({ ex, set, review });
+        return;
+      }
+    }
+    commitToggle(ex, set);
   }
 
   // Stoper `timed`: atomowy zapis czasu + zaliczenie (jeden upsert, bez wyścigu patch/toggle).
@@ -287,6 +323,7 @@ export function useSessionMutations({
     persistNotes,
     handleAddSet,
     handleToggle,
+    commitToggle,
     handleTimedComplete,
     persistSet,
     handleDeleteSet,

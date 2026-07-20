@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { updateSettings } from "@/app/actions/settings";
+import { completeOnboarding, updateSettings } from "@/app/actions/settings";
 import { saveActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,8 +37,6 @@ import {
 // E4 priorytet → E5 kierunek planu → E6 rytm → E7 karta planu + potwierdzenie.
 // Jedna decyzja na ekran · ≤60 s · wszystko skipowalne · kropki + wstecz.
 // Na sand: teksty wtórne w brand-muted (stone), NIE muted-foreground (O5).
-const FLAG = "arco-onboarded-v3";
-
 const LEVELS: { id: TrainingLevel; label: string; hint: string }[] = [
   { id: "beginner", label: "Zaczynam", hint: "Dopiero zaczynam albo wracam po przerwie." },
   { id: "intermediate", label: "Trenuję regularnie", hint: "Mam co najmniej rok regularnych treningów." },
@@ -53,8 +51,6 @@ const ENVS: { id: TrainingEnvironment; label: string; hint: string }[] = [
 
 /** Default celu tygodniowego wg poziomu (onboarding-v3 §E4). */
 const GOAL_DEFAULT: Record<TrainingLevel, number> = { beginner: 2, intermediate: 3, advanced: 4 };
-const subscribeToNothing = () => () => {};
-
 const LEVEL_REASON: Record<TrainingLevel, string> = {
   beginner: "zaczynasz albo wracasz po przerwie",
   intermediate: "trenujesz już regularnie",
@@ -85,22 +81,17 @@ function recommendationRhythmCopy(suggestion: ReturnType<typeof recommendProgram
 }
 
 export function WelcomeOverlay({
-  eligible,
+  completed,
   unit,
   weeklyGoal,
   programs,
 }: {
-  eligible: boolean;
+  completed: boolean;
   unit: UnitSystem;
   weeklyGoal: number;
   programs: ProgramCandidate[];
 }) {
   const router = useRouter();
-  const eligibleToShow = useSyncExternalStore(
-    subscribeToNothing,
-    () => eligible && !localStorage.getItem(FLAG),
-    () => false,
-  );
   const [dismissed, setDismissed] = useState(false);
   // 0=moment · 1=ty · 2=gdzie · 3=poziom · 4=priorytet · 5=kierunek · 6=rytm · 7=plan · 8=potwierdzenie
   const [step, setStep] = useState(0);
@@ -128,10 +119,9 @@ export function WelcomeOverlay({
     });
   }, [level, env, effectiveGoal, focus, programs]);
 
-  if (!eligibleToShow || dismissed) return null;
+  if (completed || dismissed) return null;
 
   function finish() {
-    localStorage.setItem(FLAG, "1");
     setDismissed(true);
     router.refresh();
   }
@@ -157,6 +147,7 @@ export function WelcomeOverlay({
           });
         }
       }
+      await completeOnboarding();
     } catch {
       toast.error("Nie udało się zapisać ustawień. Sprawdź połączenie i spróbuj ponownie.");
       setSaving(false);
@@ -184,15 +175,23 @@ export function WelcomeOverlay({
     }
   }
 
-  function skipAll() {
+  async function skipAll() {
     // Od E6 user ma już wpisany profil — „Pomiń" zapisuje go, nie gubi w milczeniu.
     // Na E7 przycisk jest ukryty, bo karta wyniku ma dwa jawne wyjścia.
     if (step >= 6) {
-      void saveProfile(false);
+      await saveProfile(false);
       return;
     }
     track({ name: "onboarding_skipped", props: { step } });
-    finish();
+    setSaving(true);
+    try {
+      await completeOnboarding();
+      finish();
+    } catch {
+      toast.error("Nie udało się zapisać ustawień. Sprawdź połączenie i spróbuj ponownie.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   const dots = 7;
@@ -213,8 +212,13 @@ export function WelcomeOverlay({
           <span />
         )}
         {step <= 6 && (
-          <button onClick={skipAll} className="min-h-11 px-2 text-sm text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-            Pomiń
+          <button
+            type="button"
+            onClick={skipAll}
+            disabled={saving}
+            className="min-h-11 px-2 text-sm text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:opacity-60"
+          >
+            {saving ? "Zapisuję…" : "Pomiń"}
           </button>
         )}
       </div>

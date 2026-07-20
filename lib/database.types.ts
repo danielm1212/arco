@@ -723,6 +723,7 @@ export type Database = {
           created_at: string
           default_rest_seconds: number
           display_name: string | null
+          onboarding_completed_at: string | null
           training_priority: Database["public"]["Enums"]["training_priority"]
           training_focus: Database["public"]["Enums"]["program_focus"]
           unit_system: Database["public"]["Enums"]["unit_system"]
@@ -737,6 +738,7 @@ export type Database = {
           created_at?: string
           default_rest_seconds?: number
           display_name?: string | null
+          onboarding_completed_at?: string | null
           training_priority?: Database["public"]["Enums"]["training_priority"]
           training_focus?: Database["public"]["Enums"]["program_focus"]
           unit_system?: Database["public"]["Enums"]["unit_system"]
@@ -751,6 +753,7 @@ export type Database = {
           created_at?: string
           default_rest_seconds?: number
           display_name?: string | null
+          onboarding_completed_at?: string | null
           training_priority?: Database["public"]["Enums"]["training_priority"]
           training_focus?: Database["public"]["Enums"]["program_focus"]
           unit_system?: Database["public"]["Enums"]["unit_system"]
