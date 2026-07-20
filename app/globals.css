@@ -148,6 +148,17 @@
     }
   }
 
+  /* iOS Safari: <input type="datetime-local"> ignoruje width i rozpycha kontener
+     mimo w-full/min-w-0/max-w-full (karta „Kiedy trenowałeś?"). appearance:none
+     normalizuje szerokość do wrappera; tap wciąż otwiera natywny picker. Reguła
+     wyłącznie na dotykowym WebKit — desktop i Android bez zmian. */
+  @supports (-webkit-touch-callout: none) {
+    input[type="datetime-local"] {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+  }
+
   .dark {
     /* ── L2 · SEMANTIC (dark) — nadpisanie referencji; primitive bez zmian ── */
     --color-bg:              var(--arco-ink-800);       /* ciepła czerń — canvas */
