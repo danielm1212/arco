@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { STICKY_HEADER_SAFE_AREA } from "@/components/navigation/stickyHeader";
 import type { ExerciseType, SessionSet, TrainingPriority, UnitSystem } from "@/lib/types";
 import { trainingPriorityMeta } from "@/lib/trainingPriority";
 import { useWakeLock } from "@/lib/useWakeLock";
@@ -223,7 +225,7 @@ export function Logger({
         showSessionMiniBar={false}
         miniBarPosition="safe-bottom"
       />
-      <header className="relative sticky top-[var(--safe-area-top)] z-10 border-b bg-background px-md py-sm before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-[var(--safe-area-top)] before:bg-background">
+      <header className={cn(STICKY_HEADER_SAFE_AREA, "relative z-10 border-b bg-background px-md py-sm")}>
         <div className="flex items-center justify-between gap-sm">
           <div className="flex min-w-0 items-center gap-2xs">
             {/* 44px pełnowymiarowy target (było: mikro-tekst "← Trening") */}

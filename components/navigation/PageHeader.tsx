@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { BackButton } from "./BackButton";
 import { CloseButton } from "./CloseButton";
+import { STICKY_HEADER_SAFE_AREA } from "./stickyHeader";
 
 export function PageHeader({
   title,
@@ -28,11 +29,7 @@ export function PageHeader({
     <header
       className={cn(
         "grid min-h-[60px] grid-cols-[minmax(2.75rem,1fr)_minmax(0,auto)_minmax(2.75rem,1fr)] items-center border-b bg-background px-sm",
-        // sticky przypina się pod paskiem statusu (top = safe-area). `before:` docleja
-        // tło na pas safe-area NAD nagłówkiem, inaczej prześwituje przezeń scrollowana
-        // treść (F0.4). Wzorzec spójny z nagłówkiem Loggera.
-        sticky &&
-          "sticky top-[var(--safe-area-top)] z-30 before:pointer-events-none before:absolute before:inset-x-0 before:bottom-full before:h-[var(--safe-area-top)] before:bg-background",
+        sticky && cn(STICKY_HEADER_SAFE_AREA, "z-30"),
         className,
       )}
     >
