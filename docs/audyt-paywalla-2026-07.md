@@ -1,6 +1,9 @@
 # Audyt paywalla i realności WTP (2026-07-16)
 
-> **Zlecenie [Ty]:** „przeanalizuj plan biznesowy, co jest za paywallem, czy userzy będą realnie płacić, czy warto zaktualizować". **Podstawa:** wizja v2 §2–3 (model, Z1–Z3, fale konwersji), `monetyzacja.md` (benchmarki), świeży research konwersji triali (linki na dole). **Werdykt w jednym zdaniu:** model jest zdrowy i nie wymaga przebudowy — wymaga **kalibracji progu B2, jednego nowego mechanizmu (teaser stagnacji) i przestawienia komunikacji ceny na roczną**.
+> **Zlecenie [Ty]:** analiza realności paywalla i WTP. **Podstawa po rebaseline:**
+> `wizja-i-strategia-v3.md` oraz świeży research konwersji triali z linków poniżej.
+> **Werdykt historyczny:** model jest zdrowy; próg konwersji po rebaseline nazywa się PAY-1,
+> a trial zaczyna się po pierwszym ukończonym treningu.
 
 ---
 
@@ -19,7 +22,8 @@
 ## 2. Czy będą płacić — szczera odpowiedź
 
 Tak, ale mniej licznie niż zakłada bramka i w innym momencie, niż uderza trial:
-- **Benchmark konwersji triali (research 2026-07-16):** trial **bez karty (opt-in)** konwertuje ~**8,9–18,2%**; z kartą (opt-out) 31–49%. Nasz reverse trial jest bez karty (świadomie — wolumen karmi ekipę, Z2). **Próg B2 „trial→paid ≥25%" jest ponad benchmarkiem opt-in — nierealistyczny.** Drugi warunek B2 („całkowita ≥1,5%") jest zdrowy (mediana freemium 2,1%).
+- **Benchmark z researchu 2026-07-16:** trial bez karty był podstawą kalibracji. Dawną bramkę
+  B2 zastąpiło PAY-1; wartości z audytu są hipotezą do płatnej bety, nie dowodem rynku PL.
 - **Kto płaci:** Paweł po 3+ miesiącach (kłódka historii, limit programów, stagnacja). **Kiedy NIE płaci:** dzień 21, jeśli przez trial guidance-full nie miał okazji nic mądrego powiedzieć (balans/staleness może; deload — nie zdąży).
 - **Cena:** miesięczna 14,99 zł stoi wysoko przy Hevy $2.99 — ale **roczna 99 zł ≈ parytet z Hevy rocznym (~95 zł)**. Kotwica Hevy znika, gdy rozmowa toczy się o rocznym.
 
@@ -27,7 +31,8 @@ Tak, ale mniej licznie niż zakłada bramka i w innym momencie, niż uderza tria
 
 **A. Teaser stagnacji — NOWY mechanizm [decyzja Daniela], najważniejsza zmiana.** Pierwsza wykryta stagnacja u KAŻDEGO usera (także free, także po trialu) → **pełna diagnoza + plan wyjścia gratis, jednorazowo**, z podpisem „tak działa Arco Coach — kolejne diagnozy w pakiecie". Rozwiązuje kluczową wadę modelu: trial kończy się, zanim produkt pokaże killer feature; teaser dostarcza próbkę **w momencie bólu** (najlepszy możliwy paywall-moment: frustracja + dowód, że apka widzi problem). Koszt: mały (flaga `first_stagnation_teaser_used`). Ryzyko kanibalizacji: pomijalne — jedna diagnoza nie zastępuje kalibracji i kolejnych cykli.
 
-**B. Kalibracja progu B2 [decyzja Daniela].** Zielone: trial→paid **≥10%** (ambitne wobec 8,9–18,2% opt-in) LUB całkowita ≥1,5% i rośnie — zamiast obecnych 25%. Bez tej korekty w kwietniu 2027 uznamy za porażkę wynik, który jest rynkową normą.
+**B. Kalibracja PAY-1 [decyzja Daniela].** Hipoteza startowa: trial→paid **≥10%** LUB
+całkowita ≥1,5% i rośnie. Ostateczne progi ustalamy po H2-F i nie przesuwamy po wyniku bety.
 
 **C. Yearly-first w komunikacji ceny [decyzja Daniela].** Paywall i landing prowadzą od **99 zł/rok** („8,25 zł/mies.") z miesięczną jako opcją — neutralizuje kotwicę Hevy (parytet roczny), podnosi LTV, zgodne z wnioskami Mobbin (tabela + „bez zobowiązań"). Test A/B na liście (14,99/99 vs 9,90/79) zostaje — dokłada tylko kolejność prezentacji.
 
@@ -37,7 +42,9 @@ Tak, ale mniej licznie niż zakłada bramka i w innym momencie, niż uderza tria
 
 **F. „Rok w żelazie" jako moment Coach — potwierdzić** (już w roadmapie): trzecia, sezonowa mini-fala konwersji (grudzień), zero dodatkowego mechanizmu.
 
-**G. NOWY feature Coach: cele siłowe z prognozą [decyzja Daniela] — rekomendacja: TAK, najlepszy WTP/koszt w backlogu.** User ustawia cel („100 kg wyciskania") → Arco śledzi trend e1RM i prognozuje („przy obecnym tempie: marzec"), a przy odchyleniu od trendu spina się z diagnozą stagnacji („oddalasz się od celu — plan wyjścia →"). Spina istniejące dane (trendy e1RM z S13), guidance i personalizację w jedną emocjonalną obietnicę, której Hevy nie ma. Koszt: regresja na liczonych już danych + ekran celu. Miejsce: fala 1 obok diagnozy; w darmowym — ustawienie celu i pasek postępu (Z-duch), prognoza i diagnoza w Coach. Kiedy: Krok 3 (split analityki) albo tuż po launchu.
+**G. Cele siłowe z prognozą [decyzja Daniela].** To kandydat do PREMIUM-01, nie automatyczny
+zwycięzca. Prognoza wymaga minimalnej ilości danych i stanu „potrzebujemy jeszcze…”. H2-V/H2-F
+porównuje ją z guidance i pełną historią; dopiero wynik wybiera najmniejszy płatny pion.
 
 **H. Kosmetyka premium (lekki dodatek, nie filar):** motywy w palecie Warm + warianty ikony apki dla subskrybentów — wzorzec Duolingo/Bear (tanie, lubiane, tożsamościowe, zero konfliktu z Z1–Z3). W paywallu jako „miły bonus" na końcu listy, nigdy argument główny. Po launchu, przy okazji toru assetów.
 
@@ -49,7 +56,8 @@ Z1–Z3 (fundament zaufania i wzrostu — nietykalne) · **reverse trial bez kar
 
 ## 5. Do naniesienia po decyzjach [Ty]
 
-Wizja v2 §3.2 (teaser stagnacji jako element fali 1) i §7 (próg B2) · landing/paywall copy (yearly-first, packaging D) · instrumentacja: event `stagnation_teaser_shown` → konwersja z teasera jako osobna metryka.
+Wizja v3 (teaser stagnacji i PAY-1) · landing/paywall copy (yearly-first) · instrumentacja:
+event `stagnation_teaser_shown` → konwersja z teasera jako osobna metryka.
 
 ---
-**Źródła benchmarków:** [RevenueCat — State of Subscription Apps](https://www.revenuecat.com/state-of-subscription-apps) · [Kirro — Free trial conversion benchmarks 2026](https://kirro.io/free-trial-conversion-rate) · [Vmobify — trial conversion by model](https://vmobify.com/blog/free-trial-conversion-rate) · wcześniejsze: Adapty/Business of Apps w `monetyzacja.md` §2.
+**Źródła benchmarków:** [RevenueCat — State of Subscription Apps](https://www.revenuecat.com/state-of-subscription-apps) · [Kirro — Free trial conversion benchmarks 2026](https://kirro.io/free-trial-conversion-rate) · [Vmobify — trial conversion by model](https://vmobify.com/blog/free-trial-conversion-rate).

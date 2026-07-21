@@ -1,6 +1,7 @@
 # Arco — Tone of Voice (kanon głosu marki)
 
-> **Data:** 2026-07-08 · **Podstawa:** `wizja-i-plan-produktu-v2.md` §1–§1.2 (retro-analog Warm, kameralność, „motywator nie obciążenie") + precedensy copy już zaakceptowane (celebracja S2, empty states S14, „zadziora" z kanonu).
+> **Data:** 2026-07-08 · **Podstawa po rebaseline:** `wizja-i-strategia-v3.md` oraz
+> zaakceptowane precedensy copy (celebracje, empty states i język momentów).
 > **Do czego służy:** (1) kanon do recenzji każdego nowego copy; (2) gotowy prompt (§4) do wklejenia w sesję Claude Code przy pisaniu tekstów.
 
 ---
@@ -50,14 +51,15 @@ Zasada kciuka: **im bliżej sztangi, tym mniej gadania.** W loggerze user ma rę
 
 | Moment | Copy-wzorzec |
 |---|---|
-| Nudge (ekipa) | „Radek przypomina Ci o treningu 💪" — imię + fakt, zero presji |
-| Check-in (ekipa) | „Daniel trenował dziś — 4. tydzień z rzędu" |
+| Nudge (ekipa) | „Radek przypomina Ci o treningu 💪”. Imię + fakt, zero presji |
+| Check-in (ekipa) | „Daniel trenował dziś. To 4. tydzień z rzędu.” |
 | Kłódka historii (fala 2) | „Wszystko tu jest, bezpieczne. Arco Coach sięga głębiej niż 12 tygodni." |
 | Trigger stagnacji (fala 1) | „Push stoi w miejscu od 3 tygodni. Coach wie, jak to ruszyć →" |
-| Koniec triala | „Trial się kończy — Twoje treningi i ekipy zostają za darmo, na zawsze. Coach zabiera głębię." |
-| **Start triala (dzień 0, timeline)** | „Przez 21 dni masz wszystko. Dzień 18: przypomnimy, co się zmieni. Dzień 22: zostaje darmowy rdzeń — nic nie znika. **Bez karty — nie ma czego zapomnieć anulować.**" *(wzorzec Blinkist-timeline; wnioski-dla-arco P2)* |
-| Pricing (subtitle pod CTA) | „Bez zobowiązań. Anuluj kiedy chcesz — dwa tapnięcia w ustawieniach." *(P3; anulowanie MUSI być realnie takie proste)* |
-| Prompt instalacji (celebracja 1. treningu) | „Dodaj Arco na ekran główny — ekran nie zgaśnie przy sztandze, a kumple dadzą znać, że trenują." |
+| Za mało danych | „Jeszcze 2 treningi i pokażemy wiarygodny kierunek." Bez prognozy na siłę |
+| Koniec triala | „Trial się kończy. Twoje treningi i Ekipy zostają za darmo, na zawsze. Coach daje większą głębię, gdy zechcesz wrócić.” |
+| **Start triala po 1. treningu** | „Pierwszy trening zapisany. Od dziś przez 21 dni masz Coach. Przed końcem przypomnimy, co się zmieni. Darmowy rdzeń i Twoje dane zostają." |
+| Pricing (subtitle pod CTA) | „Bez zobowiązań. Anulujesz w ustawieniach.” Anulowanie musi być realnie proste |
+| Prompt instalacji (celebracja 1. treningu) | „Dodaj Arco na ekran główny. Ekran nie zgaśnie przy sztandze, a kumple dadzą znać, że trenują.” |
 
 ## 4. PROMPT do wklejenia (sesje copy w Claude Code)
 
@@ -80,7 +82,7 @@ Zasady twarde:
 
 Kontekst marki: retro-analog Warm (terracotta/krem/ciepła czerń), kameralność zamiast
 publicznego feedu, „logger który prowadzi, loguje się sam i pilnuje Cię razem z kumplem".
-Wzorce i przykłady: docs/tone-of-voice.md §3, docs/archive/empty-states-copy.md.
+Wzorce i przykłady: `tone-of-voice.md` §3 oraz kontrakty UX w `decyzje-produktowe.md`.
 
 Dla każdego tekstu podaj: wariant główny + 1 alternatywę + (jeśli UI) limit znaków.
 ```

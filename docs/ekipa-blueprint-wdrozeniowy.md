@@ -75,7 +75,9 @@ CTA główne: „Załóż ekipę”. Drugorzędne: „Mam kod zaproszenia”. Po
 
 ### D. Home
 
-Karta pod guidance jest cicha: 2–4 awatary, jeden highlight i link. Gdy brak ekipy, jest zaproszeniem do wartości — nie martwym elementem nawigacji. Stan „aktywny” oznacza ostatnie 48 h, nie „kiedykolwiek”.
+Home nie ma stałej karty Ekipy. Może pokazać najwyżej jedno nowe, istotne zdarzenie
+(check-in, reakcja albo nudge) z jednym CTA do huba. Po odczytaniu zdarzenie znika. Stan pusty
+i pełna aktywność mieszkają wyłącznie w tabie Ekipa.
 
 ### E. Język i ruch
 
@@ -87,8 +89,9 @@ Przyjacielski, nigdy zawstydzający: „Radek trenował dziś” / „Szturchnij
 2. Przenieść emisję check-inu do kontrolowanej funkcji serwerowej: tylko członek ze zgodą, lokalny dzień sesji, obliczona passa.
 3. Rozszerzyć overview o postęp/reakcje/ostatnie zdarzenia oraz serwerowy wynik `can_nudge`.
 4. Dodać skrzynkę nudge oraz usuwanie członka/edycję nazwy przez twórcę.
-5. Przebudować UI do układu karta → sheet akcji; dodać wszystkie stany puste, loading i błędu.
-6. Dopiero po RLS matrix: test telefonu i kontrola kontrastu/klawiatury/czytnika.
+5. Domknąć R3b: zapamiętany switcher, unread na tabie i jedno kontekstowe zdarzenie Home.
+6. Dodać wszystkie stany puste, loading, błąd, offline i partial-data.
+7. Dopiero po RLS matrix: test telefonu i kontrola kontrastu/klawiatury/czytnika.
 
 ## 6. Definition of Done dev-v0
 

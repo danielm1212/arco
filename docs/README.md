@@ -1,85 +1,83 @@
 # Dokumentacja Arco
 
-**Aktualizacja:** 2026-07-20
+**Aktualizacja:** 2026-07-21
 
-## Zacznij tutaj
+## Źródła prawdy
 
-- `HANDOFF.md` — co działa, co jest na produkcji i jakie są aktualne ryzyka.
-- `plan-sprintow-2026-07.md` — aktywny backlog i kolejność następnych sprintów; po R3a
-  najpierw F0.7 oraz F0.2/F0.3 (ciągłość konta i integralność), potem R3b Ekipa oraz R4 Logger/Historia.
-- `userflows-docelowe-2026-07.md` — docelowa architektura informacji, przepływy i kontrakt chrome.
-- `roadmap.md` — horyzonty rozwoju i bramki decyzyjne.
-- `wizja-i-strategia-v3.md` — **kanon misji, person, modelu, strategii i języka marki (2026-07-16)**.
-- `wizja-i-plan-produktu-v2.md` — kanon zasad Z1–Z3 oraz §4–§10: ekipa, dystrybucja, sekwencja i bramki.
+Czytaj w tej kolejności:
 
-Tych sześć plików jest dokumentami sterującymi bieżącą pracą. Gdy starszy dokument im przeczy, obowiązuje powyższa kolejność.
+1. `wizja-i-strategia-v3.md` — po co istnieje Arco, dla kogo, czego nie budujemy i jakie mamy zasady.
+2. `decyzje-produktowe.md` — obowiązujące rozstrzygnięcia i pytania z bramkami.
+3. `userflows-docelowe-2026-07.md` — docelowa IA, zachowanie tras i przepływów.
+4. `HANDOFF.md` — co faktycznie działa na dziś i jakie są ryzyka.
+5. `backlog-produktu.md` — pełna kolejka zaakceptowanych, odłożonych i odrzuconych tematów.
+6. `plan-sprintow-2026-07.md` — bieżąca kolejność i Definition of Done etapów.
+7. `roadmap.md` — H2-Lab/H2-Field oraz bramki prywatności, płatnej bety i wzrostu.
 
-## Trwałe referencje
+Jeżeli stary audyt, notatka lub komentarz przeczy tej kolejności, obowiązuje dokument wyżej.
 
-### Produkt i badania
+## Praca agentów
 
-- `scenariusz-h2.md` — scenariusz testów z użytkownikami.
-- `feedback-uzytkownikow.md` — dziennik obserwacji i decyzji.
-- `usability-audit.md` — audyt użyteczności i stan ustaleń.
-- `audyt-wyszukiwarki-2026-07.md` — audyt wyszukiwania ćwiczeń; jego lokalne fazy R1–R6
-  składają się na R5a aktywnego planu i blokują H2.
-- `r5a-slownik-pl-propozycja.md` — propozycja `name_pl` (~205 ćwiczeń), aliasów i decyzji
-  placeholderowych do przeglądu właściciela; treść wejściowa dla implementacji R5a.
-- `audyt-nawigacji-2026-07.md` — docelowy kontrakt Back/Up, bottom baru, mini-bara sesji i stosu historii.
-- `audyt-kodu-2026-07.md` — audyt bezpieczeństwa, integralności danych, wydajności i zdrowia kodu po R1a/R1b/R2; findingi P1/P2 z rekomendowaną kolejnością.
-- `userflows-docelowe-2026-07.md` — decyzja nadrzędna wobec wcześniejszych wariantów IA z audytów.
-- `r0-5-wynik-prototypu.md` — wynik klikalnego prototypu, przetestowane flow i decyzje przed implementacją.
-- `audyt-r2-home-plany-2026-07-17.md` — bramka refinementu R2.1: rozbieżności
-  między wdrożonym pionem Home/Plany a zaakceptowanym UX/UI; należy wykonać przed R3a.
-- `macierz-regresji-urzadzen.md` — jedna macierz checkpointu urządzeniowego
-  (R1b/R2/R2.1/Done/R5a); wypełniana przy każdej bramce regresji z planu.
-- `konkurencja-hevy.md` oraz `archive/konkurencja-hevy-ux.md` — benchmark konkurencyjny.
-- `monetyzacja.md` — wcześniejsza analiza; wizja v2 rozstrzyga konflikty.
+- `standard-zadania-agentow.md` — Definition of Ready/Done i obowiązkowy brief zadania.
+- `koordynacja-agentow.md` — wyłącznie aktywne rezerwacje i krótki log ostatnich zmian.
+- `notion-sync-queue.md` — tylko zmiany oczekujące na ręczną synchronizację, gdy właściciel jej zażąda.
 
-### Design i komunikacja
+Agent zaczyna od `CLAUDE.md`, HANDOFF i aktywnego sprintu. Nie traktuje archiwum ani starego
+audytu jako backlogu.
 
-- `paleta-arco-warm.md` — kolory i semantyka.
-- `wytyczne-designu.md` — zasady interfejsu i dostępności.
+## Trwałe kontrakty
+
+### UX/UI i treść
+
+- `wytyczne-designu.md` — HIG/WCAG, chrome, motion i checklista ekranu.
+- `paleta-arco-warm.md` — tokeny kolorów.
 - `tone-of-voice.md` — język produktu.
-- `prompt-ikony-3d-clay.md` — zasady małego zestawu ikon 3D.
-- `prompt-fotografia-warm.md` — system fotografii Warm dla biblioteki, landingu i momentów.
-- `strategia-marketingowa.md`, `landing-plan.md`, `plan-dystrybucji.md`, `baza-contentu-instagram.md` — materiały na etap launchu.
-- `audyt-paywalla-2026-07.md` — uzasadnienie modelu Coach, yearly-first i teasera stagnacji.
-- `spec-status-konta-ui.md` — karta „Twój plan" w Ustawieniach i trzy stany ekranu `/coach`.
+- `prompt-ikony-3d-clay.md` — kuratorowany system 3D; inspiracja i reguły użycia.
+- `prompt-fotografia-warm.md` — przyszły kierunek fotografii editorialowej.
+- `r0-5-wynik-prototypu.md` — decyzje potwierdzone przez prototyp przed wdrożeniem.
+- `spec-r4-logger.md` — agent-ready refinement loggera, Historii i wartości drugiego treningu.
+- `audyt-core-i-plan-2026-07.md` — ocena silnika, dowody, architektura CORE-0/CORE-1 i granice pracy po H2.
+- `spec-plan-q-biblioteka-treningow.md` — agent-ready kontrakt danych, treści, sprzętu, UI i walidacji 15 programów.
+- `audyt-biblioteki-programow-2026-07.md` — wersjonowane zatwierdzenie recept P01–P15 i dokładna lista korekt.
+- `../prototypes/product-vision-poc/README.md` — aktualny klikalny POC docelowego kręgosłupa produktu.
 
-### Technologia i operacje
+### Jakość, bezpieczeństwo i badania
 
-- `setup-local.md` — uruchomienie lokalne.
-- `bezpieczenstwo.md` — zasady i bramki bezpieczeństwa.
-- `optymalizacja.md` — budżety wydajności.
-- `instrumentacja-metryk.md` — architektura pomiaru.
-- `backup-i-restore.md` — procedura backupu bazy i Storage oraz test odtworzenia (bramka Sprintu 16).
-- `kalendarz-wykonawczy.md` — orientacyjny harmonogram.
-- `notion-sync-queue.md` — kolejka zmian do ręcznej synchronizacji na żądanie.
-- `koordynacja-agentow.md` — rezerwacja obszarów i log pracy równoległych sesji.
+- `macierz-regresji-urzadzen.md` — checkpointy PWA/urządzeń.
+- `scenariusz-h2.md` — metodologia H2-U/H2-V/H2-E oraz protokół H2-F; finalna rewizja w R6.
+- `feedback-uzytkownikow.md` — surowe obserwacje i ich status.
+- `bezpieczenstwo.md` — bramki bezpieczeństwa i publicznych kont.
+- `backup-i-restore.md` — procedura oraz dowód odtworzenia.
+- `optymalizacja.md` — budżety gorących tras.
+- `instrumentacja-metryk.md` — plan pomiaru po decyzji prawnej.
 
-### Ekipy i dane
+### Ćwiczenia i programy
 
-- `ekipa-koncepcja.md` — założenia produktu.
-- `ekipa-blueprint-wdrozeniowy.md` — referencja techniczna; baseline v0 jest już wdrożony dla kont testowych.
-- `projekt-schematu-subs-consents-pods.md` — projekt docelowego multi-user, zgód i subskrypcji; nie opisuje w całości obecnej produkcji.
+- `audyt-bazy-cwiczen.md` — pochodzenie, ukrywanie i dotychczasowa kuracja.
+- `r5a-slownik-pl-propozycja.md` — wersjonowane źródło zatwierdzonego słownika PL i aliasów.
+- `prompty-zdjecia-cwiczen-16.md` — materiał roboczy; prompt nie jest zatwierdzeniem techniki.
+- `trainings/` — kontrakty treści programów.
 
-### Historyczne fundamenty
+### Ekipa, płatności i launch
 
-- `build-brief-apka-treningowa-v0.2.md`
-- `build-brief-v0.3-addendum.md`
-
-Briefy pomagają zrozumieć decyzje i model danych, ale nie są aktywnym planem wykonawczym.
+- `legal/README.md` — mapa draftów PRIV-1; draft nie zastępuje review prawnego ani działających flow.
+- `ekipa-koncepcja.md` — trwała zasada produktu i benchmark.
+- `ekipa-blueprint-wdrozeniowy.md` — kontrakt danych/RLS dla v0 i publicznego hardeningu.
+- `projekt-schematu-subs-consents-pods.md` — projekt przyszłych subskrypcji i zgód; migracje są prawdą dla obecnej bazy.
+- `audyt-paywalla-2026-07.md`, `spec-status-konta-ui.md` — decyzje Coach po H2.
+- `strategia-marketingowa.md`, `plan-dystrybucji.md`, `landing-plan.md`, `landing-copy.md` — etap launchu.
 
 ## Archiwum
 
-`archive/` zawiera wybrane audyty i decyzje, do których nadal warto wracać. Zakończone plany wykonawcze, które tylko dublowały historię Git, zostały usunięte zamiast utrzymywania ich jako równoległe źródła prawdy.
+`archive/` zawiera trwałe benchmarki i kontekst historyczny. Nie jest źródłem stanu ani planu.
+Zakończone raporty implementacyjne i równoległe plany są usuwane, bo ich historię zachowuje Git.
 
 ## Zasady utrzymania
 
-- Po zmianie stanu aktualizujemy `HANDOFF.md`.
-- Po zmianie priorytetu aktualizujemy `plan-sprintow-2026-07.md`.
-- Roadmapę zmieniamy tylko wtedy, gdy zmienia się kolejność horyzontów lub bramka.
-- Dokument zakończonego sprintu usuwamy, gdy jego wiedza jest już w kodzie, testach i historii Git.
-- Trwałą decyzję, benchmark lub wymaganie prawne zachowujemy jako referencję.
-- Notion synchronizujemy wyłącznie na prośbę właściciela.
+- Stan wdrożenia zmieniamy w HANDOFF.
+- Nowy pomysł trafia najpierw do backlogu; jeśli wymaga rozstrzygnięcia, także do rejestru decyzji.
+- Kolejność zmieniamy tylko w planie sprintów.
+- Roadmapę zmieniamy wyłącznie przy zmianie horyzontu lub bramki.
+- Log koordynacji nie jest changelogiem; przechowuje kilka ostatnich wpisów, resztę ma Git.
+- Dokument zamkniętego sprintu usuwamy po migracji unikalnych ustaleń do źródeł prawdy.
+- Notion nie jest źródłem prawdy i synchronizujemy go tylko na prośbę właściciela.

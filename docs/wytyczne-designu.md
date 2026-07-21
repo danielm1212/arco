@@ -13,7 +13,7 @@
 | **Hierarchy / Clarity** — jedna wyraźna akcja główna na ekran; treść przed dekoracją | Home: primary = start treningu; reszta (cel, wskazówki, passa) wizualnie podrzędna lub progressive disclosure | ⚠️ do decyzji po H2 (feedback #1) |
 | **Deference** — UI ustępuje treści; chrom minimalny | = nasza „warstwa narzędzia" (minimal, bez ramek, elevation światłem) — HIG i wizja §1.2 mówią to samo | ✅ elevation N3 |
 | **Touch targets ≥ 44×44 pt** | wszystkie interaktywne elementy, także ikonowe (✓/✕/±) | ✅ Button 44px; pilnować w nowych |
-| **Czytelność / Dynamic Type** — tekst się skaluje, zoom działa | zoom NIE może być zablokowany (`maximumScale` — P0 z usability-audit!); rozmiary w rem; min. 11pt/15px dla treści | ⚠️ P0 przed H2 |
+| **Czytelność / Dynamic Type** — tekst się skaluje, zoom działa | zoom NIE może być zablokowany; rozmiary w rem; min. 11pt/15px dla treści | 🟡 pełna regresja R5b |
 | **Safe areas** | `pt-safe` w standalone (notch/home indicator) | ✅ jest |
 | **Feedback natychmiastowy** — każda akcja ma odpowiedź <100 ms | tap serii = natychmiastowy stan (optymistyczny UI + outbox); wibracja na koniec przerwy (już mamy) = HIG-owe „haptics w momentach znaczących, oszczędnie" | ✅ rdzeń; utrzymać przy nowych |
 | **Modality oszczędnie** — sheet do krótkich zadań, nie zagnieżdżać modali | vaul-sheets (picker, swap) = dokładnie iOS-owy wzorzec; max 1 poziom | ✅ |
@@ -21,7 +21,7 @@
 | **Stany puste/ładowania/błędu zaprojektowane** | empty states S14 + skeletony + offline banner | ✅ |
 | **Dark mode semantyczny** — nie inwersja, osobna semantyka | rampy ink + re-deklaracja tokenów w `.dark` | ✅ (auto z `prefers-color-scheme` — P0) |
 | **Progresywne ujawnianie** — zaawansowane opcje schowane, defaulty mądre | „view all plans" na paywallu (wnioski-Mobbin P4), chipy „więcej sprzętu" w pickerze | ✅ wzorzec jest |
-| **Szanuj przerwania** — stan przeżywa wyjście z apki | mini-bar sesji w toku + outbox offline | ✅ / S10 domyka |
+| **Szanuj przerwania** — stan przeżywa wyjście z apki | mini-bar sesji w toku + outbox offline | ✅ rdzeń; pełna regresja R5b/H2-F |
 
 ## 2. Czego z HIG świadomie NIE bierzemy (iOS-specyfika)
 
@@ -45,7 +45,7 @@ Bottom bar jest przełącznikiem czterech głównych przestrzeni: **Trening, Pos
 
 Mini-bar aktywnego treningu nie jest częścią bottom baru. To globalny status sesji i wymaga osobnej reguły położenia: nad bottom barem na `hub/child`, przy dolnej safe area na widokach bez bottom baru, jeżeli dany `focus` dopuszcza aktywną sesję; ukryty w samym loggerze.
 
-**Powrót w headerze:** mobilnie pokazujemy sam `ChevronLeft` w pełnym targecie 44×44 px, bez widocznego „← Historia/Programy/Postępy”. Dostępność zachowuje pełną nazwę przez `aria-label`. Przycisk preferuje poprzedni widok należący do bieżącej sesji Arco, żeby zachować filtr i scroll; deep link/refresh korzysta z jawnego fallbacku do logicznego rodzica. Nie używamy globalnie gołego `router.back()` ani wyłącznie sztywnego linku do rodzica. Szczegóły: `audyt-nawigacji-2026-07.md`.
+**Powrót w headerze:** mobilnie pokazujemy sam `ChevronLeft` w pełnym targecie 44×44 px, bez widocznego „← Historia/Programy/Postępy”. Dostępność zachowuje pełną nazwę przez `aria-label`. Przycisk preferuje poprzedni widok należący do bieżącej sesji Arco, żeby zachować filtr i scroll; deep link/refresh korzysta z jawnego fallbacku do logicznego rodzica. Nie używamy globalnie gołego `router.back()` ani wyłącznie sztywnego linku do rodzica. Szczegóły i macierz: `userflows-docelowe-2026-07.md`.
 
 **Znaczenia:** `ChevronLeft` = poziom wyżej; `ChevronDown` = zminimalizuj aktywną sesję; `X` = zamknij/anuluj warstwę lub modalne zadanie. Nie zamieniamy tych ikon miejscami tylko dla symetrii wizualnej. Pełna macierz i flowy są w `userflows-docelowe-2026-07.md`.
 
@@ -81,5 +81,6 @@ Mini-bar aktywnego treningu nie jest częścią bottom baru. To globalny status 
 ## 4. Wpięcie w proces
 
 - Checklist §3 dołącza do **Definition of Done** (CLAUDE.md) jako odniesienie przy zmianach UI.
-- Audyt istniejących ekranów pod §1: NIE robimy osobnego sprintu — punkty ⚠️ już są w P0 usability-audit (zoom, dark-auto, focus-visible), reszta łapie się przy S9-cz.2 i naturalnych iteracjach.
+- Audyt istniejących ekranów pod §1 domyka R5b z `plan-sprintow-2026-07.md`; nie tworzymy
+  równoległego sprintu dostępności poza aktywnym planem.
 - Figma workstream (CLAUDE.md „Design system & Figma"): te zasady = accepance criteria komponentów przy eksporcie DS.

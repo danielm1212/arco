@@ -16,13 +16,14 @@
 **Analiza (Claude, 2026-07-08):**
 - Home (`app/page.tsx`, ~389 linii) niesie dziś jednocześnie: day-pills, cel tygodniowy, kartę wskazówek (guidance), program dnia / CTA treningu, mini-bar sesji w toku — dużo warstw na pierwszym ekranie nowego usera.
 - Zbieżne z wizją v2 §1.1: **beginner-friendliness = ochrona pętli ekip (Z2)** — zaproszony kumpel-początkujący nie może się odbić od pierwszego ekranu. Ten feedback to dokładnie ten scenariusz, jeszcze zanim ekipy istnieją.
-- Zbieżne z `usability-audit.md` (zadania sekcji C testują m.in. start) i z empty-states #1 („Zacznij od planu" — jedna akcja główna).
+- Zbieżne z docelowym flow i zasadą jednego głównego CTA na Home.
 - Hipoteza kierunkowa (do zwalidowania w H2, NIE do natychmiastowego kodowania): **hierarchia „jedna akcja główna"** — dziś = start treningu; reszta (cel, wskazówki, passa) niżej lub progressive disclosure; tryb „pierwsze 3 wizyty" z uproszczonym home.
 
 **Akcja:**
 - [x] Dopisać do scenariusza H2 zadanie „otwórz apkę pierwszy raz i powiedz, co byś zrobił" (first-click test) + pytanie o przeładowanie home. → **zrobione: `docs/scenariusz-h2.md` zadanie Z0** (2026-07-08).
-- [ ] Po H2: decyzja [Ty] o uproszczeniu hierarchii home (osobny sprint-kandydat).
-- Status: **zalogowane, czeka na H2** (1 głos ≠ redesign; ale flaga poważna, bo dotyka silnika wzrostu).
+- [x] Hierarchia Home została przebudowana w R2/R2.1: jeden hero, Dziś/Plany, kompaktowy
+  badge i brak stałych kart konkurujących z treningiem.
+- Status: **rozwiązane w produkcie; H2 sprawdza wynik, nie ponownie otwiera stary redesign**.
 
 ---
 
@@ -84,7 +85,8 @@
 - [x] edycja zakończonego treningu,
 - [x] wymagana waga, widoczna notatka i maksymalnie dwa zdjęcia.
 
-**Status:** zachowanie dotykowe właściciel potwierdził po iteracjach. Otwarte pozostają pełna regresja wszystkich sheetów oraz focus trap i zwrot fokusu dla klawiatury. To zakres Sprintu 15.
+**Status:** zachowanie dotykowe właściciel potwierdził po iteracjach. Otwarte pozostają pełna
+regresja wszystkich sheetów oraz focus trap i zwrot fokusu dla klawiatury. To zakres R5b.
 
 ---
 

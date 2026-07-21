@@ -1,6 +1,8 @@
 # Spec UI: status konta (free/Coach) i ekran `/coach`
 
-> **Data:** 2026-07-16 · **Status:** zaakceptowane [Ty] · **Podstawa:** `audyt-paywalla-2026-07.md`, `wizja-i-plan-produktu-v2.md` §2–3 (Z1–Z3, model hybrydowy), wnioski Mobbin (`inspiracje/wnioski-dla-arco.md` P1–P5), benchmark Mobbin 2026-07-16 (linki w §4).
+> **Data:** 2026-07-16 · **Status:** zaakceptowane [Ty], etap po H2 · **Podstawa:**
+> `audyt-paywalla-2026-07.md`, `wizja-i-strategia-v3.md`, wnioski Mobbin
+> (`inspiracje/wnioski-dla-arco.md` P1–P5) i benchmarki z §4.
 > **Decyzja w jednym zdaniu:** status planu żyje wyłącznie w Ustawieniach jako karta „Twój plan" (wzorzec Strava/Superlist); tap prowadzi na jeden ekran `/coach`, który zależnie od stanu konta jest ofertą, timeline'em triala albo zarządzaniem subskrypcją. Chrome home zostaje czysty.
 
 ## 1. Karta „Twój plan" — pierwsza sekcja profilu/ustawień
@@ -46,4 +48,4 @@ Nie budujemy osobno paywalla i osobno „manage subscription".
 Profil/ustawienia przez awatar wchodzą w **R2** programu R0–R7 (`plan-sprintow-2026-07.md`) — karta „Twój plan" celuje **od razu w ekran profilu** (typ `focus`, F9 z userflows), bez etapu przejściowego w obecnym SettingsForm. Zgodnie z regułą backlogu (§9 planu) nic z tego specu nie wchodzi przed H2:
 
 1. **R2 (tylko rezerwa miejsca, zero kodu monetyzacji):** projektując layout profilu, zostawić slot na kartę planu na górze — żeby po H2 nie przebudowywać ekranu.
-2. **Po H2 → „Pomiar i cichy launch":** karta stanu free + statyczny `/coach` z listą oczekujących, potem pełne stany trial/Coach, Stripe, zarządzanie, instrumentacja (`plan_card_tapped`, źródło wejścia na `/coach` jako wymiar konwersji). Bramka kont+RODO (rozjazd R4 z `monetyzacja.md` §5 — nie mylić z etapem R4 „Logger" w planie sprintów) pozostaje prerekwizytem płatności.
+2. **Po H2 → „Pomiar i cichy launch":** karta stanu free + statyczny `/coach` z listą oczekujących, potem pełne stany trial/Coach, Stripe, zarządzanie i instrumentacja. Bramka kont+RODO z `roadmap.md` pozostaje prerekwizytem płatności.

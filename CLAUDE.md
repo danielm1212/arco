@@ -1,6 +1,8 @@
 # Arco
 
-Osobista aplikacja treningowa PWA. Aktualny stan produktu opisuje `docs/HANDOFF.md`, kolejność prac `docs/plan-sprintow-2026-07.md`, a dłuższy kierunek `docs/roadmap.md`.
+Osobista aplikacja treningowa PWA. Zacznij od `docs/README.md`; aktualny stan opisuje
+`docs/HANDOFF.md`, pełną kolejkę `docs/backlog-produktu.md`, kolejność prac
+`docs/plan-sprintow-2026-07.md`, a dłuższy kierunek `docs/roadmap.md`.
 
 ## Aktualny stan
 
@@ -12,13 +14,15 @@ Osobista aplikacja treningowa PWA. Aktualny stan produktu opisuje `docs/HANDOFF.
 
 ## Źródła prawdy
 
-1. `docs/HANDOFF.md` — stan techniczny i produktowy na dziś.
-2. `docs/plan-sprintow-2026-07.md` — aktywny backlog i najbliższe sprinty.
-3. `docs/roadmap.md` — horyzonty, bramki i kolejność rozwoju.
-4. `docs/wizja-i-strategia-v3.md` — kanon wizji, person, modelu i strategii (2026-07-16); `docs/wizja-i-plan-produktu-v2.md` — §4–§10 (ekipa, sekwencja, bramki) + Z1–Z3 (§2).
-5. `docs/README.md` — mapa dokumentacji.
+1. `docs/wizja-i-strategia-v3.md` — kanon wizji, zasad produktu, person i strategii.
+2. `docs/decyzje-produktowe.md` — trwałe rozstrzygnięcia i otwarte bramki.
+3. `docs/userflows-docelowe-2026-07.md` — kontrakt IA i zachowań.
+4. `docs/HANDOFF.md` — stan techniczny i produktowy na dziś.
+5. `docs/backlog-produktu.md` — kompletna kolejka, również rzeczy odłożone i odrzucone.
+6. `docs/plan-sprintow-2026-07.md` — wyłącznie aktywna kolejność sprintów.
+7. `docs/roadmap.md` — horyzonty po H2 i bramki rozwoju.
 
-Briefy v0.2 i v0.3 są dokumentami historyczno-referencyjnymi. Nie mogą nadpisywać aktualnego stanu ani planu sprintów.
+Stare audyty, briefy i archiwum nie są backlogiem ani źródłem bieżącego stanu.
 
 ## Nienaruszalne zasady produktu
 
@@ -31,8 +35,9 @@ Briefy v0.2 i v0.3 są dokumentami historyczno-referencyjnymi. Nie mogą nadpisy
 ## Zasady pracy
 
 - Przed większą zmianą sprawdź `docs/HANDOFF.md` i aktywny sprint.
+- Każde zadanie przygotuj i domknij według `docs/standard-zadania-agentow.md`.
 - Deploy na produkcję wykonuj wyłącznie procedurą z `.claude/skills/arco-release/SKILL.md` — w tym obowiązkowe smoke'i przy zmianie kontraktu danych.
-- Każdą sesję zamykaj procedurą z `.claude/skills/arco-session-close/SKILL.md` — wpis w dzienniku koordynacji, HANDOFF i kolejka Notion.
+- Każdą sesję zamykaj procedurą z `.claude/skills/arco-session-close/SKILL.md` — wpis w dzienniku koordynacji, HANDOFF i aktualizacja zadań w Linear.
 - Migracje bazy wykonuj wyłącznie przez `supabase/migrations`, według reguł z `.claude/skills/arco-migration/SKILL.md`.
 - Każda tabela z danymi użytkownika dostaje RLS i test wielokontowy w tej samej zmianie.
 - Service role może występować wyłącznie w skryptach i środowisku serwerowym.
@@ -40,7 +45,7 @@ Briefy v0.2 i v0.3 są dokumentami historyczno-referencyjnymi. Nie mogą nadpisy
 - Przy zmianach loggera i innych gorących tras stosuj budżety z `docs/optymalizacja.md`.
 - Przy zmianach UI stosuj checklistę z `docs/wytyczne-designu.md`.
 - Nowe funkcje muszą mieć stany pusty, ładowania, błędu i jasne CTA.
-- Notion synchronizuj tylko na wyraźną prośbę. Do tego czasu aktualizuj lokalny backlog i `docs/notion-sync-queue.md`.
+- Warstwą operacyjną zadań jest **Linear** (workspace `trainarco`, team „Daniel"; decyzja 2026-07-21 — zastąpił Notion). Źródłem prawdy pozostają repo docs (`backlog-produktu.md`, plan sprintów); w Linear aktualizuj status issue dotkniętych sesją. Notion nie synchronizujemy; `docs/notion-sync-queue.md` jest zamknięte.
 
 ## Kierunek UX/UI
 

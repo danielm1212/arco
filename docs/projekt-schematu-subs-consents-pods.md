@@ -1,20 +1,27 @@
 # Projekt schematu: subscriptions · consents · pods
 
-> **Data:** 2026-07-08 · **Status zaktualizowany 2026-07-14:** część `pods` ma wdrożony baseline v0 dla kont testowych. `subscriptions`, docelowy rejestr zgód, publiczne konta i publiczne utwardzenie Ekipy pozostają projektem do Sprintów 19–21. W razie konfliktu obowiązują aktualne migracje i `HANDOFF.md`.
-> **Podstawa:** `wizja-i-plan-produktu-v2.md` §2–§4 (Z1–Z3, reverse trial 21 dni, ekipa = check-in+passa NIE logi), `audyt-kodu-pod-wizje-v2.md` §4.5 (usunięcie konta vs integralność ekip), konwencje istniejącego schematu (uuid pk, enumy, cascade po `user_id`, RLS wzorzec `programs`).
-> **Cel dokumentu:** zamknąć decyzje modelowe TERAZ, żeby Krok 2 nie projektował pod presją — i żeby nic, co budujemy wcześniej, nie zamykało drogi.
+> **Data:** 2026-07-08 · **Rebaseline:** 2026-07-20. Część `pods` ma baseline v0 dla kont
+> testowych. Subskrypcje, docelowy rejestr zgód i publiczne utwardzenie pozostają projektem
+> etapów PRIV-1, PAY-1 i GROW-1. W razie konfliktu obowiązują migracje, decyzje i `HANDOFF.md`.
+> **Podstawa:** `wizja-i-strategia-v3.md`, `decyzje-produktowe.md`,
+> `ekipa-blueprint-wdrozeniowy.md` oraz konwencje istniejącego schematu (uuid pk, enumy,
+> cascade po `user_id`, RLS wzorzec `programs`). Migracje są źródłem prawdy dla stanu bazy.
+> **Cel dokumentu:** zachować decyzje modelowe, żeby etap publicznych kont i płatności nie
+> projektował pod presją i nie zamknął drogi do uczciwego downgrade.
 
 ---
 
 ## 1. Zasady projektowe (wyprowadzone z kanonu)
 
 1. **Entitlement liczy serwer, nigdy klient.** Jedna funkcja SQL = jedna prawda; server actions i RLS czytają z niej.
-2. **Trial bez karty = trial poza Stripe.** Reverse trial startuje z kontem (`auth.users.created_at + 21 dni`) — zero tabel do tego, dopóki nie ma wyjątków.
+2. **Trial bez karty = trial poza Stripe.** Reverse trial startuje atomowo przy pierwszym
+   niepustym finishu po udostępnieniu Coach. Nie używamy `auth.users.created_at`, bo konto bez
+   treningu nie zobaczyło jeszcze wartości.
 3. **Zgody: stan + audyt osobno.** Stan zgody musi być szybki do sprawdzenia (RLS!), historia append-only do RODO-rejestru.
 4. **Ekipa widzi zdarzenia, nie treningi.** `activity_events` to OSOBNA tabela zasilana przy finish — RLS ekip nie dotyka NIGDY `sessions`/`session_sets`. To jest techniczne serce decyzji „check-in i passa, nie logi".
 5. **Nic nie kasujemy… oprócz konta (RODO wygrywa).** Usunięcie konta = twardy cascade wszędzie, łącznie z activity_events. Ekipa innych przeżywa — traci tylko wpisy usuniętego.
 
-## 2. `subscriptions` + entitlements (Krok 2)
+## 2. `subscriptions` + entitlements (PAY-1)
 
 ```sql
 create type subscription_status as enum ('active', 'past_due', 'canceled', 'expired');
@@ -48,6 +55,11 @@ create table entitlement_overrides (
 );
 ```
 
+**Start triala** wymaga `user_settings.coach_trial_started_at timestamptz null`. `finishSession`
+ustawia pole tylko raz, wyłącznie dla niepustej sesji i dopiero po włączeniu Coach dla kohorty.
+Retry finishu nie przesuwa daty. Istniejący beta-user zaczyna trial przy pierwszym finishu po
+rolloucie, a nie przez hurtowy override.
+
 **Jedna prawda o planie** (używana przez server actions i polityki):
 
 ```sql
@@ -59,8 +71,8 @@ language sql stable security definer as $$
     when exists (select 1 from subscriptions s where s.user_id = uid
                  and s.status in ('active', 'past_due')                     -- grace: patrz niżej
                  and s.current_period_end > now() - interval '7 days')      then 'coach'
-    when (select created_at from auth.users where id = uid)
-         > now() - interval '21 days'                                      then 'coach' -- reverse trial
+    when (select coach_trial_started_at from user_settings where user_id = uid)
+         > now() - interval '21 days'                                      then 'coach' -- reverse trial po wartości
     else 'free'
   end;
 $$;
@@ -68,13 +80,15 @@ $$;
 
 **Grace period (refinement 2026-07-08):** nieudana płatność (`past_due`) NIE odcina dostępu natychmiast — 7 dni łaski od końca okresu (Stripe w tym czasie ponawia obciążenia; dunning e-mail z ToV „kumpla", nie komornika). Odcięcie w sekundę po wygaśnięciu karty = najgłupszy możliwy churn. Długość grace → decyzja #6 w §6.
 
-**Beta-userzy H2 (refinement):** osoby z kontami założonymi PRZED launchem miałyby trial „skonsumowany" zanim się zaczął (`created_at` + 21 dni dawno minie). Rozwiązanie bez kodu: przy launchu hurtowy insert `entitlement_overrides(kind='comp', until_at=launch_date + 21 dni, reason='beta H2')`.
+**Beta-userzy H2:** nie dostają automatycznie płatnego entitlementu. Po gotowości prawnej
+pierwszy niepusty finish w kohorcie płatnej bety uruchamia ich 21 dni. `comp` pozostaje wyłącznie
+narzędziem supportowym, nie obejściem mechaniki triala.
 
 **Egzekwowanie limitów (Z3 — dostęp, nie dane):** w **server actions**, nie w RLS. RLS zostaje „user widzi swoje" — kłódka historii to filtr zapytania + UI, żeby (a) eksport RODO zawsze widział całość, (b) guidance/prefill liczyły po pełnych danych (decyzje z audytu §4.1–4.2), (c) odblokowanie po zakupie było natychmiastowe bez migracji. Limity tworzenia (2 programy / 10 custom) = guard `count()` w akcji + `limit_hit` event.
 
 **Stripe:** webhooki (`checkout.session.completed`, `customer.subscription.updated/deleted`) piszą do `subscriptions` service-rolą. Tabela ma RLS `select own` (user widzi swój status), zero insert/update od klienta.
 
-## 3. `consents` (Krok 2)
+## 3. `consents` (PRIV-1)
 
 ```sql
 create type consent_kind as enum ('pod_activity_sharing', 'transactional_email', 'nudge_email', 'analytics');
@@ -102,7 +116,7 @@ create table consent_log (
 - **Wiek 16+:** `user_settings.age_confirmed_at timestamptz` (checkbox przy signup) — bez daty urodzenia (minimalizacja danych).
 - **E-mail:** `transactional_email` (reset hasła itp. — podstawa prawna: umowa, zgoda niewymagana, wiersz dla porządku rejestru) vs `nudge_email` (wymaga zgody, osobny opt-out). `analytics` — na wypadek decyzji z konsultacji prawnej (instrumentacja §6.2).
 
-## 4. `pods` (Krok 4)
+## 4. `pods` (baseline testowy + publiczne GROW-1)
 
 ```sql
 create table pods (
@@ -219,7 +233,8 @@ Polityki (szkic):
 - `pod_members`: select gdy `pod_id in (select my_pod_ids())`; insert = JOIN-flow przez server action (weryfikacja invite_code + zgody + limitu 4); delete własnego wiersza (wyjście z ekipy).
 - `activity_events`: **select gdy `user_id = auth.uid()` OR (`user_id in (select my_pod_peer_ids())` AND właściciel ma aktywną zgodę `pod_activity_sharing`)**; insert/update tylko server action (service-side).
 - `reactions`, `nudges`: select/insert w obrębie `my_pod_peer_ids()`; `inbox_items`, `push_subscriptions`: strict own.
-- Do checklisty audytu RLS (Krok 2/4): test wielokontowy — userzy z RÓŻNYCH ekip nie widzą się nawzajem; były członek traci widoczność natychmiast po wyjściu.
+- Do checklisty audytu RLS PRIV-1/GROW-1: użytkownicy z różnych Ekip nie widzą się nawzajem,
+  a były członek traci widoczność natychmiast po wyjściu.
 
 ## 6. Decyzje do potwierdzenia [Ty]
 
@@ -235,7 +250,8 @@ Polityki (szkic):
 
 ## 7. Sekwencja wdrożenia
 
-1. **Krok 2 (bramka):** `subscriptions`, `entitlement_overrides`, `get_plan()`, `consents`, `consent_log`, `age_confirmed_at` + RLS + webhooki Stripe + eksport RODO czytający wszystko.
-2. **Krok 3:** guardy limitów w akcjach (używają `get_plan()`), kłódka historii, eventy `limit_hit`/`history_lock_hit`.
-3. **Krok 4:** cały blok §4 + funkcje §5 + emisja z `finishSession` + kanały dostarczania.
+1. **PRIV-1:** `consents`, `consent_log`, `age_confirmed_at`, eksport/usunięcie i audyt RLS.
+2. **PAY-1:** `subscriptions`, `entitlement_overrides`, `coach_trial_started_at`, `get_plan()`,
+   webhooki, guardy limitów i kłódka historii.
+3. **GROW-1:** publiczne utwardzenie §4–5 i kanały dostarczania Ekipy.
 4. Każdy etap: migracja → `database.types.ts` regen → audyt RLS wielokontowy → smoke.
