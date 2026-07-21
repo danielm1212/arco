@@ -85,25 +85,50 @@ Bramka: trial→paid ≥10% w płatnej becie, i to dopiero *po* dowodzie, że tr
 
 ---
 
-## 5. Twoja rola — dlaczego cyberbezpieczeństwo jest tu kluczowe
+## 5. Twoja rola — techniczny współzałożyciel (Co-founder & CTO)
 
-Wchodzisz w **najlepiej odizolowany i najbardziej „Twój" kawałek projektu.** Arco trzyma
-wrażliwe dane (historia treningów, **zdjęcia sylwetki** = potencjalnie dane o zdrowiu), a przed
-otwarciem publicznej rejestracji mamy formalną bramkę **PRIV-1** (RODO + bezpieczeństwo). To jest
-dokładnie Twój teren i nie koliduje z bieżącą pracą produktową.
+Nie wchodzisz „do jednego kawałka" — wchodzisz jako **osoba odpowiedzialna za całą stronę
+techniczną Arco.** Tak to rozpisuje porozumienie i tak to traktujemy.
 
-**Twoje pierwsze trzy zadania** (w Linear, projekt „Security & PRIV-1"):
-1. **SEC-01 · Audyt RLS wszystkich tabel** ([DAN-34]) — Twoje wejście. Cel: spróbować dostać
-   się do cudzych danych na lokalnym stacku (konto A vs B), sprawdzić polityki INSERT/UPDATE/DELETE,
-   storage z bucketem zdjęć i RPC. Wynik: raport luk + testy wielokontowe.
-2. **SEC-02 · Abuse protection** ([DAN-35]) — rate limiting, ochrona kodów zaproszeń przed brute-force,
-   blokada masowej rejestracji.
+**Ty prowadzisz** (porozumienie §2):
+- architekturę i rozwój techniczny aplikacji;
+- backend, bazę danych, **bezpieczeństwo**, testy i publikowanie wersji;
+- monitoring błędów, backupy, dokumentację techniczną i kontrolę jakości;
+- ocenę wykonalności i rekomendowanie rozwiązań technologicznych.
+
+**Daniel prowadzi:** wizję, strategię i priorytety produktu; UX/UI, design system, markę
+i komunikację; marketing, monetyzację i rozwój biznesowy. **Wspólnie:** testy z użytkownikami,
+rozwój programów treningowych, zakres kolejnych wersji i ważne decyzje produktowe. Founder
+ma ostatnie słowo w strategii i produkcie; **Ty masz ostatnie słowo w bezpieczeństwie
+technicznym** — zgłaszając istotne ryzyko, podajesz przyczynę i proponowaną alternatywę (§2.5).
+
+**Intencja na przyszłość (§6):** jeśli współpraca się rozwinie i powstanie spółka, intencją
+Stron jest rola **Co-founder & CTO** oraz docelowy pakiet **25% udziałów**, vesting 48 miesięcy
+z 12-miesięcznym cliffem, liczony od podpisania porozumienia. To zapisana zgodna intencja —
+nie przyznaje udziałów dziś; szczegóły określi osobna umowa przy zakładaniu spółki. Warunki
+finansowe reguluje porozumienie, nie ten dokument.
+
+### Od czego zaczynasz — pierwsze zadania (Linear, projekt „Security & PRIV-1")
+
+Zaczynamy od bezpieczeństwa nie dlatego, że to całość Twojej roli, tylko dlatego, że to
+**najlepszy sposób, żeby poznać cały system** (audyt RLS zmusza do przejścia wszystkich tabel,
+polityk, storage i RPC) — i jednocześnie odblokowuje bramkę **PRIV-1** przed publiczną rejestracją.
+
+1. **SEC-01 · Audyt RLS wszystkich tabel** ([DAN-34]) — Twoje wejście w kod. Spróbuj dostać się
+   do cudzych danych (konto A vs B), sprawdź polityki INSERT/UPDATE/DELETE, storage z bucketem
+   zdjęć sylwetki i RPC. Wynik: raport luk + testy wielokontowe.
+2. **SEC-02 · Abuse protection** ([DAN-35]) — rate limiting, ochrona kodów zaproszeń, blokada masowej rejestracji.
 3. **OPS-01 · Zaszyfrowany backup poza laptopem + rollback** ([DAN-36]).
 
-**Dostępy:** na start **minimalne — pracujesz na lokalnym stacku Supabase**, bez sekretów
-produkcyjnych i bez dostępu do proda. Audyt RLS robi się w 100% lokalnie i to jest właściwe
-środowisko. Gdyby kiedyś doszedł dostęp do danych produkcyjnych, dojdzie też formalne upoważnienie
-RODO (art. 29) — ale to przyszłość, nie teraz.
+Dalej naturalnie wchodzisz w resztę swojego zakresu: publikowanie wersji (`arco-release`),
+monitoring błędów (OPS-02), CI i architektura pod skalę.
+
+**Dostępy (porozumienie §3):** infrastruktura (Supabase, Vercel, GitHub, domeny, konta sklepów)
+pozostaje pod kontrolą Founderа; dostajesz **dostęp potrzebny do uzgodnionych zadań** — na start
+lokalny stack Supabase bez sekretów proda (audyt RLS robi się w 100% lokalnie). Dostęp do proda
+dochodzi wraz z zakresem, który jest już Twój (deploye, monitoring, backupy) — a gdy dotknie
+danych produkcyjnych, dojdzie formalne upoważnienie RODO (art. 29). Własne loginy + 2FA, zero
+przekazywania haseł/kart, żadnych płatnych usług bez zgody Founderа.
 
 ---
 
