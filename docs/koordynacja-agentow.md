@@ -22,6 +22,24 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-21 · Codex · CONTENT-01A Hip Thrust containment
+
+- **Zakres:** wersjonowany review trzech wariantów Hip Thrust; twarda blokada starego
+  Barbell w browse/search/swap; bezpieczny Barbell Glute Bridge w trzech slotach systemowych;
+  instrukcje PL, seed, punktowy sync i dokumentacja programów.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/q1-content-01`; migracja
+  `20260721233618_content01a_hip_thrust_containment.sql` zachowuje historię i ID slotów.
+- **Review mediów:** stare kadry Barbell odrzucone; kandydat AI pozycji końcowej także
+  odrzucony i nie trafił do repo. Dumbbell/Single-Leg pozostają na neutralnym placeholderze
+  do osobnego `CONTENT-01B`.
+- **Testy:** świeży `db reset`, seed 2×, migracja na odtworzonym starym stanie
+  (`content_blocked=true`, 0 starych i 3 nowe sloty), 99/99 unit, lint, build, walidatory
+  15 programów i 60/60 rekomendacji, overflow 5/5 oraz smoke Phase 1/2.
+- **Produkcja:** nietknięta. Lokalny test wymagał jednorazowego `127.0.0.1`, ponieważ
+  `.env.local` wskazuje nieaktualny adres LAN `192.168.100.16`.
+- **Następny krok:** mały PR CONTENT-01A; [Ty] kontrolowany release migracji po CI; potem
+  CONTENT-01B albo równoległy review CONTENT-02.
+
 ### 2026-07-21 · Codex · TRAIN-01 P11/P12/P14
 
 - **Zakres:** pilna korekta kolejności i objętości P11/P12 oraz przywrócenie hinge/hamstrings
@@ -130,21 +148,6 @@
 - **Dowód:** WTP z małego wywiadu jest sygnałem; dowodem pozostaje powrót w pilocie,
   rezerwacja po poznaniu ceny i finalnie prawdziwy zakup.
 - **Następny krok:** Q1 po commicie paczki dokumentacyjnej.
-
-### 2026-07-20 · Codex · sticky logger
-
-- **Zakres:** przywrócenie sticky nagłówka loggera przy globalnym safe area.
-- **Commit:** `61717e6`, `main == origin/main`.
-- **Testy:** lint, 91 unit, build, overflow 5/5.
-- **Produkcja:** kod wypchnięty; checkpoint iPhone PWA pozostaje w Q1.
-
-### 2026-07-20 · Codex · integralność i własny trening
-
-- **Zakres:** F0.7, F0.2/F0.3, L9/L10, świadomy „Własny trening” i ochrona pustej sesji.
-- **Commity:** paczka zakończona do `c996b35` oraz refinements do `aab5f1a`.
-- **Baza:** migracje `20260720140000`–`20260720153000` potwierdzone local/remote.
-- **Testy:** lint, 91 unit, build, smoke danych/offline/Ekipy.
-- **Następny krok:** Q1, potem R2.2/R3b.
 
 ## Szablon rezerwacji
 

@@ -96,8 +96,13 @@ a historia nie steruje stanem onboardingu.
 - TRAIN-01: pilny patch kolejności/objętości P11/P12 i brakującego hinge P14;
 - wynik review zapisać jako wersjonowane dane.
 
-**Stan TRAIN-01:** wdrożone i zweryfikowane lokalnie na `agent/q1-train-01`; produkcja
-pozostaje bez zmian do review PR, przejścia CI i kontrolowanej migracji.
+**Stan TRAIN-01:** scalone do `main` po zielonym CI; produkcja zbudowała zielony deploy po
+scaleniu PR #2, ale zastosowanie migracji na produkcyjnej bazie nadal
+wymaga osobnego potwierdzenia procedurą release.
+
+**Stan CONTENT-01:** część A jest gotowa lokalnie na `agent/q1-content-01`: ryzykowne media
+Barbell są zablokowane, trzy sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów
+są sprawdzone. Część B pozostaje otwarta dla dwóch par nowych mediów Dumbbell/Single-Leg.
 
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.

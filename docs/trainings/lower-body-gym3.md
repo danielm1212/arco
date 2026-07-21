@@ -8,7 +8,7 @@
 
 | Ćwiczenie | Serie × powt. | Przerwa |
 |---|---:|---:|
-| Barbell Hip Thrust | 3 × 6–10 | 2:30 |
+| Barbell Glute Bridge | 3 × 6–10 | 2:30 |
 | Barbell Squat | 3 × 6–10 | 2:30 |
 | Romanian Deadlift | 2 × 8–12 | 2:00 |
 | Wide-Grip Lat Pulldown | 3 × 8–12 | 2:00 |
@@ -31,7 +31,7 @@
 | Ćwiczenie | Serie × powt. | Przerwa |
 |---|---:|---:|
 | Leg Press | 3 × 10–15 | 2:00 |
-| Barbell Hip Thrust | 3 × 8–12 | 2:00 |
+| Barbell Glute Bridge | 3 × 8–12 | 2:00 |
 | Lying Leg Curl | 3 × 10–15 | 1:30 |
 | Bulgarian Split Squat | 2 × 8–12 / noga | 2:00 |
 | Wide-Grip Lat Pulldown | 2 × 10–15 | 1:30 |
@@ -43,3 +43,5 @@
 - Zacznij od dolnej granicy ciężaru i zostaw 2–3 powtórzenia w zapasie.
 - Po osiągnięciu górnego zakresu we wszystkich seriach zwiększ najmniejszy możliwy ciężar.
 - Jeżeli regeneracja nóg jest słaba, najpierw usuń jedną serię ćwiczenia izolowanego.
+- Barbell Glute Bridge zastępuje Barbell Hip Thrust do czasu zatwierdzenia nowych mediów
+  technicznych w `CONTENT-01B`; zakres serii i cel programu pozostają bez zmian.

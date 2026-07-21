@@ -6,6 +6,7 @@
 import { config } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import rawExercises from "./data/exercises.json";
+import rawContentReviews from "./data/exercise-content-reviews.json";
 import polishInstructionOverrides from "./data/exercise-instructions-pl.json";
 
 config({ path: ".env.local" });
@@ -26,12 +27,14 @@ if (!isLocal && process.env.CONFIRM_REMOTE_SYNC !== "exercise-content") {
 }
 
 type SourceExercise = { id: string; images?: string[] };
+type ContentReview = { published_images: string[] };
 const instructionMap = polishInstructionOverrides as Record<string, string[]>;
+const contentReviewMap = rawContentReviews.reviews as Record<string, ContentReview>;
 const imageBase = `${url.replace(/\/+$/, "")}/storage/v1/object/public/exercise-images/`;
 const updates = (rawExercises as SourceExercise[]).map((exercise) => ({
   id: exercise.id,
   values: {
-    images: (exercise.images ?? []).map((image) =>
+    images: (contentReviewMap[exercise.id]?.published_images ?? exercise.images ?? []).map((image) =>
       image.startsWith("http") || image.startsWith("/") ? image : `${imageBase}${image}`,
     ),
     ...(instructionMap[exercise.id] ? { instructions: instructionMap[exercise.id] } : {}),
