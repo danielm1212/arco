@@ -96,6 +96,9 @@ a historia nie steruje stanem onboardingu.
 - TRAIN-01: pilny patch kolejności/objętości P11/P12 i brakującego hinge P14;
 - wynik review zapisać jako wersjonowane dane.
 
+**Stan TRAIN-01:** wdrożone i zweryfikowane lokalnie na `agent/q1-train-01`; produkcja
+pozostaje bez zmian do review PR, przejścia CI i kontrolowanej migracji.
+
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 

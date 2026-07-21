@@ -6,11 +6,11 @@ Czterodniowy cykl może przechodzić między tygodniami. Trening trzy razy w tyg
 
 ## Upper A · siła
 
-Pull-up 4 × 5–8 · One-Arm Push-up 4 × 4–8 / strona · Wall Handstand Push-up 4 × 4–8 · Feet-Elevated Inverted Row 4 × 8–12 · Dips 3 × 6–12 · L-Sit 3 × na czas.
+Wall Handstand Push-up 4 × 4–8 · Pull-up 4 × 5–8 · One-Arm Push-up 4 × 4–8 / strona · Feet-Elevated Inverted Row 4 × 8–12 · Dips 3 × 6–12 · L-Sit 3 × na czas.
 
 ## Lower A · siła
 
-Split Squat z pauzą/progresją do pistoletu 4 × 8–12 / noga · Jump Squat 4 × 8–15 · Nordic Curl 4 × 5–10 · Single-Leg Hip Thrust 4 × 10–15 / noga · Single-Leg Calf Raise 4 × 15–25 · Copenhagen Plank 3 × na czas / strona.
+Jump Squat 3 × 3–5 · Split Squat z pauzą/progresją do pistoletu 4 × 8–12 / noga · Nordic Curl 4 × 5–10 · Single-Leg Hip Thrust 4 × 10–15 / noga · Single-Leg Calf Raise 4 × 15–25 · Copenhagen Plank 3 × na czas / strona.
 
 ## Upper B · objętość
 

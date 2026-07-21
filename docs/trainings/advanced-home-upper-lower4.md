@@ -14,7 +14,7 @@ Bulgarian Split Squat 4 × 6–10 / noga · DB Stiff-Leg Deadlift 4 × 8–12 ·
 
 ## Upper B · objętość
 
-Incline DB Press 4 × 8–12 · Chest-Supported DB Row 4 × 10–15 · Chin-up 4 × 6–10 · Wall Handstand Push-up 3 × 4–10 · Reverse Fly 3 × 15–20 · DB Triceps Extension 3 × 10–15 · Incline DB Curl 3 × 10–15 · Close-Grip Push-up 3 × 10–20.
+Wall Handstand Push-up 3 × 4–10 · Incline DB Press 3 × 8–12 · Chest-Supported DB Row 3 × 10–15 · Chin-up 3 × 6–10 · Reverse Fly 2 × 15–20 · DB Triceps Extension 2 × 10–15 · Incline DB Curl 2 × 10–15.
 
 ## Lower B · objętość
 
