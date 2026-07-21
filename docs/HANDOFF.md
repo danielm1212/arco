@@ -4,7 +4,7 @@
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** Q1 → R2.2 → R4 → R3b
+**Najbliższy etap:** Q1 → CORE-0 → R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
@@ -64,8 +64,12 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
 ## 4. Otwarte ryzyka
 
-1. **Treści ćwiczeń:** zdjęcia Barbell Hip Thrust budzą zastrzeżenia techniczne, a Chin-Up
-   wymaga review wariantu. Opisy i media widocznych ruchów muszą przejść bramkę treści przed H2.
+1. **Treści i programy:** zdjęcia Barbell Hip Thrust budzą zastrzeżenia techniczne, Chin-Up
+   wymaga review wariantu, a audyt 15 planów wykazał błędy kolejności/objętości, brakujące
+   regresje i nieprawdziwe metadane sprzętu. Q1 zawiera pilny patch, a PLAN-Q jest pełną
+   bramką treści, danych i wersjonowanego audytu Codex przed H2. Docelowe recepty 15/15 są
+   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`; obecny seed czeka na implementację.
+   Walidator pokazuje 16 unikalnych placeholderów mediów użytych w 49 slotach.
 2. **PWA:** ostatni fix sticky wymaga potwierdzenia na iPhone PWA i przy starym cache.
 3. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
 4. **Android:** brak pełnego checkpointu systemowego Back/PWA.
@@ -91,9 +95,13 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 ## 6. Najbliższa praca
 
 1. Q1: regresja sticky/F0.7 oraz review treści Hip Thrust/Chin-Up i ruchów początkujących.
-2. R2.2: filtr „Tylko z moim sprzętem”.
-3. R4: domknąć logger, Historię i drabinę wartości.
-4. R3b → R5b → R6 → H2-Lab → trzytygodniowy H2-Field.
+2. CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólna definicja faktu i odporny outbox.
+3. R4A: kontrakt aktywnej serii, pętla wielu serii/ćwiczeń i nieblokujący timer.
+4. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
+5. R2.2: filtr „Tylko z moim sprzętem” oparty na wykonalności per slot.
+6. R4B–R4D: pierwsza sesja, finish, własny trening i Historia/backfill.
+7. CORE-1 → R4E: wersjonowany thin slice guidance i wartość drugiego treningu.
+8. R3b → R5b → R6 → H2-Lab → trzytygodniowy H2-Field.
 
 ## 7. Reguły operacyjne
 

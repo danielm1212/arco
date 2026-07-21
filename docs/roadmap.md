@@ -1,6 +1,6 @@
 # Arco — roadmapa produktu
 
-**Aktualizacja:** 2026-07-20
+**Aktualizacja:** 2026-07-21
 
 Roadmapa opisuje kolejność i bramki. Konkretne zadania i statusy są w `plan-sprintow-2026-07.md`.
 
@@ -38,15 +38,17 @@ Zakres zrealizowany: logger, programy, historia, postępy, ciało, offline/PWA, 
 Do zamknięcia zgodnie z aktualnym planem:
 
 - Q1: regresja konta/PWA i bezpieczeństwo widocznych materiałów ćwiczeń;
-- R2.2, R4, R3b, R5b i R6: Plany, Sesja/Historia, Ekipa, dostępność i przygotowanie badania;
+- CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólne fakty i odporny outbox;
+- PLAN-Q, R2.2, R4, CORE-1, R3b, R5b i R6: zweryfikowana biblioteka 15 programów, Plany,
+  Sesja/Historia, minimalny wiarygodny silnik, Ekipa, dostępność i przygotowanie badania;
 - regresja bottom sheetów i PWA na urządzeniach,
 - pełna dostępność własnego dialogu,
 - backup i udowodnione odtworzenie,
 - aktualizacje PWA bez starego interfejsu z cache.
 
-**Bramka H0:** Q1–R6 zamknięte, zero znanego P0/P1 w głównych flow, serwerowy
-niezmiennik jednej otwartej sesji, odzyskiwanie szkiców, polskie wyszukiwanie, macierz
-urządzeń i udokumentowany restore.
+**Bramka H0:** Q1, CORE-0, PLAN-Q, R2.2, R4, CORE-1 oraz R3b–R6 zamknięte, zero znanego P0/P1
+w głównych flow, serwerowy niezmiennik jednej otwartej sesji, odzyskiwanie szkiców,
+polskie wyszukiwanie, macierz urządzeń i udokumentowany restore.
 
 ## Horyzont 1 — walidacja laboratoryjna i terenowa
 

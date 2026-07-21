@@ -22,6 +22,42 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-21 · Codex · PLAN-Q i zatwierdzenie 15 programów
+
+- **Zakres:** ponowna ocena 15 programów i 48 dni, zatwierdzenie docelowych recept P01–P15,
+  domknięcie kontraktu danych/kompatybilności, TRAIN-01–07 i włączenie PLAN-Q po R4A.
+- **Stan:** spec, plan, backlog, decyzje i HANDOFF zaktualizowane; kod, baza i produkcja nietknięte.
+- **Decyzja:** obecne 15 programów i wykonalność per slot są bramką przed H2; nowe programy,
+  rozgrzewka oraz Minimum/Standard/Plus czekają na dane po H2. Audyt Codex zatwierdza recepty;
+  zewnętrzny trener może wrócić po monetyzacji i nie blokuje Done/H2.
+- **Dowód:** `audyt-biblioteki-programow-2026-07.md`; 4 recepty bez zmian programowych,
+  11 zatwierdzonych po dokładnie rozpisanych korektach; wspólne warunki 15/15.
+- **Testy:** `git diff --check`, kontrola odwołań i `npm run validate:training` — zielone;
+  walidator potwierdza 15 programów/308 slotów i raportuje 16 placeholderów w 49 slotach.
+- **Linear:** issues PLAN-Q wymagają ręcznego utworzenia, ponieważ w tej sesji brak połączenia Linear.
+- **Następny krok:** Q1/ TRAIN-01, następnie CORE-0 → R4A → PLAN-Q według specyfikacji.
+
+### 2026-07-21 · Codex · audyt core i refinement sprintu
+
+- **Zakres:** audyt integralności danych, offline, rekomendacji programu i guidance względem
+  implementacji oraz literatury; włączenie CORE-0 i CORE-1 do sekwencji przed H2.
+- **Stan:** plan i backlog zaktualizowane; kod, baza i produkcja nietknięte.
+- **Decyzja:** CORE-0 jest bramką przed R4A, a CORE-1 po R4D i przed R4E. Pełny model
+  objętości, zmęczenia/deloadu i kalibracja rekomendatora czekają na H2.
+- **Dowód:** `audyt-core-i-plan-2026-07.md`; 91/91 unit, lint, walidacja treści i 60/60
+  profili rekomendacji były zielone przed refinementem.
+- **Następny krok:** Q1, następnie rezerwacja DATA-01 w CORE-0.
+
+### 2026-07-21 · Codex · refinement R4 loggera
+
+- **Zakres:** rozbicie R4 na R4A–R4E i dopisanie kontraktu aktywnej serii, guidance
+  pierwszej sesji, własnego treningu, backfillu oraz wartości drugiego treningu.
+- **Stan:** plan gotowy do implementacji; kod produktu, baza i produkcja nietknięte.
+- **Dowód:** klikalny POC został przejrzany w pełnej ścieżce. Potwierdził prosty start,
+  poprawne guardy i mini-bar, ale nie jest pełnym dowodem przejścia przez wiele serii
+  oraz nie implementuje kompletnego backfillu.
+- **Następny krok:** Q1, następnie rezerwacja LOG-00 + R4A według `spec-r4-logger.md`.
+
 ### 2026-07-21 · Claude · Linear jako warstwa operacyjna + dokumenty prawne + zespół
 
 - **Zakres:** decyzje właściciela: Piotr dołącza (security, porozumienie w draftach),

@@ -2,6 +2,8 @@
 
 **Rebaseline:** 2026-07-20
 **Refinement walidacji i premium:** 2026-07-20
+**Refinement core:** 2026-07-21
+**Refinement biblioteki treningów:** 2026-07-21
 **Status:** źródło prawdy dla kolejności wykonania
 **Cel:** użyteczny i wiarygodny produkt, który najpierw dowodzi powrotów, a dopiero potem prosi o pieniądze
 
@@ -34,13 +36,33 @@ a aktualny stan produkcji w `HANDOFF.md`. Agent realizuje zadania według
 ## 2. Sekwencja
 
 ```text
-RB0 ✓ → Q1 → R2.2 → R4 → R3b → R5b → R6 → H2-Lab → H2-Field → PRIV-1 → COMM/PREMIUM → PAY-01 → MOBILE-0 → STORE-BETA → STORE-1
+RB0 ✓ → Q1 → CORE-0 → R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2-Lab → H2-Field → PRIV-1 → COMM/PREMIUM → PAY-01 → MOBILE-0 → STORE-BETA → STORE-1
 ```
 
-R4 wyprzedza R3b, ponieważ logger jest rdzeniem używanym przez każdą osobę. Publiczne konta,
-płatności, Strava, warstwa trenerów i duże nowe powierzchnie nie wchodzą przed wynikiem R8.
-Konta deweloperskie sklepów można przygotować administracyjnie po R6, lecz migracja UI nie
-wchodzi przed dowodem PAY-01, chyba że H2-F wykaże, że PWA samo blokuje użycie lub płatność.
+CORE-0 wyprzedza R4A, ponieważ interfejs aktywnej serii nie może utrwalać nieprawidłowego
+kontraktu `completed`, jednostki ani statystyk. R4A wyprzedza R2.2 i R3b, ponieważ wpisanie
+serii jest rdzeniem używanym przez każdą osobę w każdym treningu. CORE-1 wchodzi dopiero po
+Historii/backfillu R4D, ale przed R4E: guidance drugiego treningu wymaga snapshotu recepty,
+wersjonowanej decyzji i jawnego minimum danych. R2.2 pozostaje krótkim, odizolowanym etapem
+zaufania do Planów po sprawdzeniu podstawowej pętli loggera. PLAN-Q wchodzi po R4A, aby nie
+blokować naprawy podstawowej pętli serii, ale przed R2.2 i R4C: filtr sprzętu potrzebuje
+wykonalności per slot, a finish musi znać semantykę ćwiczenia opcjonalnego.
+
+**Wpływ na sprint:** refinement dodaje przed H2 łącznie 5,5–7,5 dnia implementacji
+(CORE-0: 2,5–3,5; CORE-1: 3–4). To świadome przesunięcie startu badania, nie ukryty bufor.
+Jeżeli termin rekrutacji H2 jest już umówiony, przesuwamy sesje badawcze; nie ścinamy bramek
+integralności ani nie pokazujemy niesprawdzonego guidance. RIR-01 pozostaje eksperymentem
+opcjonalnym i nie blokuje H2.
+
+TRAIN-01 + PLAN-Q dodają przed H2 kolejne 8,5–13 dni implementacji plus checkpointy urządzeń.
+Łączny jawny koszt refinementów CORE + biblioteka to 14–20,5 dnia. To bramka jakości obecnych
+15 programów, nie sprint rozbudowy biblioteki. Audyt Codex zatwierdził docelowe recepty;
+zewnętrzny trener nie blokuje wdrożenia ani H2.
+
+Publiczne konta, płatności, Strava, warstwa trenerów i duże nowe powierzchnie nie wchodzą
+przed wynikiem R8. Konta deweloperskie sklepów można przygotować administracyjnie po R6,
+lecz migracja UI nie wchodzi przed dowodem PAY-01, chyba że H2-F wykaże, że PWA samo blokuje
+użycie lub płatność.
 
 ## RB0 — rebaseline dokumentacji i higiena repo
 
@@ -54,8 +76,8 @@ każde otwarte zadanie ma ID, etap i obserwowalny wynik.
 
 ## Q1 — bramka zaufania
 
-**Czas:** 1–2 dni
-**Właściciele:** agent + [Ty] dla urządzenia + trener dla treści technicznej
+**Czas:** 1,5–3 dni po dodaniu TRAIN-01
+**Właściciele:** Codex dla audytu treści + agent + [Ty] dla urządzenia
 
 ### Q1.1 — produkcja i konto
 
@@ -71,32 +93,87 @@ a historia nie steruje stanem onboardingu.
 - CONTENT-01: wszystkie widoczne warianty Hip Thrust;
 - CONTENT-02: Chin-Up, zgodność wariantu, chwytu, pozycji i kadru;
 - CONTENT-03a: opisy i media z planów początkujących oraz głównych ruchów;
+- TRAIN-01: pilny patch kolejności/objętości P11/P12 i brakującego hinge P14;
 - wynik review zapisać jako wersjonowane dane.
 
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
-fallback, źródło i jawne review człowieka.
+fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
+
+## CORE-0 — bramka integralności danych
+
+**Czas:** 2,5–3,5 dnia
+**Zależność:** Q1; wykonujemy przed R4A
+**Spec:** `audyt-core-i-plan-2026-07.md`
+
+- DATA-01: zakończona seria ma wynik wymagany przez typ ćwiczenia; ten sam guard działa
+  w UI, Server Action i bazie/RPC;
+- DATA-02: ciężary mają kanoniczną jednostkę w danych, a `kg/lbs` jest konwersją prezentacji;
+  istniejące konta są migrowane po backupie i audycie, bez ślepego przeliczenia;
+- DATA-03: jedna definicja kwalifikowanego faktu zasila Historię, cel, Ekipę, rekordy,
+  Postępy i guidance; sesja otwarta może pokazać wynik prowizoryczny tylko w loggerze;
+- SYNC-01: błąd trwały operacji nie blokuje całego outboxa; zachowujemy dane do odzyskania,
+  odróżniamy retry od naprawy i finish rozlicza operacje bieżącej sesji.
+
+**Poza zakresem:** nowy wygląd loggera, PowerSync, multi-device merge, nowe guidance.
+
+**Done:** nie da się zaliczyć ani zakończyć pustej serii, zmiana jednostki nie zmienia znaczenia
+historii, wszystkie pochodne liczą te same fakty, a jedna błędna operacja nie więzi kolejki.
+
+## PLAN-Q — biblioteka treningów 10/10
+
+**Czas:** 8–12 dni + checkpoint iPhone/Android; audyt programowy Codex jest wykonany
+**Zależność:** TRAIN-01, CORE-0 i R4A; wykonujemy przed R2.2 oraz R4B–R4D
+**Spec:** `spec-plan-q-biblioteka-treningow.md`
+
+- TRAIN-02: jeden strukturalny katalog 15 programów, z którego korzystają seed, walidatory
+  i karty `docs/trainings/`;
+- TRAIN-03: addytywna recepta v2 — czas dnia/slotu, RIR, tempo, typ progresji, rola,
+  opcjonalność i wersjonowane alternatywy; legacy działa bez zgadywanego backfillu;
+- TRAIN-04: korekta wszystkich 15 programów, w tym P02/P07/P08/P13 oraz pełne review
+  kolejności, wzorców, objętości, czasu, przerw i instrukcji;
+- TRAIN-05: kanoniczny sprzęt, wymagania per ćwiczenie i deterministyczna wykonalność per slot;
+- TRAIN-06: karta i detal planu pokazują realny czas, sprzęt, przerwy, opcjonalność i dostępne
+  warianty bez przeciążania głównego widoku;
+- TRAIN-07: walidator CI, bezpieczny seed, RLS, regresja aktywnych planów/sesji i urządzeń.
+
+**Poza zakresem:** nowe programy, cel 1/tydzień, rozgrzewka/schłodzenie, obowiązkowe RIR,
+automatyczny deload, pełny model objętości oraz warianty Minimum/Standard/Plus.
+
+**Done:** 15/15 programów przechodzi walidator i zatwierdzony audyt Codex; seed zachowuje ID,
+aktywne plany, własne programy, otwarte sesje i historię; filtr może policzyć wykonalność każdej
+obowiązkowej pozycji; UI przechodzi 320/375/393 px, iPhone PWA, Android i stary cache.
 
 ## R2.2 — zaufanie do Planów
 
-**Czas:** 0,5–1 dnia
+**Czas:** 1–1,5 dnia
 
 - PLAN-01: filtr „Tylko z moim sprzętem” w sheecie programów;
+- użyć wykonawczego kontraktu TRAIN-05, nie samych zbiorczych metadanych programu;
 - ustawienia pozostają źródłem inwentarza;
 - powrót z detalu zachowuje filtr i scroll;
 - sprawdzić CTA własnego programu bez dokładania FAB.
 
-**Poza zakresem:** nowe profile sprzętu, okładki i automatyczna zmiana programu.
+**Poza zakresem:** okładki i automatyczna zmiana programu; nowe klucze potrzebne do prawdy
+sprzętowej wchodzą w PLAN-Q, ale nowe marketingowe profile biblioteki czekają na H2.
 
 **Done:** użytkownik rozumie wpływ sprzętu i potrafi ograniczyć wyniki do wykonalnych planów.
 
 ## R4 — Logger, Historia i drabina wartości
 
-**Czas:** 5–6 dni + regresja PWA
+**Czas:** 6–7 dni implementacji R4 + 3–4 dni CORE-1 + dwa osobne checkpointy regresji PWA.
+
+**Kolejność wykonawcza:** R4A (pętla serii) → R4B (pierwsza sesja) → R4C
+(finish, własny trening i podmiana) → R4D (Historia/backfill) → CORE-1 (minimalny
+wiarygodny silnik) → R4E (wartość drugiego treningu). Szczegółowy, agent-ready kontrakt
+i Definition of Done są w `spec-r4-logger.md`. R4A zaczyna się po CORE-0; R2.2 nadal
+wchodzi po checkpointcie R4A.
 
 ### R4.1 — prowadzenie serii
 
 - LOG-01: subtelny, jednoznaczny sygnał „Zalicz serię” i logiczny fokus;
 - LOG-02: jednorazowe, pomijalne podpowiedzi pierwszego treningu;
+- aktywna seria, przejście przez wiele serii/ćwiczeń oraz nieblokujący timer są
+  warunkiem Done, nie detalem POC;
 - natychmiastowy feedback, outbox i brak autozaliczania;
 - bez dekoracyjnego motion w loggerze.
 
@@ -125,6 +202,7 @@ fallback, źródło i jawne review człowieka.
 
 ### R4.5 — VALUE-01, drabina wartości
 
+- CORE-1 jest zamknięte przed wystawieniem guidance w R4E;
 - po pierwszym finishu pokazać fakt i konkretny następny krok, nie sztuczną analizę;
 - przy drugim treningu widocznie wykorzystać poprzedni wynik;
 - guidance i prognoza mają minimalną liczbę sesji/serii oraz stan „potrzebujemy jeszcze…”;
@@ -133,6 +211,32 @@ fallback, źródło i jawne review człowieka.
 
 **Done:** pierwsza osoba rozumie logowanie bez moderatora, może bezpiecznie zakończyć lub
 poprawić trening, wraca do właściwego kontekstu i wie, co Arco da jej dziś oraz później.
+
+## CORE-1 — minimalny wiarygodny silnik
+
+**Czas:** 3–4 dni
+**Zależność:** CORE-0, R4A i R4D; wykonujemy przed R4E
+**Spec:** `audyt-core-i-plan-2026-07.md`
+
+- ENGINE-01: nowa sesja zachowuje snapshot planowanych serii, zakresu, przerwy i źródła
+  recepty; późniejsza edycja planu nie przepisuje kontekstu treningu; starsze sesje bez
+  snapshotu mają jawny stan legacy i obniżoną pewność, bez zgadywanego backfillu;
+- ENGINE-02: decyzja ma strukturę `action`, `reason_codes`, `confidence`, `evidence_level`,
+  `rule_version`, `inputs` i stan insufficient-data; tekst UI jest projekcją tej decyzji;
+- ENGINE-03: progresja używa wszystkich serii poprzedniej sesji, realnego najmniejszego
+  skoku sprzętu i priorytetu; nie zwiększa ciężaru na podstawie jednego najlepszego wyniku;
+- ENGINE-04: obecna reguła deloadu staje się obserwacją plateau z bezpiecznym następnym
+  krokiem; pełny klasyfikator zmęczenia czeka na dane H2;
+- ENGINE-05: macierz realistycznych historii obejmuje progres, szum, zmianę zakresu,
+  brak danych, podmianę, backfill i edycję; żadna decyzja nie mutuje planu automatycznie;
+- RIR-01: opcjonalny sygnał RIR/RPE trafia wyłącznie do dogfoodu/shadow mode przed decyzją,
+  czy warto dodawać tarcie do loggera początkującego.
+
+**Poza zakresem:** ML/AI, automatyczne programowanie, pełny model objętości, prognoza celu,
+kalibracja wag rekomendatora i automatyczny deload.
+
+**Done:** R4E potrafi pokazać poprzedni fakt i jedną nadpisywalną decyzję z jawnym powodem
+albo uczciwy stan „potrzebujemy jeszcze…”. Ta sama historia daje tę samą wersjonowaną decyzję.
 
 ## R3b — Ekipa jako prawdziwy hub
 
@@ -340,6 +444,7 @@ pomocy; listing nie obiecuje niczego, czego build nie dostarcza.
 - Q1–R6 zamknięte;
 - zero znanego P0/P1 w głównych flow;
 - widoczne materiały ćwiczeń mają review;
+- 15/15 programów systemowych przechodzi walidator PLAN-Q i zatwierdzony audyt Codex;
 - jedna sesja, szkice i offline przechodzą test procesu/PWA;
 - każdy hub ma loading/empty/error/offline/success;
 - Ekipę sprawdzono na dwóch kontach, prywatność na trzech;

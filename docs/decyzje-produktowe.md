@@ -1,6 +1,6 @@
 # Arco — rejestr decyzji produktowych
 
-**Aktualizacja:** 2026-07-20
+**Aktualizacja:** 2026-07-21
 **Zasada:** decyzja z tego pliku obowiązuje do czasu jawnego wpisu zastępującego. Pomysł z notatki nie nadpisuje decyzji.
 
 ## Decyzje obowiązujące
@@ -37,12 +37,19 @@
 | D-28 | Po PAY-01 przeprowadzamy bramkę MOBILE-0: pion Expo/React Native kontra lokalnie spakowany Capacitor; zdalny URL w WebView nie jest wariantem produkcyjnym | Obecny Next.js używa cookies, Server Actions i dynamicznych tras, więc nie daje się bezpiecznie opakować bez refaktoru |
 | D-29 | Domyślnym kierunkiem długoterminowym jest jeden projekt Expo/React Native ze współdzieloną domeną TypeScript; osobne Swift/Kotlin tylko po zmierzonym ograniczeniu React Native | Otrzymujemy natywne zachowanie i jedną bazę mobilną bez utrzymywania dwóch pełnych aplikacji |
 | D-30 | Buildy sklepowe używają StoreKit/Google Play Billing i jednego serwerowego źródła uprawnień; web może mieć osobny checkout wyłącznie zgodnie z zasadami danego rynku | Restore, anulowanie i downgrade muszą być spójne niezależnie od źródła zakupu |
+| D-31 | Globalne statystyki, rekordy, cel i Ekipa korzystają wyłącznie ze zweryfikowanych faktów zakończonej sesji; otwarta sesja może pokazywać wynik prowizoryczny tylko w loggerze | Jedna definicja danych chroni przed pustym treningiem i rozjazdem pochodnych |
+| D-32 | Ciężar ma kanoniczną jednostkę w danych; `kg/lbs` jest sposobem prezentacji, nie reinterpretacją zapisanej liczby | Zmiana ustawienia nie może zmieniać znaczenia historii użytkownika |
+| D-33 | Guidance jest deterministyczną, wersjonowaną decyzją z powodem, pewnością i minimum danych; nie mutuje planu bez działania użytkownika | Wiarygodność i audytowalność wygrywają z pozorną personalizacją black boxa |
+| D-34 | Definicje 15 programów systemowych mają jeden wersjonowany katalog strukturalny; seed, walidator i dokumentacja są jego projekcjami | Ręczne utrzymywanie kilku kontraktów doprowadziło do rozjazdu liczby programów i pól recepty |
+| D-35 | Zgodność sprzętowa planu wymaga wykonalnej ścieżki dla każdego obowiązkowego slotu; brak lub legacy obniża pewność zamiast dawać fałszywy exact match | Zbiorcze metadane programu nie dowodzą, że użytkownik wykona całą sesję |
+| D-36 | Przed H2 poprawiamy i mierzymy obecne 15 programów; nowe programy, warianty sesji i opcjonalna rozgrzewka wymagają danych po H2 | Większy katalog nie kompensuje błędnej recepty, sprzętu ani braku wersjonowanego audytu |
+| D-37 | Przed monetyzacją recepty P01–P15 zatwierdza wersjonowany audyt Codex S&C; zewnętrzny trener nie jest bramką Q1, PLAN-Q ani H2 | Właściciel świadomie wybiera szybszą walidację produktu; konsultant może wrócić po przychodzie jako audyt jakości, nie blokada wdrożenia |
 
 ## Otwarte decyzje z bramką
 
 | ID | Pytanie | Co musi być wiadomo | Bramka |
 |---|---|---|---|
-| O-01 | Jak wygląda plan 1 trening/tydzień? | Czy to maintenance, powrót czy pełny plan; jakie minimum objętości | po H2 / review trenera |
+| O-01 | Jak wygląda plan 1 trening/tydzień? | Czy to maintenance, powrót czy pełny plan; jakie minimum objętości | po H2 / wersjonowany audyt Codex |
 | O-02 | Czy użytkownik może ograniczyć guidance per ćwiczenie? | Które wskazówki irytują i czy problemem jest częstotliwość, copy czy reguła | H2 + telemetryka |
 | O-03 | Które ćwiczenia zasługują na film? | Lepsze zrozumienie niż dwa zdjęcia, koszt produkcji, waga i offline | pilotaż mediów |
 | O-04 | Czy „Powtórz trening” jest odkrywalne i potrzebne? | Częstość użycia historii jako szablonu i wpływ na model planu | po R4/H2 |

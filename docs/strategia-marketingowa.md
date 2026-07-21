@@ -26,8 +26,8 @@
 |---|---|---|---|
 | Sytuacja | 3–4 lata stażu, plan z neta, loguje w notesie/Hevy | pierwszy karnet albo powrót; boi się, że robi źle | trenuje nieregularnie; dostał link od Pawła |
 | Ból | stagnacja; „dokładać czy deload?"; dane są, wnioski nie | paraliż decyzyjny: co robić, ile, czy dobrze | sam nie utrzyma rytmu; apki go nudzą |
-| Komunikat główny | **„Arco wie, kiedy dołożyć, a kiedy odpuścić — i mówi dlaczego."** | **„Nie wiesz, od czego zacząć — Arco wie. Plan od trenera i prowadzenie serię po serii."** | **„Paweł Cię widzi. Nie ciężary — tylko czy byłeś. To wystarczy."** |
-| Dowody | jawne reguły progresji/deload, trendy tonażu, PR-y on-the-fly | 8 programów od trenera, opisy ćwiczeń, logger-tap | check-in+passa, 💪, nudge; zero feedu i oceniania |
+| Komunikat główny | **„Arco wie, kiedy dołożyć, a kiedy odpuścić — i mówi dlaczego."** | **„Nie wiesz, od czego zacząć — Arco wie. Zweryfikowany plan i prowadzenie serię po serii."** | **„Paweł Cię widzi. Nie ciężary — tylko czy byłeś. To wystarczy."** |
+| Dowody | jawne reguły progresji/deload, trendy tonażu, PR-y on-the-fly | 15 programów po wersjonowanym audycie, opisy ćwiczeń, logger-tap | check-in+passa, 💪, nudge; zero feedu i oceniania |
 | Moment konwersji | trigger stagnacji / koniec triala (fala 1) | limit nie dotyczy — zostaje free (i dobrze: Z2) | instaluje z zaproszenia → celebracja → własna ekipa |
 | Gdzie go łowimy | K1 content (frazy „progresja/deload/stagnacja"), K3 społeczności | K1 (frazy „plan dla początkujących"), grupy FB, K5 trenerzy | wyłącznie pętla produktu (K2) — nie marketing |
 

@@ -2,7 +2,7 @@
 
 > **Data:** 2026-07-17 · **Status po rebaseline:** materiał roboczy. Prompt ani estetyczny
 > przegląd nie zatwierdzają techniki. Każda para przed użyciem wymaga zgodności z wariantem,
-> źródła/licencji i review człowieka lub trenera zgodnie z CONTENT-01–04 w backlogu.
+> źródła/licencji i wersjonowanego review Codex zgodnie z D-37 oraz CONTENT-01–04 w backlogu.
 > **Źródło listy:** skan `scripts/data/exercises.json` + presety w `seed.ts`.
 > **Styl:** rozszerzenie systemu z `prompt-fotografia-warm.md`, ale to warstwa instruktażowa,
 > nie editorial. Pełna wymiana biblioteki nie jest aktywnym sprintem; kolejność ustala

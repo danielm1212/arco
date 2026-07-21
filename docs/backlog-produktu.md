@@ -60,9 +60,10 @@ checkpoint urządzeniowy; nie oznacza usunięcia regresji z macierzy.
 |---|---|---|---|---|
 | TRUST-01 | Regresja ostatniego fixa sticky loggera na iPhone PWA i starym Service Workerze | Nagłówek pozostaje widoczny, ma solidne tło, nie przepuszcza treści i nie nachodzi na status bar; toast także respektuje safe area | gotowe do podjęcia | Q1 |
 | TRUST-02 | Fresh-account smoke F0.7: pełny onboarding, skip, `0/N`, nowe urządzenie, usunięcie historii | Konto nie wraca do onboardingu, a ustawienia zachowują sens | gotowe do podjęcia | Q1 |
-| CONTENT-01 | Zweryfikować wszystkie widoczne warianty Hip Thrust; obecny Barbell Hip Thrust wstrzymać lub wymienić do review trenera | Aplikacja nie uczy ryzykownej techniki | gotowe do podjęcia | Q1 |
+| CONTENT-01 | Zweryfikować wszystkie widoczne warianty Hip Thrust; obecny Barbell Hip Thrust wstrzymać lub wymienić do wersjonowanego review Codex | Aplikacja nie uczy ryzykownej techniki | gotowe do podjęcia | Q1 |
 | CONTENT-02 | Zweryfikować zdjęcia Chin-Up względem zamierzonego wariantu i warunków drążka | Materiał pokazuje czytelną, neutralną technikę | gotowe do podjęcia | Q1 |
 | CONTENT-03 | Audyt opisów ruchów używanych w planach: start, klucz ruchu, bezpieczne zakończenie, zwięzłość | Początkujący dostaje krótką i bezpieczną instrukcję | gotowe do podjęcia | Q1 + po H2 |
+| TRAIN-01 | Pilny patch P11/P12/P14 | Ruchy techniczne i mocy są przed zmęczeniem, a plan FBW ma hinge; wersja treści i zatwierdzenie Codex są jawne | gotowe do podjęcia | Q1 |
 | OPS-01 | Zaszyfrowana kopia backupu poza laptopem i checklista rollbacku | Awaria jednego urządzenia nie niszczy możliwości odtworzenia | gotowe do podjęcia | przed publicznymi kontami |
 | OPS-02 | Monitoring błędów z numerem wersji, źródłami map i alertem dla zapisu sesji | Krytyczny błąd jest widoczny zanim zgłosi go płacący użytkownik | po H2 | przed płatną betą |
 | PRIVACY-01 | Kontrakt zdjęć Ciała: zgoda, prywatność, retencja, pobranie i usunięcie | Wrażliwe zdjęcia mają jawny cykl życia i nie są elementem domyślnego socialu | po H2 | przed publicznymi kontami |
@@ -73,12 +74,13 @@ checkpoint urządzeniowy; nie oznacza usunięcia regresji z macierzy.
 Materiały techniczne nie są zwykłym contentem. Dla ruchów używanych w planach obowiązuje:
 
 1. zgodność obrazu, polskiej nazwy i instrukcji z tym samym wariantem;
-2. brak techniki, której nie da się obronić przed trenerem;
+2. brak techniki sprzecznej z wersjonowanym audytem i przyjętymi kryteriami;
 3. krótka instrukcja obejmująca pozycję startową, klucz ruchu i bezpieczne zakończenie;
 4. dwa statyczne obrazy jako niezawodny fallback;
 5. film/animacja wyłącznie jako dodatek po teście wartości i wydajności;
 6. źródło, licencja i data review zapisane przy materiale;
-7. materiał wygenerowany przez AI wymaga review człowieka znającego technikę.
+7. materiał wygenerowany przez AI wymaga osobnego, wersjonowanego review Codex z dowodem
+   wizualnym; konsultant zewnętrzny nie jest bramką przed monetyzacją.
 
 Przed H2 audytujemy wszystkie ćwiczenia widoczne w aktywnych planach początkujących i główne
 ruchy. Pełna kuracja całej bazy jest osobnym strumieniem po H2; nie blokuje testu, jeżeli
@@ -86,11 +88,37 @@ niewidoczne lub nieużywane rekordy są bezpiecznie ukryte.
 
 ## 4. P1 — rdzeń przed H2
 
+### CORE-0 — integralność danych przed R4A
+
+| ID | Zadanie | Zakres | Status |
+|---|---|---|---|
+| DATA-01 | Prawidłowa zakończona seria | Wymagane pola wg typu ćwiczenia; wspólny guard UI/server/DB; pusta seria nie kończy treningu | gotowe do podjęcia po Q1 |
+| DATA-02 | Kanoniczne jednostki ciężaru | Dane w jednej jednostce, konwersja w UI, backup i jawna migracja istniejących kont | gotowe do podjęcia po DATA-01 |
+| DATA-03 | Jedna definicja faktu treningowego | Zakończona sesja, prawidłowa zaliczona seria robocza, niepominięte ćwiczenie; wspólne dla wszystkich pochodnych | gotowe do podjęcia po DATA-01 |
+| SYNC-01 | Trwały błąd nie blokuje outboxa | Rozróżnienie retry/quarantine, odzyskiwalny zapis błędu i flush bieżącej sesji przed finish | gotowe do podjęcia po DATA-01 |
+
+CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ograniczeń jest w
+`audyt-core-i-plan-2026-07.md`.
+
+### PLAN-Q — biblioteka treningów 10/10 po R4A
+
+| ID | Zadanie | Zakres | Status |
+|---|---|---|---|
+| TRAIN-02 | Jeden katalog 15 programów | Stabilne ID/slug/version; seed, walidatory i 15 kart dokumentacji bez rozjazdu | po TRAIN-01 i R4A |
+| TRAIN-03 | Addytywna recepta v2 | Czas dnia/slotu, RIR, tempo, progresja, rola, opcjonalność, alternatywy, RLS, legacy i snapshot | po TRAIN-02 |
+| TRAIN-04 | Korekta 15/15 programów | Wzorce, kolejność, objętość, przerwy, czasy, ruchy timed, regresje i język zgodne z zatwierdzonym audytem Codex | po TRAIN-03 |
+| TRAIN-05 | Prawda sprzętowa per slot | Kanoniczny słownik, wymagania ćwiczeń, aliasy i wykonalna ścieżka przez alternatywę | razem z TRAIN-03/04 |
+| TRAIN-06 | Czytelna karta i detal planu | Czas, akcent, sprzęt, przerwa, opcjonalność i warianty; pełne stany UX bez redesignu | po TRAIN-03/05 |
+| TRAIN-07 | Gate publikacji | Walidator CI, idempotentny seed, RLS, aktywne plany/sesje, E2E i macierz urządzeń | po TRAIN-04–06 |
+
+PLAN-Q jest twardą bramką przed R2.2 i R4C. Pełny kontrakt danych, kompatybilności, testów,
+rollbacku i review jest w `spec-plan-q-biblioteka-treningow.md`.
+
 ### R2.2 — zaufanie do planów
 
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
-| PLAN-01 | Filtr „Tylko z moim sprzętem” | Filtr czyta zapisany inwentarz; ustawienia pozostają źródłem prawdy; link „Zmień sprzęt” | gotowe do podjęcia |
+| PLAN-01 | Filtr „Tylko z moim sprzętem” | Filtr czyta zapisany inwentarz i wynik wykonalności TRAIN-05; ustawienia pozostają źródłem prawdy; link „Zmień sprzęt” | po TRAIN-05 |
 | PLAN-02 | Sprawdzić odkrywalność „Utwórz własny program” | Akcja istnieje; poprawiamy hierarchię tylko jeśli test first-click wykaże problem | eksperyment |
 | PLAN-03 | Własne ćwiczenie bez opuszczania kreatora | Utworzenie ćwiczenia wraca do właściwego miejsca w edytowanym planie | R4 |
 
@@ -109,6 +137,7 @@ niewidoczne lub nieużywane rekordy są bezpiecznie ukryte.
 
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
+| LOG-00 | Kontrakt stanu aktywnej sesji | Wspólne stany draft/ready/completed/edited/rest/minimized; brak podwójnego wolumenu i utraty szkicu | gotowe do podjęcia |
 | LOG-01 | Czytelny następny krok po wpisaniu wyniku | Subtelnie wyróżnić „Zalicz serię”, ustawić logiczny fokus; bez autozaliczania | gotowe do podjęcia |
 | LOG-02 | Pierwszy trening w kontekście | Jednorazowe, pomijalne wskazówki: wynik, zaliczenie, timer, podmiana, minimalizacja, koniec | gotowe do podjęcia |
 | LOG-03 | „Zakończ trening” na dole | Druga droga po ostatnim ćwiczeniu; używa tego samego guarda i sheetu | gotowe do podjęcia |
@@ -120,6 +149,21 @@ niewidoczne lub nieużywane rekordy są bezpiecznie ukryte.
 | VALUE-01 | Drabina wartości i minimum danych | Pierwsza sesja daje konkretny następny krok; prognoza i guidance pokazują „czego brakuje”, zamiast udawać pewność | gotowe do podjęcia |
 | HISTORY-01 | Historia zachowuje kontekst | Strona, filtry i scroll po wejściu w szczegół oraz edycję | gotowe do podjęcia |
 | HISTORY-02 | „Powtórz trening” | Nowa sesja na podstawie starej; domyślnie dodatkowa i bez zmiany rotacji | wymaga testu po R4 |
+
+Pełny kontrakt, kolejność podzadań i kryteria urządzeniowe R4 są w
+`spec-r4-logger.md`. LOG-00 i R4A zaczynają się po CORE-0; nie zaczynamy backfillu
+przed przejściem całej pętli wielu serii i ćwiczeń ani guidance R4E przed CORE-1.
+
+### CORE-1 — minimalny wiarygodny silnik przed R4E
+
+| ID | Zadanie | Zakres | Status |
+|---|---|---|---|
+| ENGINE-01 | Snapshot recepty sesji | Planowane serie, zakres, przerwa i źródło nie zmieniają się po edycji programu; legacy bez zgadywanego backfillu | po R4D |
+| ENGINE-02 | Wersjonowany kontrakt decyzji | Action, reason codes, confidence, evidence, rule version, inputs i insufficient-data | po ENGINE-01 |
+| ENGINE-03 | Progresja na pełnym wyniku | Wszystkie serie, realny skok sprzętu i priorytet; brak sugestii z jednego najlepszego wyniku | po ENGINE-02 |
+| ENGINE-04 | Plateau bez fałszywej diagnozy | Obserwacja i bezpieczny następny krok; brak automatycznego deloadu z trzech punktów | po ENGINE-02 |
+| ENGINE-05 | Macierz historii silnika | Progres, szum, zmiana zakresu, brak danych, podmiana, backfill i edycja | razem z ENGINE-03/04 |
+| RIR-01 | Dogfood RIR/RPE w shadow mode | Sprawdzić zrozumienie i tarcie; nie wymagać przy każdej serii ani nie sterować produkcją przed wynikiem | eksperyment przed H2 |
 
 ### R5b — dostępność i PWA
 
@@ -232,6 +276,8 @@ offline, klawiaturę, systemowy Back, dostępność, wielkość migracji i koszt
 | ONB-02 | Cel 1 trening/tydzień | Nie dodawać jako samą liczbę. Najpierw zaprojektować uczciwy plan minimum/powrotu i przetestować komunikat |
 | ONB-03 | Profile sprzętu: gumy, drążek, brak sprzętu | Rozszerzyć model dopiero z pełnym mapowaniem na plany i zamienniki |
 | SESSION-01 | Opcjonalna rozgrzewka i zakończenie | Mały, pomijalny blok sesji; nie dokładać przed domknięciem loggera i testem potrzeby |
+| SESSION-02 | Warianty Minimum/Standard/Plus | Najpierw dodać tylko semantykę pozycji opcjonalnej w PLAN-Q; warianty sesji uruchomić po H2 i pomiarze ukończeń |
+| PROGRAM-01 | Luki biblioteki po H2 | 1×/tydzień, 20–30 min, gumy, kettlebell, upper-focus i advanced gym tylko według danych; nie rozbudowywać katalogu przed pomiarem obecnych 15 |
 | GUIDANCE-01 | Ograniczenie prowadzenia | Preferowany poziom na planie; później wyciszenie konkretnej wskazówki. Nie globalny „wyłącz wszystko” przed H2 |
 | MEDIA-01 | Film/animacja ćwiczenia | Pilotaż na 5–10 trudnych ruchach; mierzyć zrozumienie, wagę i offline; zdjęcia zostają fallbackiem |
 | MEDIA-02 | Media własnych ćwiczeń | Prywatne domyślnie, z limitami i bez automatycznej publikacji |
@@ -242,7 +288,11 @@ offline, klawiaturę, systemowy Back, dostępność, wielkość migracji i koszt
 | VISUAL-04 | Licencja i pochodzenie 3D | Przed publicznym użyciem potwierdzić licencję, możliwość modyfikacji i źródła; 3dicons.co pozostaje inspiracją |
 | RECAP-01 | Share card po treningu | Po H2 i decyzji o prywatności; eksportowany obraz, nigdy obowiązkowy etap Done |
 | TOOLS-01 | Workflow Fable dla Arco | Tworzyć dopiero, gdy powtarzalny proces prototypowania flow ma jasne wejścia/wyjścia; nie jako zadanie dla samego narzędzia |
-| CONTENT-04 | Automatyczny inwentarz słabych mediów | Skrypt może wykrywać placeholder, niską rozdzielczość i brak pary; decyzję techniczną zatwierdza człowiek/trener |
+| CONTENT-04 | Automatyczny inwentarz słabych mediów | Skrypt wykrywa placeholder, niską rozdzielczość i brak pary; decyzję techniczną zatwierdza wersjonowany review Codex |
+| ENGINE-10 | Objętość bezpośrednia i pośrednia | Model per mięsień z jawnymi wagami; kalibracja na literaturze i realnych planach |
+| ENGINE-11 | Klasyfikator plateau/zmęczenia | Łączy trend, wykonanie recepty, objętość i opcjonalny wysiłek; deload jest jedną z możliwych akcji |
+| ENGINE-12 | Kalibracja rekomendatora programu | Strojenie do akceptacji planu, ukończenia pierwszego i powrotu do drugiego treningu, nie do fixture'ów |
+| ENGINE-13 | Outcome loop guidance | Pokazano, zrozumiano, zaakceptowano/odrzucono i wynik kolejnej sesji; po decyzji prawnej o analityce |
 
 ## 9. Po launchu lub po osobnej bramce
 
@@ -261,7 +311,8 @@ offline, klawiaturę, systemowy Back, dostępność, wielkość migracji i koszt
 - **Duże ikony 3D w narzędziu:** 3D zostaje w onboardingu, empty states i momentach; nawigacja i logger używają prostych glifów.
 - **Bezwarunkowa opcja celu 1/tydzień:** liczba bez odpowiedniego planu składa fałszywą obietnicę.
 - **Bezpośrednia integracja klienta z Notion:** niepotrzebna zależność i ryzyko danych.
-- **AI jako autorytet techniki ćwiczeń:** może wykrywać braki i przygotować propozycję, lecz nie zatwierdza materiału.
+- **Niewersjonowane AI jako autorytet techniki:** automatyczny output bez źródeł, macierzy i dowodu
+  wizualnego jest odrzucony; zatwierdzenie Codex działa wyłącznie przez wersjonowany audyt.
 - **Produkcja w store przez zdalny WebView:** utrudnia offline, łamie rekomendowany model
   Capacitor i zwiększa ryzyko uznania aplikacji za przepakowaną stronę.
 - **Pełny rewrite Swift/Kotlin „z AI”:** dwa interfejsy i dwa cykle regresji bez dowodu, że

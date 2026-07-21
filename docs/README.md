@@ -1,6 +1,6 @@
 # Dokumentacja Arco
 
-**Aktualizacja:** 2026-07-20
+**Aktualizacja:** 2026-07-21
 
 ## Źródła prawdy
 
@@ -35,6 +35,10 @@ audytu jako backlogu.
 - `prompt-ikony-3d-clay.md` — kuratorowany system 3D; inspiracja i reguły użycia.
 - `prompt-fotografia-warm.md` — przyszły kierunek fotografii editorialowej.
 - `r0-5-wynik-prototypu.md` — decyzje potwierdzone przez prototyp przed wdrożeniem.
+- `spec-r4-logger.md` — agent-ready refinement loggera, Historii i wartości drugiego treningu.
+- `audyt-core-i-plan-2026-07.md` — ocena silnika, dowody, architektura CORE-0/CORE-1 i granice pracy po H2.
+- `spec-plan-q-biblioteka-treningow.md` — agent-ready kontrakt danych, treści, sprzętu, UI i walidacji 15 programów.
+- `audyt-biblioteki-programow-2026-07.md` — wersjonowane zatwierdzenie recept P01–P15 i dokładna lista korekt.
 - `../prototypes/product-vision-poc/README.md` — aktualny klikalny POC docelowego kręgosłupa produktu.
 
 ### Jakość, bezpieczeństwo i badania

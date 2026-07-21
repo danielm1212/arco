@@ -1,6 +1,6 @@
 # Arco — wizja i strategia v3 (KANON — zaakceptowane [Ty] 2026-07-16)
 
-> **Data:** 2026-07-16 · **Rebaseline:** 2026-07-20 · **Status:** ✅ KANON (akceptacja [Ty] 2026-07-16). Ten plik zawiera całą obowiązującą wizję i zasady nadrzędne. Sekwencja i bramki żyją w `roadmap.md`, a rozstrzygnięcia wykonawcze w `decyzje-produktowe.md`.
+> **Data:** 2026-07-16 · **Rebaseline:** 2026-07-20 · **Refinement zatwierdzenia treści:** 2026-07-21 · **Status:** ✅ KANON (akceptacja [Ty] 2026-07-16). Ten plik zawiera całą obowiązującą wizję i zasady nadrzędne. Sekwencja i bramki żyją w `roadmap.md`, a rozstrzygnięcia wykonawcze w `decyzje-produktowe.md`.
 > **Źródła:** wizja v2 + monetyzacja + ekipa-koncepcja + audyt paywalla (A–H) + rozmowy [Ty] 12–16.07 (3 rampy, trener-kanał, mapa wirali, okładki, „duma z liczb").
 
 ---
@@ -26,7 +26,7 @@ Cztery filary doświadczenia (trzy z v2 + czwarty awansowany z audytów):
 | | **Paweł, 29** — trenuje poważnie (ICP płacący) | **Kasia, 24** — zaczyna (ICP wzrostowy) | **„Radek"** — zaproszony kumpel (rola w pętli) |
 |---|---|---|---|
 | Ból | stagnacja; „dokładać czy deload?"; dane są, wniosków brak; notes/Hevy nie daje dumy z liczb | paraliż decyzyjny: co robić, ile, czy dobrze | sam nie utrzyma rytmu; apki go nudzą |
-| Komunikat 1 | „**Arco wie, kiedy dołożyć, a kiedy odpuścić — i mówi dlaczego.**" | „**Nie wiesz, od czego zacząć — Arco wie.** Plan od trenera i prowadzenie serię po serii." | „**Paweł Cię widzi. Nie ciężary — tylko czy byłeś.** To wystarczy." |
+| Komunikat 1 | „**Arco wie, kiedy dołożyć, a kiedy odpuścić — i mówi dlaczego.**" | „**Nie wiesz, od czego zacząć — Arco wie.** Zweryfikowany plan i prowadzenie serię po serii." | „**Paweł Cię widzi. Nie ciężary — tylko czy byłeś.** To wystarczy." |
 | Komunikat 2 *(nowy, 07.2026)* | „**Twoje treningi zasługują na coś lepszego niż notes** — trendy, PR-y, historia, która nie znika." | „Pierwszy trening bez strachu — apka mówi, co robić." | — |
 | Konwersja | fala 1 (trial + teaser stagnacji), fala 2 (kłódka historii), cel+prognoza | nie płaci — jest wzrostem (Z2); upsell dopiero momentem (kłódka/stagnacja po miesiącach) | instaluje z zaproszenia → celebracja → własna ekipa |
 | Gdzie łowimy | K1 content (progresja/deload/stagnacja), K3 społeczności | K1 („plan dla początkujących"), grupy FB, K5 przez trenerów | wyłącznie pętla produktu |
@@ -44,7 +44,8 @@ Cztery filary doświadczenia (trzy z v2 + czwarty awansowany z audytów):
 3. **Limitujemy dostęp, nie dane.** Nie kasujemy ani nie fałszujemy historii po zakończeniu
    triala; płatność odblokowuje analizę, prowadzenie i dłuższy dostęp, nie własność danych.
 4. **Prywatność i bezpieczeństwo wygrywają z retencją.** Social nie ujawnia ciężarów,
-   notatek ani zdjęć bez jawnej zgody; materiały techniczne ćwiczeń wymagają review człowieka.
+   notatek ani zdjęć bez jawnej zgody; materiały techniczne ćwiczeń wymagają wersjonowanego
+   review zgodnego z D-37, a konsultant zewnętrzny może dojść po monetyzacji.
 
 **Free (na zawsze):** pełny logger, 15 programów, 2 własne plany, 10 custom, 12 tyg. historii, guidance-lite, staty podstawowe, passa, ekipa w całości, **cel siłowy + pasek postępu** *(nowe, G)*.
 

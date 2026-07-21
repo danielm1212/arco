@@ -1,6 +1,6 @@
 # Arco — standard zadania dla agentów
 
-**Aktualizacja:** 2026-07-20
+**Aktualizacja:** 2026-07-21
 
 Ten standard ma sprawić, że agent może podjąć zadanie bez odgadywania intencji produktu.
 `plan-sprintow-2026-07.md` ustala kolejność, `backlog-produktu.md` zakres, a ten dokument sposób wykonania.
@@ -40,7 +40,7 @@ Zadania nie zaczynamy, jeżeli:
 - brakuje decyzji zmieniającej model danych lub zachowanie użytkownika;
 - nie da się opisać mierzalnego Done;
 - zakres miesza pilny bug z niepowiązaną funkcją;
-- wymagany materiał techniczny nie ma review człowieka;
+- wymagany materiał techniczny nie ma wersjonowanego review zgodnego z aktualną decyzją produktu;
 - drugi agent edytuje ten sam obszar bez uzgodnienia.
 
 ## 4. Definition of Done
@@ -88,7 +88,8 @@ Zadanie jest skończone, gdy:
 - 3D i motion wzmacniają moment, nie zastępują hierarchii.
 - Ten sam wzorzec ma tę samą semantykę: Back, minimalizacja, X, cel tygodniowy i zakończenie.
 - Nie używamy modala do każdej decyzji; stosujemy go, gdy koszt błędu jest realny.
-- Informacja techniczna ćwiczenia wymaga zgodności tekstu i mediów oraz review człowieka.
+- Informacja techniczna ćwiczenia wymaga zgodności tekstu i mediów oraz wersjonowanego review;
+  do monetyzacji może je wykonać Codex według D-37, później może dojść audyt zewnętrzny.
 - Rozwiązanie PWA oceniamy na telefonie, nie wyłącznie w desktopowym Chromium.
 - Zrzut pojedynczego komponentu nie wystarcza: oceniamy cały ekran i przynajmniej jeden powrót
   do ekranu sąsiedniego, żeby wykryć zmianę gęstości, chrome lub hierarchii.
