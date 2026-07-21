@@ -55,6 +55,9 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
 ### Częściowe
 
+- **TRAIN-01:** P11/P12/P14 są poprawione w seedzie i chronione migracją z blokadą otwartych
+  sesji oraz testami kolejności/objętości; zmiana jest lokalna na `agent/q1-train-01`, bez PR
+  i bez wdrożenia produkcyjnego.
 - **R3b:** istnieje dużo v0, ale hub nie ma jeszcze trwałego ostatniego wyboru, unread na tabie,
   jednego kontekstowego zdarzenia Home i finalnego dogfoodu dwóch kont.
 - **R4:** rdzeń loggera, edycji i backfillu działa. Brakuje prowadzenia pierwszej sesji,
@@ -68,7 +71,8 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
    wymaga review wariantu, a audyt 15 planów wykazał błędy kolejności/objętości, brakujące
    regresje i nieprawdziwe metadane sprzętu. Q1 zawiera pilny patch, a PLAN-Q jest pełną
    bramką treści, danych i wersjonowanego audytu Codex przed H2. Docelowe recepty 15/15 są
-   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`; obecny seed czeka na implementację.
+   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`; P11/P12/P14 są gotowe lokalnie,
+   a pozostałe korekty i wdrożenie produkcyjne nadal czekają.
    Walidator pokazuje 16 unikalnych placeholderów mediów użytych w 49 slotach.
 2. **PWA:** ostatni fix sticky wymaga potwierdzenia na iPhone PWA i przy starym cache.
 3. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
@@ -94,7 +98,8 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
 ## 6. Najbliższa praca
 
-1. Q1: regresja sticky/F0.7 oraz review treści Hip Thrust/Chin-Up i ruchów początkujących.
+1. Domknąć review/CI i kontrolowaną migrację TRAIN-01; równolegle Q1: regresja sticky/F0.7
+   oraz review treści Hip Thrust/Chin-Up i ruchów początkujących.
 2. CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólna definicja faktu i odporny outbox.
 3. R4A: kontrakt aktywnej serii, pętla wielu serii/ćwiczeń i nieblokujący timer.
 4. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.

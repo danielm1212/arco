@@ -22,6 +22,24 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-21 · Codex · TRAIN-01 P11/P12/P14
+
+- **Zakres:** pilna korekta kolejności i objętości P11/P12 oraz przywrócenie hinge/hamstrings
+  w P14, bez wciągania recepty v2 i pozostałego PLAN-Q.
+- **Stan:** gotowe lokalnie na `agent/q1-train-01`; seed i dwie karty planów zaktualizowane,
+  wersje treści podbite, produkcja nietknięta.
+- **Migracja:** `20260721223000_train01_program_safety_patch.sql` zachowuje ID niezmienionych
+  slotów, odpina wycofane sloty przez istniejące `ON DELETE SET NULL` i zatrzymuje się przy
+  otwartej sesji P11/P12/P14.
+- **Testy:** migracja przeszła w transakcji z rollbackiem i na lokalnej bazie; seed 2× zachował
+  aktywne programy i 307 slotów. Zielone: lint, build, 94/94 unit, 60/60 rekomendacji,
+  walidator treści, smoke Phase 1/2 i 5/5 testów przeglądarkowych.
+- **Znane ograniczenie środowiska:** lokalna kopia `restore_prod_s11` nie zawiera tabel
+  `public`, więc nie mogła służyć jako drugi dowód migracji; test wykonano na wypełnionej
+  lokalnej bazie. Pełny CI Supabase pozostaje bramką PR.
+- **Następny krok:** review diffu i mały commit TRAIN-01; po scaleniu bazowego PR #1 otworzyć
+  osobny PR, przejść CI i zastosować migrację dopiero po audycie otwartych sesji.
+
 ### 2026-07-21 · Codex · PLAN-Q i zatwierdzenie 15 programów
 
 - **Zakres:** ponowna ocena 15 programów i 48 dni, zatwierdzenie docelowych recept P01–P15,

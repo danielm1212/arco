@@ -870,7 +870,7 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 70,
     required_equipment: ["dumbbell"],
     optional_equipment: ["body only", "pull-up bar", "other"],
-    content_version: 1,
+    content_version: 2,
     days_per_week: 4,
     days: [
       {
@@ -899,14 +899,13 @@ export const PROGRAMS: Program[] = [
       {
         label: "Upper B · objętość",
         slots: [
-          { exercise_id: "Incline_Dumbbell_Press", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
-          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 4, repsMin: 10, repsMax: 15, rest: 120 },
-          { exercise_id: "Chin-Up", sets: 4, repsMin: 6, repsMax: 10, rest: 120, notes: "dodaj pauzę u góry lub plecak po dojściu do 10" },
           { exercise_id: "Handstand_Push-Ups", sets: 3, repsMin: 4, repsMax: 10, rest: 150, notes: "przy ścianie; zamiennie trudny Pike Push-Up" },
-          { exercise_id: "Reverse_Flyes", sets: 3, repsMin: 15, repsMax: 20, rest: 60 },
-          { exercise_id: "Lying_Dumbbell_Tricep_Extension", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
-          { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
-          { exercise_id: "Push-Ups_-_Close_Triceps_Position", sets: 3, repsMin: 10, repsMax: 20, rest: 60 },
+          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 3, repsMin: 10, repsMax: 15, rest: 120 },
+          { exercise_id: "Chin-Up", sets: 3, repsMin: 6, repsMax: 10, rest: 120, notes: "dodaj pauzę u góry lub plecak po dojściu do 10" },
+          { exercise_id: "Reverse_Flyes", sets: 2, repsMin: 15, repsMax: 20, rest: 60 },
+          { exercise_id: "Lying_Dumbbell_Tricep_Extension", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Incline_Dumbbell_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -939,15 +938,15 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 65,
     required_equipment: ["body only", "pull-up bar"],
     optional_equipment: ["other"],
-    content_version: 1,
+    content_version: 2,
     days_per_week: 4,
     days: [
       {
         label: "Upper A · siła",
         slots: [
+          { exercise_id: "Handstand_Push-Ups", sets: 4, repsMin: 4, repsMax: 8, rest: 180, notes: "przy ścianie" },
           { exercise_id: "Pullups", sets: 4, repsMin: 5, repsMax: 8, rest: 180, notes: "tempo 3 sekundy w dół lub plecak" },
           { exercise_id: "Single-Arm_Push-Up", sets: 4, repsMin: 4, repsMax: 8, rest: 150, notes: "na stronę; użyj podwyższenia, jeśli trzeba" },
-          { exercise_id: "Handstand_Push-Ups", sets: 4, repsMin: 4, repsMax: 8, rest: 180, notes: "przy ścianie" },
           { exercise_id: "Inverted_Row", sets: 4, repsMin: 8, repsMax: 12, rest: 120, notes: "stopy na podwyższeniu" },
           { exercise_id: "Dips_-_Triceps_Version", sets: 3, repsMin: 6, repsMax: 12, rest: 120 },
           { exercise_id: "L-Sit_Hold", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper)" },
@@ -956,8 +955,8 @@ export const PROGRAMS: Program[] = [
       {
         label: "Lower A · siła",
         slots: [
+          { exercise_id: "Freehand_Jump_Squat", sets: 3, repsMin: 3, repsMax: 5, rest: 150, notes: "zakończ serię przy spadku wysokości skoku lub jakości lądowania" },
           { exercise_id: "Split_Squats", sets: 4, repsMin: 8, repsMax: 12, rest: 150, notes: "na nogę; wariant z pauzą lub progresja do pistoletu" },
-          { exercise_id: "Freehand_Jump_Squat", sets: 4, repsMin: 8, repsMax: 15, rest: 120, notes: "każde powtórzenie dynamiczne, lądowanie ciche" },
           { exercise_id: "Nordic_Hamstring_Curl", sets: 4, repsMin: 5, repsMax: 10, rest: 150 },
           { exercise_id: "Single-Leg_Hip_Thrust", sets: 4, repsMin: 10, repsMax: 15, rest: 120, notes: "na nogę" },
           { exercise_id: "Single_Leg_Calf_Raise", sets: 4, repsMin: 15, repsMax: 25, rest: 60, notes: "na nogę; pauza na górze" },
@@ -1105,7 +1104,7 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 65,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 2,
+    content_version: 3,
     days_per_week: 2,
     days: [
       {
@@ -1113,9 +1112,9 @@ export const PROGRAMS: Program[] = [
         slots: [
           { exercise_id: "Barbell_Squat", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
           { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
+          { exercise_id: "Romanian_Deadlift", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
           { exercise_id: "Bent_Over_Barbell_Row", sets: 4, repsMin: 8, repsMax: 10, rest: 120 },
           { exercise_id: "Standing_Military_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 120 },
-          { exercise_id: "Barbell_Curl", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "EZ-Bar_Skullcrusher", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "Na czas, od 30 do 60 sekund." },
         ],
@@ -1124,10 +1123,10 @@ export const PROGRAMS: Program[] = [
         label: "Trening B",
         slots: [
           { exercise_id: "Barbell_Walking_Lunge", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
-          { exercise_id: "Pullups", sets: 4, repsMin: null, repsMax: null, rest: 120, notes: "Zrób prawie maksymalną liczbę poprawnych powtórzeń. Zostaw 1 lub 2 w zapasie. Nachwyt." },
+          { exercise_id: "Pullups", sets: 4, repsMin: 5, repsMax: 10, rest: 120, notes: "Użyj gumy lub maszyny, jeśli pełny zakres jest za trudny. Zostaw 1 lub 2 powtórzenia w zapasie. Nachwyt." },
           { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 120 },
           { exercise_id: "Face_Pull", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
-          { exercise_id: "Hammer_Curls", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
+          { exercise_id: "Lying_Leg_Curls", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
           { exercise_id: "Ab_Wheel_Rollout", sets: 3, repsMin: 8, repsMax: 12, rest: 60, notes: "Z kolan. Bez kółka wybierz spięcia na wyciągu." },
         ],
