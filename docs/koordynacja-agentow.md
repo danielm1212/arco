@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-20
+**Aktualizacja:** 2026-07-21
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -21,6 +21,24 @@
 | — | Brak aktywnych rezerwacji | — | — | — |
 
 ## Ostatnie wpisy
+
+### 2026-07-21 · Claude · Linear jako warstwa operacyjna + dokumenty prawne + zespół
+
+- **Zakres:** decyzje właściciela: Piotr dołącza (security, porozumienie w draftach),
+  Linear zastępuje Notion. Workspace `trainarco`: labelki (grupa Obszar: Design/Dev/
+  Security/Ops/Content/Legal + Do refinementu/Zablokowane/Test urządzeniowy), 7 projektów
+  (Q1, R2.2, R4, R3b, R5b, Security & PRIV-1, Operacje), 40 issues DAN-5…DAN-44
+  zasianych z `backlog-produktu.md` i ryzyk HANDOFF (P2/mobile/store celowo poza Linear
+  do czasu aktywacji). Repo: `docs/legal/` (commity `2aa4191`, `d10e51e` — drafty RODO
+  + domena trainarco.com), aktualizacja reguł Notion→Linear (CLAUDE.md, HANDOFF §7,
+  zamknięcie `notion-sync-queue.md`).
+- **Stan:** zakończone; kod produktu, baza i produkcja nietknięte (zmiany tylko docs+Linear).
+- **Flow w Linear:** Backlog (+„Do refinementu") → Todo → In Progress → In Review
+  (= do testu; „Test urządzeniowy" blokuje Done bez telefonu) → Done / Canceled.
+  Grupa Obszar jest wzajemnie wykluczająca — jedno issue ma jednego właściciela obszaru.
+- **Następny krok:** [Ty] push commitów docs; onboarding Piotra (porozumienie OPS-06/DAN-43,
+  pierwsze zadanie SEC-01/DAN-34); statusy w Linear ewentualnie przemianować ręcznie
+  (connector nie zarządza statusami).
 
 ### 2026-07-20 · Codex · Product Vision POC
 

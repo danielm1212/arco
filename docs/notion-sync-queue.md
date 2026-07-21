@@ -1,7 +1,11 @@
-# Kolejka synchronizacji z Notion
+# Kolejka synchronizacji z Notion — ZAMKNIĘTA
 
-**Aktualizacja:** 2026-07-20
-**Zasada:** Notion nie jest źródłem prawdy. Synchronizujemy dopiero na wyraźną prośbę właściciela.
+**Aktualizacja:** 2026-07-21
+**Status:** decyzją właściciela warstwą operacyjną zadań jest **Linear** (workspace
+`trainarco`). Pozycje z tej kolejki zostały odwzorowane jako issues DAN-5…DAN-44
+(aktywny plan Q1/R2.2/R4/R3b/R5b + Security & PRIV-1 + Operacje); pozycje po-H2
+pozostają w `backlog-produktu.md` i wejdą do Linear, gdy staną się aktywne.
+Nie dopisujemy tu nowych pozycji. Plik zostaje jako archiwum ostatniego stanu sprzed migracji.
 
 ## Oczekujące
 

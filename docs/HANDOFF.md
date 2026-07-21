@@ -102,4 +102,4 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 - Jeden build Next.js naraz.
 - Deploy i zamknięcie sesji zgodnie z `.claude/skills/`.
 - Każda zmiana stanu aktualizuje HANDOFF, backlog/plan i `koordynacja-agentow.md`.
-- Notion synchronizujemy wyłącznie na wyraźną prośbę.
+- Warstwa operacyjna zadań: Linear (workspace `trainarco`; od 2026-07-21 zastępuje Notion). Repo docs pozostają źródłem prawdy.
