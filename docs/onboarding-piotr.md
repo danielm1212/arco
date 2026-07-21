@@ -102,6 +102,11 @@ rozwój programów treningowych, zakres kolejnych wersji i ważne decyzje produk
 ma ostatnie słowo w strategii i produkcie; **Ty masz ostatnie słowo w bezpieczeństwie
 technicznym** — zgłaszając istotne ryzyko, podajesz przyczynę i proponowaną alternatywę (§2.5).
 
+**Uwaga o podziale:** to jest podział *odpowiedzialności i ostatniego słowa*, nie „kto może
+dotykać kodu". Daniel też bierze zadania dev z tablicy (vibecoding) i sam pushuje — obaj
+przypisujecie sobie issues w Linear i pracujecie na tym samym repo. Ty odpowiadasz za spójność
+techniczną i jakość całości; nie znaczy to, że wszystko musi przejść przez Ciebie.
+
 **Intencja na przyszłość (§6):** jeśli współpraca się rozwinie i powstanie spółka, intencją
 Stron jest rola **Co-founder & CTO** oraz docelowy pakiet **25% udziałów**, vesting 48 miesięcy
 z 12-miesięcznym cliffem, liczony od podpisania porozumienia. To zapisana zgodna intencja —
@@ -128,7 +133,8 @@ pozostaje pod kontrolą Founderа; dostajesz **dostęp potrzebny do uzgodnionych
 lokalny stack Supabase bez sekretów proda (audyt RLS robi się w 100% lokalnie). Dostęp do proda
 dochodzi wraz z zakresem, który jest już Twój (deploye, monitoring, backupy) — a gdy dotknie
 danych produkcyjnych, dojdzie formalne upoważnienie RODO (art. 29). Własne loginy + 2FA, zero
-przekazywania haseł/kart, żadnych płatnych usług bez zgody Founderа.
+przekazywania haseł/kart, żadnych płatnych usług bez zgody Founderа. Na teraz do startu
+potrzebne są **tylko GitHub + Linear** — matryca i kroki nadawania dostępu: `docs/dostepy-i-role.md`.
 
 ---
 
