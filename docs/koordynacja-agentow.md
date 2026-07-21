@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-21
+**Aktualizacja:** 2026-07-22
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -21,6 +21,22 @@
 | — | Brak aktywnych rezerwacji | — | — | — |
 
 ## Ostatnie wpisy
+
+### 2026-07-22 · Codex · CONTENT-02 Chin-Up
+
+- **Zakres:** wersjonowany review Chin-Up, dopracowana instrukcja PL, wycofanie dwóch
+  niejednoznacznych zdjęć do placeholdera, regresja seeda, punktowa migracja i dokumentacja Q1.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/q1-content-02`; pięć slotów programowych,
+  historia i parametry treningu pozostają bez zmian. Produkcja nietknięta.
+- **Dowód:** źródła ACE i trzy publikacje badawcze; oba tylne kadry odrzucone, ponieważ nie
+  potwierdzają jednoznacznie pełnego podchwytu ani prześwitu i neutralnej szyi na górze.
+- **Testy:** świeży `db reset`, migracja na zasymulowanym starym rekordzie, seed 2×,
+  102/102 unit, lint, build, 15 programów/307 slotów, rekomendacje 60/60, overflow 5/5 oraz
+  smoke Phase 1/2, offline i Ekipa.
+- **Czego nie dotknięto:** produkcji, slotów programowych, historii użytkowników ani nowych
+  plików mediów. Lokalne konta i rekordy smoke zostały posprzątane przez skrypty.
+- **Następny krok:** [Ty] scalić zielony PR #3; potem zaktualizować tę gałąź z `main`,
+  wypchnąć i otworzyć osobny PR CONTENT-02. Następnie CONTENT-01B albo CONTENT-03a.
 
 ### 2026-07-21 · Codex · CONTENT-01A Hip Thrust containment
 

@@ -70,6 +70,26 @@
       "sources": [
         "https://pmc.ncbi.nlm.nih.gov/articles/PMC8006986/"
       ]
+    },
+    "Chin-Up": {
+      "review_version": "CONTENT-02-v1",
+      "reviewed_at": "2026-07-22",
+      "reviewer": "Codex",
+      "decision": "text_approved_media_pending",
+      "reason_codes": [
+        "instruction_reviewed",
+        "rear_view_grip_ambiguous",
+        "top_position_clearance_ambiguous"
+      ],
+      "published_images": [
+        "/exercise-placeholder.svg"
+      ],
+      "sources": [
+        "https://www.acefitness.org/continuing-education/prosource/february-2016/5799/ace-technique-series-chin-ups/",
+        "https://pubmed.ncbi.nlm.nih.gov/21068680/",
+        "https://pubmed.ncbi.nlm.nih.gov/26383875/",
+        "https://pubmed.ncbi.nlm.nih.gov/28011412/"
+      ]
     }
   }
 }

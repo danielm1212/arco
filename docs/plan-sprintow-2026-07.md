@@ -104,6 +104,10 @@ wymaga osobnego potwierdzenia procedurą release.
 Barbell są zablokowane, trzy sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów
 są sprawdzone. Część B pozostaje otwarta dla dwóch par nowych mediów Dumbbell/Single-Leg.
 
+**Stan CONTENT-02:** gotowe lokalnie na `agent/q1-content-02`: pięć slotów Chin-Up pozostaje
+bez zmian, tekst przeszedł wersjonowany review, a dwa niejednoznaczne kadry zastępuje
+placeholder do czasu zatwierdzonej pary start/koniec.
+
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 

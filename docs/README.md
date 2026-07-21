@@ -56,6 +56,7 @@ audytu jako backlogu.
 - `audyt-bazy-cwiczen.md` — pochodzenie, ukrywanie i dotychczasowa kuracja.
 - `r5a-slownik-pl-propozycja.md` — wersjonowane źródło zatwierdzonego słownika PL i aliasów.
 - `review-content-01-hip-thrust-2026-07.md` — decyzje, źródła i gate publikacji wariantów Hip Thrust.
+- `review-content-02-chin-up-2026-07.md` — decyzja tekst/media i gate publikacji Chin-Up.
 - `prompty-zdjecia-cwiczen-16.md` — materiał roboczy; prompt nie jest zatwierdzeniem techniki.
 - `trainings/` — kontrakty treści programów.
 
