@@ -17,8 +17,10 @@
   pozostają bez zmian.
 - `Dumbbell_Hip_Thrust` i `Single-Leg_Hip_Thrust` dostają zatwierdzone instrukcje tekstowe,
   ale nadal mają neutralny placeholder. Ich media pozostają otwartym `CONTENT-01B`.
-- Kandydat AI dla pozycji końcowej Barbell został odrzucony: nie pokazał jednoznacznej linii
-  bark–biodro–kolano i zmienił podparcie. Żaden wygenerowany kadr nie trafia do produktu.
+- Pierwszy kandydat AI dla pozycji końcowej Barbell został odrzucony: nie pokazał
+  jednoznacznej linii bark–biodro–kolano i zmienił podparcie. Późniejsza spójna para
+  start/koniec jest kandydatem do `CONTENT-01B`, ale nie została zapisana jako osobne assety;
+  prawy kadr wymaga jeszcze jednoznacznego pełnego wyprostu przed publikacją.
 
 ## Dowód problemu
 
@@ -55,14 +57,16 @@ techniki w aplikacji.
 
 | ID | Tekst | Media | Publikacja |
 |---|---|---|---|
-| `Barbell_Hip_Thrust` | zatwierdzony awaryjnie | stare odrzucone | zablokowany |
+| `Barbell_Hip_Thrust` | zatwierdzony awaryjnie | kandydat pary czeka na finalny kadr i import | zablokowany do `CONTENT-01B` |
 | `Barbell_Glute_Bridge` | zatwierdzony | 2 istniejące kadry zaakceptowane | zamiennik programowy |
 | `Dumbbell_Hip_Thrust` | zatwierdzony | placeholder | otwarte `CONTENT-01B` |
 | `Single-Leg_Hip_Thrust` | zatwierdzony | placeholder | otwarte `CONTENT-01B` |
 
 ## Gate `CONTENT-01B`
 
-Nowe media Dumbbell i Single-Leg można opublikować dopiero, gdy oba kadry każdego wariantu
-przechodzą powyższą checklistę, mają zapisane źródło/licencję oraz test czytelności w pełnym
-arkuszu i miniaturze 44 px. Materiał AI wymaga ponownego jawnego wpisu review; samo wygenerowanie
-obrazu nie zmienia statusu.
+Nowe media Barbell, Dumbbell i Single-Leg można opublikować dopiero, gdy oba kadry każdego
+wariantu przechodzą powyższą checklistę, mają zapisane źródło/licencję oraz test czytelności
+w pełnym arkuszu i miniaturze 44 px. Dla Barbell należy zachować zaakceptowany kierunek lewego
+kadru, dopracować pełny wyprost w prawym, zapisać dwa osobne assety i dopiero wtedy podjąć
+wersjonowaną decyzję o odblokowaniu. Materiał AI wymaga ponownego jawnego wpisu review; samo
+wygenerowanie obrazu nie zmienia statusu.

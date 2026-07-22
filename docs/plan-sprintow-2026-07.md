@@ -83,10 +83,17 @@ każde otwarte zadanie ma ID, etap i obserwowalny wynik.
 
 - TRUST-01: sticky logger na iPhone PWA po aktualizacji i starym Service Workerze;
 - TRUST-02: świeże konto, skip/finish onboardingu, `0/N`, nowe urządzenie i usunięcie historii;
+- TRUST-03: każdy bottom sheet zachowuje pozycję strony przy zamknięciu przez X, overlay,
+  Escape, swipe i akcję; test automatyczny plus iPhone PWA obejmuje środek i dół długiej strony;
 - potwierdzić jeden kontrakt na `main`, w migracjach i na produkcji.
 
+**Stan TRUST-03:** technicznie gotowe na `agent/q1-trust-03`. Przyczyną był restart efektu
+scroll-locka po zmianie referencji `onOpenChange`; wspólny komponent zachowuje teraz pozycję
+i zwraca fokus. Automatyczna macierz przechodzi X/overlay/Escape/swipe/akcję na 320/375/393 px;
+pozostaje checkpoint [Ty] na iPhone PWA i Safari.
+
 **Done:** start → logowanie → minimalizacja → wznowienie → zakończenie przechodzi bez P0/P1,
-a historia nie steruje stanem onboardingu.
+a historia nie steruje stanem onboardingu, a zamknięcie sheeta nie przenosi użytkownika na górę ekranu.
 
 ### Q1.2 — bezpieczeństwo ćwiczeń
 
@@ -100,13 +107,15 @@ a historia nie steruje stanem onboardingu.
 scaleniu PR #2, ale zastosowanie migracji na produkcyjnej bazie nadal
 wymaga osobnego potwierdzenia procedurą release.
 
-**Stan CONTENT-01:** część A jest gotowa lokalnie na `agent/q1-content-01`: ryzykowne media
-Barbell są zablokowane, trzy sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów
-są sprawdzone. Część B pozostaje otwarta dla dwóch par nowych mediów Dumbbell/Single-Leg.
+**Stan CONTENT-01:** część A jest na `main`: ryzykowne media Barbell są zablokowane, trzy
+sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów są sprawdzone; migracja
+produkcyjna nadal wymaga kontrolowanego release'u. Część B obejmuje finalizację pary Barbell
+(jednoznaczny pełny wyprost w prawym kadrze, zapis osobnych assetów i decyzja o odblokowaniu)
+oraz nowe pary Dumbbell/Single-Leg.
 
-**Stan CONTENT-02:** gotowe lokalnie na `agent/q1-content-02`: pięć slotów Chin-Up pozostaje
-bez zmian, tekst przeszedł wersjonowany review, a dwa niejednoznaczne kadry zastępuje
-placeholder do czasu zatwierdzonej pary start/koniec.
+**Stan CONTENT-02:** kod jest na `main`: pięć slotów Chin-Up pozostaje bez zmian, tekst
+przeszedł wersjonowany review, a dwa niejednoznaczne kadry zastępuje placeholder do czasu
+zatwierdzonej pary start/koniec; migracja produkcyjna nadal wymaga kontrolowanego release'u.
 
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
@@ -285,7 +294,8 @@ albo uczciwy stan „potrzebujemy jeszcze…”. Ta sama historia daje tę samą
 - A11Y-01: focus trap, Escape, zwrot fokusu i role/dialog dla każdego sheeta;
 - A11Y-02: radiogroup i komunikaty błędów;
 - A11Y-03: 200% zoom, 320 px, reduced motion, kontrast i kolejność Tab;
-- PWA-01: iPhone PWA/Safari, Android/Chromium, desktop i stary Service Worker;
+- PWA-01: iPhone PWA/Safari, Android/Chromium, desktop i stary Service Worker; scroll-lock
+  każdego sheeta zachowuje dokładną pozycję strony po X, overlayu, Escape, swipe i akcji;
 - PWA-02: ubity proces, offline, szkice, mini-bar i odzyskanie;
 - pomiar stabilnego czasu pojawienia się głównego CTA Home.
 

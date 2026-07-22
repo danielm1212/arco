@@ -14,7 +14,8 @@ import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { chromium, type Browser } from "@playwright/test";
+import { build } from "esbuild";
+import { chromium, type Browser, type Page } from "@playwright/test";
 import { STICKY_HEADER_SAFE_AREA } from "../../components/navigation/stickyHeader";
 
 const ROOT = process.cwd();
@@ -23,6 +24,7 @@ const VIEWPORT = { width: 360, height: 780 }; // wąski Android/iPhone
 const SAFE_AREA = "47px"; // wymuszona wartość notcha (headless zwraca 0)
 
 let cssCache: string | null = null;
+let bottomSheetBundleCache: string | null = null;
 function builtCss(): string {
   if (cssCache !== null) return cssCache;
   let files: string[];
@@ -41,6 +43,90 @@ function builtCss(): string {
 function pageHtml(body: string): string {
   return `<!doctype html><html><head><meta charset="utf-8"><style>${builtCss()}</style>
   <style>:root{--safe-area-top:${SAFE_AREA}}body{margin:0}</style></head><body>${body}</body></html>`;
+}
+
+async function bottomSheetBundle(): Promise<string> {
+  if (bottomSheetBundleCache !== null) return bottomSheetBundleCache;
+
+  const result = await build({
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    write: false,
+    absWorkingDir: ROOT,
+    stdin: {
+      loader: "tsx",
+      resolveDir: ROOT,
+      sourcefile: "trust03-bottom-sheet-harness.tsx",
+      contents: `
+        import React, { useState } from "react";
+        import { createRoot } from "react-dom/client";
+        import { BottomSheet } from "./components/ui/bottom-sheet";
+
+        function Harness() {
+          const [open, setOpen] = useState(false);
+          const [renderCount, setRenderCount] = useState(0);
+
+          return <main>
+            <div style={{ height: 1200 }} />
+            <BottomSheet
+              open={open}
+              onOpenChange={(nextOpen) => setOpen(nextOpen)}
+              trigger={<button type="button">Otwórz arkusz</button>}
+              title="Arkusz testowy"
+              description="Regresja pozycji strony"
+            >
+              <p>Render: {renderCount}</p>
+              <button type="button" onClick={() => setRenderCount((value) => value + 1)}>
+                Wymuś render
+              </button>
+              <button type="button" onClick={() => setOpen(false)}>
+                Zamknij akcją
+              </button>
+            </BottomSheet>
+            <div style={{ height: 1800 }} />
+          </main>;
+        }
+
+        createRoot(document.getElementById("root")).render(<Harness />);
+      `,
+    },
+  });
+
+  bottomSheetBundleCache = result.outputFiles[0]?.text ?? null;
+  assert.ok(bottomSheetBundleCache, "esbuild nie zwrócił bundla harnessu BottomSheet");
+  return bottomSheetBundleCache;
+}
+
+async function bottomSheetPage(viewport: { width: number; height: number }): Promise<{ context: Awaited<ReturnType<Browser["newContext"]>>; page: Page; scrollY: number }> {
+  const context = await browser.newContext({ viewport });
+  const page = await context.newPage();
+  await page.setContent(pageHtml('<div id="root"></div>'), { waitUntil: "load" });
+  await page.addScriptTag({ content: await bottomSheetBundle() });
+  await page.getByRole("button", { name: "Otwórz arkusz" }).waitFor();
+  await page.evaluate(() => window.scrollTo(0, 1050));
+  const scrollY = await page.evaluate(() => window.scrollY);
+  assert.ok(scrollY > 900, `harness nie przewinął strony: ${scrollY}px`);
+  await page.getByRole("button", { name: "Otwórz arkusz" }).click();
+  await page.getByRole("dialog", { name: "Arkusz testowy" }).waitFor();
+
+  // Re-render tworzy nową referencję inline `onOpenChange`. TRUST-03 pilnuje,
+  // żeby sam render otwartego sheeta nie przeinicjalizował scroll-locka.
+  await page.getByRole("button", { name: "Wymuś render" }).click();
+  const lock = await page.evaluate(() => ({
+    position: document.body.style.position,
+    top: document.body.style.top,
+  }));
+  assert.deepEqual(lock, { position: "fixed", top: `${-scrollY}px` }, "re-render poluzował blokadę tła");
+  return { context, page, scrollY };
+}
+
+async function expectRestoredScroll(page: Page, expected: number) {
+  await page.evaluate(() => new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  }));
+  const actual = await page.evaluate(() => window.scrollY);
+  assert.ok(Math.abs(actual - expected) <= 1, `scroll po zamknięciu: ${actual}px zamiast ${expected}px`);
 }
 
 let browser: Browser;
@@ -148,5 +234,42 @@ test("logger: safe-area jest kompensowane przed sticky, nie wewnątrz nagłówka
     assert.ok(positions.contentTop >= 47, "treść Loggera weszła pod status bar");
   } finally {
     await ctx.close();
+  }
+});
+
+test("TRUST-03: BottomSheet zachowuje pozycję strony przy każdym sposobie zamknięcia", async (t) => {
+  const widths = [320, 375, 393];
+  const cases: Array<[string, (page: Page) => Promise<void>]> = [
+    ["X", async (page) => page.getByRole("button", { name: "Zamknij", exact: true }).click()],
+    ["overlay", async (page) => page.locator("div[aria-hidden]").click({ position: { x: 8, y: 8 } })],
+    ["Escape", async (page) => page.keyboard.press("Escape")],
+    ["swipe", async (page) => {
+      const handle = page.getByRole("button", { name: "Przeciągnij w dół, aby zamknąć" });
+      const box = await handle.boundingBox();
+      assert.ok(box, "brak uchwytu gestu");
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 + 100, { steps: 4 });
+      await page.mouse.up();
+    }],
+    ["akcja wewnętrzna", async (page) => page.getByRole("button", { name: "Zamknij akcją" }).click()],
+  ];
+
+  for (const width of widths) {
+    for (const [name, closeSheet] of cases) {
+      await t.test(`${width}px / ${name}`, async () => {
+        const { context, page, scrollY } = await bottomSheetPage({ width, height: 780 });
+        try {
+          await closeSheet(page);
+          await page.getByRole("dialog", { name: "Arkusz testowy" }).waitFor({ state: "detached" });
+          await expectRestoredScroll(page, scrollY);
+          await assert.doesNotReject(() => page.getByRole("button", { name: "Otwórz arkusz" }).evaluate((element) => {
+            if (document.activeElement !== element) throw new Error("fokus nie wrócił na trigger");
+          }));
+        } finally {
+          await context.close();
+        }
+      });
+    }
   }
 });

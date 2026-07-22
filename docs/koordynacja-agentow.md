@@ -22,6 +22,22 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Codex · TRUST-03 i refinement CONTENT-01B
+
+- **Zakres:** wspólny `BottomSheet`, realna regresja Chromium, plan/backlog/handoff, review
+  Hip Thrust i standard rekomendowania modelu przed zadaniem.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/q1-trust-03`; inline `onOpenChange` nie
+  restartuje scroll-locka, a zamknięcie przywraca dokładną pozycję i fokus. CONTENT-01B
+  obejmuje finalną parę Barbell oraz pary Dumbbell/Single-Leg.
+- **Dowód:** test przed poprawką odtwarzał `scrollY 1050 → 0` dla wszystkich ścieżek;
+  po poprawce X, overlay, Escape, swipe i akcja przechodzą na 320/375/393 px, również po
+  re-renderze otwartego sheeta, z aktywną blokadą tła i fokusem na triggerze.
+- **Testy:** czyste `npm ci` (0 podatności), lint, 102/102 unit, build, walidator
+  907 ćwiczeń/15 programów/307 slotów, rekomendacje 60/60 i overflow 21/21.
+- **Czego nie dotknięto:** produkcji, migracji, danych, logiki treningu i assetów ćwiczeń.
+- **Zaległości:** [Ty] kontrolowany release migracji Q1, następnie checkpoint iPhone
+  PWA/Safari i merge po zielonym CI; potem CONTENT-01B i CORE-0.
+
 ### 2026-07-22 · Codex · SEC-02 sharp advisory
 
 - **Zakres:** wymuszenie załatanej wersji `sharp` 0.35.3 w zależnościach produkcyjnych,
@@ -149,15 +165,6 @@
   zapis programu, filtry sprzętu, Historia, Ekipa, szerokości 393/320 px i konsola przeglądarki.
 - **Artefakt:** `prototypes/product-vision-poc/`.
 - **Następny krok:** review właściciela, następnie Q1 i implementacja według R2.2 → R4 → R3b.
-
-### 2026-07-20 · Codex · strategia mobile i sklepy
-
-- **Zakres:** tor STORE-00/MOBILE-0/STORE-BETA/STORE-1, porównanie Expo/React Native z lokalnym
-  Capacitorem, billing sklepowy, zgodność i staged rollout.
-- **Stan:** zakończone lokalnie w dokumentacji; kod, baza, konta sklepów i produkcja nietknięte.
-- **Decyzja:** PWA do H2-F/PAY-01; zdalny WebView odrzucony; pełny Swift/Kotlin bez mierzalnego
-  blokera odrzucony; Expo/React Native jest domyślną hipotezą do sprawdzenia pionem.
-- **Następny krok:** konta sklepów można przygotować po R6; implementacja po bramce PAY-01.
 
 ## Szablon rezerwacji
 

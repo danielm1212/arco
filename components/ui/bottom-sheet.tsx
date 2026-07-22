@@ -3,6 +3,7 @@
 import {
   cloneElement,
   isValidElement,
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -50,10 +51,19 @@ export function BottomSheet({
   const descriptionId = useId();
   const dialogRef = useRef<HTMLElement>(null);
   const dragStartY = useRef<number | null>(null);
+  const onOpenChangeRef = useRef(onOpenChange);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const restoreScrollFrameRef = useRef<number | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
 
-  const close = () => onOpenChange?.(false);
+  useEffect(() => {
+    onOpenChangeRef.current = onOpenChange;
+  }, [onOpenChange]);
+
+  // Referencja pozostaje stabilna, więc inline callback rodzica nie może
+  // przeinicjalizować scroll-locka w trakcie otwartego sheeta.
+  const close = useCallback(() => onOpenChangeRef.current?.(false), []);
 
   function beginDrag(event: ReactPointerEvent<HTMLButtonElement>) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -83,11 +93,20 @@ export function BottomSheet({
   useEffect(() => {
     if (!open) return;
 
+    if (restoreScrollFrameRef.current !== null) {
+      window.cancelAnimationFrame(restoreScrollFrameRef.current);
+      restoreScrollFrameRef.current = null;
+    }
+
     // iOS nie respektuje `overscroll-behavior` dla documentu. Bez fizycznego
     // unieruchomienia body gest z krótkiego albo przewiniętego do końca sheeta
     // przechodzi na ekran pod nim. Ujemny top zachowuje pikselową pozycję tła.
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
+    const activeElement = document.activeElement;
+    returnFocusRef.current = activeElement instanceof HTMLElement && activeElement !== document.body
+      ? activeElement
+      : null;
     const previousBodyStyles = {
       position: document.body.style.position,
       top: document.body.style.top,
@@ -109,16 +128,21 @@ export function BottomSheet({
       dialogRef.current?.focus({ preventScroll: true });
     });
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onOpenChange?.(false);
+      if (event.key === "Escape") close();
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
       window.cancelAnimationFrame(focusDialog);
       document.removeEventListener("keydown", onKeyDown);
       Object.assign(document.body.style, previousBodyStyles);
-      window.requestAnimationFrame(() => window.scrollTo(scrollX, scrollY));
+      const focusTarget = returnFocusRef.current;
+      restoreScrollFrameRef.current = window.requestAnimationFrame(() => {
+        window.scrollTo(scrollX, scrollY);
+        if (focusTarget?.isConnected) focusTarget.focus({ preventScroll: true });
+        restoreScrollFrameRef.current = null;
+      });
     };
-  }, [open, onOpenChange]);
+  }, [close, open]);
 
   const triggerElement = isValidElement<TriggerProps>(trigger)
     ? cloneElement(trigger as ReactElement<TriggerProps>, {
