@@ -22,6 +22,20 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Codex · refinement TRUST-03 i CONTENT-01B
+
+- **Zakres:** plan, backlog, handoff, review Hip Thrust i standard zadań; wydzielenie
+  regresji pozycji scrolla bottom sheeta oraz doprecyzowanie finalnych mediów Barbell.
+- **Stan:** **ZAKOŃCZONE** jako refinement; TRUST-03 jest osobnym zadaniem Q1 przed CORE-0,
+  a CONTENT-01B obejmuje parę Barbell oraz pary Dumbbell/Single-Leg.
+- **Dowód:** wspólny `BottomSheet` obsługuje kilkanaście flow i wiąże efekt scroll-locka
+  z referencją `onOpenChange`; to hipoteza do potwierdzenia testem reprodukującym, nie diagnoza
+  uznana bez dowodu. Kryteria obejmują X, overlay, Escape, swipe, akcję i iPhone PWA.
+- **Testy:** `git diff --check`; zmiana wyłącznie dokumentacyjna, bez uruchamiania gate'u kodu.
+- **Czego nie dotknięto:** komponentu, produkcji, migracji, danych i assetów ćwiczeń.
+- **Zaległości:** następna sesja — `gpt-5.6-sol`, reasoning `high`, implementuje TRUST-03;
+  [Ty] wykonuje checkpoint iPhone. Następnie CONTENT-01B i CORE-0.
+
 ### 2026-07-22 · Codex · SEC-02 sharp advisory
 
 - **Zakres:** wymuszenie załatanej wersji `sharp` 0.35.3 w zależnościach produkcyjnych,
@@ -149,15 +163,6 @@
   zapis programu, filtry sprzętu, Historia, Ekipa, szerokości 393/320 px i konsola przeglądarki.
 - **Artefakt:** `prototypes/product-vision-poc/`.
 - **Następny krok:** review właściciela, następnie Q1 i implementacja według R2.2 → R4 → R3b.
-
-### 2026-07-20 · Codex · strategia mobile i sklepy
-
-- **Zakres:** tor STORE-00/MOBILE-0/STORE-BETA/STORE-1, porównanie Expo/React Native z lokalnym
-  Capacitorem, billing sklepowy, zgodność i staged rollout.
-- **Stan:** zakończone lokalnie w dokumentacji; kod, baza, konta sklepów i produkcja nietknięte.
-- **Decyzja:** PWA do H2-F/PAY-01; zdalny WebView odrzucony; pełny Swift/Kotlin bez mierzalnego
-  blokera odrzucony; Expo/React Native jest domyślną hipotezą do sprawdzenia pionem.
-- **Następny krok:** konta sklepów można przygotować po R6; implementacja po bramce PAY-01.
 
 ## Szablon rezerwacji
 

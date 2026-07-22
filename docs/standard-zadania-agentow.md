@@ -20,6 +20,22 @@ Każde zadanie gotowe do podjęcia zawiera:
 9. **ryzyka** — dane, RLS, PWA, dostępność, wydajność i stary cache;
 10. **dokumenty do aktualizacji** — HANDOFF, backlog, plan i log koordynacji.
 11. **dowód wizualny** — dla zmiany UI lista wymaganych zrzutów przed/po, viewportów i stanów.
+12. **rekomendowany model przed startem** — nazwa modelu, poziom reasoning i jednozdaniowe
+    uzasadnienie proporcjonalne do ryzyka zadania.
+
+### Rekomendacja modelu
+
+Przed rozpoczęciem każdego nowego zadania agent podaje właścicielowi rekomendowany model:
+
+- `gpt-5.6-sol` z reasoning `high` — zmiany przekrojowe, regresje PWA/iOS, kontrakt danych,
+  migracje, offline, bezpieczeństwo oraz niejednoznaczna diagnoza;
+- `gpt-5.6-terra` z reasoning `medium` lub `high` — małe, dobrze ograniczone poprawki UI,
+  treści, dokumentacji i testów z gotowym kontraktem akceptacji;
+- generowanie mediów wykonuje narzędzie obrazowe, a `gpt-5.6-sol` z reasoning `medium/high`
+  odpowiada za review techniki, integrację, testy i decyzję publikacyjną.
+
+Rekomendacja nie zastępuje briefu ani bramek jakości. Mocniejszy model wybieramy ze względu
+na koszt błędu i liczbę zależności, a nie rozmiar samego diffu.
 
 ## 2. Kolejność pracy
 

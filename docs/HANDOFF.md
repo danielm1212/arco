@@ -57,9 +57,9 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
 - **TRAIN-01:** PR #2 jest scalony do `main` po zielonym CI; produkcyjny deploy aplikacji jest
   zielony, ale zastosowanie migracji bazy wymaga osobnego potwierdzenia procedurą release.
-- **CONTENT-01:** część A jest gotowa lokalnie na `agent/q1-content-01`: Barbell Hip Thrust
-  jest wstrzymany, systemowe sloty używają sprawdzonego Barbell Glute Bridge, a wszystkie trzy
-  warianty mają poprawione instrukcje. Media Dumbbell/Single-Leg pozostają częścią B.
+- **CONTENT-01:** część A jest na `main`: Barbell Hip Thrust jest wstrzymany, systemowe sloty
+  używają sprawdzonego Barbell Glute Bridge, a wszystkie trzy warianty mają poprawione
+  instrukcje. CONTENT-01B obejmuje finalną parę Barbell i pary Dumbbell/Single-Leg.
 - **CONTENT-02:** gotowe lokalnie na `agent/q1-content-02`: Chin-Up zachowuje pięć slotów,
   publikuje poprawioną instrukcję, a niejednoznaczne zdjęcia są zastąpione placeholderem do
   czasu zatwierdzenia nowej pary.
@@ -72,6 +72,8 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
   wyróżnienia zaliczenia serii, CTA finish na dole, zapisu własnej sesji jako programu,
   pełnoekranowych mediów i części zachowania scrolla/kontekstu Historii.
 - **R5b:** brakuje pełnego focus trapu/zwrotu fokusu, radiogroup oraz pełnej macierzy Android.
+- **TRUST-03:** zgłoszony skok treści do góry po zamknięciu bottom sheeta wymaga punktowego
+  repro, naprawy wspólnego scroll-locka i regresji wszystkich sposobów zamknięcia.
 
 ## 4. Otwarte ryzyka
 
@@ -85,7 +87,8 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
    Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
 2. **Zależności:** załatana wersja biblioteki obrazów jest na PR #4; ryzyko znika z produkcji
    dopiero po zielonym CI, merge i udanym deployu.
-3. **PWA:** ostatni fix sticky wymaga potwierdzenia na iPhone PWA i przy starym cache.
+3. **PWA:** ostatni fix sticky wymaga potwierdzenia na iPhone PWA i przy starym cache;
+   bottom sheet potrafi zgubić pozycję strony przy zamknięciu (`TRUST-03`).
 4. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
 5. **Android:** brak pełnego checkpointu systemowego Back/PWA.
 6. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
@@ -109,9 +112,9 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
 ## 6. Najbliższa praca
 
-1. [Ty] po zielonym CI scalić PR #4, a następnie wykonać kontrolowany release migracji
-   TRAIN-01/CONTENT-01A/CONTENT-02 i potwierdzić deploy aplikacji; potem checkpoint iPhone
-   sticky/F0.7. Dalej Q1: CONTENT-01B i ruchy początkujących.
+1. [Ty] wykonać kontrolowany release migracji TRAIN-01/CONTENT-01A/CONTENT-02. Następnie
+   `TRUST-03`: naprawa zachowania pozycji po zamknięciu bottom sheeta i checkpoint iPhone;
+   potem TRUST-01/02, CONTENT-01B i ruchy początkujących.
 2. CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólna definicja faktu i odporny outbox.
 3. R4A: kontrakt aktywnej serii, pętla wielu serii/ćwiczeń i nieblokujący timer.
 4. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
