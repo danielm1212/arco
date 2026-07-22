@@ -44,6 +44,7 @@ Stare audyty, briefy i archiwum nie są backlogiem ani źródłem bieżącego st
 - Nigdy nie usuwaj hurtowo sesji. Dane testowe kasuj tylko po znanych identyfikatorach.
 - Przy zmianach loggera i innych gorących tras stosuj budżety z `docs/optymalizacja.md`.
 - Przy zmianach UI stosuj checklistę z `docs/wytyczne-designu.md`.
+- Zmiany animacji/przejść przeglądaj skillem `.claude/skills/arco-motion-review/SKILL.md`.
 - Nowe funkcje muszą mieć stany pusty, ładowania, błędu i jasne CTA.
 - Warstwą operacyjną zadań jest **Linear** (workspace `trainarco`, team „Daniel"; decyzja 2026-07-21 — zastąpił Notion). Źródłem prawdy pozostają repo docs (`backlog-produktu.md`, plan sprintów); w Linear aktualizuj status issue dotkniętych sesją. Notion nie synchronizujemy; `docs/notion-sync-queue.md` jest zamknięte.
 

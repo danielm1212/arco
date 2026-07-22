@@ -22,6 +22,27 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Claude · nowy skill arco-motion-review + dogfood
+
+- **Zakres:** analiza 3 zewnętrznych repo skilli (taste-skill/impeccable/emil) pod kątem Arco;
+  nowy skill projektowy `.claude/skills/arco-motion-review/SKILL.md` (metoda review z
+  `review-animations` Emila, MIT; bar z `wytyczne-designu §2c` + `optymalizacja.md` + realne
+  tokeny `globals.css`/`bottom-sheet.tsx`); przegląd istniejącego ruchu tą metodą. Bez kodu apki.
+- **Stan:** **ZAKOŃCZONE** (skill, commit lokalny). Wniosek z analizy: taste-skill i większość
+  impeccable celują w greenfield/anti-slop i biłyby się z kanonem — pominięte; z impeccable
+  ewentualnie CLI `detect` do CI (osobno). Zero vendorowania cudzego drzewa.
+- **Wynik dogfoodu:** biblioteki animacji — brak (S5 ✓); `SetRow animate-pulse-once` w loggerze
+  = sankcjonowany moment PR (S1 ✓, pokryty reduced-motion); `flame-*`/`pr-flash` w budżecie ✓.
+  **1 FINDING (S2, do decyzji [Ty]):** `components/ui/bottom-sheet.tsx` używa
+  `animate-in fade-in-0 slide-in-from-bottom-8` BEZ bramki reduced-motion — blok
+  `@media (prefers-reduced-motion)` w `globals.css` pokrywa tylko `animate-flame-*`/
+  `animate-pulse-once`, więc najczęstszy overlay apki animuje wejście mimo preferencji usera.
+  `app/history/[id]/page.tsx` robi to dobrze (`motion-safe:`), sheet nie — niespójność.
+- **Dowód:** skill odwołany do realnych tokenów (zweryfikowane w `globals.css` linie 236–281,
+  `bottom-sheet.tsx` 164/182); finding potwierdzony grep-em (sheet: 0× `motion-safe`, history: 1×).
+- **Następny krok:** decyzja [Ty] o fixie bottom-sheet (jednoliniowy `motion-safe:` albo dopis do
+  bloku reduced-motion; zero zmiany dla userów bez reduced-motion) — shipped UI, nie ruszam bez zgody.
+
 ### 2026-07-22 · Codex · TRAIN-02A3 P11/P12
 
 - **Zakres:** pełne korekty objętości P11/P12 po TRAIN-01, estymacje czterech dni,
