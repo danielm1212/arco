@@ -110,7 +110,8 @@ a historia nie steruje stanem onboardingu, a zamknięcie sheeta nie przenosi uż
 **Stan TRAIN-01:** wdrożone produkcyjnie 2026-07-22 po backupie, audycie otwartych sesji,
 dry-runie i zgodności historii migracji. P14 ma receptę v3. P11/P12 nie istnieją na produkcji,
 więc migracja zgodnie z kontraktem wykonała dla nich no-op. Nie należy ich teraz dosiewać:
-pozostałe korekty P11/P12 należą do TRAIN-02A3 przed ich pierwszą publikacją.
+recepty P11/P12 zostały domknięte w TRAIN-02A3, ale pierwszy release nadal czeka na
+TRAIN-03/05, SEC-03, backup i dry-run.
 
 **Stan CONTENT-01:** część A jest na produkcji: ryzykowne media Barbell są zablokowane, trzy
 sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów są sprawdzone. Część B
@@ -124,17 +125,21 @@ zatwierdzonej pary start/koniec.
 
 **Stan produkcji po release 2026-07-22:** trzy migracje Q1 są zastosowane, historia lokalna i
 zdalna jest zgodna, a punktowa kontrola danych przeszła wszystkie 8 asercji. Aplikacja na Vercel
-ma zielony status, ekran logowania renderuje się bez błędów konsoli. Otwarty pozostaje SEC-03,
-TRAIN-02A1–A4 oraz checkpoint iPhone PWA/Safari.
+ma zielony status, ekran logowania renderuje się bez błędów konsoli. Otwarte pozostają SEC-03,
+TRAIN-02A4 oraz checkpoint iPhone PWA/Safari; A1–A3 są gotowe technicznie.
 
 **Stan TRAIN-02A1:** read-only `audit:program-catalog` i testy wykrywają dokładnie brakujące
 P01/P03/P08/P11/P12, rozjazdy wersji/slugów i blokują point sync każdego niegotowego planu.
-Migracja SQL celowo czeka na A2/A3 oraz kontrakt alternatyw TRAIN-03/05.
+Po zakończonych A2/A3 migracja SQL celowo czeka na kontrakt alternatyw TRAIN-03/05.
 
 **Stan TRAIN-02A2:** P01 v2 dodaje 2 serie Lying Leg Curl i redukuje łydki do 2 serii
 (19 serii, ok. 46 min w B), P08 v2 redukuje C z 24 do 18 serii (ok. 42 min), a P03 ma
 testowane mapowanie 3 alternatyw. Relacje P03 pozostają niepublikowane do TRAIN-03/05;
 produkcja i migracje są nietknięte.
+
+**Stan TRAIN-02A3:** P11/P12 mają recepty v3 i zatwierdzoną objętość wszystkich dni:
+P11 21/21/18/18, P12 22/22/21/19. Regresje pilnują czasu i 26 przygotowanych ścieżek
+sprzętowych. Relacje pozostają niepublikowane do TRAIN-03/05; produkcja i SQL są nietknięte.
 
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.

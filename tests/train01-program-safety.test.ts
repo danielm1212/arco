@@ -18,7 +18,7 @@ test("TRAIN-01 / P11: HSPU jest pierwsze, a Upper B ma dokładnie 18 serii", () 
   const p11 = program("advanced-home-upper-lower4");
   const upperB = day(p11.slug, "Upper B · objętość");
 
-  assert.equal(p11.content_version, 2);
+  assert.equal(p11.content_version, 3);
   assert.deepEqual(
     upperB.slots.map((slot) => slot.exercise_id),
     [
@@ -39,7 +39,7 @@ test("TRAIN-01 / P12: ruchy techniczne i mocy poprzedzają zmęczenie", () => {
   const upperA = day(p12.slug, "Upper A · siła");
   const lowerA = day(p12.slug, "Lower A · siła");
 
-  assert.equal(p12.content_version, 2);
+  assert.equal(p12.content_version, 3);
   assert.equal(upperA.slots[0]?.exercise_id, "Handstand_Push-Ups");
   assert.deepEqual(
     lowerA.slots.slice(0, 2).map((slot) => slot.exercise_id),

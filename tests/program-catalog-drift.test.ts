@@ -47,7 +47,7 @@ test("TRAIN-02A1 identyfikuje dokładnie pięć brakujących planów produkcyjny
   assert.equal(audit.pointSyncDecision, "blocked");
 });
 
-test("A2 odblokowuje recepty P01/P08, ale pełny point sync nadal jest zablokowany", () => {
+test("A2/A3 odblokowują pięć recept, ale pełny point sync nadal jest zablokowany", () => {
   const audit = auditProgramCatalog([...presentProductionSlugs].map(systemRow));
 
   assert.equal(audit.missingReadiness.length, 5);
@@ -60,6 +60,14 @@ test("A2 odblokowuje recepty P01/P08, ale pełny point sync nadal jest zablokowa
     "ready",
   );
   assert.equal(MISSING_PRODUCTION_READINESS["beginner-home-fbw2"]?.recipeStatus, "ready");
+  assert.equal(
+    MISSING_PRODUCTION_READINESS["advanced-home-upper-lower4"]?.recipeStatus,
+    "ready",
+  );
+  assert.equal(
+    MISSING_PRODUCTION_READINESS["advanced-bodyweight-upper-lower4"]?.recipeStatus,
+    "ready",
+  );
   assert.equal(MISSING_PRODUCTION_READINESS["beginner-gym-fbw2"]?.status, "blocked");
   assert.equal(MISSING_PRODUCTION_READINESS["intermediate-bodyweight-fbw3"]?.status, "blocked");
   assert.equal(MISSING_PRODUCTION_READINESS["beginner-home-fbw2"]?.status, "blocked");

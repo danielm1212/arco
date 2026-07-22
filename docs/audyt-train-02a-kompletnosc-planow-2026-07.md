@@ -1,7 +1,7 @@
 # TRAIN-02A — audyt brakujących planów i kompletności sesji
 
 **Data:** 2026-07-22  
-**Status:** TRAIN-02A1/A2 gotowe technicznie; bez zmian produkcji
+**Status:** TRAIN-02A1–A3 gotowe technicznie; bez zmian produkcji
 
 **Źródła prawdy:** `scripts/seed.ts`, `audyt-biblioteki-programow-2026-07.md`,
 `spec-plan-q-biblioteka-treningow.md` i odczyt produkcji z release'u Q1  
@@ -29,12 +29,12 @@ TRAIN-02A jest zatem kontrolą i domknięciem pięciu planów przed publikacją,
 | P01 | `beginner-gym-fbw2` | recepta v2 gotowa: 19 serii i ok. 46 min w B | czeka tylko na wspólny release A4 |
 | P03 | `beginner-home-fbw2` | recepta bez zmian; 3 alternatywy zmapowane i testowane | zapis relacji oraz prawda ławki/gumy w TRAIN-03/05 |
 | P08 | `intermediate-bodyweight-fbw3` | recepta v2 gotowa: dzień C ma 18 serii i ok. 42 min | czeka tylko na wspólny release A4 |
-| P11 | `advanced-home-upper-lower4` | TRAIN-01 naprawił Upper B; reszta niepełna | Upper A 21 serii; Lower B 18 serii; alternatywy dla podpór/kotwic; czasy 55–65/50–60/45–55/45–55 |
-| P12 | `advanced-bodyweight-upper-lower4` | TRAIN-01 naprawił kolejność Upper A i Jump Squat | Upper B 21 serii; Lower B 19 serii; jawne wymagania podpór, niskiego drążka i kotwicy |
+| P11 | `advanced-home-upper-lower4` | recepta v3 gotowa: 21/21/18/18 serii i 14 ścieżek sprzętowych | zapis relacji oraz prawda sprzętowa w TRAIN-03/05 |
+| P12 | `advanced-bodyweight-upper-lower4` | recepta v3 gotowa: 22/22/21/19 serii i 12 ścieżek sprzętowych | zapis relacji oraz prawda sprzętowa w TRAIN-03/05 |
 
-P11/P12 nie mogą zostać uznane za zamknięte tylko dlatego, że pilny TRAIN-01 usunął ich
-najpoważniejszy błąd kolejności. Pozostała objętość i prawda sprzętowa należą do tego samego
-kontraktu jakości przed ich pierwszą publikacją na produkcji.
+P11/P12 mają domknięte recepty źródłowe, lecz nadal nie są gotowe do publikacji. Przygotowane
+mapowania muszą zostać zapisane w addytywnym kontrakcie TRAIN-03/05, a pierwszy release nadal
+wymaga SEC-03, backupu, dry-runu i kontroli aktywnych sesji.
 
 ## 3. Podział wykonawczy TRAIN-02A
 
@@ -64,9 +64,11 @@ kontraktem TRAIN-03/05 — obecność w `supabase/migrations` umożliwiałaby pr
 
 ### TRAIN-02A3 — P11/P12
 
-- wdrożyć wszystkie pozostałe korekty audytu, nie tylko TRAIN-01;
-- policzyć serie i czasy każdego dnia po zmianie;
-- przygotować mapowanie ścieżek sprzętowych; brak publikacji przed TRAIN-03/05.
+- **gotowe technicznie:** P11 v3 ma 21/21/18/18 serii, a P12 v3 ma 22/22/21/19;
+- regresje liczą serie i przybliżony czas każdego dnia względem zatwierdzonych widełek;
+- przygotowano 14 ścieżek sprzętowych P11 oraz 12 P12, z wymaganiami zamiennika i jawnym
+  oznaczeniem pełnego albo częściowego pokrycia wzorca;
+- brak publikacji przed zapisem relacji i prawdy sprzętowej w TRAIN-03/05.
 
 ### TRAIN-02A4 — release w PLAN-Q
 
