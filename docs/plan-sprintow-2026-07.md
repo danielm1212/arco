@@ -131,6 +131,11 @@ TRAIN-02A1–A4 oraz checkpoint iPhone PWA/Safari.
 P01/P03/P08/P11/P12, rozjazdy wersji/slugów i blokują point sync każdego niegotowego planu.
 Migracja SQL celowo czeka na A2/A3 oraz kontrakt alternatyw TRAIN-03/05.
 
+**Stan TRAIN-02A2:** P01 v2 dodaje 2 serie Lying Leg Curl i redukuje łydki do 2 serii
+(19 serii, ok. 46 min w B), P08 v2 redukuje C z 24 do 18 serii (ok. 42 min), a P03 ma
+testowane mapowanie 3 alternatyw. Relacje P03 pozostają niepublikowane do TRAIN-03/05;
+produkcja i migracje są nietknięte.
+
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 

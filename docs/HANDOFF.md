@@ -90,8 +90,9 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
    bramką treści, danych i wersjonowanego audytu Codex przed H2. Docelowe recepty 15/15 są
    zatwierdzone w `audyt-biblioteki-programow-2026-07.md`. Produkcja ma obecnie 10/15 planów
    systemowych; P11/P12 nie istnieją, więc ich bezpieczna migracja prawidłowo wykonała no-op.
-   Brakujące P01/P03/P08/P11/P12 nie są gotowe do prostego point syncu: P01/P08 oraz
-   pozostały zakres P11/P12 wymagają korekt, a P03 strukturalnych alternatyw. TRAIN-02A1–A4
+   Brakujące P01/P03/P08/P11/P12 nie są gotowe do prostego point syncu: recepty P01/P08
+   są już domknięte w TRAIN-02A2, ale P03 czeka na zapis relacji TRAIN-03/05, a P11/P12 na A3.
+   TRAIN-02A1–A4
    rozdziela audyt, korekty i release bez pełnego reseedu oraz bez naruszania planów własnych,
    aktywnych sesji lub historii.
    Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
@@ -123,8 +124,9 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
 1. [Ty] pilnie wykonać kontrolowaną rotację legacy `service_role` (`SEC-03`): nowy sekret,
    Vercel/automatyzacje, smoke akcji serwerowych, a na końcu odwołanie starego.
-2. [Codex] `TRAIN-02A1` ma gotowy read-only audit i blockery; następne są A2 dla
-   P01/P03/P08 oraz A3 dla P11/P12. SQL point syncu powstaje dopiero po korektach.
+2. [Codex] `TRAIN-02A1/A2` są gotowe technicznie: audyt blokuje niegotowy sync, P01/P08
+   mają recepty v2, a P03 mapę 3 alternatyw. Następne jest A3 dla P11/P12; SQL point syncu
+   powstaje dopiero po korektach i kontrakcie TRAIN-03/05.
 3. [Ty] SEC-03 po przygotowaniu A1–A3. TRAIN-02A4 czeka na kontrakt alternatyw
    TRAIN-03/05 w PLAN-Q, następnie backup i dry-run.
 4. Checkpoint iPhone TRUST-01/03 + TRUST-02 oraz CONTENT-01B/CONTENT-03a.

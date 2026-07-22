@@ -3,6 +3,7 @@
  * Uruchom: npm run validate:training
  */
 import rawExercises from "./data/exercises.json";
+import { PLANNED_PROGRAM_ALTERNATIVES } from "./data/program-slot-alternatives";
 import {
   PROGRAMS,
   POLISH_INSTRUCTION_OVERRIDES,
@@ -174,6 +175,50 @@ for (const program of PROGRAMS) {
         warn(`${context}: używa placeholdera zdjęcia.`);
       }
     }
+  }
+}
+
+const alternativeKeys = new Set<string>();
+for (const alternative of PLANNED_PROGRAM_ALTERNATIVES) {
+  const key = [
+    alternative.programSlug,
+    alternative.dayLabel,
+    alternative.defaultExerciseId,
+    alternative.alternativeExerciseId,
+  ].join("::");
+  if (alternativeKeys.has(key)) fail(`Duplikat planowanej alternatywy: ${key}.`);
+  alternativeKeys.add(key);
+
+  const program = PROGRAMS.find((item) => item.slug === alternative.programSlug);
+  const day = program?.days.find((item) => item.label === alternative.dayLabel);
+  const sourceSlot = day?.slots.find(
+    (item) => item.exercise_id === alternative.defaultExerciseId,
+  );
+  const alternativeExercise = byId.get(alternative.alternativeExerciseId);
+  const context = `${alternative.programSlug} / ${alternative.dayLabel}`;
+
+  if (!program) fail(`${context}: planowana alternatywa wskazuje nieistniejący program.`);
+  if (!day) fail(`${context}: planowana alternatywa wskazuje nieistniejący dzień.`);
+  if (!sourceSlot) {
+    fail(`${context}: brak źródłowego slotu ${alternative.defaultExerciseId}.`);
+  }
+  if (!alternativeExercise) {
+    fail(`${context}: alternatywa ${alternative.alternativeExerciseId} nie istnieje.`);
+  } else {
+    if (deriveHidden(alternativeExercise)) {
+      fail(`${context}: alternatywa ${alternative.alternativeExerciseId} jest ukryta.`);
+    }
+    if (program?.environment === "home" && !HOME_ALLOWED.has(alternativeExercise.equipment)) {
+      fail(
+        `${context}: sprzęt alternatywy „${alternativeExercise.equipment}” nie pasuje do programu domowego.`,
+      );
+    }
+  }
+  if (alternative.missingEquipment.length === 0) {
+    fail(`${context}: alternatywa nie ma jawnego triggera brakującego sprzętu.`);
+  }
+  if (alternative.notePl.trim().length < 24) {
+    fail(`${context}: alternatywa nie opisuje użytkownikowi kompromisu.`);
   }
 }
 

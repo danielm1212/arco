@@ -25,9 +25,10 @@
 | 2 | Incline DB Press | 3 × 8–12 | 2:00 | Łagodny skos ławki |
 | 3 | Seated Cable Row | 3 × 8–12 | 2:00 | Nie odchylaj tułowia dla rozpędu |
 | 4 | DB Reverse Lunge | 2 × 8–10 / noga | 1:30 | W razie potrzeby zacznij bez ciężaru |
-| 5 | Pull-up | 2 × 5–10 | 2:00 | Użyj maszyny lub gumy do asysty |
-| 6 | Standing Calf Raise | 3 × 10–15 | 1:00 | Pełny zakres i pauza u góry |
-| 7 | Dead Bug | 2 × 8–12 / strona | 0:45 | Lędźwie utrzymuj przy podłożu |
+| 5 | Lying Leg Curl | 2 × 10–15 | 1:30 | Kontroluj powrót, bez odrywania bioder |
+| 6 | Pull-up | 2 × 5–10 | 2:00 | Użyj maszyny lub gumy do asysty |
+| 7 | Standing Calf Raise | 2 × 10–15 | 1:00 | Pełny zakres i pauza u góry |
+| 8 | Dead Bug | 2 × 8–12 / strona | 0:45 | Lędźwie utrzymuj przy podłożu |
 
 ---
 

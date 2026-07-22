@@ -22,6 +22,19 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Codex · TRAIN-02A2 P01/P03/P08
+
+- **Zakres:** korekta źródłowych recept P01/P08, wersjonowana mapa alternatyw P03,
+  walidator integralności, regresje czasu/objętości i dokumentacja trzech planów.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/train-02a-recipes`; bez migracji SQL,
+  bazy, sekretów i produkcji. Gałąź jest oparta na oczekującym TRAIN-02A1.
+- **Wynik:** P01 v2 ma Lying Leg Curl i 19 serii/ok. 46 min w B; P08 v2 ma 18 serii/
+  ok. 42 min w C. P03 ma trzy jawne mapowania, w tym uczciwie oznaczony częściowy Pullover.
+- **Dowód:** 7/7 regresji A1/A2, walidator 907 ćwiczeń/15 programów/308 slotów,
+  17 placeholderów w 54 slotach oraz rekomendacje 60/60 są zielone.
+- **Następny krok:** TRAIN-02A3 dla P11/P12; zapis alternatyw P03 dopiero w TRAIN-03/05,
+  a wspólny release A4 po SEC-03, backupie i dry-runie.
+
 ### 2026-07-22 · Codex · TRAIN-02A i kompletność sesji
 
 - **Zakres:** ponowny audyt pięciu planów nieobecnych na produkcji, zależności PLAN-Q,
@@ -163,16 +176,6 @@
 - **Dowód:** `audyt-core-i-plan-2026-07.md`; 91/91 unit, lint, walidacja treści i 60/60
   profili rekomendacji były zielone przed refinementem.
 - **Następny krok:** Q1, następnie rezerwacja DATA-01 w CORE-0.
-
-### 2026-07-21 · Codex · refinement R4 loggera
-
-- **Zakres:** rozbicie R4 na R4A–R4E i dopisanie kontraktu aktywnej serii, guidance
-  pierwszej sesji, własnego treningu, backfillu oraz wartości drugiego treningu.
-- **Stan:** plan gotowy do implementacji; kod produktu, baza i produkcja nietknięte.
-- **Dowód:** klikalny POC został przejrzany w pełnej ścieżce. Potwierdził prosty start,
-  poprawne guardy i mini-bar, ale nie jest pełnym dowodem przejścia przez wiele serii
-  oraz nie implementuje kompletnego backfillu.
-- **Następny krok:** Q1, następnie rezerwacja LOG-00 + R4A według `spec-r4-logger.md`.
 
 ## Szablon rezerwacji
 

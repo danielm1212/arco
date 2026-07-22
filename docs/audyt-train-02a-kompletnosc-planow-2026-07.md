@@ -1,7 +1,8 @@
 # TRAIN-02A — audyt brakujących planów i kompletności sesji
 
 **Data:** 2026-07-22  
-**Status:** TRAIN-02A1 gotowe technicznie; bez zmian produkcji  
+**Status:** TRAIN-02A1/A2 gotowe technicznie; bez zmian produkcji
+
 **Źródła prawdy:** `scripts/seed.ts`, `audyt-biblioteki-programow-2026-07.md`,
 `spec-plan-q-biblioteka-treningow.md` i odczyt produkcji z release'u Q1  
 **Cel:** nie opublikować brakujących planów tylko dlatego, że istnieją lokalnie, oraz jawnie
@@ -25,9 +26,9 @@ TRAIN-02A jest zatem kontrolą i domknięciem pięciu planów przed publikacją,
 
 | ID | Slug | Stan lokalny | Co musi wejść przed publikacją |
 |---|---|---|---|
-| P01 | `beginner-gym-fbw2` | recepta sprzed finalnej korekty | B: dodać `Lying Leg Curl 2×10–15` po wykrokach i zmniejszyć łydki 3→2; bump wersji i regresja czasu |
-| P03 | `beginner-home-fbw2` | recepta zatwierdzona, fallbacki tylko w notatkach | strukturalne alternatywy Bench→Floor Press i Band Lat Pulldown→Dumbbell Pullover; prawda ławki/gumy |
-| P08 | `intermediate-bodyweight-fbw3` | dzień C nadal ma 24 serie | skrócić C do 18 serii według audytu; bump wersji i ponowna estymacja czasu |
+| P01 | `beginner-gym-fbw2` | recepta v2 gotowa: 19 serii i ok. 46 min w B | czeka tylko na wspólny release A4 |
+| P03 | `beginner-home-fbw2` | recepta bez zmian; 3 alternatywy zmapowane i testowane | zapis relacji oraz prawda ławki/gumy w TRAIN-03/05 |
+| P08 | `intermediate-bodyweight-fbw3` | recepta v2 gotowa: dzień C ma 18 serii i ok. 42 min | czeka tylko na wspólny release A4 |
 | P11 | `advanced-home-upper-lower4` | TRAIN-01 naprawił Upper B; reszta niepełna | Upper A 21 serii; Lower B 18 serii; alternatywy dla podpór/kotwic; czasy 55–65/50–60/45–55/45–55 |
 | P12 | `advanced-bodyweight-upper-lower4` | TRAIN-01 naprawił kolejność Upper A i Jump Squat | Upper B 21 serii; Lower B 19 serii; jawne wymagania podpór, niskiego drążka i kotwicy |
 
@@ -53,10 +54,13 @@ kontraktem TRAIN-03/05 — obecność w `supabase/migrations` umożliwiałaby pr
 
 ### TRAIN-02A2 — P01/P03/P08
 
-- wdrożyć korekty recept P01/P08 i przygotować mapowanie alternatyw P03;
+- **gotowe technicznie:** korekty recept P01/P08 i mapowanie trzech alternatyw P03;
 - relacje P03 korzystają z addytywnego kontraktu TRAIN-03/05; plan pozostaje nieopublikowany
   do czasu gotowego kontraktu;
-- testy: idempotencja, liczność, czas dnia, aktywny plan i otwarta sesja.
+- regresje potwierdzają kolejność, liczbę serii, czas dnia, istnienie ćwiczeń i jawny kompromis
+  niepełnego zamiennika pionowego przyciągania;
+- idempotencja, aktywny plan i otwarta sesja należą do przyszłego point syncu A4, nie do
+  źródłowej korekty bez SQL.
 
 ### TRAIN-02A3 — P11/P12
 
