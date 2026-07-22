@@ -238,7 +238,11 @@ export function Logger({
         showSessionMiniBar={false}
         miniBarPosition="safe-bottom"
       />
-      <header className={cn(STICKY_HEADER_SAFE_AREA, "relative z-10 border-b bg-background px-md py-sm")}>
+      {/* NIE dodawaj `relative`: `cn()` = tailwind-merge, a `relative` konfliktuje z
+          `sticky` w STICKY_HEADER_SAFE_AREA i zostaje wybrane jako ostatnie — usuwając
+          `sticky`. To był bug „header nie przykleja się" (2026-07-22). `sticky` samo
+          pozycjonuje, więc `before:absolute` i `z` działają. */}
+      <header className={cn(STICKY_HEADER_SAFE_AREA, "z-10 border-b bg-background px-md py-sm")}>
         <div className="flex items-center justify-between gap-sm">
           <div className="flex min-w-0 items-center gap-2xs">
             {/* 44px pełnowymiarowy target (było: mikro-tekst "← Trening") */}

@@ -223,10 +223,11 @@
     @apply bg-background text-foreground;
     -webkit-tap-highlight-color: transparent;
     /* `clip`, nie `hidden`: `overflow-x: hidden` wymusza `overflow-y: auto`, przez co
-       <body> staje się kontenerem przewijania i psuje `position: sticky` (header loggera
-       uciekał z treścią; sheet body-lock maskował to przeskokiem scrolla). `clip` tnie
-       poziomy nadmiar bez tworzenia scrollportu — sticky liczy się względem viewportu.
-       iOS Safari 16+. Regresję poziomego overflow pilnuje e2e Playwright. */
+       <body> stałoby się kontenerem przewijania — a to psuje `position: sticky` liczone
+       względem viewportu. Defensywa, nie fix konkretnego buga (bug „header nie przykleja
+       się" z 2026-07-22 miał inną przyczynę: `cn()`/tailwind-merge gubił `sticky` przy
+       kolizji z `relative` — patrz Logger.tsx). `clip` tnie poziomy nadmiar bez tworzenia
+       scrollportu. iOS Safari 16+. */
     overflow-x: clip;
   }
   /* Spójny focus dla wszystkich interaktywnych elementów (a11y) */
