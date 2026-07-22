@@ -9,6 +9,10 @@ a aplikacja nie obiecuje dopasowania, którego nie potrafi policzyć.
 **Audyt programowy:** `audyt-biblioteki-programow-2026-07.md`; docelowe recepty P01–P15
 zatwierdzone przez Codex, bez zewnętrznej bramki trenerskiej przed H2.
 
+**Reconciliation produkcji i kompletność sesji:**
+`audyt-train-02a-kompletnosc-planow-2026-07.md`; pięć brakujących planów nie może zostać
+opublikowane przed pełnymi korektami i kontraktem alternatyw TRAIN-03/05.
+
 ## 1. Wynik użytkownika i dowód problemu
 
 Po PLAN-Q wszystkie 15 programów systemowych ma zweryfikowaną strukturę, realne wymagania
@@ -41,8 +45,9 @@ Dowód problemu:
    pozostaje eksperymentem RIR-01.
 5. Guidance nie zmienia planu automatycznie. PLAN-Q dostarcza dane wejściowe; decyzje pozostają
    w CORE-1 i podlegają D-33.
-6. Nowe programy, cel 1/tydzień, rozgrzewka/schłodzenie oraz warianty Minimum/Standard/Plus
-   pozostają po H2. Najpierw naprawiamy i mierzymy obecne 15 programów.
+6. Nowe programy, cel 1/tydzień, interaktywna rozgrzewka/zakończenie SESSION-01B oraz warianty
+   Minimum/Standard/Plus pozostają po H2. Przed H2 wchodzi wyłącznie mała, opcjonalna
+   rekomendacja SESSION-01A, bez nowego kreatora i bez wpływu na ukończenie treningu.
 
 ## 3. Kontrakt danych v2
 
@@ -95,6 +100,16 @@ test A+B/C w tej samej migracji.
 8. Usunięcie pól legacy wymaga osobnej decyzji po H2; nie należy do PLAN-Q.
 
 ## 5. Zadania wykonawcze
+
+### TRAIN-02A — pięć planów nieobecnych na produkcji
+
+P01/P03/P08/P11/P12 przechodzą A1–A3 bez dotykania produkcji. Ich pierwszy release A4 jest
+częścią PLAN-Q po gotowym kontrakcie alternatyw/prawdy sprzętowej TRAIN-03/05, SEC-03,
+backupie i dry-runie. Szczegół i pozostałe korekty per plan:
+`audyt-train-02a-kompletnosc-planow-2026-07.md`.
+
+Samo uzyskanie liczności 15 nie jest Definition of Done. Point sync nie może publikować
+niepełnych recept ani zastępować pełnym seedem danych produkcyjnych.
 
 ### TRAIN-01 — pilny patch bezpieczeństwa w Q1
 

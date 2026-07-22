@@ -22,6 +22,24 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Codex · TRAIN-02A i kompletność sesji
+
+- **Zakres:** ponowny audyt pięciu planów nieobecnych na produkcji, zależności PLAN-Q,
+  rozgrzewki, zakończenia oraz hipotezy domowego programu 20–30 minut.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/train-02a-audit`; read-only
+  `audit:program-catalog` blokuje niegotowy sync. Baza, sekrety i produkcja nietknięte.
+- **Wynik:** prosty sync P01/P03/P08/P11/P12 jest odrzucony. TRAIN-02A1–A3 przygotowuje
+  migrację i domyka recepty bez produkcji; A4 czeka na alternatywy/prawdę sprzętową
+  TRAIN-03/05, SEC-03, backup i dry-run.
+- **Kompletność:** SESSION-01A dodaje po R4A małą, opcjonalną rekomendację rozgrzewki
+  specyficznej i zakończenia bez obietnic regeneracji. PROGRAM-01A 20–30 minut pozostaje
+  osobnym eksperymentem po sygnale H2, nie dodatkowym dniem aktywnego planu.
+- **Dowód:** aktualny walidator: 907 ćwiczeń, 15 programów, 307 slotów i 17 placeholderów
+  w 54 slotach; 106/106 unit, lint, build i rekomendacje 60/60 zielone; przegląd ACSM 2026
+  oraz meta-analizy warm-up, stretching i split/FBW.
+- **Następny krok:** agent `gpt-5.6-sol high` wykonuje A2 dla P01/P03/P08 i A3 dla P11/P12;
+  [Ty] wykonuje SEC-03 po przygotowaniu A1–A3.
+
 ### 2026-07-22 · Codex · release Q1 TRAIN-01/CONTENT-01A/CONTENT-02
 
 - **Zakres:** backup bazy i Storage, audyt otwartych sesji oraz planów, dry-run i wdrożenie
@@ -155,24 +173,6 @@
   poprawne guardy i mini-bar, ale nie jest pełnym dowodem przejścia przez wiele serii
   oraz nie implementuje kompletnego backfillu.
 - **Następny krok:** Q1, następnie rezerwacja LOG-00 + R4A według `spec-r4-logger.md`.
-
-### 2026-07-21 · Claude · Linear jako warstwa operacyjna + dokumenty prawne + zespół
-
-- **Zakres:** decyzje właściciela: Piotr dołącza (security, porozumienie w draftach),
-  Linear zastępuje Notion. Workspace `trainarco`: labelki (grupa Obszar: Design/Dev/
-  Security/Ops/Content/Legal + Do refinementu/Zablokowane/Test urządzeniowy), 7 projektów
-  (Q1, R2.2, R4, R3b, R5b, Security & PRIV-1, Operacje), 40 issues DAN-5…DAN-44
-  zasianych z `backlog-produktu.md` i ryzyk HANDOFF (P2/mobile/store celowo poza Linear
-  do czasu aktywacji). Repo: `docs/legal/` (commity `2aa4191`, `d10e51e` — drafty RODO
-  + domena trainarco.com), aktualizacja reguł Notion→Linear (CLAUDE.md, HANDOFF §7,
-  zamknięcie `notion-sync-queue.md`).
-- **Stan:** zakończone; kod produktu, baza i produkcja nietknięte (zmiany tylko docs+Linear).
-- **Flow w Linear:** Backlog (+„Do refinementu") → Todo → In Progress → In Review
-  (= do testu; „Test urządzeniowy" blokuje Done bez telefonu) → Done / Canceled.
-  Grupa Obszar jest wzajemnie wykluczająca — jedno issue ma jednego właściciela obszaru.
-- **Następny krok:** [Ty] push commitów docs; onboarding Piotra (porozumienie OPS-06/DAN-43,
-  pierwsze zadanie SEC-01/DAN-34); statusy w Linear ewentualnie przemianować ręcznie
-  (connector nie zarządza statusami).
 
 ## Szablon rezerwacji
 

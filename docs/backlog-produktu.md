@@ -66,7 +66,10 @@ checkpoint urządzeniowy; nie oznacza usunięcia regresji z macierzy.
 | CONTENT-02 | Zweryfikować zdjęcia Chin-Up względem zamierzonego wariantu i warunków drążka | Zatwierdzony tekst jest publikowany; niejednoznaczne zdjęcia zastępuje placeholder do nowej sesji | wdrożone produkcyjnie; nowa para nadal otwarta | Q1 |
 | CONTENT-03 | Audyt opisów ruchów używanych w planach: start, klucz ruchu, bezpieczne zakończenie, zwięzłość | Początkujący dostaje krótką i bezpieczną instrukcję | gotowe do podjęcia | Q1 + po H2 |
 | TRAIN-01 | Pilny patch P11/P12/P14 | Ruchy techniczne i mocy są przed zmęczeniem, a plan FBW ma hinge; wersja treści i zatwierdzenie Codex są jawne | wdrożone produkcyjnie 2026-07-22; P11/P12 nieobecne w prod wykonały bezpieczny no-op | Q1 |
-| TRAIN-02A | Uzgodnić produkcję z katalogiem 15 planów | Point sync dodaje brakujące 5 planów bez pełnego reseedu, zmiany planów własnych, aktywnych sesji i historii | gotowe do przygotowania po SEC-03; prod ma 10/15 | Q1 |
+| TRAIN-02A1 | Audyt i kontrakt point syncu pięciu brakujących planów | Read-only audit P01/P03/P08/P11/P12, stabilne slugi/wersje i jawne blockery; SQL powstaje dopiero po korektach | gotowe technicznie na `agent/train-02a-audit`; prod ma 10/15 | Q1 |
+| TRAIN-02A2 | Domknąć recepty P01/P03/P08 przed pierwszą publikacją | P01/P08 dostają korekty, P03 mapowanie alternatyw oczekujące na kontrakt TRAIN-03/05 | po A1; bez produkcji | Q1 |
+| TRAIN-02A3 | Domknąć recepty P11/P12 po pilnym TRAIN-01 | Pozostała objętość i czasy są zgodne z pełnym audytem; mapowanie sprzętu oczekuje na TRAIN-03/05 | po A1; bez produkcji | Q1 |
+| TRAIN-02A4 | Kontrolowany release pięciu planów | Po TRAIN-03/05, SEC-03, backupie i dry-runie produkcja ma 15 planów bez zmiany własnych planów, aktywnych sesji i historii | PLAN-Q po A2/A3 |
 | OPS-01 | Zaszyfrowana kopia backupu poza laptopem i checklista rollbacku | Awaria jednego urządzenia nie niszczy możliwości odtworzenia | gotowe do podjęcia | przed publicznymi kontami |
 | OPS-02 | Monitoring błędów z numerem wersji, źródłami map i alertem dla zapisu sesji | Krytyczny błąd jest widoczny zanim zgłosi go płacący użytkownik | po H2 | przed płatną betą |
 | PRIVACY-01 | Kontrakt zdjęć Ciała: zgoda, prywatność, retencja, pobranie i usunięcie | Wrażliwe zdjęcia mają jawny cykl życia i nie są elementem domyślnego socialu | po H2 | przed publicznymi kontami |
@@ -107,12 +110,13 @@ CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ogranic
 
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
-| TRAIN-02 | Jeden katalog 15 programów | Stabilne ID/slug/version; seed, walidatory i 15 kart dokumentacji bez rozjazdu; docelowo usuwa klasę driftu wykrytą przez TRAIN-02A | po TRAIN-02A i R4A |
+| TRAIN-02 | Jeden katalog 15 programów | Stabilne ID/slug/version; seed, walidatory i 15 kart dokumentacji bez rozjazdu; docelowo usuwa klasę driftu wykrytą przez TRAIN-02A1 | po TRAIN-02A1–A3 i R4A |
 | TRAIN-03 | Addytywna recepta v2 | Czas dnia/slotu, RIR, tempo, progresja, rola, opcjonalność, alternatywy, RLS, legacy i snapshot | po TRAIN-02 |
 | TRAIN-04 | Korekta 15/15 programów | Wzorce, kolejność, objętość, przerwy, czasy, ruchy timed, regresje i język zgodne z zatwierdzonym audytem Codex | po TRAIN-03 |
 | TRAIN-05 | Prawda sprzętowa per slot | Kanoniczny słownik, wymagania ćwiczeń, aliasy i wykonalna ścieżka przez alternatywę | razem z TRAIN-03/04 |
 | TRAIN-06 | Czytelna karta i detal planu | Czas, akcent, sprzęt, przerwa, opcjonalność i warianty; pełne stany UX bez redesignu | po TRAIN-03/05 |
 | TRAIN-07 | Gate publikacji | Walidator CI, idempotentny seed, RLS, aktywne plany/sesje, E2E i macierz urządzeń | po TRAIN-04–06 |
+| SESSION-01A | Minimalna rekomendacja przygotowania i zakończenia | Kontekstowe serie rozgrzewkowe przed ciężkim/power/skill; po finishu opcjonalne wyciszenie/mobilność bez obietnicy lepszej regeneracji | po R4A, przed H2; nie blokuje sesji |
 
 PLAN-Q jest twardą bramką przed R2.2 i R4C. Pełny kontrakt danych, kompatybilności, testów,
 rollbacku i review jest w `spec-plan-q-biblioteka-treningow.md`.
@@ -278,9 +282,10 @@ offline, klawiaturę, systemowy Back, dostępność, wielkość migracji i koszt
 |---|---|---|
 | ONB-02 | Cel 1 trening/tydzień | Nie dodawać jako samą liczbę. Najpierw zaprojektować uczciwy plan minimum/powrotu i przetestować komunikat |
 | ONB-03 | Profile sprzętu: gumy, drążek, brak sprzętu | Rozszerzyć model dopiero z pełnym mapowaniem na plany i zamienniki |
-| SESSION-01 | Opcjonalna rozgrzewka i zakończenie | Mały, pomijalny blok sesji; nie dokładać przed domknięciem loggera i testem potrzeby |
+| SESSION-01B | Interaktywna rozgrzewka i zakończenie | Rozbudować SESSION-01A dopiero, jeżeli H2 pokaże wartość; bez obowiązkowego rytuału i bez blokowania finishu |
 | SESSION-02 | Warianty Minimum/Standard/Plus | Najpierw dodać tylko semantykę pozycji opcjonalnej w PLAN-Q; warianty sesji uruchomić po H2 i pomiarze ukończeń |
-| PROGRAM-01 | Luki biblioteki po H2 | 1×/tydzień, 20–30 min, gumy, kettlebell, upper-focus i advanced gym tylko według danych; nie rozbudowywać katalogu przed pomiarem obecnych 15 |
+| PROGRAM-01A | Domowy plan 20–30 minut | Osobny program 2–3×/tydzień, nie dodatkowy dzień ponad aktywny plan; masa ciała + opcjonalnie hantle/guma, pełny gate TRAIN-07, wejście tylko po sygnale H2/danych ukończeń |
+| PROGRAM-01B | Pozostałe luki biblioteki po H2 | 1×/tydzień, kettlebell, upper-focus i advanced gym tylko według danych; nie rozbudowywać katalogu przed pomiarem obecnych 15 |
 | GUIDANCE-01 | Ograniczenie prowadzenia | Preferowany poziom na planie; później wyciszenie konkretnej wskazówki. Nie globalny „wyłącz wszystko” przed H2 |
 | MEDIA-01 | Film/animacja ćwiczenia | Pilotaż na 5–10 trudnych ruchach; mierzyć zrozumienie, wagę i offline; zdjęcia zostają fallbackiem |
 | MEDIA-02 | Media własnych ćwiczeń | Prywatne domyślnie, z limitami i bez automatycznej publikacji |

@@ -103,12 +103,14 @@ a historia nie steruje stanem onboardingu, a zamknięcie sheeta nie przenosi uż
 - CONTENT-02: Chin-Up, zgodność wariantu, chwytu, pozycji i kadru;
 - CONTENT-03a: opisy i media z planów początkujących oraz głównych ruchów;
 - TRAIN-01: pilny patch kolejności/objętości P11/P12 i brakującego hinge P14;
-- TRAIN-02A: bezpieczny point sync brakujących 5 planów, bo produkcja ma 10/15;
+- TRAIN-02A1–A3: audyt i korekty recept brakujących P01/P03/P08/P11/P12 bez produkcji;
+- TRAIN-02A4 pozostaje w PLAN-Q: point sync dopiero po TRAIN-03/05, SEC-03, backupie i dry-runie;
 - wynik review zapisać jako wersjonowane dane.
 
 **Stan TRAIN-01:** wdrożone produkcyjnie 2026-07-22 po backupie, audycie otwartych sesji,
 dry-runie i zgodności historii migracji. P14 ma receptę v3. P11/P12 nie istnieją na produkcji,
-więc migracja zgodnie z kontraktem wykonała dla nich no-op; ich utworzenie należy do TRAIN-02A.
+więc migracja zgodnie z kontraktem wykonała dla nich no-op. Nie należy ich teraz dosiewać:
+pozostałe korekty P11/P12 należą do TRAIN-02A3 przed ich pierwszą publikacją.
 
 **Stan CONTENT-01:** część A jest na produkcji: ryzykowne media Barbell są zablokowane, trzy
 sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów są sprawdzone. Część B
@@ -123,7 +125,11 @@ zatwierdzonej pary start/koniec.
 **Stan produkcji po release 2026-07-22:** trzy migracje Q1 są zastosowane, historia lokalna i
 zdalna jest zgodna, a punktowa kontrola danych przeszła wszystkie 8 asercji. Aplikacja na Vercel
 ma zielony status, ekran logowania renderuje się bez błędów konsoli. Otwarty pozostaje SEC-03,
-TRAIN-02A oraz checkpoint iPhone PWA/Safari.
+TRAIN-02A1–A4 oraz checkpoint iPhone PWA/Safari.
+
+**Stan TRAIN-02A1:** read-only `audit:program-catalog` i testy wykrywają dokładnie brakujące
+P01/P03/P08/P11/P12, rozjazdy wersji/slugów i blokują point sync każdego niegotowego planu.
+Migracja SQL celowo czeka na A2/A3 oraz kontrakt alternatyw TRAIN-03/05.
 
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
@@ -161,12 +167,17 @@ historii, wszystkie pochodne liczą te same fakty, a jedna błędna operacja nie
 - TRAIN-04: korekta wszystkich 15 programów, w tym P02/P07/P08/P13 oraz pełne review
   kolejności, wzorców, objętości, czasu, przerw i instrukcji;
 - TRAIN-05: kanoniczny sprzęt, wymagania per ćwiczenie i deterministyczna wykonalność per slot;
+- TRAIN-02A4: pierwsza publikacja P01/P03/P08/P11/P12 dopiero po gotowym kontrakcie
+  alternatyw i prawdy sprzętowej;
 - TRAIN-06: karta i detal planu pokazują realny czas, sprzęt, przerwy, opcjonalność i dostępne
   warianty bez przeciążania głównego widoku;
 - TRAIN-07: walidator CI, bezpieczny seed, RLS, regresja aktywnych planów/sesji i urządzeń.
+- SESSION-01A po R4A: mała, opcjonalna rekomendacja rozgrzewki specyficznej i zakończenia;
+  serie `warmup` nie liczą się do objętości/ukończenia, a rozciąganie nie obiecuje regeneracji.
 
-**Poza zakresem:** nowe programy, cel 1/tydzień, rozgrzewka/schłodzenie, obowiązkowe RIR,
-automatyczny deload, pełny model objętości oraz warianty Minimum/Standard/Plus.
+**Poza zakresem:** nowe programy, cel 1/tydzień, interaktywny SESSION-01B, obowiązkowe RIR,
+automatyczny deload, pełny model objętości oraz warianty Minimum/Standard/Plus. PROGRAM-01A
+20–30 minut pozostaje eksperymentem po sygnale H2, nie dodatkowym treningiem do aktywnego planu.
 
 **Done:** 15/15 programów przechodzi walidator i zatwierdzony audyt Codex; seed zachowuje ID,
 aktywne plany, własne programy, otwarte sesje i historię; filtr może policzyć wykonalność każdej

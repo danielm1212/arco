@@ -90,8 +90,10 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
    bramką treści, danych i wersjonowanego audytu Codex przed H2. Docelowe recepty 15/15 są
    zatwierdzone w `audyt-biblioteki-programow-2026-07.md`. Produkcja ma obecnie 10/15 planów
    systemowych; P11/P12 nie istnieją, więc ich bezpieczna migracja prawidłowo wykonała no-op.
-   Potrzebny jest osobny, audytowalny point sync brakujących pięciu planów (`TRAIN-02A`), bez
-   pełnego reseedu i bez naruszania planów własnych, aktywnych sesji lub historii.
+   Brakujące P01/P03/P08/P11/P12 nie są gotowe do prostego point syncu: P01/P08 oraz
+   pozostały zakres P11/P12 wymagają korekt, a P03 strukturalnych alternatyw. TRAIN-02A1–A4
+   rozdziela audyt, korekty i release bez pełnego reseedu oraz bez naruszania planów własnych,
+   aktywnych sesji lub historii.
    Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
 3. **PWA:** ostatni fix sticky i techniczna poprawka pozycji bottom sheeta (`TRUST-03`)
    wymagają potwierdzenia na iPhone PWA/Safari i przy starym cache.
@@ -121,13 +123,16 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
 1. [Ty] pilnie wykonać kontrolowaną rotację legacy `service_role` (`SEC-03`): nowy sekret,
    Vercel/automatyzacje, smoke akcji serwerowych, a na końcu odwołanie starego.
-2. [Codex + Ty] `TRAIN-02A`: przygotować i zatwierdzić point sync brakujących 5 planów
-   produkcyjnych; żadnego pełnego reseedu. Potem checkpoint iPhone dla TRUST-01/03 i TRUST-02.
-3. CONTENT-01B i CONTENT-03a: nowe, zatwierdzone media oraz ruchy początkujących.
-4. CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólna definicja faktu i odporny outbox.
-5. R4A: kontrakt aktywnej serii, pętla wielu serii/ćwiczeń i nieblokujący timer.
+2. [Codex] `TRAIN-02A1` ma gotowy read-only audit i blockery; następne są A2 dla
+   P01/P03/P08 oraz A3 dla P11/P12. SQL point syncu powstaje dopiero po korektach.
+3. [Ty] SEC-03 po przygotowaniu A1–A3. TRAIN-02A4 czeka na kontrakt alternatyw
+   TRAIN-03/05 w PLAN-Q, następnie backup i dry-run.
+4. Checkpoint iPhone TRUST-01/03 + TRUST-02 oraz CONTENT-01B/CONTENT-03a.
+5. CORE-0 → R4A → SESSION-01A: integralność loggera i mała, opcjonalna rekomendacja
+   rozgrzewki/zakończenia bez wpływu na ukończenie treningu.
 6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
-7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2.
+7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
+   (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
 
 ## 7. Reguły operacyjne
 

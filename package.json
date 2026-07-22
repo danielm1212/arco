@@ -15,6 +15,7 @@
     "seed": "node --import tsx scripts/seed.ts",
     "validate:training": "node --import tsx scripts/validate-training-content.ts",
     "validate:recommendations": "node --import tsx scripts/validate-program-recommendations.ts",
+    "audit:program-catalog": "node --import tsx scripts/audit-program-catalog-drift.ts",
     "upload:exercise-images": "node --import tsx scripts/upload-exercise-images.ts",
     "sync:exercise-content": "node --import tsx scripts/sync-exercise-content.ts",
     "sync:missing-exercises": "node --import tsx scripts/sync-missing-exercises.ts",
