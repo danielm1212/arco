@@ -35,5 +35,6 @@
 
 - Trenuj z co najmniej jednym dniem przerwy, np. wtorek + piątek.
 - Gdy osiągniesz górę zakresu we wszystkich seriach przy RIR 2–3, dołóż ciężar. Jeśli hantle są za lekkie, najpierw zwolnij fazę opuszczania do 3 sekund.
-- Guma poprawia jakość pionowego przyciągania, ale nie jest warunkiem rozpoczęcia planu.
+- Guma poprawia jakość pionowego przyciągania, ale nie jest warunkiem rozpoczęcia planu. DB Pullover angażuje najszerszy grzbietu, lecz nie zastępuje w pełni pionowego przyciągania.
+- Alternatywy ławki i gumy mają przygotowane jawne mapowanie TRAIN-02A2; notatki pozostają fallbackiem tylko do czasu wdrożenia kontraktu TRAIN-03/05.
 - Przy stałej gotowości na 3 dni wybierz `beginner-home-fbw3`.

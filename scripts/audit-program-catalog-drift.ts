@@ -12,6 +12,7 @@ import { PROGRAMS } from "./seed";
 
 export type ProgramReleaseReadiness = {
   auditId: `P${string}`;
+  recipeStatus: "blocked" | "ready";
   status: "blocked" | "ready";
   blockers: string[];
 };
@@ -27,21 +28,25 @@ export type ProgramRow = {
 export const MISSING_PRODUCTION_READINESS: Record<string, ProgramReleaseReadiness> = {
   "beginner-gym-fbw2": {
     auditId: "P01",
+    recipeStatus: "ready",
     status: "blocked",
-    blockers: ["TRAIN-02A2: korekta recepty P01"],
+    blockers: ["TRAIN-02A4: wspólny kontrolowany release po zamknięciu wszystkich bramek"],
   },
   "beginner-home-fbw2": {
     auditId: "P03",
+    recipeStatus: "ready",
     status: "blocked",
-    blockers: ["TRAIN-03/05: strukturalne alternatywy i prawda sprzętowa P03"],
+    blockers: ["TRAIN-03/05: zapis przygotowanych alternatyw i prawda sprzętowa P03"],
   },
   "intermediate-bodyweight-fbw3": {
     auditId: "P08",
+    recipeStatus: "ready",
     status: "blocked",
-    blockers: ["TRAIN-02A2: skrócenie dnia C P08 do 18 serii"],
+    blockers: ["TRAIN-02A4: wspólny kontrolowany release po zamknięciu wszystkich bramek"],
   },
   "advanced-home-upper-lower4": {
     auditId: "P11",
+    recipeStatus: "blocked",
     status: "blocked",
     blockers: [
       "TRAIN-02A3: pozostała korekta objętości P11",
@@ -50,6 +55,7 @@ export const MISSING_PRODUCTION_READINESS: Record<string, ProgramReleaseReadines
   },
   "advanced-bodyweight-upper-lower4": {
     auditId: "P12",
+    recipeStatus: "blocked",
     status: "blocked",
     blockers: [
       "TRAIN-02A3: pozostała korekta objętości P12",

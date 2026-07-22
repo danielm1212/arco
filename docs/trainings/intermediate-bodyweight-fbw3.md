@@ -30,13 +30,13 @@ Cykl A–B–C można kontynuować między tygodniami. Czwarty trening w tygodni
 
 | Ćwiczenie | Serie × powt. | Przerwa | Progresja |
 |---|---:|---:|---|
-| Walking Lunge | 4 × 12–20 / noga | 1:30 | wolniejsze tempo |
-| Chin-up | 4 × 5–10 | 2:30 | pauza u góry |
-| Feet-Elevated Push-up | 4 × 8–15 | 2:00 | wyższe podparcie |
+| Walking Lunge | 3 × 12–20 / noga | 1:30 | wolniejsze tempo |
+| Chin-up | 3 × 5–10 | 2:30 | pauza u góry |
+| Feet-Elevated Push-up | 3 × 8–15 | 2:00 | wyższe podparcie |
 | Single-Leg Glute Bridge | 3 × 12–20 / noga | 1:30 | pauza na górze |
-| Pike Push-up | 3 × 10–15 | 1:30 | stopy na podwyższeniu |
-| Scapular Pull-up | 3 × 10–15 | 1:00 | pełna kontrola łopatki |
-| Copenhagen Plank | 3 × na czas / strona | 1:00 | dłuższa dźwignia |
+| Pike Push-up | 2 × 10–15 | 1:30 | stopy na podwyższeniu |
+| Scapular Pull-up | 2 × 10–15 | 1:00 | pełna kontrola łopatki |
+| Copenhagen Plank | 2 × na czas / strona | 1:00 | dłuższa dźwignia |
 
 ## Guardy
 

@@ -337,7 +337,7 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 55,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 1,
+    content_version: 2,
     days_per_week: 2,
     days: [
       {
@@ -358,8 +358,9 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Seated_Cable_Rows", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Dumbbell_Rear_Lunge", sets: 2, repsMin: 8, repsMax: 10, rest: 90, notes: "na nogę" },
+          { exercise_id: "Lying_Leg_Curls", sets: 2, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Pullups", sets: 2, repsMin: 5, repsMax: 10, rest: 120, notes: "z asystą, jeśli trzeba" },
-          { exercise_id: "Standing_Calf_Raises", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Standing_Calf_Raises", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
         ],
       },
@@ -696,7 +697,7 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 55,
     required_equipment: ["body only", "pull-up bar"],
     optional_equipment: ["other"],
-    content_version: 1,
+    content_version: 2,
     days_per_week: 3,
     days: [
       {
@@ -724,13 +725,13 @@ export const PROGRAMS: Program[] = [
       {
         label: "Trening C · objętość",
         slots: [
-          { exercise_id: "Bodyweight_Walking_Lunge", sets: 4, repsMin: 12, repsMax: 20, rest: 90, notes: "na nogę" },
-          { exercise_id: "Chin-Up", sets: 4, repsMin: 5, repsMax: 10, rest: 150 },
-          { exercise_id: "Push-Ups_With_Feet_Elevated", sets: 4, repsMin: 8, repsMax: 15, rest: 120 },
+          { exercise_id: "Bodyweight_Walking_Lunge", sets: 3, repsMin: 12, repsMax: 20, rest: 90, notes: "na nogę" },
+          { exercise_id: "Chin-Up", sets: 3, repsMin: 5, repsMax: 10, rest: 150 },
+          { exercise_id: "Push-Ups_With_Feet_Elevated", sets: 3, repsMin: 8, repsMax: 15, rest: 120 },
           { exercise_id: "Single_Leg_Glute_Bridge", sets: 3, repsMin: 12, repsMax: 20, rest: 90, notes: "na nogę" },
-          { exercise_id: "Pike_Push-Up", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
-          { exercise_id: "Scapular_Pull-Up", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
-          { exercise_id: "Copenhagen_Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas, na stronę" },
+          { exercise_id: "Pike_Push-Up", sets: 2, repsMin: 10, repsMax: 15, rest: 90 },
+          { exercise_id: "Scapular_Pull-Up", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Copenhagen_Plank", sets: 2, repsMin: null, repsMax: null, rest: 60, notes: "na czas, na stronę" },
         ],
       },
     ],
