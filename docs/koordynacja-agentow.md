@@ -18,9 +18,21 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
-| — | Brak aktywnych rezerwacji | — | — | — |
+| — | — | — | — | brak aktywnych rezerwacji |
 
 ## Ostatnie wpisy
+
+### 2026-07-22 · Codex · SEC-02 sharp advisory
+
+- **Zakres:** wymuszenie załatanej wersji `sharp` 0.35.3 w zależnościach produkcyjnych,
+  odświeżenie lockfile oraz regresja builda i optymalizatora obrazów na gałęzi PR #4.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE**; jedna wersja `sharp` 0.35.3 korzysta z libvips
+  8.18.3, a `npm audit --omit=dev` raportuje 0 podatności. Produkcja nietknięta.
+- **Testy:** czyste `npm ci`, 102/102 unit, lint, build, walidator 907 ćwiczeń/15 programów/
+  307 slotów, rekomendacje 60/60, overflow 5/5 i runtime smoke `/_next/image` 200 z
+  faktycznym przeskalowaniem PNG 192×192 → 128×128.
+- **Czego nie dotknięto:** migracji, danych użytkowników, logiki treści CONTENT-02 ani produkcji.
+- **Zaległości:** zielony CI PR #4, merge [Ty], następnie kontrolowany release migracji Q1.
 
 ### 2026-07-22 · Codex · CONTENT-02 Chin-Up
 
@@ -35,8 +47,8 @@
   smoke Phase 1/2, offline i Ekipa.
 - **Czego nie dotknięto:** produkcji, slotów programowych, historii użytkowników ani nowych
   plików mediów. Lokalne konta i rekordy smoke zostały posprzątane przez skrypty.
-- **Następny krok:** [Ty] scalić zielony PR #3; potem zaktualizować tę gałąź z `main`,
-  wypchnąć i otworzyć osobny PR CONTENT-02. Następnie CONTENT-01B albo CONTENT-03a.
+- **Następny krok:** PR #4 jest otwarty; po zielonym CI [Ty] scalić go i wykonać
+  kontrolowany release. Następnie CONTENT-01B albo CONTENT-03a.
 
 ### 2026-07-21 · Codex · CONTENT-01A Hip Thrust containment
 
@@ -146,24 +158,6 @@
 - **Decyzja:** PWA do H2-F/PAY-01; zdalny WebView odrzucony; pełny Swift/Kotlin bez mierzalnego
   blokera odrzucony; Expo/React Native jest domyślną hipotezą do sprawdzenia pionem.
 - **Następny krok:** konta sklepów można przygotować po R6; implementacja po bramce PAY-01.
-
-### 2026-07-20 · Codex · RB0
-
-- **Zakres:** pełna inwentaryzacja dokumentacji, nowy backlog, rejestr decyzji, standard pracy
-  agentów, rebaseline planu i HANDOFF; higiena starych raportów i assetów.
-- **Stan:** zakończone lokalnie; kod produktu, migracje i produkcja nietknięte.
-- **Testy:** link-check dokumentacji, `git diff --check`, lint, 91 unit i build — zielone.
-- **Artefakty:** dokumentacja zmniejszona z ok. 968 do 648 KB, a katalog ikon 3D z ok. 25 do 4,1 MB.
-- **Następny krok:** Q1 po akceptacji właściciela; zmiany RB0 wymagają osobnego commita.
-
-### 2026-07-20 · Codex · refinement walidacji i premium
-
-- **Zakres:** R4 przed R3b, osobne H2-U/H2-V/H2-E, trzytygodniowe H2-F, drabina wartości,
-  eksperyment importu, bramka wizualna oraz droga PRIV-1 → najmniejszy pion premium → płatna beta.
-- **Stan:** zakończone lokalnie w dokumentacji; kod, baza i produkcja nietknięte.
-- **Dowód:** WTP z małego wywiadu jest sygnałem; dowodem pozostaje powrót w pilocie,
-  rezerwacja po poznaniu ceny i finalnie prawdziwy zakup.
-- **Następny krok:** Q1 po commicie paczki dokumentacyjnej.
 
 ## Szablon rezerwacji
 
