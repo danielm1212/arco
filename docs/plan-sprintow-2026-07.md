@@ -87,6 +87,11 @@ każde otwarte zadanie ma ID, etap i obserwowalny wynik.
   Escape, swipe i akcję; test automatyczny plus iPhone PWA obejmuje środek i dół długiej strony;
 - potwierdzić jeden kontrakt na `main`, w migracjach i na produkcji.
 
+**Stan TRUST-03:** technicznie gotowe na `agent/q1-trust-03`. Przyczyną był restart efektu
+scroll-locka po zmianie referencji `onOpenChange`; wspólny komponent zachowuje teraz pozycję
+i zwraca fokus. Automatyczna macierz przechodzi X/overlay/Escape/swipe/akcję na 320/375/393 px;
+pozostaje checkpoint [Ty] na iPhone PWA i Safari.
+
 **Done:** start → logowanie → minimalizacja → wznowienie → zakończenie przechodzi bez P0/P1,
 a historia nie steruje stanem onboardingu, a zamknięcie sheeta nie przenosi użytkownika na górę ekranu.
 

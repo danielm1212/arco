@@ -22,19 +22,21 @@
 
 ## Ostatnie wpisy
 
-### 2026-07-22 · Codex · refinement TRUST-03 i CONTENT-01B
+### 2026-07-22 · Codex · TRUST-03 i refinement CONTENT-01B
 
-- **Zakres:** plan, backlog, handoff, review Hip Thrust i standard zadań; wydzielenie
-  regresji pozycji scrolla bottom sheeta oraz doprecyzowanie finalnych mediów Barbell.
-- **Stan:** **ZAKOŃCZONE** jako refinement; TRUST-03 jest osobnym zadaniem Q1 przed CORE-0,
-  a CONTENT-01B obejmuje parę Barbell oraz pary Dumbbell/Single-Leg.
-- **Dowód:** wspólny `BottomSheet` obsługuje kilkanaście flow i wiąże efekt scroll-locka
-  z referencją `onOpenChange`; to hipoteza do potwierdzenia testem reprodukującym, nie diagnoza
-  uznana bez dowodu. Kryteria obejmują X, overlay, Escape, swipe, akcję i iPhone PWA.
-- **Testy:** `git diff --check`; zmiana wyłącznie dokumentacyjna, bez uruchamiania gate'u kodu.
-- **Czego nie dotknięto:** komponentu, produkcji, migracji, danych i assetów ćwiczeń.
-- **Zaległości:** następna sesja — `gpt-5.6-sol`, reasoning `high`, implementuje TRUST-03;
-  [Ty] wykonuje checkpoint iPhone. Następnie CONTENT-01B i CORE-0.
+- **Zakres:** wspólny `BottomSheet`, realna regresja Chromium, plan/backlog/handoff, review
+  Hip Thrust i standard rekomendowania modelu przed zadaniem.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/q1-trust-03`; inline `onOpenChange` nie
+  restartuje scroll-locka, a zamknięcie przywraca dokładną pozycję i fokus. CONTENT-01B
+  obejmuje finalną parę Barbell oraz pary Dumbbell/Single-Leg.
+- **Dowód:** test przed poprawką odtwarzał `scrollY 1050 → 0` dla wszystkich ścieżek;
+  po poprawce X, overlay, Escape, swipe i akcja przechodzą na 320/375/393 px, również po
+  re-renderze otwartego sheeta, z aktywną blokadą tła i fokusem na triggerze.
+- **Testy:** czyste `npm ci` (0 podatności), lint, 102/102 unit, build, walidator
+  907 ćwiczeń/15 programów/307 slotów, rekomendacje 60/60 i overflow 21/21.
+- **Czego nie dotknięto:** produkcji, migracji, danych, logiki treningu i assetów ćwiczeń.
+- **Zaległości:** [Ty] kontrolowany release migracji Q1, następnie checkpoint iPhone
+  PWA/Safari i merge po zielonym CI; potem CONTENT-01B i CORE-0.
 
 ### 2026-07-22 · Codex · SEC-02 sharp advisory
 

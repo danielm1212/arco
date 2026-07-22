@@ -51,7 +51,8 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 - R0–R3a i integralność F0;
 - funkcjonalne zachowanie bottom sheetów: overlay, scroll lock, scroll wnętrza i swipe;
 - iPhone checkpoint z 2026-07-18 dla wcześniejszej macierzy 8/8;
-- polskie wyszukiwanie i podstawowy kontrakt treści programów.
+- polskie wyszukiwanie i podstawowy kontrakt treści programów;
+- SEC-02: `sharp` 0.35.3 z libvips 8.18.3 jest na produkcji po zielonym CI i deployu PR #4.
 
 ### Częściowe
 
@@ -60,24 +61,23 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 - **CONTENT-01:** część A jest na `main`: Barbell Hip Thrust jest wstrzymany, systemowe sloty
   używają sprawdzonego Barbell Glute Bridge, a wszystkie trzy warianty mają poprawione
   instrukcje. CONTENT-01B obejmuje finalną parę Barbell i pary Dumbbell/Single-Leg.
-- **CONTENT-02:** gotowe lokalnie na `agent/q1-content-02`: Chin-Up zachowuje pięć slotów,
-  publikuje poprawioną instrukcję, a niejednoznaczne zdjęcia są zastąpione placeholderem do
-  czasu zatwierdzenia nowej pary.
-- **SEC-02:** PR #4 wymusza `sharp` 0.35.3 z libvips 8.18.3; czysta instalacja, audit,
-  build i runtime optymalizatora obrazów są zielone. Produkcja pozostaje na poprzednim stanie
-  do merge i deployu PR #4.
+- **CONTENT-02:** kod jest na `main`: Chin-Up zachowuje pięć slotów, publikuje poprawioną
+  instrukcję, a niejednoznaczne zdjęcia zastępuje placeholder do czasu zatwierdzenia nowej
+  pary. Migracja produkcyjna wymaga kontrolowanego release'u.
 - **R3b:** istnieje dużo v0, ale hub nie ma jeszcze trwałego ostatniego wyboru, unread na tabie,
   jednego kontekstowego zdarzenia Home i finalnego dogfoodu dwóch kont.
 - **R4:** rdzeń loggera, edycji i backfillu działa. Brakuje prowadzenia pierwszej sesji,
   wyróżnienia zaliczenia serii, CTA finish na dole, zapisu własnej sesji jako programu,
   pełnoekranowych mediów i części zachowania scrolla/kontekstu Historii.
 - **R5b:** brakuje pełnego focus trapu/zwrotu fokusu, radiogroup oraz pełnej macierzy Android.
-- **TRUST-03:** zgłoszony skok treści do góry po zamknięciu bottom sheeta wymaga punktowego
-  repro, naprawy wspólnego scroll-locka i regresji wszystkich sposobów zamknięcia.
+- **TRUST-03:** technicznie gotowe na `agent/q1-trust-03`: wspólny scroll-lock nie restartuje
+  się po re-renderze, pozycja strony i fokus wracają dla X/overlay/Escape/swipe/akcji;
+  automatyczna macierz 320/375/393 px jest zielona. Pozostaje checkpoint iPhone [Ty].
 
 ## 4. Otwarte ryzyka
 
-1. **Treści i programy:** ryzykowne zdjęcia Barbell Hip Thrust są punktowo wstrzymane lokalnie;
+1. **Treści i programy:** ryzykowne zdjęcia Barbell Hip Thrust są punktowo wstrzymane na
+   `main`, ale migracja produkcyjna nadal czeka;
    nowe media Dumbbell/Single-Leg oraz zatwierdzona para Chin-Up nadal wymagają przygotowania,
    a audyt 15 planów wykazał błędy kolejności/objętości, brakujące
    regresje i nieprawdziwe metadane sprzętu. Q1 zawiera pilny patch, a PLAN-Q jest pełną
@@ -85,21 +85,19 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
    zatwierdzone w `audyt-biblioteki-programow-2026-07.md`; P11/P12/P14 są na `main`,
    a pozostałe korekty i kontrolowane migracje produkcyjne nadal czekają.
    Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
-2. **Zależności:** załatana wersja biblioteki obrazów jest na PR #4; ryzyko znika z produkcji
-   dopiero po zielonym CI, merge i udanym deployu.
-3. **PWA:** ostatni fix sticky wymaga potwierdzenia na iPhone PWA i przy starym cache;
-   bottom sheet potrafi zgubić pozycję strony przy zamknięciu (`TRUST-03`).
-4. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
-5. **Android:** brak pełnego checkpointu systemowego Back/PWA.
-6. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
-7. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
-8. **Publiczność:** signup, RODO, eksport/usunięcie, abuse protection i publiczna Ekipa są zamknięte.
-9. **Badania:** większość wiedzy pochodzi z dogfoodu właściciela; wymagane są H2-Lab oraz
+2. **PWA:** ostatni fix sticky i techniczna poprawka pozycji bottom sheeta (`TRUST-03`)
+   wymagają potwierdzenia na iPhone PWA/Safari i przy starym cache.
+3. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
+4. **Android:** brak pełnego checkpointu systemowego Back/PWA.
+5. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
+6. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
+7. **Publiczność:** signup, RODO, eksport/usunięcie, abuse protection i publiczna Ekipa są zamknięte.
+8. **Badania:** większość wiedzy pochodzi z dogfoodu właściciela; wymagane są H2-Lab oraz
    trzytygodniowy H2-Field, zanim ruszą publiczne konta i premium.
-10. **Prawo:** commity `2aa4191` i `d10e51e` dodały drafty w `docs/legal/` oraz docelową domenę;
+9. **Prawo:** commity `2aa4191` i `d10e51e` dodały drafty w `docs/legal/` oraz docelową domenę;
    nie zaliczają PRIV-1 bez review prawnego, eksportu/usunięcia, audytu RLS i weryfikacji
    dostawców/regionu.
-11. **Sklepy:** obecny dynamiczny Next.js nie jest gotowym bundle'em Capacitor. PWA pozostaje
+10. **Sklepy:** obecny dynamiczny Next.js nie jest gotowym bundle'em Capacitor. PWA pozostaje
     drogą do H2-F/PAY-01; decyzja Expo/React Native kontra lokalny Capacitor jest w MOBILE-0.
 
 ## 5. Dane i technologia
@@ -113,8 +111,8 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 ## 6. Najbliższa praca
 
 1. [Ty] wykonać kontrolowany release migracji TRAIN-01/CONTENT-01A/CONTENT-02. Następnie
-   `TRUST-03`: naprawa zachowania pozycji po zamknięciu bottom sheeta i checkpoint iPhone;
-   potem TRUST-01/02, CONTENT-01B i ruchy początkujących.
+   scalić zielony PR TRUST-03 i wykonać checkpoint iPhone dla scrolla/sticky; potem
+   TRUST-01/02, CONTENT-01B i ruchy początkujących.
 2. CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólna definicja faktu i odporny outbox.
 3. R4A: kontrakt aktywnej serii, pętla wielu serii/ćwiczeń i nieblokujący timer.
 4. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
