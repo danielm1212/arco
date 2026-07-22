@@ -65,6 +65,7 @@ async function bottomSheetBundle(): Promise<string> {
 
         function Harness() {
           const [open, setOpen] = useState(false);
+          const [nestedOpen, setNestedOpen] = useState(false);
           const [renderCount, setRenderCount] = useState(0);
 
           return <main>
@@ -82,6 +83,21 @@ async function bottomSheetBundle(): Promise<string> {
               </button>
               <button type="button" onClick={() => setOpen(false)}>
                 Zamknij akcją
+              </button>
+              {/* Wzorzec „Podmień ćwiczenie": zamknięcie tego sheeta i otwarcie
+                  KOLEJNEJ instancji w tym samym commicie (ExerciseCardMenu → SwapPanel) */}
+              <button type="button" onClick={() => { setOpen(false); setNestedOpen(true); }}>
+                Podmień
+              </button>
+            </BottomSheet>
+            <BottomSheet
+              open={nestedOpen}
+              onOpenChange={(nextOpen) => setNestedOpen(nextOpen)}
+              title="Arkusz zagnieżdżony"
+              description="Regresja pozycji strony po łańcuchu sheetów"
+            >
+              <button type="button" onClick={() => setNestedOpen(false)}>
+                Zamknij zagnieżdżony
               </button>
             </BottomSheet>
             <div style={{ height: 1800 }} />
@@ -208,32 +224,89 @@ test("sticky header (F0.4): ::before kryje pas safe-area — treść nie prześw
   }
 });
 
-test("logger: safe-area jest kompensowane przed sticky, nie wewnątrz nagłówka", async () => {
-  // Globalny body ma pt-safe. Logger kasuje je na KONTENERZE, a header używa
-  // standardowego offsetu sticky — dzięki temu cały header pozostaje widoczny po scrollu.
-  const body = `<div class="-mt-[var(--safe-area-top)]">
-    <header class="${STICKY_HEADER_SAFE_AREA} relative min-h-[60px] bg-background px-md py-sm">
+// Struktura Loggera: body ma globalne pt-safe, kontener BEZ ujemnego marginesu.
+// pullUp=true odtwarza starą, błędną wersję z `-mt-[var(--safe-area-top)]` —
+// inline stylem, bo po usunięciu klasy z Loggera Tailwind JIT już jej nie emituje.
+function loggerStructure(pullUp: boolean): string {
+  return `<div${pullUp ? ' style="margin-top:calc(var(--safe-area-top) * -1)"' : ""} class="flex min-h-dvh flex-col">
+    <header class="${STICKY_HEADER_SAFE_AREA} z-10 min-h-[60px] bg-background px-md py-sm">
       <div data-header-content class="h-11">Własny trening</div>
     </header>
+    <main><div data-first-content>Sylwetka: dobierz ciężar tak…</div></main>
     <div style="height:900px"></div>
   </div>`;
+}
+
+async function loggerPositions(pullUp: boolean, scrollTo: number) {
   const ctx = await browser.newContext({ viewport: VIEWPORT });
   try {
     const p = await ctx.newPage();
     await p.setContent(
-      pageHtml(body).replace("body{margin:0}", "body{margin:0;padding-top:var(--safe-area-top)}"),
+      pageHtml(loggerStructure(pullUp)).replace(
+        "body{margin:0}",
+        "body{margin:0;padding-top:var(--safe-area-top)}",
+      ),
       { waitUntil: "load" },
     );
-    await p.evaluate(() => window.scrollTo(0, 100));
-    const positions = await p.evaluate(() => {
+    await p.evaluate((y) => window.scrollTo(0, y), scrollTo);
+    return await p.evaluate(() => {
       const header = document.querySelector("header")!.getBoundingClientRect();
-      const content = document.querySelector("[data-header-content]")!.getBoundingClientRect();
-      return { headerTop: header.top, contentTop: content.top };
+      const first = document.querySelector("[data-first-content]")!.getBoundingClientRect();
+      return { headerTop: header.top, headerBottom: header.bottom, firstTop: first.top };
     });
-    assert.equal(positions.headerTop, 47, "nagłówek Loggera nie przykleił się pod status barem");
-    assert.ok(positions.contentTop >= 47, "treść Loggera weszła pod status bar");
   } finally {
     await ctx.close();
+  }
+}
+
+test("logger: sticky header nie zasłania pierwszej treści przy scrollu 0 (regresja 2026-07-22)", async () => {
+  // Z `-mt` naturalny top headera = 0 < offset sticky (47) → sticky OD RAZU
+  // zsuwał header o 47 px w dół, nakrywając pas z podpowiedzią priorytetu.
+  const positions = await loggerPositions(false, 0);
+  assert.ok(
+    positions.firstTop >= positions.headerBottom - 1,
+    `header nachodzi na pierwszą treść: content@${positions.firstTop}px < headerBottom@${positions.headerBottom}px`,
+  );
+});
+
+test("logger: header przykleja się pod status barem po scrollu", async () => {
+  const positions = await loggerPositions(false, 100);
+  // Treść PO scrollu chowa się pod header — to poprawne; pilnujemy tylko pozycji headera.
+  assert.equal(positions.headerTop, 47, "nagłówek Loggera nie przykleił się pod status barem");
+});
+
+test("kontrola negatywna: z `-mt` header FAKTYCZNIE nakrywa treść (test wykrywa regresję)", async () => {
+  const positions = await loggerPositions(true, 0);
+  assert.ok(
+    positions.firstTop < positions.headerBottom - 1,
+    "oczekiwano nakładki przy starej strukturze — jeśli brak, ten test nic nie pilnuje",
+  );
+});
+
+test("sheet-w-sheecie (Podmień ćwiczenie): blokada przejmuje pozycję, zamknięcie wraca do niej", async () => {
+  // Reprodukcja buga 2026-07-22: menu karty zamyka się i w tym samym commicie
+  // otwiera się SwapPanel. Blokada per instancja czytała scrollY=0 (przywrócenie
+  // z rAF pierwszego sheeta jeszcze nie zdążyło się wykonać) i po zamknięciu
+  // drugiego arkusza strona skakała na górę.
+  const { context, page, scrollY } = await bottomSheetPage({ width: 375, height: 780 });
+  try {
+    await page.getByRole("button", { name: "Podmień", exact: true }).click();
+    await page.getByRole("dialog", { name: "Arkusz testowy" }).waitFor({ state: "detached" });
+    await page.getByRole("dialog", { name: "Arkusz zagnieżdżony" }).waitFor();
+    const lock = await page.evaluate(() => ({
+      position: document.body.style.position,
+      top: document.body.style.top,
+    }));
+    assert.deepEqual(
+      lock,
+      { position: "fixed", top: `${-scrollY}px` },
+      "zagnieżdżony sheet zgubił pozycję strony (zapamiętał wyzerowany scroll)",
+    );
+    await page.getByRole("button", { name: "Zamknij zagnieżdżony" }).click();
+    await page.getByRole("dialog", { name: "Arkusz zagnieżdżony" }).waitFor({ state: "detached" });
+    await expectRestoredScroll(page, scrollY);
+  } finally {
+    await context.close();
   }
 });
 

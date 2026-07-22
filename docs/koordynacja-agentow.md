@@ -22,6 +22,34 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Claude · FIX 2 resztki buga sticky/sheet: nakładka safe-area + skok scrolla sheet-w-sheecie
+
+- **Zakres:** `app/session/[id]/Logger.tsx` (usunięty `-mt-[var(--safe-area-top)]` z kontenera),
+  `components/ui/bottom-sheet.tsx` (współdzielona, zliczana blokada scrolla body),
+  `tests/e2e/overflow.test.ts` (harness z zagnieżdżonym sheetem + testy nakładki, z kontrolami negatywnymi).
+- **Stan:** **ZAKOŃCZONE**, zweryfikowane w realnej apce (preview, lokalny stack); commit na main.
+- **Objaw 1 (header zasłaniał pas priorytetu):** kontener Loggera kasował globalne `pt-safe`
+  ujemnym marginesem → naturalny top headera = 0 < offset sticky (safe-area) → sticky OD RAZU
+  zsuwał header o pas safe-area w dół, nakrywając pierwszą treść main. Fix: bez `-mt` header
+  zachowuje się jak `PageHeader` (naturalna pozycja == pozycja przyklejenia). Poprzedni e2e
+  tego nie łapał, bo mierzył tylko stan PO scrollu — teraz jest asercja przy scrollu 0.
+- **Objaw 2 (skok strony po „Podmień ćwiczenie"):** blokada body per instancja sheeta.
+  Menu karty zamyka się i w tym samym commicie otwiera się SwapPanel (druga instancja):
+  cleanup pierwszego przywracał scroll w rAF, efekt drugiego czytał `window.scrollY` ZANIM
+  rAF się wykonał → zapamiętywał 0 → po zamknięciu SwapPanelu `scrollTo(0,0)`. Fix: jedna
+  modułowa blokada z licznikiem referencji; kolejny sheet przejmuje zapamiętaną pozycję.
+- **Dowód:** e2e 24/24 ✓ (nowy test sheet-w-sheecie na starym kodzie PADA z przewidzianym
+  komunikatem — sprawdzone stashem); realna apka w preview: lock trzyma `-884px` przy
+  zagnieżdżonym sheecie, po zamknięciu scroll wraca 884→884, przy scrollu 0 header nie
+  nachodzi na aside (odstęp 16 px przy wymuszonym safe-area 47 px). Dane testowe sprzątnięte
+  po ID sesji; konto `sticky-check@example.test` zostaje na LOKALNYM stacku do retestów.
+- **Obok:** `.env.local` — nieaktualne LAN IP supabase (192.168.100.16→53, IP maszyny się
+  zmieniło); naprawione, bez tego lokalna apka nie logowała. W `node_modules` były zduplikowane
+  katalogi „* 2" (`@types/node 2` itd.) wywalające build — usunięte dwa blokujące; przy okazji
+  warto zrobić czysty `npm ci`.
+- **Następny krok:** retest [Ty] na iPhone PWA: scroll w treningu → header trzyma się pod
+  status barem i NIE zasłania pasa priorytetu; ⋯ → Podmień → zamknij → strona zostaje w miejscu.
+
 ### 2026-07-22 · Claude · FIX sticky header — WŁAŚCIWA przyczyna (cn/tailwind-merge gubił `sticky`)
 
 - **Zakres:** `app/session/[id]/Logger.tsx` (usunięte `relative` z headera), `tests/sticky-header.test.ts`

@@ -230,7 +230,12 @@ export function Logger({
     (hh > 0 ? `${hh}:${String(mm).padStart(2, "0")}` : `${mm}`) + `:${String(ss).padStart(2, "0")}`;
 
   return (
-    <div className="-mt-[var(--safe-area-top)] mx-auto flex min-h-dvh max-w-md flex-col pb-28">
+    // NIE kasuj globalnego pt-safe body ujemnym marginesem: z `-mt` naturalny top
+    // headera = 0 < offset sticky (safe-area), więc sticky OD RAZU zsuwa header
+    // o pas safe-area W DÓŁ — nachodząc na pierwszą treść main (bug 2026-07-22:
+    // zasłonięty pas priorytetu). Bez `-mt` header zachowuje się jak PageHeader:
+    // naturalna pozycja == pozycja przyklejenia, zero przesunięcia.
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
       <ScreenChrome
         screenType={isFinished || isHistorical ? "session-edit" : "session-live"}
         showBottomNav={false}
