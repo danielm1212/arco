@@ -22,6 +22,49 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Claude · FIX sticky header (overflow-x hidden→clip)
+
+- **Zakres:** `app/globals.css` — `body { overflow-x: hidden }` → `overflow-x: clip`. Zgłoszenie
+  [Ty] (iPhone PWA): sticky header loggera nie przykleja się (ucieka z treścią), a po
+  otwarciu/zamknięciu bottom sheetu „pojawia się" i treść przeskakuje.
+- **Stan:** **ZAKOŃCZONE** (fix), commit lokalny. NIE wypchnięte — shipped UI, czeka na retest
+  [Ty] na urządzeniu (jesteś w trakcie).
+- **Wynik / przyczyna:** `overflow-x: hidden` per spec wymusza `overflow-y: auto` → `<body>`
+  staje się kontenerem przewijania, a sticky liczy się względem body, gdy realnie przewija się
+  viewport → sticky nigdy się nie załącza. Sheet robi `body{position:fixed}`+`scrollTo`, więc po
+  zamknięciu scroll ląduje przy górze i header „wraca" (to przeskok, nie działający sticky).
+  `clip` tnie poziomy nadmiar BEZ tworzenia scrollportu → sticky działa. Naprawia wszystkie
+  sticky headery w apce (logger + PageHeader), nie tylko logger.
+- **Dowód:** przyczyna potwierdzona w kodzie (globals.css:225, `STICKY_HEADER_SAFE_AREA`
+  `top: var(--safe-area-top)`); poziomy overflow nadal cięty (clip == hidden pod tym kątem),
+  więc e2e overflow guards trzymają.
+- **Następny krok:** [Ty] retest na iPhone PWA (scenariusz: scroll w treningu → header ma zostać
+  na górze; open/close ⋯ i Podmień → brak przeskoku treści). **Luka procesu:** e2e
+  `tests/e2e/overflow.test.ts` ma test sticky loggera, ale jego harness nie odtworzył realnego
+  `body{overflow-x:hidden}`, więc bug przeszedł — do uszczelnienia (dodać prod-owe `overflow`
+  do harnessu + negatywny kontrol z `hidden`), osobny mały task po potwierdzeniu na urządzeniu.
+
+### 2026-07-22 · Claude · nowy skill arco-motion-review + dogfood
+
+- **Zakres:** analiza 3 zewnętrznych repo skilli (taste-skill/impeccable/emil) pod kątem Arco;
+  nowy skill projektowy `.claude/skills/arco-motion-review/SKILL.md` (metoda review z
+  `review-animations` Emila, MIT; bar z `wytyczne-designu §2c` + `optymalizacja.md` + realne
+  tokeny `globals.css`/`bottom-sheet.tsx`); przegląd istniejącego ruchu tą metodą. Bez kodu apki.
+- **Stan:** **ZAKOŃCZONE** (skill, commit lokalny). Wniosek z analizy: taste-skill i większość
+  impeccable celują w greenfield/anti-slop i biłyby się z kanonem — pominięte; z impeccable
+  ewentualnie CLI `detect` do CI (osobno). Zero vendorowania cudzego drzewa.
+- **Wynik dogfoodu:** biblioteki animacji — brak (S5 ✓); `SetRow animate-pulse-once` w loggerze
+  = sankcjonowany moment PR (S1 ✓, pokryty reduced-motion); `flame-*`/`pr-flash` w budżecie ✓.
+  **1 FINDING (S2, do decyzji [Ty]):** `components/ui/bottom-sheet.tsx` używa
+  `animate-in fade-in-0 slide-in-from-bottom-8` BEZ bramki reduced-motion — blok
+  `@media (prefers-reduced-motion)` w `globals.css` pokrywa tylko `animate-flame-*`/
+  `animate-pulse-once`, więc najczęstszy overlay apki animuje wejście mimo preferencji usera.
+  `app/history/[id]/page.tsx` robi to dobrze (`motion-safe:`), sheet nie — niespójność.
+- **Dowód:** skill odwołany do realnych tokenów (zweryfikowane w `globals.css` linie 236–281,
+  `bottom-sheet.tsx` 164/182); finding potwierdzony grep-em (sheet: 0× `motion-safe`, history: 1×).
+- **Następny krok:** decyzja [Ty] o fixie bottom-sheet (jednoliniowy `motion-safe:` albo dopis do
+  bloku reduced-motion; zero zmiany dla userów bez reduced-motion) — shipped UI, nie ruszam bez zgody.
+
 ### 2026-07-22 · Codex · TRAIN-02A3 P11/P12
 
 - **Zakres:** pełne korekty objętości P11/P12 po TRAIN-01, estymacje czterech dni,
