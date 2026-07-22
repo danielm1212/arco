@@ -85,9 +85,11 @@ każde otwarte zadanie ma ID, etap i obserwowalny wynik.
 - TRUST-02: świeże konto, skip/finish onboardingu, `0/N`, nowe urządzenie i usunięcie historii;
 - TRUST-03: każdy bottom sheet zachowuje pozycję strony przy zamknięciu przez X, overlay,
   Escape, swipe i akcję; test automatyczny plus iPhone PWA obejmuje środek i dół długiej strony;
+- SEC-03: obrócić legacy `service_role`, podmienić sekret w Vercel i automatyzacjach,
+  wykonać smoke akcji serwerowych i dopiero wtedy odwołać stary klucz;
 - potwierdzić jeden kontrakt na `main`, w migracjach i na produkcji.
 
-**Stan TRUST-03:** technicznie gotowe na `agent/q1-trust-03`. Przyczyną był restart efektu
+**Stan TRUST-03:** scalone do `main` i wdrożone. Przyczyną był restart efektu
 scroll-locka po zmianie referencji `onOpenChange`; wspólny komponent zachowuje teraz pozycję
 i zwraca fokus. Automatyczna macierz przechodzi X/overlay/Escape/swipe/akcję na 320/375/393 px;
 pozostaje checkpoint [Ty] na iPhone PWA i Safari.
@@ -101,21 +103,27 @@ a historia nie steruje stanem onboardingu, a zamknięcie sheeta nie przenosi uż
 - CONTENT-02: Chin-Up, zgodność wariantu, chwytu, pozycji i kadru;
 - CONTENT-03a: opisy i media z planów początkujących oraz głównych ruchów;
 - TRAIN-01: pilny patch kolejności/objętości P11/P12 i brakującego hinge P14;
+- TRAIN-02A: bezpieczny point sync brakujących 5 planów, bo produkcja ma 10/15;
 - wynik review zapisać jako wersjonowane dane.
 
-**Stan TRAIN-01:** scalone do `main` po zielonym CI; produkcja zbudowała zielony deploy po
-scaleniu PR #2, ale zastosowanie migracji na produkcyjnej bazie nadal
-wymaga osobnego potwierdzenia procedurą release.
+**Stan TRAIN-01:** wdrożone produkcyjnie 2026-07-22 po backupie, audycie otwartych sesji,
+dry-runie i zgodności historii migracji. P14 ma receptę v3. P11/P12 nie istnieją na produkcji,
+więc migracja zgodnie z kontraktem wykonała dla nich no-op; ich utworzenie należy do TRAIN-02A.
 
-**Stan CONTENT-01:** część A jest na `main`: ryzykowne media Barbell są zablokowane, trzy
-sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów są sprawdzone; migracja
-produkcyjna nadal wymaga kontrolowanego release'u. Część B obejmuje finalizację pary Barbell
+**Stan CONTENT-01:** część A jest na produkcji: ryzykowne media Barbell są zablokowane, trzy
+sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów są sprawdzone. Część B
+obejmuje finalizację pary Barbell
 (jednoznaczny pełny wyprost w prawym kadrze, zapis osobnych assetów i decyzja o odblokowaniu)
 oraz nowe pary Dumbbell/Single-Leg.
 
-**Stan CONTENT-02:** kod jest na `main`: pięć slotów Chin-Up pozostaje bez zmian, tekst
+**Stan CONTENT-02:** zmiana jest na produkcji: pięć slotów Chin-Up pozostaje bez zmian, tekst
 przeszedł wersjonowany review, a dwa niejednoznaczne kadry zastępuje placeholder do czasu
-zatwierdzonej pary start/koniec; migracja produkcyjna nadal wymaga kontrolowanego release'u.
+zatwierdzonej pary start/koniec.
+
+**Stan produkcji po release 2026-07-22:** trzy migracje Q1 są zastosowane, historia lokalna i
+zdalna jest zgodna, a punktowa kontrola danych przeszła wszystkie 8 asercji. Aplikacja na Vercel
+ma zielony status, ekran logowania renderuje się bez błędów konsoli. Otwarty pozostaje SEC-03,
+TRAIN-02A oraz checkpoint iPhone PWA/Safari.
 
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.

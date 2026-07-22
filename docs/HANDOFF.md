@@ -53,51 +53,59 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 - iPhone checkpoint z 2026-07-18 dla wcześniejszej macierzy 8/8;
 - polskie wyszukiwanie i podstawowy kontrakt treści programów;
 - SEC-02: `sharp` 0.35.3 z libvips 8.18.3 jest na produkcji po zielonym CI i deployu PR #4.
+- TRAIN-01: migracja P11/P12/P14 została zastosowana na produkcji 2026-07-22; P14 ma
+  poprawioną receptę v3, a brakujące P11/P12 nie zostały utworzone „przy okazji”.
+- release CONTENT-01A/CONTENT-02: blokada starego Barbell Hip Thrust, zamiana trzech slotów,
+  instrukcje wariantów i review Chin-Up są aktywne na produkcji.
 
 ### Częściowe
 
-- **TRAIN-01:** PR #2 jest scalony do `main` po zielonym CI; produkcyjny deploy aplikacji jest
-  zielony, ale zastosowanie migracji bazy wymaga osobnego potwierdzenia procedurą release.
-- **CONTENT-01:** część A jest na `main`: Barbell Hip Thrust jest wstrzymany, systemowe sloty
+- **CONTENT-01:** część A jest na produkcji: Barbell Hip Thrust jest wstrzymany, systemowe sloty
   używają sprawdzonego Barbell Glute Bridge, a wszystkie trzy warianty mają poprawione
   instrukcje. CONTENT-01B obejmuje finalną parę Barbell i pary Dumbbell/Single-Leg.
-- **CONTENT-02:** kod jest na `main`: Chin-Up zachowuje pięć slotów, publikuje poprawioną
+- **CONTENT-02:** zmiana jest na produkcji: Chin-Up zachowuje pięć slotów, publikuje poprawioną
   instrukcję, a niejednoznaczne zdjęcia zastępuje placeholder do czasu zatwierdzenia nowej
-  pary. Migracja produkcyjna wymaga kontrolowanego release'u.
+  pary.
 - **R3b:** istnieje dużo v0, ale hub nie ma jeszcze trwałego ostatniego wyboru, unread na tabie,
   jednego kontekstowego zdarzenia Home i finalnego dogfoodu dwóch kont.
 - **R4:** rdzeń loggera, edycji i backfillu działa. Brakuje prowadzenia pierwszej sesji,
   wyróżnienia zaliczenia serii, CTA finish na dole, zapisu własnej sesji jako programu,
   pełnoekranowych mediów i części zachowania scrolla/kontekstu Historii.
 - **R5b:** brakuje pełnego focus trapu/zwrotu fokusu, radiogroup oraz pełnej macierzy Android.
-- **TRUST-03:** technicznie gotowe na `agent/q1-trust-03`: wspólny scroll-lock nie restartuje
+- **TRUST-03:** scalone do `main` i wdrożone: wspólny scroll-lock nie restartuje
   się po re-renderze, pozycja strony i fokus wracają dla X/overlay/Escape/swipe/akcji;
   automatyczna macierz 320/375/393 px jest zielona. Pozostaje checkpoint iPhone [Ty].
 
 ## 4. Otwarte ryzyka
 
-1. **Treści i programy:** ryzykowne zdjęcia Barbell Hip Thrust są punktowo wstrzymane na
-   `main`, ale migracja produkcyjna nadal czeka;
-   nowe media Dumbbell/Single-Leg oraz zatwierdzona para Chin-Up nadal wymagają przygotowania,
+1. **Sekret serwerowy:** legacy `service_role` został niezamierzenie ujawniony w prywatnym
+   logu narzędzia CLI podczas release'u. Nie trafił do repo ani dokumentów, ale należy pilnie
+   utworzyć nowy sekret, podmienić go w Vercel/automatyzacjach, sprawdzić akcje serwerowe i
+   dopiero wtedy odwołać stary klucz (`SEC-03`).
+2. **Treści i programy:** ryzykowne zdjęcia Barbell Hip Thrust są punktowo wstrzymane na
+   produkcji; nowe media Dumbbell/Single-Leg oraz zatwierdzona para Chin-Up nadal wymagają
+   przygotowania,
    a audyt 15 planów wykazał błędy kolejności/objętości, brakujące
    regresje i nieprawdziwe metadane sprzętu. Q1 zawiera pilny patch, a PLAN-Q jest pełną
    bramką treści, danych i wersjonowanego audytu Codex przed H2. Docelowe recepty 15/15 są
-   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`; P11/P12/P14 są na `main`,
-   a pozostałe korekty i kontrolowane migracje produkcyjne nadal czekają.
+   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`. Produkcja ma obecnie 10/15 planów
+   systemowych; P11/P12 nie istnieją, więc ich bezpieczna migracja prawidłowo wykonała no-op.
+   Potrzebny jest osobny, audytowalny point sync brakujących pięciu planów (`TRAIN-02A`), bez
+   pełnego reseedu i bez naruszania planów własnych, aktywnych sesji lub historii.
    Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
-2. **PWA:** ostatni fix sticky i techniczna poprawka pozycji bottom sheeta (`TRUST-03`)
+3. **PWA:** ostatni fix sticky i techniczna poprawka pozycji bottom sheeta (`TRUST-03`)
    wymagają potwierdzenia na iPhone PWA/Safari i przy starym cache.
-3. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
-4. **Android:** brak pełnego checkpointu systemowego Back/PWA.
-5. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
-6. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
-7. **Publiczność:** signup, RODO, eksport/usunięcie, abuse protection i publiczna Ekipa są zamknięte.
-8. **Badania:** większość wiedzy pochodzi z dogfoodu właściciela; wymagane są H2-Lab oraz
+4. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
+5. **Android:** brak pełnego checkpointu systemowego Back/PWA.
+6. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
+7. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
+8. **Publiczność:** signup, RODO, eksport/usunięcie, abuse protection i publiczna Ekipa są zamknięte.
+9. **Badania:** większość wiedzy pochodzi z dogfoodu właściciela; wymagane są H2-Lab oraz
    trzytygodniowy H2-Field, zanim ruszą publiczne konta i premium.
-9. **Prawo:** commity `2aa4191` i `d10e51e` dodały drafty w `docs/legal/` oraz docelową domenę;
+10. **Prawo:** commity `2aa4191` i `d10e51e` dodały drafty w `docs/legal/` oraz docelową domenę;
    nie zaliczają PRIV-1 bez review prawnego, eksportu/usunięcia, audytu RLS i weryfikacji
    dostawców/regionu.
-10. **Sklepy:** obecny dynamiczny Next.js nie jest gotowym bundle'em Capacitor. PWA pozostaje
+11. **Sklepy:** obecny dynamiczny Next.js nie jest gotowym bundle'em Capacitor. PWA pozostaje
     drogą do H2-F/PAY-01; decyzja Expo/React Native kontra lokalny Capacitor jest w MOBILE-0.
 
 ## 5. Dane i technologia
@@ -106,20 +114,20 @@ regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 - Supabase Auth/Postgres/Storage/RLS, Serwist i Vercel;
 - 907 rekordów ćwiczeń lokalnie; bieżące liczby potwierdza `npm run validate:training`;
 - publiczna rejestracja wyłączona;
-- migracje produkcyjne do `20260720153000_team_streak_warsaw.sql` zostały zastosowane.
+- migracje produkcyjne do `20260722002735_content02_chin_up_review.sql` zostały zastosowane;
+  lokalna i zdalna historia migracji są zgodne.
 
 ## 6. Najbliższa praca
 
-1. [Ty] wykonać kontrolowany release migracji TRAIN-01/CONTENT-01A/CONTENT-02. Następnie
-   scalić zielony PR TRUST-03 i wykonać checkpoint iPhone dla scrolla/sticky; potem
-   TRUST-01/02, CONTENT-01B i ruchy początkujących.
-2. CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólna definicja faktu i odporny outbox.
-3. R4A: kontrakt aktywnej serii, pętla wielu serii/ćwiczeń i nieblokujący timer.
-4. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
-5. R2.2: filtr „Tylko z moim sprzętem” oparty na wykonalności per slot.
-6. R4B–R4D: pierwsza sesja, finish, własny trening i Historia/backfill.
-7. CORE-1 → R4E: wersjonowany thin slice guidance i wartość drugiego treningu.
-8. R3b → R5b → R6 → H2-Lab → trzytygodniowy H2-Field.
+1. [Ty] pilnie wykonać kontrolowaną rotację legacy `service_role` (`SEC-03`): nowy sekret,
+   Vercel/automatyzacje, smoke akcji serwerowych, a na końcu odwołanie starego.
+2. [Codex + Ty] `TRAIN-02A`: przygotować i zatwierdzić point sync brakujących 5 planów
+   produkcyjnych; żadnego pełnego reseedu. Potem checkpoint iPhone dla TRUST-01/03 i TRUST-02.
+3. CONTENT-01B i CONTENT-03a: nowe, zatwierdzone media oraz ruchy początkujących.
+4. CORE-0: prawidłowa zakończona seria, kanoniczne jednostki, wspólna definicja faktu i odporny outbox.
+5. R4A: kontrakt aktywnej serii, pętla wielu serii/ćwiczeń i nieblokujący timer.
+6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
+7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2.
 
 ## 7. Reguły operacyjne
 
