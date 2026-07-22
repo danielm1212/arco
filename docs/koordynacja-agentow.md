@@ -22,6 +22,27 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Claude · FIX sticky header — WŁAŚCIWA przyczyna (cn/tailwind-merge gubił `sticky`)
+
+- **Zakres:** `app/session/[id]/Logger.tsx` (usunięte `relative` z headera), `tests/sticky-header.test.ts`
+  (nowy, przez realne `cn()`), `app/globals.css` (sprostowany komentarz — `clip` to defensywa, nie fix).
+- **Stan:** **ZAKOŃCZONE** (fix), zweryfikowane; commit lokalny, czeka na push + PR.
+- **Przyczyna (potwierdzona empirycznie):** header składany `cn(STICKY_HEADER_SAFE_AREA, "relative z-10 …")`.
+  `cn` = `twMerge(clsx())`; `sticky` (w stałej) i `relative` (dodane) to konflikt `position` —
+  tailwind-merge zostawia ostatnie (`relative`) i USUWA `sticky`. Header renderował się jako
+  `position: relative` → uciekał z treścią. `twMerge('sticky …','relative …')` → bez `sticky`
+  (sprawdzone `node -e`). `PageHeader` używa `cn(…, "z-30")` bez `relative` — dlatego jego sticky
+  działał i bug był tylko w loggerze.
+- **Sprostowanie:** wcześniejszy fix `overflow-x: hidden→clip` (PR #10, na prodzie) NIE był przyczyną —
+  zweryfikowane na żywym prodzie (Claude in Chrome): `body overflow-x:clip, overflow-y:visible`,
+  scroll na `html`, a bug dalej występował (repro na desktop Edge). `clip` zostaje jako nieszkodliwa
+  defensywa. Pierwsza diagnoza (overflow) była błędna — poszła za podręcznikowym odruchem zamiast pomiaru.
+- **Dowód / uszczelnienie:** nowy `tests/sticky-header.test.ts` (node:test) idzie przez `cn()` i pilnuje,
+  że `sticky` przeżywa; ma negatywny kontrol (z `relative` `sticky` znika). To łapie klasę buga,
+  której stary e2e nie widział, bo składał klasy stringiem bez tailwind-merge. Testy 3/3 ✓, lint ✓.
+- **Następny krok:** push gałęzi + PR → merge → retest [Ty] (header zostaje przy scrollu). Do rozważenia
+  osobno: reguła w arco-motion-review/review, by NIE dokładać `position` obok `STICKY_HEADER_SAFE_AREA`.
+
 ### 2026-07-22 · Claude · FIX sticky header (overflow-x hidden→clip)
 
 - **Zakres:** `app/globals.css` — `body { overflow-x: hidden }` → `overflow-x: clip`. Zgłoszenie
