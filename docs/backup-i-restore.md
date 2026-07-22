@@ -58,6 +58,18 @@ Skrypt obsługuje katalog z `schema.sql` i `data.sql`, pojedynczy plik SQL oraz 
 
 ## Zweryfikowane wykonania
 
+### 2026-07-22
+
+- Przed produkcyjnym release'em Q1 wykonano i zweryfikowano backup bazy
+  `backups/20260722T094952Z`: `roles.sql`, `schema.sql`, `data.sql` i `manifest.sha256`.
+- Backup produkcyjnego Storage zapisano w `backups/20260722T095327Z/storage`: 2 pliki z
+  `body-photos`, 0 plików z `exercise-photos`; manifest zapisany.
+- Po backupie dry-run pokazał wyłącznie trzy oczekiwane migracje TRAIN-01/CONTENT-01A/CONTENT-02.
+  Zostały zastosowane, a `migration list` potwierdził identyczną historię lokalną i zdalną do
+  `20260722002735_content02_chin_up_review.sql`.
+- Nie wykonywano restore testu, ponieważ skrypty backupu nie zmieniły się od pełnego testu
+  2026-07-16. Kopie nadal trzeba przenieść do zaszyfrowanej lokalizacji poza laptopem.
+
 ### 2026-07-16
 
 - Backup bazy `backups/20260716T124816Z`: `roles.sql`, `schema.sql`, `data.sql` i `manifest.sha256`; wszystkie trzy sumy SHA-256 zweryfikowane.

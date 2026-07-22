@@ -1,6 +1,6 @@
 # Arco — backlog produktu
 
-**Aktualizacja:** 2026-07-20
+**Aktualizacja:** 2026-07-22
 **Właściciel priorytetów:** [Ty]
 **Rola dokumentu:** kompletna kolejka produktu. Bieżąca kolejność wykonania jest wyłącznie w `plan-sprintow-2026-07.md`.
 
@@ -51,7 +51,7 @@ checkpoint urządzeniowy; nie oznacza usunięcia regresji z macierzy.
 | Badge `0/N`, niespójna semantyka celu i opcja 1–7 | F0.7 + D-05/D-06 + ONB-02 | rdzeń gotowy, 1/tydzień po decyzji |
 | Kod Ekipy, unread, trwały wybór i kontekst Home | TEAM-02–TEAM-06 | kod 8 znaków gotowy, reszta R3b |
 | Niespójne 3D, empty states bez CTA i jakość ekranów | D-16 + VISUAL-05 | zasady gotowe, bramka R6 |
-| Treści Hip Thrust, Chin-Up i opisy ćwiczeń | CONTENT-01–CONTENT-03 | CONTENT-01A i CONTENT-02 na `main`; migracje produkcyjne i CONTENT-01B nadal w Q1 |
+| Treści Hip Thrust, Chin-Up i opisy ćwiczeń | CONTENT-01–CONTENT-03 | CONTENT-01A i CONTENT-02 na produkcji; CONTENT-01B i CONTENT-03 nadal w Q1 |
 | App Store, Google Play i decyzja o warstwie mobilnej | STORE-00, MOBILE-01–03, STORE-01–04 | po H2/PAY-01 |
 
 ## 3. P0 — zaufanie, bezpieczeństwo i bramki
@@ -60,11 +60,13 @@ checkpoint urządzeniowy; nie oznacza usunięcia regresji z macierzy.
 |---|---|---|---|---|
 | TRUST-01 | Regresja ostatniego fixa sticky loggera na iPhone PWA i starym Service Workerze | Nagłówek pozostaje widoczny, ma solidne tło, nie przepuszcza treści i nie nachodzi na status bar; toast także respektuje safe area | gotowe do podjęcia | Q1 |
 | TRUST-02 | Fresh-account smoke F0.7: pełny onboarding, skip, `0/N`, nowe urządzenie, usunięcie historii | Konto nie wraca do onboardingu, a ustawienia zachowują sens | gotowe do podjęcia | Q1 |
-| TRUST-03 | Zachować pozycję strony po zamknięciu każdego bottom sheeta | X, overlay, Escape, swipe i akcja wewnątrz zamykają sheet bez skoku treści do góry; tło pozostaje zablokowane, a fokus wraca bez przewinięcia | technicznie gotowe na `agent/q1-trust-03`; checkpoint iPhone [Ty] | Q1 |
-| CONTENT-01 | Zweryfikować wszystkie widoczne warianty Hip Thrust; obecny Barbell Hip Thrust wstrzymać lub wymienić do wersjonowanego review Codex | Aplikacja nie uczy ryzykownej techniki | CONTENT-01A na `main`; CONTENT-01B: finalna para Barbell oraz pary Dumbbell/Single-Leg | Q1 |
-| CONTENT-02 | Zweryfikować zdjęcia Chin-Up względem zamierzonego wariantu i warunków drążka | Zatwierdzony tekst jest publikowany; niejednoznaczne zdjęcia zastępuje placeholder do nowej sesji | na `main`; migracja produkcyjna do potwierdzenia | Q1 |
+| TRUST-03 | Zachować pozycję strony po zamknięciu każdego bottom sheeta | X, overlay, Escape, swipe i akcja wewnątrz zamykają sheet bez skoku treści do góry; tło pozostaje zablokowane, a fokus wraca bez przewinięcia | na `main` i produkcji; checkpoint iPhone [Ty] | Q1 |
+| SEC-03 | Rotacja ujawnionego legacy `service_role` | Nowy sekret działa w Vercel i automatyzacjach, akcje serwerowe przechodzą smoke, a stary klucz jest odwołany dopiero na końcu | pilne działanie właściciela; sekret nie trafił do repo | Q1 |
+| CONTENT-01 | Zweryfikować wszystkie widoczne warianty Hip Thrust; obecny Barbell Hip Thrust wstrzymać lub wymienić do wersjonowanego review Codex | Aplikacja nie uczy ryzykownej techniki | CONTENT-01A na produkcji; CONTENT-01B: finalna para Barbell oraz pary Dumbbell/Single-Leg | Q1 |
+| CONTENT-02 | Zweryfikować zdjęcia Chin-Up względem zamierzonego wariantu i warunków drążka | Zatwierdzony tekst jest publikowany; niejednoznaczne zdjęcia zastępuje placeholder do nowej sesji | wdrożone produkcyjnie; nowa para nadal otwarta | Q1 |
 | CONTENT-03 | Audyt opisów ruchów używanych w planach: start, klucz ruchu, bezpieczne zakończenie, zwięzłość | Początkujący dostaje krótką i bezpieczną instrukcję | gotowe do podjęcia | Q1 + po H2 |
-| TRAIN-01 | Pilny patch P11/P12/P14 | Ruchy techniczne i mocy są przed zmęczeniem, a plan FBW ma hinge; wersja treści i zatwierdzenie Codex są jawne | scalone do `main`; migracja produkcyjna do potwierdzenia | Q1 |
+| TRAIN-01 | Pilny patch P11/P12/P14 | Ruchy techniczne i mocy są przed zmęczeniem, a plan FBW ma hinge; wersja treści i zatwierdzenie Codex są jawne | wdrożone produkcyjnie 2026-07-22; P11/P12 nieobecne w prod wykonały bezpieczny no-op | Q1 |
+| TRAIN-02A | Uzgodnić produkcję z katalogiem 15 planów | Point sync dodaje brakujące 5 planów bez pełnego reseedu, zmiany planów własnych, aktywnych sesji i historii | gotowe do przygotowania po SEC-03; prod ma 10/15 | Q1 |
 | OPS-01 | Zaszyfrowana kopia backupu poza laptopem i checklista rollbacku | Awaria jednego urządzenia nie niszczy możliwości odtworzenia | gotowe do podjęcia | przed publicznymi kontami |
 | OPS-02 | Monitoring błędów z numerem wersji, źródłami map i alertem dla zapisu sesji | Krytyczny błąd jest widoczny zanim zgłosi go płacący użytkownik | po H2 | przed płatną betą |
 | PRIVACY-01 | Kontrakt zdjęć Ciała: zgoda, prywatność, retencja, pobranie i usunięcie | Wrażliwe zdjęcia mają jawny cykl życia i nie są elementem domyślnego socialu | po H2 | przed publicznymi kontami |
@@ -105,7 +107,7 @@ CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ogranic
 
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
-| TRAIN-02 | Jeden katalog 15 programów | Stabilne ID/slug/version; seed, walidatory i 15 kart dokumentacji bez rozjazdu | po TRAIN-01 i R4A |
+| TRAIN-02 | Jeden katalog 15 programów | Stabilne ID/slug/version; seed, walidatory i 15 kart dokumentacji bez rozjazdu; docelowo usuwa klasę driftu wykrytą przez TRAIN-02A | po TRAIN-02A i R4A |
 | TRAIN-03 | Addytywna recepta v2 | Czas dnia/slotu, RIR, tempo, progresja, rola, opcjonalność, alternatywy, RLS, legacy i snapshot | po TRAIN-02 |
 | TRAIN-04 | Korekta 15/15 programów | Wzorce, kolejność, objętość, przerwy, czasy, ruchy timed, regresje i język zgodne z zatwierdzonym audytem Codex | po TRAIN-03 |
 | TRAIN-05 | Prawda sprzętowa per slot | Kanoniczny słownik, wymagania ćwiczeń, aliasy i wykonalna ścieżka przez alternatywę | razem z TRAIN-03/04 |

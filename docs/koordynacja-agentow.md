@@ -22,6 +22,24 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Codex · release Q1 TRAIN-01/CONTENT-01A/CONTENT-02
+
+- **Zakres:** backup bazy i Storage, audyt otwartych sesji oraz planów, dry-run i wdrożenie
+  trzech punktowych migracji produkcyjnych; niezależna kontrola danych i ekranu aplikacji.
+- **Stan:** **WDROŻONE PRODUKCYJNIE**. Historia migracji lokalna/zdalna jest zgodna do
+  `20260722002735_content02_chin_up_review.sql`; Vercel dla bieżącego `main` ma zielony status.
+- **Dowód:** 8/8 asercji produkcyjnych: containment Barbell Hip Thrust, publikacja Glute Bridge,
+  instrukcje trzech wariantów, review Chin-Up, recepta i dni P14 oraz 0 starych/3 nowe sloty.
+  Ekran logowania Arco renderuje się bez błędów konsoli.
+- **Backup:** baza `backups/20260722T094952Z`; Storage
+  `backups/20260722T095327Z/storage` (2 `body-photos`, 0 `exercise-photos`).
+- **Drift:** produkcja ma 10/15 planów systemowych, w tym brakuje P11/P12. Migracja celowo
+  wykonała no-op dla nieistniejących planów; osobny TRAIN-02A zrobi audytowalny point sync.
+- **Bezpieczeństwo:** CLI nieoczekiwanie wypisało legacy `service_role` do prywatnego logu.
+  Klucz nie trafił do repo; SEC-03 wymaga pilnej kontrolowanej rotacji przez właściciela.
+- **Następny krok:** SEC-03 → TRAIN-02A → checkpoint iPhone TRUST-01/03 + TRUST-02;
+  następnie CONTENT-01B/CONTENT-03a i CORE-0.
+
 ### 2026-07-22 · Codex · TRUST-03 i refinement CONTENT-01B
 
 - **Zakres:** wspólny `BottomSheet`, realna regresja Chromium, plan/backlog/handoff, review
@@ -155,16 +173,6 @@
 - **Następny krok:** [Ty] push commitów docs; onboarding Piotra (porozumienie OPS-06/DAN-43,
   pierwsze zadanie SEC-01/DAN-34); statusy w Linear ewentualnie przemianować ręcznie
   (connector nie zarządza statusami).
-
-### 2026-07-20 · Codex · Product Vision POC
-
-- **Zakres:** pełna mapa zgłoszeń właściciela w backlogu oraz klikalny POC docelowego
-  kręgosłupa Home, Planów, loggera, Historii, Postępów/Ciała i Ekipy.
-- **Stan:** zakończone lokalnie; kod produkcyjny, baza i produkcja nietknięte.
-- **Testy:** pełny przepływ planowanego i własnego treningu, mini-bar, finish guards,
-  zapis programu, filtry sprzętu, Historia, Ekipa, szerokości 393/320 px i konsola przeglądarki.
-- **Artefakt:** `prototypes/product-vision-poc/`.
-- **Następny krok:** review właściciela, następnie Q1 i implementacja według R2.2 → R4 → R3b.
 
 ## Szablon rezerwacji
 
