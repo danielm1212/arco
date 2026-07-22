@@ -46,21 +46,15 @@ export const MISSING_PRODUCTION_READINESS: Record<string, ProgramReleaseReadines
   },
   "advanced-home-upper-lower4": {
     auditId: "P11",
-    recipeStatus: "blocked",
+    recipeStatus: "ready",
     status: "blocked",
-    blockers: [
-      "TRAIN-02A3: pozostała korekta objętości P11",
-      "TRAIN-03/05: alternatywy i prawda sprzętowa P11",
-    ],
+    blockers: ["TRAIN-03/05: zapis przygotowanych alternatyw i prawda sprzętowa P11"],
   },
   "advanced-bodyweight-upper-lower4": {
     auditId: "P12",
-    recipeStatus: "blocked",
+    recipeStatus: "ready",
     status: "blocked",
-    blockers: [
-      "TRAIN-02A3: pozostała korekta objętości P12",
-      "TRAIN-03/05: alternatywy i prawda sprzętowa P12",
-    ],
+    blockers: ["TRAIN-03/05: zapis przygotowanych alternatyw i prawda sprzętowa P12"],
   },
 };
 

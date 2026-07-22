@@ -22,12 +22,25 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Codex · TRAIN-02A3 P11/P12
+
+- **Zakres:** pełne korekty objętości P11/P12 po TRAIN-01, estymacje czterech dni,
+  wersjonowane mapowanie ławki/drążków/podpór/kotwic i regresje integralności.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/train-02a-p11-p12`; bez SQL, bazy,
+  sekretów i produkcji. A1/A2 są już na `main`.
+- **Wynik:** P11 v3 ma 21/21/18/18 serii i 14 ścieżek sprzętowych; P12 v3 ma
+  22/22/21/19 serii i 12 ścieżek. Częściowe zamienniki są oznaczone jawnie.
+- **Dowód:** 112/112 unit, lint, build, walidator 907 ćwiczeń/15 programów/308 slotów
+  oraz rekomendacje 60/60 są zielone; 17 placeholderów w 54 slotach bez wzrostu.
+- **Następny krok:** zapis relacji i kanoniczna prawda sprzętowa w TRAIN-03/05; SEC-03
+  wykonuje właściciel przed kontrolowanym A4, backupem i dry-runem.
+
 ### 2026-07-22 · Codex · TRAIN-02A2 P01/P03/P08
 
 - **Zakres:** korekta źródłowych recept P01/P08, wersjonowana mapa alternatyw P03,
   walidator integralności, regresje czasu/objętości i dokumentacja trzech planów.
-- **Stan:** **ZAKOŃCZONE TECHNICZNIE** na `agent/train-02a-recipes`; bez migracji SQL,
-  bazy, sekretów i produkcji. Gałąź jest oparta na oczekującym TRAIN-02A1.
+- **Stan:** **ZAKOŃCZONE TECHNICZNIE** i scalone do `main`; bez migracji SQL,
+  bazy, sekretów i produkcji.
 - **Wynik:** P01 v2 ma Lying Leg Curl i 19 serii/ok. 46 min w B; P08 v2 ma 18 serii/
   ok. 42 min w C. P03 ma trzy jawne mapowania, w tym uczciwie oznaczony częściowy Pullover.
 - **Dowód:** 7/7 regresji A1/A2, walidator 907 ćwiczeń/15 programów/308 slotów,
