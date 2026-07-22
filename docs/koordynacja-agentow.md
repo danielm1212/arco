@@ -22,6 +22,28 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Claude · FIX sticky header (overflow-x hidden→clip)
+
+- **Zakres:** `app/globals.css` — `body { overflow-x: hidden }` → `overflow-x: clip`. Zgłoszenie
+  [Ty] (iPhone PWA): sticky header loggera nie przykleja się (ucieka z treścią), a po
+  otwarciu/zamknięciu bottom sheetu „pojawia się" i treść przeskakuje.
+- **Stan:** **ZAKOŃCZONE** (fix), commit lokalny. NIE wypchnięte — shipped UI, czeka na retest
+  [Ty] na urządzeniu (jesteś w trakcie).
+- **Wynik / przyczyna:** `overflow-x: hidden` per spec wymusza `overflow-y: auto` → `<body>`
+  staje się kontenerem przewijania, a sticky liczy się względem body, gdy realnie przewija się
+  viewport → sticky nigdy się nie załącza. Sheet robi `body{position:fixed}`+`scrollTo`, więc po
+  zamknięciu scroll ląduje przy górze i header „wraca" (to przeskok, nie działający sticky).
+  `clip` tnie poziomy nadmiar BEZ tworzenia scrollportu → sticky działa. Naprawia wszystkie
+  sticky headery w apce (logger + PageHeader), nie tylko logger.
+- **Dowód:** przyczyna potwierdzona w kodzie (globals.css:225, `STICKY_HEADER_SAFE_AREA`
+  `top: var(--safe-area-top)`); poziomy overflow nadal cięty (clip == hidden pod tym kątem),
+  więc e2e overflow guards trzymają.
+- **Następny krok:** [Ty] retest na iPhone PWA (scenariusz: scroll w treningu → header ma zostać
+  na górze; open/close ⋯ i Podmień → brak przeskoku treści). **Luka procesu:** e2e
+  `tests/e2e/overflow.test.ts` ma test sticky loggera, ale jego harness nie odtworzył realnego
+  `body{overflow-x:hidden}`, więc bug przeszedł — do uszczelnienia (dodać prod-owe `overflow`
+  do harnessu + negatywny kontrol z `hidden`), osobny mały task po potwierdzeniu na urządzeniu.
+
 ### 2026-07-22 · Claude · nowy skill arco-motion-review + dogfood
 
 - **Zakres:** analiza 3 zewnętrznych repo skilli (taste-skill/impeccable/emil) pod kątem Arco;
