@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "reviews": {
+    "Barbell_Hip_Thrust": {
+      "review_version": "CONTENT-01A-v1",
+      "reviewed_at": "2026-07-21",
+      "reviewer": "Codex",
+      "decision": "blocked",
+      "reason_codes": [
+        "media_neck_hyperextension",
+        "media_unstable_arm_support",
+        "instruction_missing_safety_cues"
+      ],
+      "replacement_exercise_id": "Barbell_Glute_Bridge",
+      "published_images": [
+        "/exercise-placeholder.svg"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/35586943/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8006986/"
+      ]
+    },
+    "Barbell_Glute_Bridge": {
+      "review_version": "CONTENT-01A-v1",
+      "reviewed_at": "2026-07-21",
+      "reviewer": "Codex",
+      "decision": "approved_replacement",
+      "reason_codes": [
+        "stable_floor_support",
+        "two_frame_fallback",
+        "evidence_supported_substitute"
+      ],
+      "published_images": [
+        "Barbell_Glute_Bridge/0.jpg",
+        "Barbell_Glute_Bridge/1.jpg"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/35586943/",
+        "https://github.com/yuhonas/free-exercise-db"
+      ]
+    },
+    "Dumbbell_Hip_Thrust": {
+      "review_version": "CONTENT-01A-v1",
+      "reviewed_at": "2026-07-21",
+      "reviewer": "Codex",
+      "decision": "text_approved_media_pending",
+      "reason_codes": [
+        "instruction_reviewed",
+        "placeholder_not_instructional"
+      ],
+      "published_images": [
+        "/exercise-placeholder.svg"
+      ],
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8006986/"
+      ]
+    },
+    "Single-Leg_Hip_Thrust": {
+      "review_version": "CONTENT-01A-v1",
+      "reviewed_at": "2026-07-21",
+      "reviewer": "Codex",
+      "decision": "text_approved_media_pending",
+      "reason_codes": [
+        "instruction_reviewed",
+        "placeholder_not_instructional"
+      ],
+      "published_images": [
+        "/exercise-placeholder.svg"
+      ],
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8006986/"
+      ]
+    }
+  }
+}

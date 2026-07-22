@@ -1,4 +1,28 @@
 {
+  "Barbell_Glute_Bridge": [
+    "Połóż się na plecach z ugiętymi kolanami i stopami na szerokość bioder. Ułóż zabezpieczoną miękką osłoną sztangę nad zgięciem bioder i trzymaj ją oburącz.",
+    "Napnij brzuch, utrzymaj żebra nad miednicą i wciśnij całe stopy w podłogę.",
+    "Unieś biodra do chwili, gdy barki, biodra i kolana utworzą prostą linię. Kolana prowadź w kierunku palców stóp.",
+    "Zatrzymaj ruch przed wygięciem dolnych pleców, napnij pośladki i opuść biodra pod kontrolą."
+  ],
+  "Barbell_Hip_Thrust": [
+    "Oprzyj łopatki o krawędź stabilnej ławki, a stopy ustaw płasko na szerokość bioder. Ułóż zabezpieczoną miękką osłoną sztangę nad zgięciem bioder i trzymaj ją oburącz.",
+    "Lekko schowaj brodę, napnij brzuch i utrzymaj żebra nad miednicą.",
+    "Wciśnij całe stopy w podłogę i unieś biodra. Kolana prowadź w kierunku palców stóp.",
+    "Zakończ ruch, gdy barki, biodra i kolana utworzą prostą linię — bez odchylania głowy i wyginania dolnych pleców. Opuść biodra spokojnie."
+  ],
+  "Dumbbell_Hip_Thrust": [
+    "Oprzyj łopatki o krawędź stabilnej ławki, a stopy ustaw płasko na szerokość bioder. Ułóż hantel poziomo nad zgięciem bioder i trzymaj go oburącz.",
+    "Lekko schowaj brodę, napnij brzuch i utrzymaj żebra nad miednicą.",
+    "Wciśnij całe stopy w podłogę i unieś biodra, prowadząc kolana w kierunku palców.",
+    "Zatrzymaj ruch, gdy barki, biodra i kolana utworzą prostą linię. Nie wyginaj dolnych pleców; opuść biodra pod kontrolą. Bez ławki wykonaj most biodrowy na podłodze."
+  ],
+  "Single-Leg_Hip_Thrust": [
+    "Oprzyj łopatki o krawędź stabilnej ławki. Jedną stopę ustaw płasko pod kolanem, a drugą nogę unieś z ugiętym kolanem.",
+    "Lekko schowaj brodę, napnij brzuch i ustaw miednicę równo, bez skręcania na bok.",
+    "Wciśnij stopę podporową w podłogę i unieś biodra, aż bark, biodro i kolano nogi podporowej utworzą prostą linię.",
+    "Zatrzymaj ruch przed wygięciem dolnych pleców lub skręceniem miednicy. Opuść biodra spokojnie i po serii zmień stronę."
+  ],
   "Pullups": [
     "Złap drążek nachwytem, nieco szerzej niż barki. Zacznij w swobodnym zwisie z napiętym brzuchem.",
     "Ściągnij łopatki w dół i przyciągnij klatkę w stronę drążka. Prowadź łokcie w dół, bez kołysania nogami.",

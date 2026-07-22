@@ -70,7 +70,7 @@
 | 2 | Bulgarian Split Squat | `lunge` | 3 × 8–12 / noga | 2:00 | Walking Lunge |
 | 3 | Leg Extension | `isolation:quad` | 4 × 12–20 | 1:30 | Sissy Squat |
 | 4 | Seated Leg Curl | `isolation:hamstring` | 4 × 12–15 | 1:30 | Lying Leg Curl |
-| 5 | Hip Thrust | `isolation:glute` | 3 × 8–12 | 2:00 | Cable Pull-Through |
+| 5 | Barbell Glute Bridge | `isolation:glute` | 3 × 8–12 | 2:00 | Cable Pull-Through |
 | 6 | Calf Press | `calf` | 4 × 12–15 | 1:00 | Standing Calf Raise |
 | 7 | Hanging Leg Raise | `core:flexion` | 3 × 10–15 | 1:00 | Lying Leg Raise |
 

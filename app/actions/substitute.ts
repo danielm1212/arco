@@ -76,6 +76,7 @@ export async function getSubstitutes(
       .from("exercises")
       .select("id, name, name_pl, equipment, mechanic, level, images, primary_muscles, secondary_muscles, movement_pattern")
       .neq("id", cur.id)
+      .eq("content_blocked", false)
       .eq("hidden", false) // kuracja 2026-07-08: swap nie proponuje stretching/cardio/przestarzałych
       .limit(60);
     if (equipment.length) q = q.in("equipment", equipment);

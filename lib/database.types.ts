@@ -159,6 +159,7 @@ export type Database = {
       exercises: {
         Row: {
           category: string | null
+          content_blocked: boolean
           equipment: string | null
           exercise_type: Database["public"]["Enums"]["exercise_type"]
           force: string | null
@@ -181,6 +182,7 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          content_blocked?: boolean
           equipment?: string | null
           exercise_type: Database["public"]["Enums"]["exercise_type"]
           force?: string | null
@@ -202,6 +204,7 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          content_blocked?: boolean
           equipment?: string | null
           exercise_type?: Database["public"]["Enums"]["exercise_type"]
           force?: string | null

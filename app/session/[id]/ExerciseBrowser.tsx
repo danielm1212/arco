@@ -122,10 +122,12 @@ export function ExerciseBrowser({
       let req = supabase
         .from("exercises")
         .select("id, name, name_pl, search_aliases, equipment, images, user_id")
+        .eq("content_blocked", false)
         .order("name")
         .limit(30);
       // Stopień 1 kuracji (audyt S8 + trenerski 2026-07-08): browse po chipach ukrywa
-      // hidden (stretching/cardio/przestarzałe); search po nazwie NADAL znajduje wszystko.
+      // hidden (stretching/cardio/przestarzałe); search po nazwie nadal znajduje rekordy
+      // miękko ukryte, ale content_blocked zawsze zatrzymuje materiał bez review.
       // R5a: search po nazwie PL/EN i aliasach potocznych (docs/r5a-slownik-pl-propozycja.md).
       if (queryTerm.length >= 2) req = req.or(buildSearchOrFilter(queryTerm));
       else req = req.eq("hidden", false);

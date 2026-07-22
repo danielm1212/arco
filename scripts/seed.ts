@@ -9,6 +9,7 @@ import { config } from "dotenv";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { pathToFileURL } from "node:url";
 import rawExercises from "./data/exercises.json";
+import rawContentReviews from "./data/exercise-content-reviews.json";
 import polishInstructionOverrides from "./data/exercise-instructions-pl.json";
 import polishNames from "./data/exercise-names-pl.json";
 import { withNormalizedAliases } from "../lib/exerciseSearch";
@@ -24,6 +25,24 @@ const IMG_PREFIX = customImageBase
     : "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
 
 export const POLISH_INSTRUCTION_OVERRIDES = polishInstructionOverrides as Record<string, string[]>;
+
+type ContentReviewDecision =
+  | "blocked"
+  | "approved_replacement"
+  | "text_approved_media_pending";
+
+export interface ExerciseContentReview {
+  review_version: string;
+  reviewed_at: string;
+  reviewer: string;
+  decision: ContentReviewDecision;
+  reason_codes: string[];
+  replacement_exercise_id?: string;
+  published_images: string[];
+  sources: string[];
+}
+
+export const CONTENT_REVIEWS = rawContentReviews.reviews as Record<string, ExerciseContentReview>;
 
 // R5a: zatwierdzony słownik nazw PL + aliasów (docs/r5a-slownik-pl-propozycja.md).
 // Seed i migracja 20260717* muszą prowadzić do tego samego stanu — źródłem jest ten JSON.
@@ -128,6 +147,7 @@ const PATTERN_OVERRIDES: Record<string, MovementPattern> = {
   Hanging_Leg_Raise: "core",
   // Audyt trenerski 2026-07-08: hip hinge zamiast heurystyki "press/raise → push"
   Barbell_Hip_Thrust: "hinge",
+  Barbell_Glute_Bridge: "hinge",
   Dumbbell_Hip_Thrust: "hinge",
   "Single-Leg_Hip_Thrust": "hinge",
   Frog_Pump: "hinge",
@@ -218,6 +238,7 @@ const MISCATEGORIZED_VISIBLE = new Set([
 ]);
 
 export function deriveHidden(ex: RawExercise): boolean {
+  if (CONTENT_REVIEWS[ex.id]?.decision === "blocked") return true;
   if (MISCATEGORIZED_VISIBLE.has(ex.id)) return false;
   if (OUTDATED_HIDDEN_IDS.has(ex.id)) return true;
   return HIDDEN_CATEGORIES.has(ex.category ?? "");
@@ -237,12 +258,13 @@ export function toSeedExercise(ex: RawExercise) {
     category: ex.category,
     instructions:
       POLISH_INSTRUCTION_OVERRIDES[ex.id] ?? INSTRUCTION_OVERRIDES[ex.id] ?? ex.instructions ?? [],
-    images: (ex.images ?? []).map((img) =>
+    images: (CONTENT_REVIEWS[ex.id]?.published_images ?? ex.images ?? []).map((img) =>
       img.startsWith("http") || img.startsWith("/") ? img : IMG_PREFIX + img,
     ),
     movement_pattern: deriveMovementPattern(ex),
     exercise_type: deriveExerciseType(ex),
     hidden: deriveHidden(ex),
+    content_blocked: CONTENT_REVIEWS[ex.id]?.decision === "blocked",
     name_pl: POLISH_NAMES[ex.id]?.name_pl ?? null,
     // Warianty bez diakrytyk obok oryginałów — zgodnie z migracją 20260717163900.
     search_aliases: withNormalizedAliases(POLISH_NAMES[ex.id]?.aliases ?? []),
@@ -513,13 +535,13 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 60,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 1,
+    content_version: 2,
     days_per_week: 3,
     days: [
       {
         label: "Dół A · siła",
         slots: [
-          { exercise_id: "Barbell_Hip_Thrust", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
+          { exercise_id: "Barbell_Glute_Bridge", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
           { exercise_id: "Barbell_Squat", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
           { exercise_id: "Romanian_Deadlift", sets: 2, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
@@ -542,7 +564,7 @@ export const PROGRAMS: Program[] = [
         label: "Dół B · objętość",
         slots: [
           { exercise_id: "Leg_Press", sets: 3, repsMin: 10, repsMax: 15, rest: 120 },
-          { exercise_id: "Barbell_Hip_Thrust", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Barbell_Glute_Bridge", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Lying_Leg_Curls", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Bulgarian_Split_Squat", sets: 2, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
           { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 2, repsMin: 10, repsMax: 15, rest: 90 },
@@ -1011,7 +1033,7 @@ export const PROGRAMS: Program[] = [
     // squat+RDL tego samego dnia), a systemowe zmęczenie zredukowane po obu stronach:
     // mniej serii wioseł w Pull A i mniej serii RDL/leg curl w Legs A. Do potwierdzenia
     // przez trenera-konsultanta (decyzja D2) — na testy ze znajomymi wystarczające.
-    content_version: 3,
+    content_version: 4,
     days_per_week: 6,
     days: [
       {
@@ -1077,7 +1099,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Bulgarian_Split_Squat", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
           { exercise_id: "Leg_Extensions", sets: 4, repsMin: 12, repsMax: 20, rest: 90 },
           { exercise_id: "Seated_Leg_Curl", sets: 4, repsMin: 12, repsMax: 15, rest: 90 },
-          { exercise_id: "Barbell_Hip_Thrust", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Barbell_Glute_Bridge", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Calf_Press", sets: 4, repsMin: 12, repsMax: 15, rest: 60 },
           { exercise_id: "Hanging_Leg_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
