@@ -185,7 +185,7 @@ sekund, sprzętu i alternatyw w PLAN-Q.
 ## 5. Zatwierdzone zakresy czasu dni
 
 Zakres obejmuje serie robocze, typowe przejścia i 5–8 minut przygotowania/ramp sets. Opcjonalny
-ekran rozgrzewki SESSION-01 nie jest doliczany drugi raz.
+rekomendacja rozgrzewki SESSION-01A nie jest doliczana drugi raz.
 
 | Program | Zatwierdzone czasy dni po korektach |
 |---|---|
