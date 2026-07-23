@@ -31,7 +31,9 @@
   8 wywołań `MomentIcon3D` w `app/page.tsx`, `app/progress/page.tsx`, `app/body/page.tsx`,
   `app/history/page.tsx`, `app/history/add/page.tsx`, `app/history/[id]/page.tsx`,
   `app/ekipa/TeamPanel.tsx`, `components/WelcomeOverlay.tsx`, oraz `prototypes/product-vision-poc/app.js`
-  (2 twarde odwołania poza komponentem). Working tree na `main`, niezacommitowane; baza i produkcja nietknięte.
+  (2 twarde odwołania poza komponentem). Commit `76572e4` na gałęzi
+  `agent/icon-swap-arco-performance-objects`, wypchnięty; PR [#13](https://github.com/danielm1212/arco/pull/13)
+  otwarty (jeszcze nie zmergowany). Baza i produkcja nietknięte.
 - **Mapowanie:** gym→plan (home „Zacznij od planu”), history/fire→history, target→progress,
   calendar→history (reużyte), tick→workout-complete, rocket→team (Ekipa onboarding),
   rocket→equipment (WelcomeOverlay krok 8 „Plan gotowy” — na życzenie właściciela, torba
@@ -49,10 +51,13 @@
   Nieuruchomione (niezwiązane): `test:unit`, `test:overflow`, walidatory treści.
 - **Bonus:** zamyka ryzyko z `backlog-produktu.md` `VISUAL-04` (niepotwierdzona licencja
   3dicons.co) — nowy zestaw jest własnym projektem Arco.
-- **NIE dotknięto:** `assets-source/icons-3d/` (pośrednie pliki starego pipeline'u — zostają jako
-  historia, nikt ich już nie referencuje); danych, migracji, produkcji.
-- **Zaległości:** [Ty] wizualna weryfikacja `WelcomeOverlay` krok 8 i `history/[id]` bannera przy
-  najbliższej okazji; commit + PR tej paczki (gałąź `agent/*` per `arco-release`).
+- **Aktualizacja tej samej sesji:** na prośbę właściciela usunięty też `assets-source/icons-3d/`
+  (pośrednie pliki starego pipeline'u recolorowania, ~20 MB, nikt ich już nie referencuje) oraz
+  surowy pakiet `3dicons-*.png` w `../3d icons/` (poza repo Git) — zachowany tylko nowy master
+  `../3d icons/icons/png-512-alpha/` pod przyszłe generowanie. Commit + push + PR #13 wykonane.
+- **NIE dotknięto:** danych, migracji, produkcji.
+- **Zaległości:** [Ty] review + merge PR #13; wizualna weryfikacja `WelcomeOverlay` krok 8
+  i `history/[id]` bannera przy najbliższej okazji.
 
 ### 2026-07-22 · Claude · odświeżenie skilli: 4 nowe + fix Notion→Linear
 
