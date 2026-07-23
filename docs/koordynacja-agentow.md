@@ -22,6 +22,38 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-23 · Claude · podmiana ikon 3D na Arco Performance Objects v1.1: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `components/MomentIcon3D.tsx` (uproszczony do jednego motywo-neutralnego `<Image>` —
+  v1.1 nie ma osobnych wariantów light/dark, patrz `strategy/arco-3d-icon-system.md` §8),
+  `public/icons-3d/` (7 nowych plików `icon-3d-{team,history,progress,plan,workout-complete,
+  body-measurements,equipment}.png`, usunięte 14 osieroconych plików starego pakietu 3dicons.co),
+  8 wywołań `MomentIcon3D` w `app/page.tsx`, `app/progress/page.tsx`, `app/body/page.tsx`,
+  `app/history/page.tsx`, `app/history/add/page.tsx`, `app/history/[id]/page.tsx`,
+  `app/ekipa/TeamPanel.tsx`, `components/WelcomeOverlay.tsx`, oraz `prototypes/product-vision-poc/app.js`
+  (2 twarde odwołania poza komponentem). Working tree na `main`, niezacommitowane; baza i produkcja nietknięte.
+- **Mapowanie:** gym→plan (home „Zacznij od planu”), history/fire→history, target→progress,
+  calendar→history (reużyte), tick→workout-complete, rocket→team (Ekipa onboarding),
+  rocket→equipment (WelcomeOverlay krok 8 „Plan gotowy” — na życzenie właściciela, torba
+  sprzętowa pasuje semantycznie lepiej niż `05-plan`), notebook→body-measurements.
+  5 ikon (`rest`, `consistency`, `personal-record`, `swap-exercise`, dodatkowo `03-training`)
+  zostaje niewykorzystanych, gotowych pod przyszłe ekrany.
+- **Testy:** `npm run lint` czysty, `npm run build` zielony (TS OK, wszystkie route'y). Weryfikacja
+  wizualna na koncie testowym (localhost:3000, `next start`) — home/plan, progress, history,
+  history/add, ekipa/team, body/measurements sprawdzone light **i** dark (przełącznik w
+  Ustawieniach); jeden plik PNG działa czytelnie na obu tłach bez halo, zgodnie z założeniem v1.1.
+  Motyw po teście przywrócony do „System”. Nie sprawdzono wizualnie: `WelcomeOverlay` krok 8
+  (wymaga ścieżki „Aktywuj plan” z rekomendowanym programem, nie odtworzonej w tej sesji —
+  sam plik `icon-3d-equipment.png` obejrzany bezpośrednio, ten sam komponent/pipeline co
+  potwierdzone ekrany) oraz `history/[id]` banner potwierdzenia (wymaga realnego zapisu treningu).
+  Nieuruchomione (niezwiązane): `test:unit`, `test:overflow`, walidatory treści.
+- **Bonus:** zamyka ryzyko z `backlog-produktu.md` `VISUAL-04` (niepotwierdzona licencja
+  3dicons.co) — nowy zestaw jest własnym projektem Arco.
+- **NIE dotknięto:** `assets-source/icons-3d/` (pośrednie pliki starego pipeline'u — zostają jako
+  historia, nikt ich już nie referencuje); danych, migracji, produkcji.
+- **Zaległości:** [Ty] wizualna weryfikacja `WelcomeOverlay` krok 8 i `history/[id]` bannera przy
+  najbliższej okazji; commit + PR tej paczki (gałąź `agent/*` per `arco-release`).
+
 ### 2026-07-22 · Claude · odświeżenie skilli: 4 nowe + fix Notion→Linear
 
 - **Zakres:** `.claude/skills/` — cztery nowe skille + poprawka warstwy zadań. Gałąź `agent/skills-refresh`. Kod produktu, baza i produkcja nietknięte.

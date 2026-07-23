@@ -59,7 +59,7 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
       <main className="flex-1 space-y-lg p-md">
         {fresh ? (
           <section className="flex min-h-[60dvh] flex-col items-center justify-center text-center">
-            <MomentIcon3D name="target" className="size-32" priority />
+            <MomentIcon3D name="progress" className="size-32" priority />
             <h2 className="mt-sm text-xl font-semibold">Twój postęp zaczyna się od pierwszego treningu</h2>
             <p className="mt-xs max-w-xs text-sm leading-relaxed text-muted-foreground">Po dwóch sesjach pokażemy trend siły, regularność i bilans trenowanych partii.</p>
             <form action={startFreestyle} className="mt-md">

@@ -161,7 +161,7 @@ export function TeamPanel({
     return (
       <div className="space-y-lg">
         <section className="rounded-2xl bg-card p-lg text-center shadow-sm">
-          <MomentIcon3D name="rocket" className="mx-auto -my-sm size-24" priority />
+          <MomentIcon3D name="team" className="mx-auto -my-sm size-24" priority />
           <h1 className="mt-sm text-2xl font-semibold tracking-tight">Trzymajcie wspólny rytm.</h1>
           <p className="mt-xs text-sm leading-relaxed text-muted-foreground">Prywatna grupa do wspólnego trzymania rytmu. Bez rankingów i porównywania wyników.</p>
         </section>

@@ -2,34 +2,13 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const MOMENT_ICONS = {
-  gym: {
-    light: "/icons-3d/production/gym-light.webp",
-    dark: "/icons-3d/production/gym-dark.webp",
-  },
-  history: {
-    light: "/icons-3d/production/fire-light.webp",
-    dark: "/icons-3d/production/fire-dark.webp",
-  },
-  target: {
-    light: "/icons-3d/production/target-light.webp",
-    dark: "/icons-3d/production/target-dark.webp",
-  },
-  calendar: {
-    light: "/icons-3d/icon-3d-calendar-date-light.png",
-    dark: "/icons-3d/icon-3d-calendar-date-dark.png",
-  },
-  tick: {
-    light: "/icons-3d/icon-3d-tick-light.png",
-    dark: "/icons-3d/icon-3d-tick-dark.png",
-  },
-  rocket: {
-    light: "/icons-3d/icon-3d-rocket-light.png",
-    dark: "/icons-3d/icon-3d-rocket-dark.png",
-  },
-  notebook: {
-    light: "/icons-3d/icon-3d-notebook-light.png",
-    dark: "/icons-3d/icon-3d-notebook-dark.png",
-  },
+  team: "/icons-3d/icon-3d-team.png",
+  history: "/icons-3d/icon-3d-history.png",
+  progress: "/icons-3d/icon-3d-progress.png",
+  plan: "/icons-3d/icon-3d-plan.png",
+  workoutComplete: "/icons-3d/icon-3d-workout-complete.png",
+  bodyMeasurements: "/icons-3d/icon-3d-body-measurements.png",
+  equipment: "/icons-3d/icon-3d-equipment.png",
 } as const;
 
 export type MomentIconName = keyof typeof MOMENT_ICONS;
@@ -43,25 +22,14 @@ export function MomentIcon3D({
   className?: string;
   priority?: boolean;
 }) {
-  const icon = MOMENT_ICONS[name];
-
   return (
     <span className={cn("relative block size-28 shrink-0", className)} aria-hidden="true">
       <Image
-        src={icon.light}
+        src={MOMENT_ICONS[name]}
         alt=""
         width={320}
         height={320}
-        className="size-full object-contain dark:hidden"
-        priority={priority}
-        unoptimized
-      />
-      <Image
-        src={icon.dark}
-        alt=""
-        width={320}
-        height={320}
-        className="hidden size-full object-contain dark:block"
+        className="size-full object-contain"
         priority={priority}
         unoptimized
       />
