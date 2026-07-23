@@ -50,7 +50,7 @@ Stare audyty, briefy i archiwum nie są backlogiem ani źródłem bieżącego st
 
 ## Kierunek UX/UI
 
-- System wizualny: Arco Warm, jasny domyślny interfejs, terracotta jako oszczędny akcent.
+- System wizualny: Arco Warm, jasny domyślny interfejs, terracotta (rust) jako oszczędny akcent działania. Od v1.4 (2026-07-23) **violet = kolor uzupełniający** dla prowadzenia/planów/danych/wykresów (~5% ekranu, nie miesza się z rust w jednym komponencie); neutrale chłodniejsze, krem tylko pod brand-surface. Kanon: `docs/paleta-arco-warm.md` §„Adopcja Arco UI v1.4".
 - UI narzędzia pozostaje czyste i spokojne. Retro-analogowa warstwa służy komunikacji i momentom, nie tłom codziennych ekranów.
 - Ikony 3D clay stosujemy oszczędnie: onboarding, celebracje i empty states. Nie zastępują podstawowej ikonografii nawigacji.
 - Floating bottom nav ma równy margines 12 px po bokach i od dołu z uwzględnieniem safe area.

@@ -114,18 +114,18 @@ export function SessionMiniBar({
           : "bottom-[calc(var(--safe-area-bottom)+var(--floating-nav-gap))]",
       )}
     >
-      <div className="flex items-center gap-sm rounded-xl bg-volt px-sm py-1.5 text-volt-foreground shadow-lg">
-        <Link href={`/session/${open.id}`} className="flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-md px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt-foreground">
+      <div className="flex items-center gap-sm rounded-xl bg-primary px-sm py-1.5 text-primary-foreground shadow-lg">
+        <Link href={`/session/${open.id}`} className="flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-md px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground">
           <p className="flex items-center gap-1 truncate text-sm font-semibold">
             <Play className="size-3.5 shrink-0 fill-current" /> Trening w toku
             {open.label ? ` · ${open.label}` : ""}
           </p>
-          <p className="text-xs tabular-nums text-volt-foreground/70">{mmss(elapsed)} · Wróć</p>
+          <p className="text-xs tabular-nums text-primary-foreground/70">{mmss(elapsed)} · Wróć</p>
         </Link>
         <button
           onClick={() => setConfirmOpen(true)}
           disabled={busy}
-          className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-md px-3 text-xs font-medium text-volt-foreground/80 hover:bg-black/10 hover:text-volt-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-volt-foreground disabled:opacity-50"
+          className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-md px-3 text-xs font-medium text-primary-foreground/80 hover:bg-black/10 hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground disabled:opacity-50"
           aria-label="Porzuć trening"
         >
           <X className="size-3.5" /> Porzuć

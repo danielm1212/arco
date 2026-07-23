@@ -10,6 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        // Prowadzenie/plany/dane (violet). Nie na główne CTA działania — te zostają `default` (rust).
+        support: "bg-support text-support-foreground hover:bg-support/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:

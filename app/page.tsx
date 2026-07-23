@@ -210,7 +210,7 @@ export default async function HomePage() {
           // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.
           // R2: karta NIE jest jednym wielkim przyciskiem — osobne cele tapnięcia:
           // CTA startuje sesję, nazwa planu otwiera szczegół, stopka = podgląd/zmiana.
-          <div className="overflow-hidden rounded-xl bg-card text-card-foreground shadow-md">
+          <div className="surface-polished surface-polished-subtle overflow-hidden rounded-xl text-card-foreground">
             <div className="p-md">
               <div className="flex items-center justify-between gap-sm">
                 <span className="shrink-0 text-xs font-medium text-muted-foreground">

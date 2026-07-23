@@ -39,7 +39,7 @@ export function GuidanceChip({ items }: { items: GuidanceItem[] }) {
           type="button"
           className="flex min-h-11 w-full items-center gap-sm rounded-md px-2xs text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="mt-0.5 shrink-0 text-muted-foreground">
+          <span className="mt-0.5 shrink-0 text-support">
             <GuidanceIcon kind={top.kind} />
           </span>
           <span className="min-w-0 flex-1 truncate">{top.message}</span>
@@ -54,7 +54,7 @@ export function GuidanceChip({ items }: { items: GuidanceItem[] }) {
       <ul className="space-y-sm">
         {items.map((g) => (
           <li key={g.id} className="flex items-start gap-sm text-sm">
-            <span className="mt-0.5 shrink-0 text-muted-foreground">
+            <span className="mt-0.5 shrink-0 text-support">
               <GuidanceIcon kind={g.kind} />
             </span>
             <span className="leading-6">{g.message}</span>

@@ -68,12 +68,12 @@ Mini-bar aktywnego treningu nie jest częścią bottom baru. To globalny status 
 ## 3. Checklist nowego ekranu/komponentu (do review przed merge)
 
 1. Jedna akcja główna? Co user ma zrobić najpierw — widać w 2 s?
-2. Wszystkie targety ≥44 px, focus-visible, kontrast AA (tekst na kremie: tylko rust-500+)?
+2. Wszystkie targety ≥44 px, focus-visible (ring = violet-400), kontrast AA (tekst na kremie: tylko rust-500+; biały na violet: tylko violet-500+; w dark na rust-400/violet-400 tekst ciemny)?
 3. Działa z zoomem 200% i długimi stringami PL (np. „Wyciskanie hantli na ławce skośnej")?
 4. Stany: pusty / ładowanie / błąd / offline zaprojektowane, nie domyślne?
 5. Feedback akcji <100 ms (optymistyczny UI tam, gdzie sieć)?
 6. Sheet zamiast nowej trasy dla zadań <30 s? Max 1 poziom modality?
-7. Dark mode sprawdzony (tokeny semantyczne, zero magic hexów)?
+7. Dark mode sprawdzony (tokeny semantyczne, zero magic hexów)? Kolor zgodny z osią: **rust=działanie, violet=prowadzenie/plany/dane**; jeden kolor chromatyczny na komponent; wykresy z `chart-*`, nie z CTA. Kanon: `paleta-arco-warm.md` §„Adopcja Arco UI v1.4".
 8. Copy przeszło ToV (warstwa narzędzia = minimum słów)?
 9. Android: gest wstecz nie wyrzuca z flow w połowie? iOS standalone: safe-area OK?
 10. Czy to dokłada element do home/nav? Jeśli tak — co zabieramy w zamian (feedback #1!).

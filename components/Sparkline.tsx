@@ -24,7 +24,7 @@ export function Sparkline({
       <polyline
         points={pts}
         fill="none"
-        stroke="hsl(var(--primary))"
+        stroke="hsl(var(--color-chart-primary))"
         strokeWidth="2"
         strokeLinejoin="round"
         strokeLinecap="round"
