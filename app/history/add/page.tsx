@@ -31,7 +31,7 @@ export default async function AddHistoricalWorkoutPage() {
       <PageHeader title="Trening po fakcie" fallback="/history" backLabel="Wróć do historii" sticky />
       <main className="flex-1 space-y-lg p-md pb-[calc(2rem+var(--safe-area-bottom))]">
         <div className="space-y-2xs">
-          <MomentIcon3D name="calendar" className="-my-sm size-24" priority />
+          <MomentIcon3D name="history" className="-my-sm size-24" priority />
           <h2 className="text-2xl font-semibold">Dodaj trening po fakcie</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Odtwórz trening, o którym zapomniałeś. Najpierw ustawiamy jego prawdziwą datę, potem wpisujesz ćwiczenia i serie.

@@ -271,7 +271,7 @@ export default async function HomePage() {
              środowisko z WelcomeOverlay, nie w tym zakresie, patrz HANDOFF) */
           <div className="space-y-sm">
             <div className="space-y-sm rounded-xl bg-card p-md text-center text-card-foreground shadow-md">
-              <MomentIcon3D name="gym" className="mx-auto -my-xs" priority />
+              <MomentIcon3D name="plan" className="mx-auto -my-xs" priority />
               <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">
                 Wybierz jeden z {presetCount} planów. Arco poprowadzi Cię przez trening serię po serii.

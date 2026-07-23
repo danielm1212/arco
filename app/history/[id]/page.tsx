@@ -115,7 +115,7 @@ export default async function SessionDetailPage(props: {
             className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 flex items-center gap-sm rounded-xl bg-primary/10 p-sm text-primary duration-300"
             role="status"
           >
-            <MomentIcon3D name="tick" className="size-12" />
+            <MomentIcon3D name="workoutComplete" className="size-12" />
             <div>
               <p className="text-sm font-semibold">Trening dodany do historii</p>
               <p className="text-xs text-muted-foreground">

@@ -56,6 +56,17 @@ violet-surfaces wymaga konta z danymi (konto testowe puste). **Env:** `node_modu
 „ 2" (iCloud Desktop) — build tsc wywalał się na `@types/estree 2`, usunięte ad hoc; rozważyć
 `npm ci` + wyłączenie sync. Szczegóły w dzienniku koordynacji.
 
+**Ikony 3D (2026-07-23, PR [#13](https://github.com/danielm1212/arco/pull/13) otwarty, gałąź
+`agent/icon-swap-arco-performance-objects`):** podmienione z generycznego pakietu 3dicons.co
+na własny zestaw Arco Performance Objects v1.1 (`strategy/arco-3d-icon-system.md`
+w `Arco-Brand-System-v1.4`) — zamyka ryzyko licencyjne `VISUAL-04`. `MomentIcon3D` uproszczony do
+jednego pliku na ikonę (v1.1 nie rozróżnia light/dark). Osierocony `assets-source/icons-3d/`
+(~20 MB starego pipeline'u) usunięty. Lint/build zielone, 6 z 8 ekranów
+zweryfikowanych wizualnie light+dark. **[Ty]:** review + merge PR #13; doraz sprawdzić
+`WelcomeOverlay` krok 8 („Plan gotowy") i baner potwierdzenia w `history/[id]` — nieodtworzone
+w tej sesji. Szczegóły w dzienniku
+koordynacji (2026-07-23).
+
 ## 3. Stan planu
 
 ### Zamknięte

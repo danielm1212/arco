@@ -526,7 +526,7 @@ export function WelcomeOverlay({
         {/* Mikro-potwierdzenie po aktywacji (0,9 s) — domknięcie pętli E5 */}
         {step === 8 && (
           <div className="flex flex-col items-center gap-md text-center">
-            <MomentIcon3D name="rocket" className="-my-sm size-24" priority />
+            <MomentIcon3D name="equipment" className="-my-sm size-24" priority />
             <p className="text-lg font-semibold">Plan gotowy</p>
             <p className="text-sm text-brand-muted">
               Czeka na ekranie głównym. Możesz od razu zacząć trening.

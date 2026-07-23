@@ -80,7 +80,7 @@ function renderToday() {
       ${header()}
       ${segment({ route: "today", label: "Dziś" }, { route: "plans", label: "Plany" }, "today")}
       <section class="card empty-state">
-        <img class="moment-image" src="../../public/icons-3d/icon-3d-notebook-light.png" alt="" />
+        <img class="moment-image" src="../../public/icons-3d/icon-3d-plan.png" alt="" />
         <h1>Wybierz pierwszy plan</h1>
         <p>Plan daje Ci kolejność ćwiczeń i prosty następny krok. Możesz też zacząć własny trening.</p>
         <div class="empty-actions">
@@ -278,7 +278,7 @@ function exerciseCard(name, target, valuesReady, completeClass, completeLabel, l
 function renderDone() {
   const freestyle = state.sessionType === "freestyle";
   return `<main class="screen moment">
-    <img class="moment-image" src="../../public/icons-3d/icon-3d-tick-light.png" alt="" />
+    <img class="moment-image" src="../../public/icons-3d/icon-3d-workout-complete.png" alt="" />
     <p class="eyebrow">Trening zapisany</p>
     <div class="number-hero">${state.setCompleted ? "1" : "0"}</div>
     <h1>${state.setCompleted ? "zaliczona seria" : "ukończony trening"}</h1>

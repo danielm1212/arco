@@ -95,7 +95,7 @@ export default async function BodyPage() {
           <h2 className="text-base font-semibold">Historia pomiarów</h2>
           {metricRows.length === 0 && (
             <div className="flex items-center gap-sm rounded-xl bg-card p-md shadow-sm">
-              <MomentIcon3D name="notebook" className="size-16" />
+              <MomentIcon3D name="bodyMeasurements" className="size-16" />
               <div className="min-w-0">
                 <p className="font-semibold">Tu pojawi się historia pomiarów</p>
                 <p className="mt-2xs text-sm text-muted-foreground">
