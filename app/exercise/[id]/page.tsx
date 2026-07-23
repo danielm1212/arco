@@ -241,7 +241,7 @@ export default async function ExercisePage(props: {
                     aria-current={t.key === sel ? "page" : undefined}
                     className={`flex min-h-11 flex-1 items-center justify-center rounded-md border px-2 text-center text-sm ${
                       t.key === sel
-                        ? "border-primary bg-primary/10 font-medium text-primary"
+                        ? "border-support bg-support/10 font-medium text-support"
                         : "border-input text-muted-foreground"
                     }`}
                   >

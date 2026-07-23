@@ -98,3 +98,73 @@
 | danger | `hsl(353 65% 46%)` ≈ #C22A44 (malina) | `hsl(353 70% 62%)` | hue 353 vs rust 11–15 — wyraźnie inna barwa, nadal ciepła rodzina |
 | success | `hsl(146 45% 36%)` ≈ #33875A | `hsl(146 40% 55%)` | przygaszona zieleń, nie neonowa; AA jako tekst na canvas |
 | warning | `hsl(38 92% 50%)` (amber, bez zmian) | jw. | używany głównie jako badge W/nota — odróżnialny od rusta |
+
+## Adopcja „Arco UI v1.4" (2026-07-23, decyzja [Ty])
+
+Źródło: `Arco-Brand-System-v1.4/implementation/arco-ui-theme-migration-guide.md`. Wdrożenie w
+`app/globals.css` + `tailwind.config.ts`. **To migracja design systemu, nie redesign** — logika i
+układ bez zmian. Ta sekcja jest nadrzędna nad wcześniejszymi regułami tam, gdzie się różnią
+(zwłaszcza dark canvas: `ink-850`, nie `ink-800`).
+
+### Violet — kolor UZUPEŁNIAJĄCY marki (nowy)
+
+Marka ma teraz **dwa** kolory: **Rust = działanie/energia/aktywność** (kolor główny) i
+**Violet = prowadzenie/progresja/plany/dane** (uzupełniający). Nie są równorzędne — orientacyjna
+proporcja na ekranie: ~80% neutralne, ~15% rust, **~5% violet**. Główny odcień: `violet-500`.
+
+- **Violet stosuj dla:** rekomendacji progresji, prowadzenia usera, planów/rotacji, analityki i
+  wykresów, dopasowania planu, treści edukacyjnych/onboardingu, drugorzędnych zaznaczeń, przyszłego
+  premium.
+- Skala `violet-50…900` w primitives; tokeny semantyczne `--color-support*` (+ `support` w Tailwind:
+  `bg-support`, `text-support-surface-text` itd.).
+- **Focus ring = `violet-400`** (oddzielenie koloru działania od koloru interakcji; `--color-ring`
+  i `--color-border-focus`).
+
+### Twarde reguły violet (guide §7)
+
+1. **Nie zestawiaj rust z violet jako tekst/tło** — zbliżona luminancja, brak kontrastu.
+2. W jednym komponencie dominuje **jeden** kolor chromatyczny.
+3. Biały drobny tekst w light: min. `violet-500` (nie 400). W dark na `violet-400` tekst **ciemny**
+   (`ink-900`) — biały nie daje 4.5:1 (to samo co rust-400, celowo).
+4. Na `support-surface` używaj `support-surface-text`, nie `support-contrast`.
+5. **Violet nie zastępuje kolorów semantycznych** — sukces=zielony, ostrzeżenie=amber, błąd=czerwony.
+
+### Neutrale — mniej ciepła na dużych powierzchniach
+
+Canvas i powierzchnie użytkowe przechodzą na chłodniejsze neutrale guide; **sand (ciepły) zostaje
+wyłącznie pod brand-surface** (hero/onboarding/celebracja).
+
+| Rola | Light | Dark |
+|---|---|---|
+| canvas | `#F7F7F5` (grey-100) | `#18171A` (ink-850) |
+| surface | `#FFFFFF` (grey-0) | `#232226` (ink-700) |
+| surface-muted | `#EFEFED` (grey-200) | `#2C2B30` (ink-600) |
+| surface-hover | `#F3F3F1` (grey-150) | `#343238` (ink-550) |
+| text | `#1C1B1F` (ink-800) | `#F6F2ED` (sand-100) |
+| text-muted | `#67666B` (grey-600) | `#BDB8B2` (sand-350) |
+| border-subtle | `#E2E2DF` (grey-300) | `#3D3B42` (ink-500) |
+
+### Elevation E0–E3 (guide §9)
+
+Strukturę budują powierzchnia + border + spacing + typografia; cień = element realnie unoszący się.
+Tokeny `--shadow-e1/e2/e3` (+ Tailwind `shadow-e1/e2/e3`); **E0 = brak cienia**.
+Główne CTA bez cienia · karty E0/E1 · dolna nawigacja/popover/FAB E2 · bottom sheet/modal E3.
+W dark elevation buduj tonalnie (poziom powierzchni) + delikatny cień.
+
+### Role borderów (guide §10)
+
+`border-subtle` (dekoracyjne, może mieć niski kontrast) · `border-control` (granica kontrolki,
+≥3:1) · `border-focus` = violet-400 · `border-danger`. Outline-only input → `border-control`;
+input z wypełnieniem `surface-muted` → `border-subtle`. *Polished edge (gradientowa krawędź) z guide
+§10 — jeszcze niewdrożone; do zaprojektowania na wybranych kartach.*
+
+### Wykresy (guide §8)
+
+Osobna warstwa `--color-chart-*` (Tailwind `chart-primary/secondary/positive/warning/neutral`) —
+**nie dziedziczy z CTA**. Kolejność serii: `chart-primary=violet-500`, `chart-secondary=rust-500`.
+Nie opieraj znaczenia wyłącznie na kolorze (etykiety/ikony/wzory).
+
+### Migracja `volt`
+
+Token `volt` (był aliasem `primary`/rust) **usunięty** — komponenty używają `primary`. „Athletic/volt"
+zamknięte definitywnie.

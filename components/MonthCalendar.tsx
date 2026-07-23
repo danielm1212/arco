@@ -83,7 +83,7 @@ export function MonthCalendar({
               key={c.key}
               className={`flex aspect-square items-center justify-center rounded-md text-xs tabular-nums ${
                 days.has(c.key) ? "" : "text-muted-foreground"
-              } ${c.key === todayKey ? "ring-1 ring-volt" : ""}`}
+              } ${c.key === todayKey ? "ring-1 ring-primary" : ""}`}
             >
               {days.has(c.key) ? (
                 <>

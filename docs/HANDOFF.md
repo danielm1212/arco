@@ -1,6 +1,6 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-22
+**Aktualizacja:** 2026-07-23
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
@@ -43,6 +43,18 @@ Na `main` i w migracjach są:
 
 Ostatni fix `61717e6` przywraca sticky nagłówek loggera przy globalnym safe area. Automatyczna
 regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
+
+**Design system (2026-07-23, DS-UI-v1.4, working tree, niezacommitowane):** wdrożone Fazy 1–2
+migracji „Arco UI v1.4" na warstwie tokenów — skala Violet + `support-*` (kolor uzupełniający:
+prowadzenie/plany/dane/wykresy), `chart-*`, elevation E1–E3, role `border-*`, chłodniejsze neutrale
+(canvas `#F7F7F5` / dark `#18171A`), focus ring → violet-400, `volt` usunięty (kolaps do `primary`).
+Kanon: `paleta-arco-warm.md` §„Adopcja Arco UI v1.4". Build/lint/unit zielone, weryfikacja wizualna
+(light+dark) OK. **Faza 3 — pierwszy slice wdrożony:** violet na `GuidanceChip`/`Sparkline`/
+`MuscleHeatmap`/`ProgramReviewInsight` + `Button variant="support"`, inputy na `border-control`,
+polished edge na karcie home. **Otwarte:** reszta mapowania violet per ekran; wizualna weryfikacja
+violet-surfaces wymaga konta z danymi (konto testowe puste). **Env:** `node_modules` ma duplikaty
+„ 2" (iCloud Desktop) — build tsc wywalał się na `@types/estree 2`, usunięte ad hoc; rozważyć
+`npm ci` + wyłączenie sync. Szczegóły w dzienniku koordynacji.
 
 ## 3. Stan planu
 

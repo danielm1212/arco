@@ -198,7 +198,7 @@ function ProgramRow({
           {/* Pełna nazwa (N2#1) — zawijanie zamiast ucinania */}
           <p className="break-words font-medium">{p.name}</p>
           {kind === "preset" && preferredFocus === "lower_body" && p.focus_key === preferredFocus && (
-            <span className="mt-2xs inline-flex rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+            <span className="mt-2xs inline-flex rounded-full bg-support/15 px-2 py-0.5 text-xs font-medium text-support">
               Pasuje do Twojego kierunku
             </span>
           )}

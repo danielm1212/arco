@@ -4,7 +4,7 @@ import Model from "react-body-highlighter";
 import { musclesToSlugCounts, heatmapData } from "@/lib/muscleMap";
 
 /** Heatmapa-sylwetka (anatomiczna, react-body-highlighter) — front + tył,
- *  mięśnie kolorowane volt wg liczby serii (3 poziomy intensywności). */
+ *  mięśnie kolorowane chart-primary (violet = dane) wg liczby serii (3 poziomy). */
 export function MuscleHeatmap({
   setsPerMuscle,
 }: {
@@ -13,9 +13,9 @@ export function MuscleHeatmap({
   const data = heatmapData(musclesToSlugCounts(setsPerMuscle));
   const bodyColor = "hsl(var(--muted-foreground) / 0.22)";
   const highlightedColors = [
-    "hsl(var(--volt) / 0.45)",
-    "hsl(var(--volt) / 0.72)",
-    "hsl(var(--volt))",
+    "hsl(var(--color-chart-primary) / 0.45)",
+    "hsl(var(--color-chart-primary) / 0.72)",
+    "hsl(var(--color-chart-primary))",
   ];
   const svgStyle = { width: "100%", height: "auto" } as const;
 
@@ -46,9 +46,9 @@ export function MuscleHeatmap({
 
       <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <span>mniej</span>
-        <span className="h-2 w-6 rounded-full bg-volt/45" />
-        <span className="h-2 w-6 rounded-full bg-volt/70" />
-        <span className="h-2 w-6 rounded-full bg-volt" />
+        <span className="h-2 w-6 rounded-full bg-chart-primary/45" />
+        <span className="h-2 w-6 rounded-full bg-chart-primary/70" />
+        <span className="h-2 w-6 rounded-full bg-chart-primary" />
         <span>więcej serii</span>
       </div>
     </div>

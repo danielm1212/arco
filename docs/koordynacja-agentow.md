@@ -22,6 +22,15 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-22 · Claude · odświeżenie skilli: 4 nowe + fix Notion→Linear
+
+- **Zakres:** `.claude/skills/` — cztery nowe skille + poprawka warstwy zadań. Gałąź `agent/skills-refresh`. Kod produktu, baza i produkcja nietknięte.
+- **Nowe skille:** `arco-content-review` (bezpieczeństwo treści ćwiczeń — kontrakt z backlog §3, blizny Hip Thrust/Chin-Up), `arco-debug` (systematyczna diagnoza — odtwórz na właściwej powierzchni → przyczyna → dowód → guard), `arco-session-start` (bezpieczny start przy wielu agentach — gałąź/WIP/rezerwacje przed edycją), `arco-a11y-review` (WCAG 2.1 AA — fokus/kontrast/targety/zoom/aria/długie PL; konsoliduje AA rozproszone po wytycznych/palecie/DoD; symetria do motion-review).
+- **Fix:** `arco-session-close` (krok 5) i `arco-release` (krok 6) mówiły „Notion" — poprawione na Linear, z zasadą **Linear tylko na prośbę właściciela**; lokalne docs zawsze. Dodany `docs/linear-workflow.md` (ściąga Linear dla zespołu).
+- **NIE dotknięto:** treści `arco-migration`/`arco-session-close` poza fixem Notion (dojrzałe, incydento-sterowane); żadnego kodu, migracji, danych.
+- **Dodatkowo (ta sama paczka):** `docs/workflow-zespolu.md` — standard współpracy Daniel+Piotr (PR-y, krótkie gałęzie, claim w Linear, `main` chroniony); `arco-release §4` zmieniony z „push na main" na „merge PR" (spójność z chronionym mainem). Do włączenia po stronie [Ty]: branch protection na `main` (require PR + status check „Jakość").
+- **Zaległości:** [Ty] review + merge PR gałęzi `agent/skills-refresh`; włączyć branch protection na `main`.
+
 ### 2026-07-22 · Claude · FIX 2 resztki buga sticky/sheet: nakładka safe-area + skok scrolla sheet-w-sheecie
 
 - **Zakres:** `app/session/[id]/Logger.tsx` (usunięty `-mt-[var(--safe-area-top)]` z kontenera),
@@ -281,6 +290,36 @@
 - **Dowód:** `audyt-core-i-plan-2026-07.md`; 91/91 unit, lint, walidacja treści i 60/60
   profili rekomendacji były zielone przed refinementem.
 - **Następny krok:** Q1, następnie rezerwacja DATA-01 w CORE-0.
+
+### 2026-07-23 · Claude · DS-UI-v1.4 (Fazy 1–2)
+
+- **Zakres:** migracja design systemu do „Arco UI v1.4" (guide z `Arco-Brand-System-v1.4`). Faza 1:
+  primitives Violet 50–900, tokeny `support-*`, `chart-*`, elevation E1–E3, role `border-*`. Faza 2:
+  neutrale na wartości guide (canvas `#F7F7F5` / dark `#18171A`, itd.; sand zostaje tylko pod
+  brand-surface), focus ring rust→violet-400, usunięcie martwego tokenu `volt` (kolaps do `primary`
+  w 6 plikach — bezstratne kolorystycznie).
+- **Pliki:** `app/globals.css`, `tailwind.config.ts`; komponenty: `SessionMiniBar`, `MonthCalendar`,
+  `MuscleHeatmap`, `RestTimer`, `SetRow`, `app/progress/sections.tsx`. Docs: `paleta-arco-warm.md`
+  (§„Adopcja Arco UI v1.4"), `wytyczne-designu.md` (checklist 2/7), `CLAUDE.md` (Kierunek UX/UI).
+- **Commit/stan:** working tree, niezacommitowane; baza i produkcja **nietknięte**.
+- **Testy:** `npm run build` zielony (TS OK), `npm run lint` czysty, `test:unit` 115/115. Weryfikacja
+  wizualna prod (localhost:3000) light+dark na koncie testowym — neutrale, CTA rust z ciemnym tekstem
+  w dark, focus/support/chart rozwiązują się do violet-400, `--volt` usunięty, zero błędów w konsoli.
+  Nieuruchomione (niezwiązane z kolorami): `test:overflow`, walidatory treści — zostają dla CI.
+- **Produkcja:** nietknięta.
+- **Faza 3 (pierwszy slice, ten sam dzień):** violet na kanonicznych powierzchniach prowadzenia/danych
+  — `GuidanceChip` (ikona → support), `Sparkline` + `MuscleHeatmap` → `chart-primary`,
+  `ProgramReviewInsight` (karta „Kolejny krok") w całości support + nowy wariant `Button variant="support"`.
+  Inputy: `--input` przepięty na `border-control` (mocniejsza krawędź kontrolki). Polished edge:
+  klasy `.surface-polished*` + zastosowane na karcie „Następny trening" (home). Reguła „jeden kolor
+  chromatyczny/komponent" zachowana (karta home z rust-CTA dostała tylko polished, bez fioletu w środku).
+- **Env (do wiadomości [Ty]):** `node_modules` ma masowe duplikaty „ 2" (Desktop pod iCloud Drive);
+  tsc wywalał build na `@types/estree 2`. Usunięto ten katalog ad hoc. Ryzyko powrotu — patrz Otwarte.
+- **Otwarte:** (1) reszta mapowania violet (onboarding, inne sekcje analityki, selected-secondary) —
+  do decyzji per ekran; (2) role borderów w inputach outline vs wypełnione — audyt; (3) weryfikacja
+  wizualna violet-surfaces wymaga konta z danymi (konto testowe puste — wykresy/guidance się nie
+  renderują); (4) `node_modules` — rozważyć `npm ci` i wyłączenie synchronizacji iCloud dla repo.
+- **Następny krok:** przegląd violet-surfaces na koncie z historią; decyzja o zakresie dalszego mapowania.
 
 ## Szablon rezerwacji
 

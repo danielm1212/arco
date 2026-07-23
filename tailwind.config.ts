@@ -55,11 +55,6 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Akcent-fill (terracotta): ✓ serii, mini-bar, streak, aktywne
-        volt: {
-          DEFAULT: "hsl(var(--volt))",
-          foreground: "hsl(var(--volt-foreground))",
-        },
         // Powierzchnia BRANDOWA (sand/krem) — hero, celebracja, onboarding; max 1/ekran
         brand: {
           DEFAULT: "hsl(var(--brand))",
@@ -70,6 +65,28 @@ const config: Config = {
         success: "hsl(var(--color-success))",
         warning: "hsl(var(--color-warning))",
         danger: "hsl(var(--color-danger))",
+        // Support (violet) — prowadzenie, plany, dane; oś uzupełniająca akcentu
+        support: {
+          DEFAULT: "hsl(var(--color-support))",
+          foreground: "hsl(var(--color-support-contrast))",
+          hover: "hsl(var(--color-support-hover))",
+          pressed: "hsl(var(--color-support-pressed))",
+          surface: "hsl(var(--color-support-surface))",
+          "surface-strong": "hsl(var(--color-support-surface-strong))",
+          "surface-text": "hsl(var(--color-support-surface-text))",
+        },
+        // Wykresy — osobna paleta serii, nie dziedziczy z CTA
+        chart: {
+          primary: "hsl(var(--color-chart-primary))",
+          secondary: "hsl(var(--color-chart-secondary))",
+          positive: "hsl(var(--color-chart-positive))",
+          warning: "hsl(var(--color-chart-warning))",
+          neutral: "hsl(var(--color-chart-neutral))",
+        },
+        // Role borderów (guide §10). border-subtle = domyślny `border`.
+        subtle: "hsl(var(--color-border-subtle))",
+        control: "hsl(var(--color-border-control))",
+        focus: "hsl(var(--color-border-focus))",
       },
       borderRadius: {
         xl: "var(--radius-xl)",
@@ -80,6 +97,9 @@ const config: Config = {
       boxShadow: {
         sm: "var(--shadow-sm)",
         md: "var(--shadow-md)",
+        e1: "var(--shadow-e1)",
+        e2: "var(--shadow-e2)",
+        e3: "var(--shadow-e3)",
       },
       spacing: {
         "2xs": "var(--space-2xs)",

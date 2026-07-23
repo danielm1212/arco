@@ -44,7 +44,7 @@ export function ProgramReviewInsight({
 
   return (
     <section
-      className="relative space-y-sm rounded-xl border border-primary/20 bg-primary/5 p-md"
+      className="relative space-y-sm rounded-xl border border-support/20 bg-support/5 p-md"
       aria-label="Wskazówka o przeglądzie planu"
     >
       <button
@@ -58,7 +58,7 @@ export function ProgramReviewInsight({
       >
         <X className="size-4" aria-hidden />
       </button>
-      <p className="pr-10 text-xs font-medium text-primary">Kolejny krok</p>
+      <p className="pr-10 text-xs font-medium text-support">Kolejny krok</p>
       <h2 className="pr-10 text-lg font-semibold">
         Masz już {completedSessions} treningów w tym planie
       </h2>
@@ -71,7 +71,7 @@ export function ProgramReviewInsight({
         <Button variant="outline" asChild>
           <Link href={`/programs/${programId}`}>Sprawdź plan</Link>
         </Button>
-        <Button asChild>
+        <Button asChild variant="support">
           <Link href="/programs">Porównaj opcje</Link>
         </Button>
       </div>

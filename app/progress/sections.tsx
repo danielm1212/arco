@@ -52,7 +52,7 @@ export function PeriodTabs({ activeKey }: { activeKey: string }) {
           aria-current={p.key === activeKey ? "page" : undefined}
           className={`flex min-h-11 flex-1 items-center justify-center rounded-md border px-2 text-center text-sm ${
             p.key === activeKey
-              ? "border-primary bg-primary/10 font-medium text-primary"
+              ? "border-support bg-support/10 font-medium text-support"
               : "border-input text-muted-foreground"
           }`}
         >
@@ -72,7 +72,7 @@ export function Stat({
   value: string;
   delta?: number | null;
 }) {
-  // S13: delta vs poprzedni okres — ↑ volt / ↓ stonowane / → neutralne (±10% = bez zmiany)
+  // S13: delta vs poprzedni okres — ↑ support (dane) / ↓ stonowane / → neutralne (±10% = bez zmiany)
   const d = delta == null ? null : delta >= 10 ? "up" : delta <= -10 ? "down" : "flat";
   return (
     <div className="rounded-xl bg-card p-sm text-center shadow-sm">
@@ -83,7 +83,7 @@ export function Stat({
       {d && (
         <p
           className={`mt-0.5 text-xs font-medium tabular-nums ${
-            d === "up" ? "text-primary" : "text-muted-foreground"
+            d === "up" ? "text-support" : "text-muted-foreground"
           }`}
         >
           {d === "up" ? "↑" : d === "down" ? "↓" : "→"} {delta! > 0 ? "+" : ""}
@@ -136,7 +136,7 @@ export function BalanceSection({
             </p>
             <Link
               href="/progress?okres=all"
-              className="flex min-h-11 shrink-0 items-center rounded-md border border-primary bg-primary/10 px-3 text-sm font-medium text-primary"
+              className="flex min-h-11 shrink-0 items-center rounded-md border border-support bg-support/10 px-3 text-sm font-medium text-support"
             >
               Pokaż wszystko
             </Link>
@@ -155,7 +155,7 @@ export function BalanceSection({
                   <span className="w-24 shrink-0 truncate capitalize">{m}</span>
                   <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
                     <div
-                      className="h-full rounded-full bg-primary"
+                      className="h-full rounded-full bg-chart-primary"
                       style={{ width: `${Math.max(8, (n / max) * 100)}%` }}
                     />
                   </div>

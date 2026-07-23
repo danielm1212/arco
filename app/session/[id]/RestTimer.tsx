@@ -76,7 +76,7 @@ export function RestTimer({
 
   if (done) {
     return (
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-volt pb-[env(safe-area-inset-bottom)] text-volt-foreground">
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-primary pb-[env(safe-area-inset-bottom)] text-primary-foreground">
         <div className="mx-auto flex max-w-md items-center gap-sm p-md">
           <p className="flex-1 text-base font-semibold">
             Koniec przerwy. Czas na serię! 💪
