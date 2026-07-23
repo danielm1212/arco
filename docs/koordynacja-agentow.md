@@ -27,8 +27,9 @@
 - **Zakres:** `.claude/skills/` — cztery nowe skille + poprawka warstwy zadań. Gałąź `agent/skills-refresh`. Kod produktu, baza i produkcja nietknięte.
 - **Nowe skille:** `arco-content-review` (bezpieczeństwo treści ćwiczeń — kontrakt z backlog §3, blizny Hip Thrust/Chin-Up), `arco-debug` (systematyczna diagnoza — odtwórz na właściwej powierzchni → przyczyna → dowód → guard), `arco-session-start` (bezpieczny start przy wielu agentach — gałąź/WIP/rezerwacje przed edycją), `arco-a11y-review` (WCAG 2.1 AA — fokus/kontrast/targety/zoom/aria/długie PL; konsoliduje AA rozproszone po wytycznych/palecie/DoD; symetria do motion-review).
 - **Fix:** `arco-session-close` (krok 5) i `arco-release` (krok 6) mówiły „Notion" — poprawione na Linear, z zasadą **Linear tylko na prośbę właściciela**; lokalne docs zawsze. Dodany `docs/linear-workflow.md` (ściąga Linear dla zespołu).
-- **NIE dotknięto:** treści `arco-migration`/`arco-release`/`arco-session-close` poza fixem Notion (dojrzałe, incydento-sterowane); żadnego kodu, migracji, danych.
-- **Zaległości:** [Ty] review + merge PR gałęzi `agent/skills-refresh`.
+- **NIE dotknięto:** treści `arco-migration`/`arco-session-close` poza fixem Notion (dojrzałe, incydento-sterowane); żadnego kodu, migracji, danych.
+- **Dodatkowo (ta sama paczka):** `docs/workflow-zespolu.md` — standard współpracy Daniel+Piotr (PR-y, krótkie gałęzie, claim w Linear, `main` chroniony); `arco-release §4` zmieniony z „push na main" na „merge PR" (spójność z chronionym mainem). Do włączenia po stronie [Ty]: branch protection na `main` (require PR + status check „Jakość").
+- **Zaległości:** [Ty] review + merge PR gałęzi `agent/skills-refresh`; włączyć branch protection na `main`.
 
 ### 2026-07-22 · Claude · FIX 2 resztki buga sticky/sheet: nakładka safe-area + skok scrolla sheet-w-sheecie
 

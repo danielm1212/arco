@@ -60,11 +60,14 @@ Zasady twarde: migracje wyłącznie przez `supabase/migrations`; żadnego re-see
 rozjazdy danych naprawiaj punktowym syncem znanych rekordów; service role tylko w skryptach
 i środowisku serwerowym, nigdy w repo ani logach.
 
-## 4. Deploy kodu
+## 4. Deploy kodu — przez PR, nie push na `main`
 
-1. `git push` na `main`.
-2. GitHub Actions: oba joby workflow „Jakość" zielone.
-3. Vercel: deployment dla wypchniętego SHA w stanie Ready/success.
+`main` jest chroniony i = produkcja. Nie pushuj bezpośrednio; praca idzie na krótkiej gałęzi
+(`<kto>/<opis>`, `agent/<opis>`). Model współpracy: `docs/workflow-zespolu.md`.
+
+1. Otwórz Pull Request na `main`.
+2. GitHub Actions: oba joby workflow „Jakość" zielone na PR.
+3. **Merge PR** → Vercel: deployment dla scalonego SHA w stanie Ready/success.
 
 ## 5. Weryfikacja proda — tylko przeglądarką
 
