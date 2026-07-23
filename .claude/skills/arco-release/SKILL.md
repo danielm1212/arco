@@ -83,8 +83,9 @@ i daje fałszywy alarm. W realnej przeglądarce sprawdź:
 - Zaktualizuj `docs/HANDOFF.md` (sekcje „Ostatnio domknięte" i „Następny krok").
 - Dopisz wpis do `docs/koordynacja-agentow.md` w formacie:
   `**data · kto (zakres): STATUS.** zakres / wynik z wynikami weryfikacji / czego nie dotknięto`.
-- Jeśli zmiana dotyczy backlogu — dopisz do `docs/notion-sync-queue.md`.
-  Notion synchronizuj tylko na wyraźną prośbę właściciela.
+- Jeśli zmiana dotyczy backlogu — zaktualizuj lokalny `backlog-produktu.md`. **Linear
+  aktualizujemy tylko na wyraźną prośbę właściciela** (konwencje: `docs/linear-workflow.md`),
+  nie automatycznie po deployu. Notion jest wygaszony.
 - Posprzątaj dane testowe po znanych ID i odnotuj to.
 
 ## Awaryjnie

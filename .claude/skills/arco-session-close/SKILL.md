@@ -1,6 +1,6 @@
 ---
 name: arco-session-close
-description: Higiena zamknięcia sesji agenta na repo arco — zwolnienie pasa w dzienniku koordynacji, aktualizacja HANDOFF, kolejka Notion, sprzątanie danych testowych i jawne przekazanie zaległości właścicielowi. Użyj na koniec każdej sesji roboczej, przy "zamknij sesję", "handoff", "kończymy", oraz przed przekazaniem pracy innej sesji.
+description: Higiena zamknięcia sesji agenta na repo arco — zwolnienie pasa w dzienniku koordynacji, aktualizacja HANDOFF, sprzątanie danych testowych i jawne przekazanie zaległości właścicielowi (Linear aktualizujemy tylko na jego prośbę). Użyj na koniec każdej sesji roboczej, przy "zamknij sesję", "handoff", "kończymy", oraz przed przekazaniem pracy innej sesji.
 ---
 
 # Zamknięcie sesji na repo arco
@@ -52,15 +52,20 @@ Nie zawyżaj statusu — „technicznie" to nie „zakończone".
 - „Otwarte ryzyka" — dodaj/zamknij pozycje, jeśli sesja je zmieniła.
 - Zmiana czysto dokumentacyjna lub w izolowanym prototypie nie wymaga ruszania HANDOFF.
 
-## 5. Kolejka Notion — `docs/notion-sync-queue.md`
+## 5. Zadania w Linear — na prośbę właściciela
 
-Jeśli praca zmienia backlog, dopisz pozycję w formacie kolejki:
+Warstwą operacyjną zadań jest **Linear** (od 2026-07-21 zastąpił Notion), ale nie jest
+kanonem. **Zawsze** aktualizuj lokalne źródła prawdy (`HANDOFF.md`, `koordynacja-agentow.md`,
+`backlog-produktu.md`). **Linear aktualizujemy wyłącznie na wyraźną prośbę właściciela** —
+nie po każdej sesji (zbędny hałas i koszt), dokładnie jak wcześniej Notion.
 
-```
-- [ ] CREATE/UPDATE | Tytuł karty | Priorytet | Kto | Status | — | Obszar | Notatka: RRRR-MM-DD — treść.
-```
+Gdy właściciel poprosi:
+- zaktualizuj status issues (In Progress → In Review/Done) i dodaj nowe pozycje z backlogu
+  jako issue we właściwym projekcie; konwencje w `docs/linear-workflow.md`;
+- **jeśli sesja nie ma połączenia z Linear** (część sesji Codex) — nie zgaduj: odnotuj
+  w dzienniku, które issues wymagają ręcznej aktualizacji (ID/nazwa + docelowy status).
 
-**Nie synchronizuj z Notion.** Sync wykonuje się wyłącznie na wyraźną prośbę właściciela.
+Notion jest wygaszony (`docs/notion-sync-queue.md` = zamknięte archiwum).
 
 ## 6. Ostatni rzut oka
 
