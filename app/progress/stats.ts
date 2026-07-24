@@ -6,6 +6,7 @@ import { localDayKey, computeStreak, dayOfWeek, weeksMeetingGoal } from "@/lib/w
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 import { joinMany, joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 import { weightToDisplay } from "@/lib/format";
+import { finishedSessions } from "@/lib/qualifiedFacts";
 
 /**
  * Warstwa danych trasy /progress — S9-cz.2 paczka 4: logika przeniesiona 1:1
@@ -35,10 +36,10 @@ async function periodStats(
   fromIso: string,
   toIso: string | null,
 ): Promise<PeriodStats> {
-  let q = supabase.from("sessions").select("id").gte("started_at", fromIso);
-  if (toIso) q = q.lt("started_at", toIso);
-  const { data: recent } = await q;
-  const ids = (recent ?? []).map((s) => s.id);
+  // DATA-03 (CORE-0): tylko zakończone sesje liczą się do agregatu okresu —
+  // otwarta sesja nie jest jeszcze kwalifikowanym faktem.
+  const recent = await finishedSessions(supabase, { gte: fromIso, lt: toIso ?? undefined });
+  const ids = recent.map((s) => s.id);
   const empty: PeriodStats = {
     sessionCount: ids.length,
     setCount: 0,
@@ -206,11 +207,9 @@ export async function getStrengthTrends(
   unit: UnitSystem,
 ): Promise<StrengthRow[]> {
   const strengthCutoff = new Date(Date.now() - 90 * 86_400_000).toISOString();
-  const { data: sSessions } = await supabase
-    .from("sessions")
-    .select("id, started_at")
-    .gte("started_at", strengthCutoff);
-  const sStart = new Map((sSessions ?? []).map((s) => [s.id, s.started_at]));
+  // DATA-03 (CORE-0): trend siły liczy się tylko z zakończonych sesji.
+  const sSessions = await finishedSessions(supabase, { gte: strengthCutoff });
+  const sStart = new Map(sSessions.map((s) => [s.id, s.started_at]));
   const sSessIds = [...sStart.keys()];
   const { data: sExs } = sSessIds.length
     ? await supabase

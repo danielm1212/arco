@@ -22,6 +22,55 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-24 · Claude · CORE-0 / DATA-03 — jedna definicja kwalifikowanego faktu: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** nowa migracja `20260724143658_data03_qualified_fact_finished_only.sql`
+  (`recompute_personal_records()`, `previous_working_set()`, `previous_session_sets()` — dodane
+  `s.finished_at is not null`), `lib/repPRs.ts` (zagnieżdżony filtr
+  `session_exercises.sessions.finished_at`), `app/exercise/[id]/page.tsx` (`sessions!inner` +
+  filtr), `app/progress/stats.ts` (`periodStats`/`getStrengthTrends` przez nowy
+  `lib/qualifiedFacts.ts::finishedSessions`), `scripts/smoke-phase2.ts` (poprawka testu —
+  patrz niżej). Gałąź `agent/core-0-data-03`.
+- **Znalezisko (audyt przed kodem):** grep + czytanie wszystkich miejsc agregujących
+  "fakt treningowy" (rekordy, trendy, Postępy, guidance) wykrył **pięć** miejsc bez warunku
+  `finished_at is not null` — seria zaliczona w OTWARTEJ sesji mogła utworzyć rekord, wejść
+  do trendu siły/e1RM, zasilić rep-PR albo "poprzedni wynik" progresji. Home (`app/page.tsx`)
+  i Ekipa (`team_streak_warsaw.sql` i inne funkcje) już miały ten warunek poprawnie —
+  potwierdzone czytaniem kodu przed jakąkolwiek zmianą, nie zgadywaniem.
+- **Kontrakt:** kwalifikowany fakt = zaliczona seria robocza (`completed=true`,
+  `set_type='working'`) w ZAKOŃCZONEJ sesji (`finished_at is not null`). Otwarta sesja może
+  pokazać wynik wyłącznie prowizorycznie w samym loggerze (już tak działało — nie ruszone).
+  Dwa niemal identyczne zapytania w `progress/stats.ts` scalone w jedną funkcję
+  `finishedSessions()` — realne "jedna definicja", nie pięć kopii tej samej reguły.
+- **Świadomie POZA zakresem, odnotowane jako finding:** `previous_working_set`/
+  `previous_session_sets` porządkują po `s.started_at desc limit 1` względem WSZYSTKICH innych
+  sesji — poprawne dla live loggingu (niezmiennik jednej otwartej sesji chroni), ale przy
+  edycji BARDZO starej historii z równolegle otwartym innym treningiem "poprzedni wynik" może
+  pokazać dane z sesji late-r niż ta edytowana (błędny kierunek czasu, nie tylko otwarta-vs-
+  zakończona). Rzadki przypadek, osobny problem od tego, co naprawia DATA-03 — zgłoszony w
+  HANDOFF/planie, nie naprawiony w tym PR (jeden PR = jedno zadanie).
+- **Dowód:** `npm run build` zielony; Docker padł w trakcie (`supabase_db_arco` exited 137,
+  `realtime` crash-loop) po nieudanym pierwszym `db reset` — naprawione `supabase stop` +
+  `supabase start` (dane odtworzone z wolumenu, zero utraty), potem `db reset` przeszedł
+  czysto z nową migracją. `npm run seed` → 907/15/308; `validate:training`/
+  `validate:recommendations` zielone; lint czysty; `test:unit` 117/117; `smoke`/`smoke:offline`
+  zielone. **`smoke:phase2` początkowo czerwony** („PR max_weight = undefined, oczekiwano 120")
+  — test tworzył sesję BEZ `finished_at` i oczekiwał policzonego rekordu: dokładnie stary,
+  błędny kontrakt, który DATA-03 świadomie zamyka. Naprawione dodaniem `finished_at` przy
+  tworzeniu sesji testowej; po poprawce zielony.
+- **Weryfikacja end-to-end w przeglądarce (świeże konto):** zalogowano 150kg×3 w OTWARTEJ
+  sesji freestyle → `/exercise/Barbell_Squat` poprawnie „Jeszcze go nie robiłeś" (zero
+  historii/rekordów/trendu) → `/progress` poprawnie 0 sesji/0 serii/0 objętości/brak rekordów
+  → zakończono sesję → te same strony natychmiast poprawnie pokazują 150kg, e1RM 165kg,
+  objętość 450kg, rekord 3 powt./150kg → nowa druga sesja z tym samym ćwiczeniem poprawnie
+  czyta "poprzedni wynik": „Cel na dziś: 150kg × 4+ powt. (ostatnio 3)". Oba konta testowe
+  usunięte po ID po weryfikacji.
+- **Czego nie dotknięto:** produkcji, SYNC-01, `body_metrics`, kierunku czasu w
+  `previous_working_set`/`previous_session_sets` (odnotowane, nie naprawione).
+- **Następny krok:** [Ty] otworzyć/zmergować PR `agent/core-0-data-03`, potem release migracji
+  (`arco-release`, dry-run). Ostatni kawałek CORE-0: **SYNC-01** (trwały błąd outboxa nie
+  blokuje kolejki).
+
 ### 2026-07-24 · Claude · CORE-0 / DATA-02 — kanoniczne jednostki ciężaru: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `lib/format.ts` (nowe `weightToDisplay`/`weightToCanonicalKg`, `formatSet`

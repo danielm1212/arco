@@ -169,8 +169,8 @@ action (`assertCompletableSet` w `app/actions/sets.ts` dla `addSet`/`upsertSet`/
 i DB (trigger `assert_valid_completed_set`, ostatnia linia obrony). Draft (`completed=false`)
 z pustymi polami pozostaje zawsze dozwolony.
 
-**Stan DATA-02:** zaimplementowane na `agent/core-0-data-02`, PR
-[#15](https://github.com/danielm1212/arco/pull/15) czeka na review/merge. kg jest
+**Stan DATA-02:** ZAKOŃCZONE, PR [#15](https://github.com/danielm1212/arco/pull/15) scalony do
+`main`. kg jest
 teraz kanoniczną jednostką zapisu — `session_sets.weight`/`added_weight` zawsze w kg,
 `unit_system` jest wyłącznie preferencją prezentacji. Granica konwersji: `lib/format.ts`
 (`weightToDisplay`/`weightToCanonicalKg`, nowe), wejście w `SetRow.tsx` (kg state ↔ display
@@ -190,6 +190,33 @@ end-to-end na koncie `lbs`: wpis 225lbs×5 → baza `102.06`kg (225×0,45359237)
 → Historia „225lbs × 5", e1RM „262,6lbs" → `/exercise/[id]` trend+rekord zgodne → `/progress`
 objętość+rekordy zgodne. `smoke:team` nie uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`,
 niezwiązane.
+
+**Stan DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR
+[#16](https://github.com/danielm1212/arco/pull/16) czeka na review/merge. Audyt
+wykrył **pięć** miejsc liczących "fakt treningowy" bez sprawdzenia `sessions.finished_at is
+not null` — seria zaliczona w OTWARTEJ sesji mogła utworzyć rekord, wejść do trendu siły,
+zasilić rep-PR albo "poprzedni wynik" w guidance, mimo że spec wymaga: sesja otwarta pokazuje
+wynik wyłącznie prowizorycznie w loggerze. Home (`app/page.tsx`) i Ekipa (funkcje DB
+`team_streak_warsaw.sql`) już miały ten warunek poprawnie — DATA-03 domyka resztę do tej samej
+definicji: `recompute_personal_records()`, `previous_working_set()`/`previous_session_sets()`
+(migracja `20260724143658_data03_qualified_fact_finished_only.sql`), `lib/repPRs.ts`
+(zagnieżdżony filtr `session_exercises.sessions.finished_at`), `app/exercise/[id]/page.tsx`
+(`sessions!inner` + filtr) oraz `periodStats`/`getStrengthTrends` w `app/progress/stats.ts`
+(nowy współdzielony `lib/qualifiedFacts.ts::finishedSessions` — jedna definicja zamiast dwóch
+niezależnie powtórzonych zapytań). **Poza zakresem, odnotowane, nie naprawione:** funkcje
+`previous_working_set`/`previous_session_sets` wybierają globalnie najnowszą inną sesję po
+`started_at`, nie sesję czasowo poprzedzającą przeglądaną — przy edycji bardzo starej historii
+"poprzedni wynik" może pokazać coś z późniejszego treningu. Rzadki przypadek (edycja starej
+sesji przy jednoczesnym innym otwartym treningu), osobny finding, nie rozszerzony tutaj.
+Zweryfikowane: 117/117 unit, lint, build, `db reset` na świeżej bazie, walidatory, smoke
+phase1/offline zielone; **smoke:phase2 wymagał poprawki** (`scripts/smoke-phase2.ts` tworzył
+sesję bez `finished_at` i oczekiwał, że policzy się rekord — to był dokładnie stary, błędny
+kontrakt; naprawione dodaniem `finished_at` przy tworzeniu sesji testowej). Manualna
+weryfikacja end-to-end: seria 150kg×3 w OTWARTEJ sesji → `/exercise/[id]` i `/progress`
+poprawnie pokazują zero (brak historii/rekordów/objętości) → po zakończeniu sesji te same
+strony poprawnie pokazują 150kg/165kg e1RM/450kg objętości → druga, nowa sesja poprawnie
+odczytuje "poprzedni wynik" (guidance: "Cel na dziś: 150kg × 4+ powt. (ostatnio 3)").
+`smoke:team` nie uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`, niezwiązane.
 
 - DATA-01: zakończona seria ma wynik wymagany przez typ ćwiczenia; ten sam guard działa
   w UI, Server Action i bazie/RPC;

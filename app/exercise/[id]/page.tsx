@@ -52,12 +52,15 @@ export default async function ExercisePage(props: {
   // Agregacja po exercise_id (brief: widok exercise-first).
   // Cap do 100 ostatnich wystąpień (audyt P2): bez limitu zapytanie rosło bez
   // końca ze stażem konta; sort po joinie, żeby limit ciął najstarsze.
+  // DATA-03 (CORE-0): historia/trend ćwiczenia liczy się tylko z zakończonych
+  // sesji — `sessions!inner` + filtr finished_at pozwalają odciąć otwartą sesję.
   const { data: occurrences } = await supabase
     .from("session_exercises")
     .select(
-      "id, sessions(started_at), session_sets(set_index, set_type, weight, reps, duration_seconds, added_weight, completed)",
+      "id, sessions!inner(started_at, finished_at), session_sets(set_index, set_type, weight, reps, duration_seconds, added_weight, completed)",
     )
     .eq("exercise_id", exerciseId)
+    .not("sessions.finished_at", "is", null)
     .order("sessions(started_at)", { ascending: false, nullsFirst: false })
     .limit(100);
 
