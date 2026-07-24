@@ -8,6 +8,7 @@ import { CountUpNumber } from "./CountUpNumber";
 import { weekStart, computeStreak, weeksMeetingGoal } from "@/lib/week";
 import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatGoalProgress } from "@/lib/programRecommendation";
+import { weightToDisplay } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -122,7 +123,7 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
   // hierarchię robi animowana liczba-bohater + nagłówek. Sesja bez zaliczonych
   // serii nie celebruje zer: hero i staty znikają, zostaje nagłówek i CTA.
   const hero = volume > 0
-    ? { value: Math.round(volume), unit, label: "tyle dziś uniosłeś" }
+    ? { value: Math.round(weightToDisplay(volume, unit)), unit, label: "tyle dziś uniosłeś" }
     : totalReps > 0
       ? { value: totalReps, unit: "powt.", label: "tyle powtórzeń zrobiłeś" }
       : { value: totalSeconds, unit: "s", label: "tyle czasu pracowałeś" };

@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { Button } from "@/components/ui/button";
 import type { SessionSet, UnitSystem } from "@/lib/types";
-import { formatSet } from "@/lib/format";
+import { formatSet, weightToDisplay } from "@/lib/format";
 import { DateEditor } from "./DateEditor";
 import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import { PageHeader } from "@/components/navigation/PageHeader";
@@ -141,7 +141,7 @@ export default async function SessionDetailPage(props: {
           </div>
           <div className="rounded-xl bg-card p-sm text-center shadow-sm">
             <p className="font-display text-2xl tabular-nums">
-              {Math.round(volume).toLocaleString("pl-PL")}
+              {Math.round(weightToDisplay(volume, unit)).toLocaleString("pl-PL")}
             </p>
             <p className="text-xs text-muted-foreground">objętość {unit}</p>
           </div>
@@ -168,8 +168,9 @@ export default async function SessionDetailPage(props: {
                 <li key={i} className="flex items-center justify-between">
                   <span className="truncate">{p.name}</span>
                   <span className="shrink-0 text-muted-foreground">
-                    {p.label} {p.value}
-                    {p.label === "ciężar" || p.label === "e1RM" ? unit : ""}
+                    {p.label === "ciężar" || p.label === "e1RM"
+                      ? `${weightToDisplay(p.value, unit)}${unit}`
+                      : p.value}
                   </span>
                 </li>
               ))}

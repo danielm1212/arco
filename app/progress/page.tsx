@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { ProgressSubnav } from "@/components/navigation/ProgressSubnav";
 import type { UnitSystem } from "@/lib/types";
+import { weightToDisplay } from "@/lib/format";
 import {
   PERIODS,
   getActivity,
@@ -82,7 +83,7 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
           <Stat label="Serie" value={String(cur.setCount)} delta={deltas.sets} />
           <Stat
             label={`Objętość ${unit}`}
-            value={Math.round(cur.volume).toLocaleString("pl-PL")}
+            value={Math.round(weightToDisplay(cur.volume, unit)).toLocaleString("pl-PL")}
             delta={deltas.volume}
           />
         </section>

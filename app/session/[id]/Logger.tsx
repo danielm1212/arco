@@ -14,6 +14,8 @@ import { ChevronDown, ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { reorderExercise } from "@/app/actions/sets";
 import { ensureOnline } from "@/lib/offlineGuard";
+import { weightToDisplay } from "@/lib/format";
+import { WEIGHT_REVIEW_KG, VERY_HIGH_WEIGHT_REVIEW_KG } from "@/lib/setValidation";
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseCard } from "./ExerciseCard";
@@ -329,7 +331,7 @@ export function Logger({
           <span className="inline-flex items-center gap-1">
             <Dumbbell className="size-3.5" />
             <span className="font-medium text-foreground">
-              {Math.round(volume).toLocaleString("pl-PL")}
+              {Math.round(weightToDisplay(volume, unit)).toLocaleString("pl-PL")}
               {unit}
             </span>
           </span>
@@ -484,20 +486,20 @@ export function Logger({
         {weightReview && (
           <div className="space-y-md">
             <p className="text-sm text-muted-foreground">
-              Chcesz zaliczyć <span className="font-semibold text-foreground">{weightReview.set.weight} {unit} × {weightReview.set.reps ?? "—"}</span> w ćwiczeniu {weightReview.ex.name}.
+              Chcesz zaliczyć <span className="font-semibold text-foreground">{weightToDisplay(weightReview.set.weight ?? 0, unit)} {unit} × {weightReview.set.reps ?? "—"}</span> w ćwiczeniu {weightReview.ex.name}.
             </p>
             <ul className="space-y-xs rounded-lg bg-warning/10 p-sm text-sm text-warning">
               {weightReview.review.reasons.includes("high_weight") && (
-                <li>To więcej niż {300} {unit}. Sprawdź, czy ciężar jest wpisany poprawnie.</li>
+                <li>To więcej niż {weightToDisplay(WEIGHT_REVIEW_KG, unit)} {unit}. Sprawdź, czy ciężar jest wpisany poprawnie.</li>
               )}
               {weightReview.review.reasons.includes("very_high_weight") && (
-                <li>To więcej niż 500 {unit}. Zapisz go tylko, jeśli na pewno nie ma pomyłki.</li>
+                <li>To więcej niż {weightToDisplay(VERY_HIGH_WEIGHT_REVIEW_KG, unit)} {unit}. Zapisz go tylko, jeśli na pewno nie ma pomyłki.</li>
               )}
               {weightReview.review.reasons.includes("large_jump") && (
                 <li>
                   To ponad 50% więcej niż Twój dotychczasowy prawidłowy wynik
                   {weightReview.review.previousWeight != null
-                    ? ` (${weightReview.review.previousWeight} ${unit})`
+                    ? ` (${weightToDisplay(weightReview.review.previousWeight, unit)} ${unit})`
                     : ""}.
                 </li>
               )}

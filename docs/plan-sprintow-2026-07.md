@@ -162,18 +162,33 @@ fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 (czeka na zewnętrzne wsparcie) nie blokuje CORE-0** — integralność danych jest osobną osią
 od rotacji sekretu; jedyne zadanie realnie zablokowane przez SEC-03 to TRAIN-02A4.
 
-**Stan DATA-01:** zaimplementowane na `agent/core-0-data-01`, PR otwarty. Wspólny guard w
-trzech warstwach — `lib/setValidation.ts` (`getCompletionBlockReason`), UI
-(`useSessionMutations.ts` blokuje `handleToggle`/`handleTimedComplete` z toastem), server
+**Stan DATA-01:** ZAKOŃCZONE, PR [#14](https://github.com/danielm1212/arco/pull/14) scalony do
+`main`. Wspólny guard w trzech warstwach — `lib/setValidation.ts` (`getCompletionBlockReason`),
+UI (`useSessionMutations.ts` blokuje `handleToggle`/`handleTimedComplete` z toastem), server
 action (`assertCompletableSet` w `app/actions/sets.ts` dla `addSet`/`upsertSet`/`updateSet`)
-i DB (trigger `assert_valid_completed_set` w nowej migracji, ostatnia linia obrony). Draft
-(`completed=false`) z pustymi polami pozostaje zawsze dozwolony. Zweryfikowane: 116/116 unit
-(nowy test `getCompletionBlockReason`), lint, build, `db reset` na świeżej bazie, walidatory
-(907/15/308, 60/60), smoke phase1/phase2/offline zielone, ręczny SQL scratch-test triggera
-(7 przypadków: weighted/bodyweight/timed × odrzucone/przyjęte + draft zawsze przechodzi,
-transakcja wycofana, zero trwałych danych), oraz manualna weryfikacja w przeglądarce (toast
-blokujący pustą serię, normalne zaliczenie po wpisaniu wartości). `smoke:team` nie uruchomiony
-— brak lokalnego `TEAM_TEST_PASSWORD`, niezwiązane z tą zmianą.
+i DB (trigger `assert_valid_completed_set`, ostatnia linia obrony). Draft (`completed=false`)
+z pustymi polami pozostaje zawsze dozwolony.
+
+**Stan DATA-02:** zaimplementowane na `agent/core-0-data-02`, PR czeka na otwarcie. kg jest
+teraz kanoniczną jednostką zapisu — `session_sets.weight`/`added_weight` zawsze w kg,
+`unit_system` jest wyłącznie preferencją prezentacji. Granica konwersji: `lib/format.ts`
+(`weightToDisplay`/`weightToCanonicalKg`, nowe), wejście w `SetRow.tsx` (kg state ↔ display
+string), wszystkie miejsca wyświetlające wagę (Logger volume+dialog przeglądu, guidance
+progresji, exercise/[id] trend+rekordy, history/[id] objętość+PR, done/page hero, progress
+stats+sections). Logika domenowa (walidacja, e1RM, rekordy, LIMITS.weight) zostaje w kg bez
+zmian — konwersja żyje wyłącznie na granicy prezentacji. Migracja
+`20260724141047_data02_canonical_kg_weights.sql` przelicza istniejące konta `unit_system='lbs'`
+z funtów na kg (jednorazowo, `WHERE unit_system='lbs'` — na świeżej/pustej bazie no-op).
+Świadomie POZA zakresem: `body_metrics.weight` (Postępy/Ciało) ma tę samą klasę problemu, ale
+to osobna tabela/funkcja — zgłoszone jako follow-up, nie rozszerzone w tym PR.
+Zweryfikowane: 117/117 unit (nowe testy `weightToDisplay`/`weightToCanonicalKg` + poprawiony
+`formatSet` na `lbs`, który wcześniej testował błędne zachowanie „brak konwersji"), lint,
+build, `db reset` na świeżej bazie (migracja no-op), walidatory (907/15/308, 60/60), smoke
+phase1/phase2/offline zielone (konto domyślne `kg`, transparentne). Manualna weryfikacja
+end-to-end na koncie `lbs`: wpis 225lbs×5 → baza `102.06`kg (225×0,45359237) → Done „1125lbs"
+→ Historia „225lbs × 5", e1RM „262,6lbs" → `/exercise/[id]` trend+rekord zgodne → `/progress`
+objętość+rekordy zgodne. `smoke:team` nie uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`,
+niezwiązane.
 
 - DATA-01: zakończona seria ma wynik wymagany przez typ ćwiczenia; ten sam guard działa
   w UI, Server Action i bazie/RPC;

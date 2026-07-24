@@ -5,6 +5,7 @@ import { setMetric } from "@/lib/exerciseMetrics";
 import { localDayKey, computeStreak, dayOfWeek, weeksMeetingGoal } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 import { joinMany, joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
+import { weightToDisplay } from "@/lib/format";
 
 /**
  * Warstwa danych trasy /progress — S9-cz.2 paczka 4: logika przeniesiona 1:1
@@ -258,9 +259,12 @@ export async function getStrengthTrends(
   });
   return [...byExSession.entries()]
     .map(([id, e]) => {
-      const series = [...e.perSession.entries()]
+      // DATA-02: e1RM (weighted) jest w kanonicznym kg — konwersja do jednostki
+      // profilu dopiero tutaj, na granicy zwracanej do prezentacji (progress/page.tsx).
+      const rawSeries = [...e.perSession.entries()]
         .sort((a, b) => +new Date(sStart.get(a[0])!) - +new Date(sStart.get(b[0])!))
         .map(([, v]) => v);
+      const series = e.type === "weighted" ? rawSeries.map((v) => weightToDisplay(v, unit)) : rawSeries;
       const last = series[series.length - 1];
       const delta = series.length >= 2 ? Math.round((last - series[0]) * 10) / 10 : 0;
       const suffix = e.type === "weighted" ? unit : e.type === "timed" ? "s" : "";

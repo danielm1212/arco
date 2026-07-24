@@ -99,7 +99,7 @@ niewidoczne lub nieużywane rekordy są bezpiecznie ukryte.
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
 | DATA-01 | Prawidłowa zakończona seria | Wymagane pola wg typu ćwiczenia; wspólny guard UI/server/DB; pusta seria nie kończy treningu | zaimplementowane i zweryfikowane lokalnie 2026-07-24 (`agent/core-0-data-01`) |
-| DATA-02 | Kanoniczne jednostki ciężaru | Dane w jednej jednostce, konwersja w UI, backup i jawna migracja istniejących kont | gotowe do podjęcia po DATA-01 |
+| DATA-02 | Kanoniczne jednostki ciężaru | Dane w jednej jednostce, konwersja w UI, backup i jawna migracja istniejących kont | zaimplementowane i zweryfikowane lokalnie 2026-07-24 (`agent/core-0-data-02`) |
 | DATA-03 | Jedna definicja faktu treningowego | Zakończona sesja, prawidłowa zaliczona seria robocza, niepominięte ćwiczenie; wspólne dla wszystkich pochodnych | gotowe do podjęcia po DATA-01 |
 | SYNC-01 | Trwały błąd nie blokuje outboxa | Rozróżnienie retry/quarantine, odzyskiwalny zapis błędu i flush bieżącej sesji przed finish | gotowe do podjęcia po DATA-01 |
 

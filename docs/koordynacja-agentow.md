@@ -22,6 +22,53 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-24 · Claude · CORE-0 / DATA-02 — kanoniczne jednostki ciężaru: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `lib/format.ts` (nowe `weightToDisplay`/`weightToCanonicalKg`, `formatSet`
+  konwertuje), `app/session/[id]/SetRow.tsx` (granica wejścia: kg state ↔ display string dla
+  `weight`/`added_weight`, max/placeholder też w jednostce profilu), `app/session/[id]/Logger.tsx`
+  (objętość + dialog przeglądu wagi, progi 300/500 z `setValidation` zamiast magic numbers),
+  `lib/guidance.ts` (`progressionTarget` konwertuje `prev.weight`/`repPR.weight` do jednostki
+  profilu tuż przed budową tekstu), `app/exercise/[id]/page.tsx` (trend + rekordy powtórzeń),
+  `app/history/[id]/page.tsx` (objętość + lista PR), `app/session/[id]/done/page.tsx` (hero
+  objętości), `app/progress/stats.ts` (`getStrengthTrends`), `app/progress/page.tsx`
+  (`cur.volume`), `app/progress/sections.tsx` (`RecordsSection`). Nowa migracja
+  `20260724141047_data02_canonical_kg_weights.sql` (trigger nie dotyczy — to zwykły UPDATE
+  jednorazowy). Gałąź `agent/core-0-data-02`.
+- **Kontrakt:** kg jest kanoniczną jednostką zapisu wszędzie (React state, server action, DB) —
+  `unit_system` jest WYŁĄCZNIE preferencją prezentacji. Logika domenowa (walidacja zakresów,
+  e1RM, `recompute_personal_records`, `LIMITS.weight`) zostaje w kg bez żadnych zmian; konwersja
+  żyje wyłącznie na granicy input/output. Migracja przelicza istniejące konta `unit_system='lbs'`
+  z funtów na kg (jednorazowo, `WHERE unit_system='lbs'`) — dziś brak takich kont, więc na
+  świeżej/produkcyjnej bazie to bezpieczny no-op; zapisane na przyszłość.
+- **Świadomie POZA zakresem:** `user_settings.bar_weight`/`available_plates` — sprawdzone w
+  kodzie: zero odwołań poza wygenerowanymi typami, nigdy nie mają UI do edycji, zawsze
+  domyślne z bootstrapu w kg — migracja by je BŁĘDNIE przeliczyła, gdyby je dotknęła (nigdy nie
+  były w jednostce profilu). `body_metrics.weight` (Postępy/Ciało) ma identyczną klasę problemu
+  (kg/lbs jako etykieta bez konwersji w `BodyForm.tsx`), ale to osobna tabela i osobny ekran —
+  zgłoszone jako follow-up w HANDOFF, nie rozszerzone tutaj (jeden PR = jedno zadanie).
+- **Dowód:** `npm run build` zielony; `supabase db reset` czysty na świeżej bazie (migracja
+  no-op, 0 wierszy); `npm run seed` → 907/15/308; `validate:training`/`validate:recommendations`
+  zielone (17 placeholderów bez wzrostu, 60/60); lint czysty; `test:unit` **117/117** (nowy test
+  `weightToDisplay`/`weightToCanonicalKg` + poprawiony `formatSet` na `lbs` — stary test
+  asercjonował błędne zachowanie „60kg → wyświetl 60lbs", teraz poprawnie „60kg → 132.3lbs");
+  `smoke`/`smoke:phase2`/`smoke:offline` zielone (konto domyślne `kg`, transparentne, bez
+  regresji happy path). `smoke:team` NIE uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`,
+  niezwiązane.
+- **Weryfikacja end-to-end w przeglądarce (świeże konto, `unit_system` przełączony na `lbs`
+  przez UI Ustawień):** dodano serię 225lbs × 5 we freestyle treningu (Barbell Squat) →
+  zapis w bazie potwierdzony bezpośrednim SQL: `weight=102.06` (=225×0,45359237, kanoniczny kg)
+  → UI natychmiast po zaliczeniu nadal pokazuje „225" (round-trip transparentny) → Done: „1125
+  lbs" (objętość 225×5, poprawnie w lbs, nie w kg) → Historia: „objętość 1125 lbs",
+  „225lbs × 5", rekordy „225lbs"/„262.6lbs" e1RM → `/exercise/Barbell_Squat`: trend „262.6lbs",
+  rekord powtórzeń „5 powt. 225 lbs" → `/progress`: „1125 Objętość lbs",
+  „e1RM 262.6lbs · maks. 225lbs". Wszystkie liczby matematycznie spójne (e1RM Epley:
+  102.06×(1+5/30)=119.1kg→262.6lbs). Konto testowe usunięte po ID po weryfikacji.
+- **Czego nie dotknięto:** produkcji, DATA-03, SYNC-01, `body_metrics`/Postępy-Ciało (follow-up).
+- **Następny krok:** [Ty] otworzyć/zmergować PR `agent/core-0-data-02`, potem release migracji
+  (`arco-release`, dry-run — migracja jest no-op dziś, ale i tak przez pełną procedurę).
+  Kolejny kawałek CORE-0: DATA-03 (jedna definicja kwalifikowanego faktu treningowego).
+
 ### 2026-07-24 · Claude · CORE-0 / DATA-01 — poprawna zakończona seria: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `lib/setValidation.ts` (nowa `getCompletionBlockReason`), `app/session/[id]/useSessionMutations.ts`
