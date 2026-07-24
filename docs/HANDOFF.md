@@ -112,7 +112,8 @@ koordynacji (2026-07-23).
   (`session_sets.weight`/`added_weight`); `unit_system` jest wyłącznie preferencją prezentacji.
   **Poza zakresem — follow-up:** `body_metrics.weight` (Postępy/Ciało) ma tę samą klasę
   problemu (kg/lbs jako etykieta bez konwersji), osobna tabela/funkcja, niedotknięta.
-- **CORE-0 / DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR czeka na otwarcie.
+- **CORE-0 / DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR
+  [#16](https://github.com/danielm1212/arco/pull/16) czeka na review/merge.
   Audyt wykrył pięć miejsc liczących fakt treningowy bez `sessions.finished_at is not null`:
   `recompute_personal_records()`, `previous_working_set`/`previous_session_sets` (migracja
   `20260724143658_data03_qualified_fact_finished_only.sql`), `lib/repPRs.ts`,
@@ -189,7 +190,8 @@ koordynacji (2026-07-23).
    czeka też na odwołanie z punktu 1.
 3. **CORE-0 w toku (Claude, 2026-07-24):** integralność danych nie zależy technicznie od
    SEC-03, więc jedzie równolegle. **DATA-01 i DATA-02 scalone** (PR #14, #15). **DATA-03
-   zaimplementowane** na `agent/core-0-data-03`, PR do otwarcia [Ty] review/merge. Następne:
+   zaimplementowane** na `agent/core-0-data-03`, PR
+   [#16](https://github.com/danielm1212/arco/pull/16) czeka na review/merge [Ty]. Następne:
    SYNC-01 (outbox) — ostatni kawałek CORE-0. Follow-upy poza CORE-0: `body_metrics.weight`
    (jednostki, jak DATA-02) i `previous_working_set`/`previous_session_sets` liczące najnowszą
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).

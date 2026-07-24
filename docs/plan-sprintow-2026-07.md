@@ -191,7 +191,8 @@ end-to-end na koncie `lbs`: wpis 225lbs×5 → baza `102.06`kg (225×0,45359237)
 objętość+rekordy zgodne. `smoke:team` nie uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`,
 niezwiązane.
 
-**Stan DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR czeka na otwarcie. Audyt
+**Stan DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR
+[#16](https://github.com/danielm1212/arco/pull/16) czeka na review/merge. Audyt
 wykrył **pięć** miejsc liczących "fakt treningowy" bez sprawdzenia `sessions.finished_at is
 not null` — seria zaliczona w OTWARTEJ sesji mogła utworzyć rekord, wejść do trendu siły,
 zasilić rep-PR albo "poprzedni wynik" w guidance, mimo że spec wymaga: sesja otwarta pokazuje
