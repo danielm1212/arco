@@ -31,9 +31,11 @@ async function main() {
 
 
   // 2. Przeliczanie PR + e1RM (Epley)
+  // DATA-03 (CORE-0): rekordy liczą się tylko z ZAKOŃCZONYCH sesji — bez
+  // finished_at recompute_personal_records świadomie pomija te serie.
   const { data: sess } = await sb
     .from("sessions")
-    .insert({ user_id: uid, program_day_id: null })
+    .insert({ user_id: uid, program_day_id: null, finished_at: new Date().toISOString() })
     .select("id")
     .single();
   const { data: se } = await sb

@@ -18,13 +18,19 @@ export async function getRepPRs(
   excludeSessionId?: string,
 ): Promise<RepPRMap> {
   if (exerciseIds.length === 0) return {};
+  // DATA-03 (CORE-0): rep-PR liczą się tylko z zakończonych sesji — bez tego
+  // filtru, seria zaliczona w innej otwartej sesji (np. przy edycji starej
+  // historii, gdy równolegle trwa nowy trening) zawyżałaby rekord do pobicia.
   let q = supabase
     .from("session_sets")
-    .select("weight, reps, session_exercises!inner(exercise_id, session_id)")
+    .select(
+      "weight, reps, session_exercises!inner(exercise_id, session_id, sessions!inner(finished_at))",
+    )
     .eq("completed", true)
     .eq("set_type", "working")
     .not("weight", "is", null)
     .not("reps", "is", null)
+    .not("session_exercises.sessions.finished_at", "is", null)
     .in("session_exercises.exercise_id", exerciseIds);
   if (excludeSessionId) q = q.neq("session_exercises.session_id", excludeSessionId);
   const { data } = await q;

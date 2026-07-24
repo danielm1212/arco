@@ -107,21 +107,25 @@ koordynacji (2026-07-23).
   scalony do `main`. Zaliczona seria wymaga wyniku właściwego dla typu ćwiczenia (weighted:
   ciężar+powtórzenia; bodyweight: powtórzenia; timed: czas > 0) w trzech warstwach — UI,
   server action (`assertCompletableSet`) i DB (trigger `assert_valid_completed_set`).
-- **CORE-0 / DATA-02:** zaimplementowane na `agent/core-0-data-02`, PR
-  [#15](https://github.com/danielm1212/arco/pull/15) czeka na review/merge.
-  kg jest teraz kanoniczną jednostką zapisu ciężaru (`session_sets.weight`/`added_weight`);
-  `unit_system` jest wyłącznie preferencją prezentacji. Konwersja (`weightToDisplay`/
-  `weightToCanonicalKg` w `lib/format.ts`) żyje na granicy wejścia (SetRow) i wszystkich miejsc
-  wyświetlania wagi (Logger, guidance, exercise/[id], history/[id], done, progress) — logika
-  domenowa (walidacja, e1RM, rekordy) zostaje w kg bez zmian. Migracja
-  `20260724141047_data02_canonical_kg_weights.sql` przelicza istniejące konta `unit_system='lbs'`
-  z funtów na kg jednorazowo (świeża baza = no-op). Zweryfikowane: 117/117 unit, lint, build,
-  `db reset`, walidatory, smoke phase1/phase2/offline zielone, **oraz manualny test end-to-end
-  na koncie `lbs`** (225lbs×5 → baza 102.06kg → Done/Historia/exercise/progress wszystkie
-  poprawnie w lbs). `smoke:team` nieuruchomiony (brak lokalnego `TEAM_TEST_PASSWORD`,
-  niezwiązane). **Poza zakresem — follow-up:** `body_metrics.weight` (Postępy/Ciało) ma tę
-  samą klasę problemu (kg/lbs jako etykieta bez konwersji), osobna tabela/funkcja, niedotknięta
-  w tym PR.
+- **CORE-0 / DATA-02:** ZAKOŃCZONE, PR [#15](https://github.com/danielm1212/arco/pull/15)
+  scalony do `main`. kg jest teraz kanoniczną jednostką zapisu ciężaru
+  (`session_sets.weight`/`added_weight`); `unit_system` jest wyłącznie preferencją prezentacji.
+  **Poza zakresem — follow-up:** `body_metrics.weight` (Postępy/Ciało) ma tę samą klasę
+  problemu (kg/lbs jako etykieta bez konwersji), osobna tabela/funkcja, niedotknięta.
+- **CORE-0 / DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR czeka na otwarcie.
+  Audyt wykrył pięć miejsc liczących fakt treningowy bez `sessions.finished_at is not null`:
+  `recompute_personal_records()`, `previous_working_set`/`previous_session_sets` (migracja
+  `20260724143658_data03_qualified_fact_finished_only.sql`), `lib/repPRs.ts`,
+  `app/exercise/[id]/page.tsx`, oraz `periodStats`/`getStrengthTrends` w `app/progress/stats.ts`
+  (naprawione przez nowy współdzielony `lib/qualifiedFacts.ts::finishedSessions`). Home i Ekipa
+  już miały ten warunek poprawnie. Zweryfikowane: 117/117 unit, lint, build, `db reset`,
+  walidatory, smoke phase1/offline zielone (smoke:phase2 wymagał poprawki — testował stary,
+  błędny kontrakt bez `finished_at`); manualna weryfikacja end-to-end (seria w otwartej sesji →
+  poprawnie niewidoczna wszędzie → po zakończeniu poprawnie widoczna, w tym "poprzedni wynik"
+  w guidance nowej sesji). **Poza zakresem, odnotowane:** `previous_working_set`/
+  `previous_session_sets` wybierają globalnie najnowszą inną sesję, nie czasowo poprzedzającą
+  przeglądaną — przy edycji starej historii z równolegle otwartym innym treningiem "poprzedni
+  wynik" może być z późniejszej sesji. Rzadki przypadek, osobny finding na przyszłość.
 
 ## 4. Otwarte ryzyka
 
@@ -184,11 +188,11 @@ koordynacji (2026-07-23).
    powstaje dopiero po kontrakcie TRAIN-03/05 **i** po SEC-03 — oba warunki, więc realnie
    czeka też na odwołanie z punktu 1.
 3. **CORE-0 w toku (Claude, 2026-07-24):** integralność danych nie zależy technicznie od
-   SEC-03, więc jedzie równolegle. **DATA-01 scalone** (PR #14). **DATA-02 zaimplementowane**
-   na `agent/core-0-data-02`, PR [#15](https://github.com/danielm1212/arco/pull/15) czeka na
-   review/merge [Ty]. Następne: DATA-03 (jedna
-   definicja faktu) i SYNC-01 (outbox). Follow-up poza CORE-0: `body_metrics.weight` ma tę
-   samą klasę problemu jednostek co DATA-02, niedotknięte w tym zakresie.
+   SEC-03, więc jedzie równolegle. **DATA-01 i DATA-02 scalone** (PR #14, #15). **DATA-03
+   zaimplementowane** na `agent/core-0-data-03`, PR do otwarcia [Ty] review/merge. Następne:
+   SYNC-01 (outbox) — ostatni kawałek CORE-0. Follow-upy poza CORE-0: `body_metrics.weight`
+   (jednostki, jak DATA-02) i `previous_working_set`/`previous_session_sets` liczące najnowszą
+   sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
 4. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
 5. Po CORE-0: R4A → SESSION-01A: integralność loggera i mała, opcjonalna rekomendacja
