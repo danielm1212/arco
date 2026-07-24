@@ -103,7 +103,8 @@ koordynacji (2026-07-23).
   (usunięcie treningu z Historii ponownie otwierało onboarding) nie odtwarza się —
   `completed` na Home liczy się wyłącznie z `onboarding_completed_at`. Pozostaje
   checkpoint [Ty] na fizycznym iPhone PWA (razem z TRUST-01/03).
-- **CORE-0 / DATA-01:** zaimplementowane na `agent/core-0-data-01` (PR czeka na review/merge).
+- **CORE-0 / DATA-01:** zaimplementowane na `agent/core-0-data-01`, PR
+  [#14](https://github.com/danielm1212/arco/pull/14) czeka na review/merge.
   Zaliczona seria wymaga wyniku właściwego dla typu ćwiczenia (weighted: ciężar+powtórzenia;
   bodyweight: powtórzenia; timed: czas > 0) w trzech warstwach — UI (blokada z toastem przed
   zapisem), server action (`assertCompletableSet`) i DB (trigger `assert_valid_completed_set`,
@@ -173,9 +174,9 @@ koordynacji (2026-07-23).
    powstaje dopiero po kontrakcie TRAIN-03/05 **i** po SEC-03 — oba warunki, więc realnie
    czeka też na odwołanie z punktu 1.
 3. **CORE-0 w toku (Claude, 2026-07-24):** integralność danych nie zależy technicznie od
-   SEC-03, więc jedzie równolegle. **DATA-01 zaimplementowane** (PR `agent/core-0-data-01`
-   czeka na review/merge [Ty]). Następne: DATA-02 (kanoniczne jednostki), DATA-03 (jedna
-   definicja faktu) i SYNC-01 (outbox).
+   SEC-03, więc jedzie równolegle. **DATA-01 zaimplementowane** — PR
+   [#14](https://github.com/danielm1212/arco/pull/14) czeka na review/merge [Ty]. Następne:
+   DATA-02 (kanoniczne jednostki), DATA-03 (jedna definicja faktu) i SYNC-01 (outbox).
 4. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
 5. Po CORE-0: R4A → SESSION-01A: integralność loggera i mała, opcjonalna rekomendacja

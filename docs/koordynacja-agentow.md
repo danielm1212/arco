@@ -29,7 +29,7 @@
   (`assertCompletableSet` — druga linia obrony w `addSet`/`upsertSet`/`updateSet`), nowa migracja
   `supabase/migrations/20260724133849_data01_completed_set_guard.sql` (trigger `assert_valid_completed_set`
   — trzecia/ostatnia linia obrony w DB), `tests/set-validation.test.ts` (nowy test). Gałąź
-  `agent/core-0-data-01`, PR jeszcze nie otwarty w momencie tego wpisu — zaraz po nim.
+  `agent/core-0-data-01`, PR [#14](https://github.com/danielm1212/arco/pull/14) otwarty.
 - **Kontrakt:** zaliczona seria (`completed=true`) wymaga: weighted → ciężar I powtórzenia;
   bodyweight → powtórzenia; timed → czas > 0. Draft (`completed=false`) zostaje bez zmian —
   pole może być puste podczas wpisywania. Ten sam warunek w UI, server action i DB, żeby
