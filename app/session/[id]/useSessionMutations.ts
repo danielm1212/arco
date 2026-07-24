@@ -12,7 +12,11 @@ import { getAutoRest } from "@/lib/prefs";
 import { ensureOnline } from "@/lib/offlineGuard";
 import { vibrate } from "@/lib/feedback";
 import { uuid } from "@/lib/uuid";
-import { reviewWorkingSetWeight, type SetWeightReview } from "@/lib/setValidation";
+import {
+  getCompletionBlockReason,
+  reviewWorkingSetWeight,
+  type SetWeightReview,
+} from "@/lib/setValidation";
 import { LIMITS } from "@/lib/format";
 import type { LoggerExercise } from "./Logger";
 
@@ -175,6 +179,12 @@ export function useSessionMutations({
     // wyniku zatrzymujemy zapis przed zmianą stanu — to jest realne potwierdzenie,
     // a nie toast pojawiający się już po utworzeniu rekordu.
     if (!set.completed) {
+      // DATA-01 (CORE-0): pusta seria nie może stać się faktem treningowym.
+      const blockReason = getCompletionBlockReason(ex.type, set);
+      if (blockReason) {
+        toast.error(blockReason);
+        return;
+      }
       const review = reviewWorkingSetWeight({
         type: ex.type,
         setType: set.set_type,
@@ -191,6 +201,12 @@ export function useSessionMutations({
 
   // Stoper `timed`: atomowy zapis czasu + zaliczenie (jeden upsert, bez wyścigu patch/toggle).
   function handleTimedComplete(ex: LoggerExercise, set: SessionSet, seconds: number) {
+    // DATA-01: stoper teoretycznie mógłby oddać 0 s (manualny reset tuż przed stopem).
+    const blockReason = getCompletionBlockReason(ex.type, { duration_seconds: seconds });
+    if (blockReason) {
+      toast.error(blockReason);
+      return;
+    }
     patchSetLocal(ex.sessionExerciseId, set.id, { duration_seconds: seconds, completed: true });
     if (!set.completed) maybeStartRest(ex);
     saveSet(set, { duration_seconds: seconds, completed: true });
