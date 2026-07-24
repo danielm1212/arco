@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { SetType } from "@/lib/types";
-import { assertValidSetNumbers } from "@/lib/setValidation";
+import { assertValidSetNumbers, getCompletionBlockReason } from "@/lib/setValidation";
+import { joinOne } from "@/lib/dbJoins";
+import type { ExerciseType } from "@/lib/types";
 
 async function db() {
   const supabase = await createClient();
@@ -12,6 +14,29 @@ async function db() {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Brak sesji użytkownika");
   return supabase;
+}
+
+/**
+ * DATA-01 (CORE-0): druga linia obrony obok UI — inny klient (offline flush,
+ * przyszły import) nie może zapisać zaliczonej serii bez wyniku właściwego dla
+ * typu ćwiczenia. Ostatnia linia jest w DB (`assert_valid_completed_set`).
+ */
+async function assertCompletableSet(
+  supabase: Awaited<ReturnType<typeof db>>,
+  sessionExerciseId: string,
+  merged: { completed: boolean; weight: number | null; reps: number | null; duration_seconds: number | null },
+) {
+  if (!merged.completed) return;
+  const { data, error } = await supabase
+    .from("session_exercises")
+    .select("exercises(exercise_type)")
+    .eq("id", sessionExerciseId)
+    .single();
+  if (error) throw new Error(error.message);
+  const exercise = joinOne<{ exercise_type: ExerciseType } | null>(data.exercises);
+  if (!exercise) return;
+  const reason = getCompletionBlockReason(exercise.exercise_type, merged);
+  if (reason) throw new Error(reason);
 }
 
 /**
@@ -57,6 +82,12 @@ export async function addSet(
 ) {
   assertValidSetNumbers(values);
   const supabase = await db();
+  await assertCompletableSet(supabase, sessionExerciseId, {
+    completed: values.completed ?? false,
+    weight: values.weight ?? null,
+    reps: values.reps ?? null,
+    duration_seconds: values.duration_seconds ?? null,
+  });
   const { count } = await supabase
     .from("session_sets")
     .select("*", { count: "exact", head: true })
@@ -101,6 +132,7 @@ export async function upsertSet(
 ) {
   assertValidSetNumbers(row);
   const supabase = await db();
+  await assertCompletableSet(supabase, row.session_exercise_id, row);
   const { error } = await supabase.from("session_sets").upsert(row, { onConflict: "id" });
   if (error) throw new Error(error.message);
   await refreshFinishedSessionDerivedData(supabase, _sessionId);
@@ -110,6 +142,19 @@ export async function upsertSet(
 export async function updateSet(sessionId: string, setId: string, values: SetValues) {
   assertValidSetNumbers(values);
   const supabase = await db();
+  const { data: current, error: currentError } = await supabase
+    .from("session_sets")
+    .select("session_exercise_id, weight, reps, duration_seconds, completed")
+    .eq("id", setId)
+    .single();
+  if (currentError) throw new Error(currentError.message);
+  await assertCompletableSet(supabase, current.session_exercise_id, {
+    completed: values.completed ?? current.completed,
+    weight: values.weight !== undefined ? values.weight : current.weight,
+    reps: values.reps !== undefined ? values.reps : current.reps,
+    duration_seconds:
+      values.duration_seconds !== undefined ? values.duration_seconds : current.duration_seconds,
+  });
   const { error } = await supabase.from("session_sets").update(values).eq("id", setId);
   if (error) throw new Error(error.message);
   revalidatePath(`/session/${sessionId}`);

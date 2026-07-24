@@ -22,6 +22,42 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-24 · Claude · CORE-0 / DATA-01 — poprawna zakończona seria: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `lib/setValidation.ts` (nowa `getCompletionBlockReason`), `app/session/[id]/useSessionMutations.ts`
+  (blokada w `handleToggle`/`handleTimedComplete` z toastem, przed zmianą stanu), `app/actions/sets.ts`
+  (`assertCompletableSet` — druga linia obrony w `addSet`/`upsertSet`/`updateSet`), nowa migracja
+  `supabase/migrations/20260724133849_data01_completed_set_guard.sql` (trigger `assert_valid_completed_set`
+  — trzecia/ostatnia linia obrony w DB), `tests/set-validation.test.ts` (nowy test). Gałąź
+  `agent/core-0-data-01`, PR [#14](https://github.com/danielm1212/arco/pull/14) otwarty.
+- **Kontrakt:** zaliczona seria (`completed=true`) wymaga: weighted → ciężar I powtórzenia;
+  bodyweight → powtórzenia; timed → czas > 0. Draft (`completed=false`) zostaje bez zmian —
+  pole może być puste podczas wpisywania. Ten sam warunek w UI, server action i DB, żeby
+  żaden inny klient (offline flush, przyszły import) nie ominął reguły.
+  DATA-02/DATA-03/SYNC-01 (CORE-0) zostają do kolejnej sesji.
+- **Dowód:** `npm run build` zielony po `rm -rf node_modules && npm ci` (znów ~139 duplikatów
+  iCloud „ 2", ten sam problem co w TRUST-02 — warto rozłączyć sync iCloud dla repo, patrz
+  pamięć `arco-node-modules-icloud-dupes`); `supabase db reset` czysty na świeżej bazie
+  (trigger tworzy się bez błędu); `npm run seed` → 907/15/308; `validate:training` i
+  `validate:recommendations` zielone (17 placeholderów bez wzrostu, 60/60); lint czysty;
+  `test:unit` 116/116 (nowy test `getCompletionBlockReason` — weighted/bodyweight/timed ×
+  odrzucone/przyjęte); `smoke`, `smoke:phase2`, `smoke:offline` zielone (w tym normalny zapis
+  100kg×8 przechodzi bez przeszkód — guard nie łapie poprawnych danych). `smoke:team` NIE
+  uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`, niezwiązane z tą zmianą.
+- **Weryfikacja triggera DB (osobno od smoke'ów):** ręczny SQL w transakcji z `rollback` na
+  końcu (zero trwałych danych) — 7 przypadków: weighted bez reps (odrzucone), weighted z
+  danymi (OK), bodyweight bez reps (odrzucone), bodyweight z reps (OK), timed z duration=0
+  (odrzucone), timed z duration=45 (OK), completed=false z pustymi polami (zawsze OK).
+  Wszystkie 7 zgodne z oczekiwaniem; potwierdzone `select count(*) = 0` po rollbacku.
+- **Weryfikacja UI (przeglądarka, świeże konto testowe):** freestyle trening, ćwiczenie
+  weighted, próba zaliczenia pustej serii → toast „Wpisz ciężar i powtórzenia, zanim
+  zaliczysz serię.", checkmark zostaje pusty; po wpisaniu 40kg×10 zaliczenie przechodzi
+  normalnie i startuje przerwa. Konto testowe usunięte po ID po teście.
+- **Czego nie dotknięto:** produkcji (migracja tylko lokalnie), danych innych sesji, DATA-02/03/SYNC-01.
+- **Następny krok:** [Ty] review + merge PR `agent/core-0-data-01` (zawiera migrację —
+  po merge kontrolowany release migracji zgodnie z `arco-release`, dry-run przed produkcją).
+  Potem DATA-02 (kanoniczne jednostki) jako kolejny kawałek CORE-0.
+
 ### 2026-07-24 · Claude · TRUST-02 — fresh-account smoke F0.7: ZAKOŃCZONE
 
 - **Zakres:** wyłącznie weryfikacja na lokalnym stacku (Supabase local, `next start`

@@ -53,6 +53,38 @@ export function assertValidSetNumbers(values: SetNumbers) {
   if (error) throw new Error(error);
 }
 
+type CompletableSetValues = {
+  weight?: number | null;
+  reps?: number | null;
+  duration_seconds?: number | null;
+};
+
+/**
+ * DATA-01 (CORE-0): zaliczona seria musi mieć wynik właściwy dla typu ćwiczenia —
+ * inaczej finish/rekordy/historia liczą fakt, który nigdy się nie wydarzył.
+ * Wspólne dla UI (blokada przed toggle) i server action (obrona przed innym klientem);
+ * DB ma ten sam warunek w triggerze `assert_valid_completed_set` jako ostatnia linia.
+ */
+export function getCompletionBlockReason(
+  type: ExerciseType,
+  values: CompletableSetValues,
+): string | null {
+  if (type === "weighted") {
+    if (values.weight == null || values.reps == null) {
+      return "Wpisz ciężar i powtórzenia, zanim zaliczysz serię.";
+    }
+  } else if (type === "bodyweight") {
+    if (values.reps == null) {
+      return "Wpisz powtórzenia, zanim zaliczysz serię.";
+    }
+  } else if (type === "timed") {
+    if (values.duration_seconds == null || values.duration_seconds <= 0) {
+      return "Zmierz czas, zanim zaliczysz serię.";
+    }
+  }
+  return null;
+}
+
 export interface SetWeightReview {
   reasons: ("high_weight" | "very_high_weight" | "large_jump")[];
   previousWeight: number | null;

@@ -158,6 +158,23 @@ fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 **Zależność:** Q1; wykonujemy przed R4A
 **Spec:** `audyt-core-i-plan-2026-07.md`
 
+**Stan:** rozpoczęte 2026-07-24 (Claude). **SEC-03 wstrzymane u [Ty]
+(czeka na zewnętrzne wsparcie) nie blokuje CORE-0** — integralność danych jest osobną osią
+od rotacji sekretu; jedyne zadanie realnie zablokowane przez SEC-03 to TRAIN-02A4.
+
+**Stan DATA-01:** zaimplementowane na `agent/core-0-data-01`, PR otwarty. Wspólny guard w
+trzech warstwach — `lib/setValidation.ts` (`getCompletionBlockReason`), UI
+(`useSessionMutations.ts` blokuje `handleToggle`/`handleTimedComplete` z toastem), server
+action (`assertCompletableSet` w `app/actions/sets.ts` dla `addSet`/`upsertSet`/`updateSet`)
+i DB (trigger `assert_valid_completed_set` w nowej migracji, ostatnia linia obrony). Draft
+(`completed=false`) z pustymi polami pozostaje zawsze dozwolony. Zweryfikowane: 116/116 unit
+(nowy test `getCompletionBlockReason`), lint, build, `db reset` na świeżej bazie, walidatory
+(907/15/308, 60/60), smoke phase1/phase2/offline zielone, ręczny SQL scratch-test triggera
+(7 przypadków: weighted/bodyweight/timed × odrzucone/przyjęte + draft zawsze przechodzi,
+transakcja wycofana, zero trwałych danych), oraz manualna weryfikacja w przeglądarce (toast
+blokujący pustą serię, normalne zaliczenie po wpisaniu wartości). `smoke:team` nie uruchomiony
+— brak lokalnego `TEAM_TEST_PASSWORD`, niezwiązane z tą zmianą.
+
 - DATA-01: zakończona seria ma wynik wymagany przez typ ćwiczenia; ten sam guard działa
   w UI, Server Action i bazie/RPC;
 - DATA-02: ciężary mają kanoniczną jednostkę w danych, a `kg/lbs` jest konwersją prezentacji;
