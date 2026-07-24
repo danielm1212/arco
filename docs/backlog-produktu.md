@@ -59,7 +59,7 @@ checkpoint urządzeniowy; nie oznacza usunięcia regresji z macierzy.
 | ID | Zadanie | Wynik użytkownika | Status | Etap |
 |---|---|---|---|---|
 | TRUST-01 | Regresja ostatniego fixa sticky loggera na iPhone PWA i starym Service Workerze | Nagłówek pozostaje widoczny, ma solidne tło, nie przepuszcza treści i nie nachodzi na status bar; toast także respektuje safe area | gotowe do podjęcia | Q1 |
-| TRUST-02 | Fresh-account smoke F0.7: pełny onboarding, skip, `0/N`, nowe urządzenie, usunięcie historii | Konto nie wraca do onboardingu, a ustawienia zachowują sens | gotowe do podjęcia | Q1 |
+| TRUST-02 | Fresh-account smoke F0.7: pełny onboarding, skip, `0/N`, nowe urządzenie, usunięcie historii | Konto nie wraca do onboardingu, a ustawienia zachowują sens | zweryfikowane lokalnie 2026-07-24, zero P0/P1; pozostaje checkpoint [Ty] na fizycznym iPhone PWA | Q1 |
 | TRUST-03 | Zachować pozycję strony po zamknięciu każdego bottom sheeta | X, overlay, Escape, swipe i akcja wewnątrz zamykają sheet bez skoku treści do góry; tło pozostaje zablokowane, a fokus wraca bez przewinięcia | na `main` i produkcji; checkpoint iPhone [Ty] | Q1 |
 | SEC-03 | Rotacja ujawnionego legacy `service_role` | Nowy sekret działa w Vercel i automatyzacjach, akcje serwerowe przechodzą smoke, a stary klucz jest odwołany dopiero na końcu | pilne działanie właściciela; sekret nie trafił do repo | Q1 |
 | CONTENT-01 | Zweryfikować wszystkie widoczne warianty Hip Thrust; obecny Barbell Hip Thrust wstrzymać lub wymienić do wersjonowanego review Codex | Aplikacja nie uczy ryzykownej techniki | CONTENT-01A na produkcji; CONTENT-01B: finalna para Barbell oraz pary Dumbbell/Single-Leg | Q1 |

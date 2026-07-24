@@ -89,6 +89,14 @@ każde otwarte zadanie ma ID, etap i obserwowalny wynik.
   wykonać smoke akcji serwerowych i dopiero wtedy odwołać stary klucz;
 - potwierdzić jeden kontrakt na `main`, w migracjach i na produkcji.
 
+**Stan TRUST-02:** zweryfikowane lokalnie 2026-07-24, zero P0/P1. Pełny onboarding
+(7 kroków), skip na starcie, badge `0/N` i ustawienia (jednostki/priorytet/kierunek/cel)
+trwałe po reload — potwierdzone w DOM, nie tylko wizualnie. Kluczowa regresja F0.7
+(usunięcie treningu z Historii ponownie otwierało onboarding) nie odtwarza się:
+`app/page.tsx` liczy `completed` wyłącznie z `user_settings.onboarding_completed_at`,
+zero zależności od tabeli `sessions`. „Nowe urządzenie" sprawdzone jako proxy (druga
+sesja/cookie) — pełny fizyczny checkpoint iPhone PWA zostaje z TRUST-01/03 dla [Ty].
+
 **Stan TRUST-03:** scalone do `main` i wdrożone. Przyczyną był restart efektu
 scroll-locka po zmianie referencji `onOpenChange`; wspólny komponent zachowuje teraz pozycję
 i zwraca fokus. Automatyczna macierz przechodzi X/overlay/Escape/swipe/akcję na 320/375/393 px;

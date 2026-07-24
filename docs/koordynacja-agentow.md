@@ -22,6 +22,51 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-24 · Claude · TRUST-02 — fresh-account smoke F0.7: ZAKOŃCZONE
+
+- **Zakres:** wyłącznie weryfikacja na lokalnym stacku (Supabase local, `next start`
+  po `npm run build`); brak zmian w kodzie/schemacie. Dwa świeże konta testowe
+  bootstrapowane przez `bootstrap:test-user`.
+- **Env:** `node_modules` znowu miał ~139 duplikatów „ 2" (iCloud Desktop) —
+  `tsc` wywalał build na `@types/react 2`. Naprawione czystym `rm -rf node_modules && npm ci`
+  (nie punktowym usuwaniem, bo skala uzasadniała pełny reinstall). Ryzyko powrotu
+  pozostaje, dopóki repo/iCloud sync nie jest rozłączone — patrz `arco-node-modules-icloud-dupes`
+  w pamięci agenta.
+- **Wynik:** wszystkie ścieżki F0.7 zielone, zero P0/P1:
+  1) **Pełny onboarding** (7 kroków, siłownia/intermediate/Siła/całe ciało/3×tydz.) →
+     aktywacja planu → Home pokazuje poprawny plan i badge `0/3`; ustawienia
+     (jednostki, priorytet, kierunek, cel) trwałe po reload, potwierdzone przez DOM
+     (`border-primary` na wybranych opcjach), nie tylko wizualnie.
+  2) **Skip na starcie** (krok 0 „Pomiń") → poprawny empty state Home („Zacznij od
+     planu”, CTA Wybierz program/Własny trening), badge `0/2` (default), trwałe po reload.
+  3) **Usunięcie historii — kluczowa regresja F0.7:** zalogowałem 1 serię, zakończyłem
+     trening (przeszedł LOG-04 guard niepełnej sesji poprawnie), usunąłem trening z
+     Historii (`DeleteSessionButton` → `deleteSession`) — Home **nie** wrócił do
+     onboardingu, badge poprawnie spadł z powrotem do `0/3`. Potwierdza to również kod:
+     `app/page.tsx` liczy `completed` wyłącznie z `settings.onboarding_completed_at`,
+     zero zależności od tabeli `sessions`.
+  4) **Nowe urządzenie (proxy):** druga zakładka/sesja z tym samym cookie od razu
+     pokazuje właściwy stan Home bez onboardingu — potwierdza, że stan jest w 100%
+     server-side (brak flag klienckich). Pełny checkpoint na fizycznym iPhone PWA
+     pozostaje zadaniem [Ty] razem z TRUST-01/03.
+- **Znaleziony false-positive (nie bug):** w trakcie testu współrzędnościowe kliknięcia
+  `computer` (nie przez `ref`) trafiały poza cel przez rozjazd skali screenshot (800×450)
+  vs realny viewport (1280×720) — raz zresetowało to onboarding do kroku 0 pozornie
+  bez powodu. Powtórzone wyłącznie klikami przez `ref` — zero regresji w produkcie.
+  Do wiadomości innych sesji korzystających z Browser pane: wolej `ref`, nie surowe
+  współrzędne z zrzutu.
+- **Testy:** `npm run build` zielony po `npm ci` (TS OK, wszystkie route'y). Nie
+  uruchamiano `test:unit`/`test:overflow`/walidatorów — brak zmian w kodzie produktowym.
+- **Dane testowe:** dwa konta (`trust02-*@example.test`) utworzone przez
+  `bootstrap:test-user` na **lokalnym** Supabase, usunięte punktowo po ID przez
+  `auth.admin.deleteUser` po teście. Jeden trening testowy usunięty przez UI w
+  ramach samego scenariusza. Zero dotknięcia produkcji.
+- **Czego nie dotknięto:** produkcji, migracji, danych innych sesji, kodu aplikacji.
+- **Następny krok:** TRUST-02 może przejść do „zamknięte" w `backlog-produktu.md`/
+  `plan-sprintow-2026-07.md` (fresh-account smoke zielony). Pozostaje checkpoint
+  [Ty] na fizycznym iPhone PWA/Safari (TRUST-01/03 + nowe urządzenie realne).
+  Kolejny logiczny krok po Q1: CORE-0 (czeka też na SEC-03).
+
 ### 2026-07-23 · Claude · podmiana ikon 3D na Arco Performance Objects v1.1: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `components/MomentIcon3D.tsx` (uproszczony do jednego motywo-neutralnego `<Image>` —

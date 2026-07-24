@@ -1,6 +1,6 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-23
+**Aktualizacja:** 2026-07-24
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
@@ -98,6 +98,11 @@ koordynacji (2026-07-23).
 - **TRUST-03:** scalone do `main` i wdrożone: wspólny scroll-lock nie restartuje
   się po re-renderze, pozycja strony i fokus wracają dla X/overlay/Escape/swipe/akcji;
   automatyczna macierz 320/375/393 px jest zielona. Pozostaje checkpoint iPhone [Ty].
+- **TRUST-02:** zweryfikowane lokalnie 2026-07-24 (fresh-account smoke F0.7), zero P0/P1.
+  Pełny onboarding, skip, badge `0/N` i ustawienia trwałe po reload; kluczowa regresja
+  (usunięcie treningu z Historii ponownie otwierało onboarding) nie odtwarza się —
+  `completed` na Home liczy się wyłącznie z `onboarding_completed_at`. Pozostaje
+  checkpoint [Ty] na fizycznym iPhone PWA (razem z TRUST-01/03).
 
 ## 4. Otwarte ryzyka
 
@@ -121,7 +126,9 @@ koordynacji (2026-07-23).
    Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
 3. **PWA:** ostatni fix sticky i techniczna poprawka pozycji bottom sheeta (`TRUST-03`)
    wymagają potwierdzenia na iPhone PWA/Safari i przy starym cache.
-4. **Fresh account:** F0.7 wymaga krótkiej regresji nowego urządzenia, skip/finish i usunięcia historii.
+4. **Fresh account:** F0.7 zweryfikowane lokalnie 2026-07-24 (skip/finish, `0/N`,
+   usunięcie historii — zero P0/P1); brakuje wyłącznie regresji na fizycznym nowym
+   urządzeniu (iPhone PWA, razem z TRUST-01/03).
 5. **Android:** brak pełnego checkpointu systemowego Back/PWA.
 6. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
 7. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
@@ -152,7 +159,8 @@ koordynacji (2026-07-23).
    dopiero po kontrakcie TRAIN-03/05.
 3. [Ty] SEC-03 po przygotowaniu A1–A3. TRAIN-02A4 czeka na kontrakt alternatyw
    TRAIN-03/05 w PLAN-Q, następnie backup i dry-run.
-4. Checkpoint iPhone TRUST-01/03 + TRUST-02 oraz CONTENT-01B/CONTENT-03a.
+4. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
+   lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
 5. CORE-0 → R4A → SESSION-01A: integralność loggera i mała, opcjonalna rekomendacja
    rozgrzewki/zakończenia bez wpływu na ukończenie treningu.
 6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
