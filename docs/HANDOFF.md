@@ -107,7 +107,8 @@ koordynacji (2026-07-23).
   scalony do `main`. Zaliczona seria wymaga wyniku właściwego dla typu ćwiczenia (weighted:
   ciężar+powtórzenia; bodyweight: powtórzenia; timed: czas > 0) w trzech warstwach — UI,
   server action (`assertCompletableSet`) i DB (trigger `assert_valid_completed_set`).
-- **CORE-0 / DATA-02:** zaimplementowane na `agent/core-0-data-02`, PR czeka na otwarcie.
+- **CORE-0 / DATA-02:** zaimplementowane na `agent/core-0-data-02`, PR
+  [#15](https://github.com/danielm1212/arco/pull/15) czeka na review/merge.
   kg jest teraz kanoniczną jednostką zapisu ciężaru (`session_sets.weight`/`added_weight`);
   `unit_system` jest wyłącznie preferencją prezentacji. Konwersja (`weightToDisplay`/
   `weightToCanonicalKg` w `lib/format.ts`) żyje na granicy wejścia (SetRow) i wszystkich miejsc
@@ -184,7 +185,8 @@ koordynacji (2026-07-23).
    czeka też na odwołanie z punktu 1.
 3. **CORE-0 w toku (Claude, 2026-07-24):** integralność danych nie zależy technicznie od
    SEC-03, więc jedzie równolegle. **DATA-01 scalone** (PR #14). **DATA-02 zaimplementowane**
-   na `agent/core-0-data-02`, PR do otwarcia [Ty] review/merge. Następne: DATA-03 (jedna
+   na `agent/core-0-data-02`, PR [#15](https://github.com/danielm1212/arco/pull/15) czeka na
+   review/merge [Ty]. Następne: DATA-03 (jedna
    definicja faktu) i SYNC-01 (outbox). Follow-up poza CORE-0: `body_metrics.weight` ma tę
    samą klasę problemu jednostek co DATA-02, niedotknięte w tym zakresie.
 4. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany

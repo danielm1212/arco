@@ -169,7 +169,8 @@ action (`assertCompletableSet` w `app/actions/sets.ts` dla `addSet`/`upsertSet`/
 i DB (trigger `assert_valid_completed_set`, ostatnia linia obrony). Draft (`completed=false`)
 z pustymi polami pozostaje zawsze dozwolony.
 
-**Stan DATA-02:** zaimplementowane na `agent/core-0-data-02`, PR czeka na otwarcie. kg jest
+**Stan DATA-02:** zaimplementowane na `agent/core-0-data-02`, PR
+[#15](https://github.com/danielm1212/arco/pull/15) czeka na review/merge. kg jest
 teraz kanoniczną jednostką zapisu — `session_sets.weight`/`added_weight` zawsze w kg,
 `unit_system` jest wyłącznie preferencją prezentacji. Granica konwersji: `lib/format.ts`
 (`weightToDisplay`/`weightToCanonicalKg`, nowe), wejście w `SetRow.tsx` (kg state ↔ display
