@@ -1,4 +1,5 @@
 import type { ExerciseType, TrainingPriority, UnitSystem } from "@/lib/types";
+import { weightToDisplay } from "@/lib/format";
 
 /**
  * Guidance rule-based (rdzeń wyróżnika „anti-Hevy") — jawne, nadpisywalne reguły.
@@ -146,20 +147,25 @@ export function progressionTarget(input: {
   trainingPriority?: TrainingPriority;
 }): ProgressionTarget | null {
   const { type, unit, prev, previousSets, targetRepsMin, targetRepsMax, repPR, trainingPriority } = input;
+  // DATA-02: prev.weight/repPR.weight docierają jako kanoniczny kg (session_sets,
+  // personal_records) — konwersja do jednostki profilu żyje wyłącznie tutaj,
+  // przy budowaniu tekstu, nie w samych danych.
+  const prevWeightDisplay = prev?.weight != null ? weightToDisplay(prev.weight, unit) : null;
+  const repPRWeightDisplay = repPR ? weightToDisplay(repPR.weight, unit) : null;
   const priorityBit = trainingPriority === "fat_loss"
     ? " Na redukcji najpierw utrzymaj jakość i ciężar."
     : trainingPriority === "strength"
       ? " Daj sobie pełną przerwę przed kolejną serią."
       : "";
   const prBit =
-    type === "weighted" && repPR ? ` Rekord przy ${repPR.reps} powt.: ${repPR.weight}${unit}.` : "";
+    type === "weighted" && repPR ? ` Rekord przy ${repPR.reps} powt.: ${repPRWeightDisplay}${unit}.` : "";
 
   if (!prev) {
     // Bez „poprzednio" (np. dawno nietrenowane) rep-PR sam w sobie daje cel
     return type === "weighted" && repPR
       ? {
           kind: "beat_record",
-          message: `Cel na dziś: pobij ${repPR.weight}${unit} przy ${repPR.reps} powtórzeniach.`,
+          message: `Cel na dziś: pobij ${repPRWeightDisplay}${unit} przy ${repPR.reps} powtórzeniach.`,
         }
       : null;
   }
@@ -181,21 +187,21 @@ export function progressionTarget(input: {
       ? completedRepSets.every((set) => (set.reps ?? 0) >= targetRepsMax)
       : (prev?.reps ?? 0) >= targetRepsMax);
 
-  if (type === "weighted" && prev.weight != null && prev.reps != null) {
+  if (type === "weighted" && prevWeightDisplay != null && prev.reps != null) {
     if (targetRepsMax && allReachedTop)
       return {
         kind: "increase_load",
-        message: `Cel na dziś: ${prev.weight + inc}${unit} × ${targetRepsMin ?? targetRepsMax}–${targetRepsMax}. Poprzednio każda seria osiągnęła górę zakresu.${prBit}${priorityBit}`,
+        message: `Cel na dziś: ${prevWeightDisplay + inc}${unit} × ${targetRepsMin ?? targetRepsMax}–${targetRepsMax}. Poprzednio każda seria osiągnęła górę zakresu.${prBit}${priorityBit}`,
       };
     if (targetRepsMin && prev.reps < targetRepsMin)
       return {
         kind: "hold_load",
-        message: `Cel na dziś: utrzymaj ${prev.weight}${unit} i zrób co najmniej ${targetRepsMin} powt. (ostatnio ${prev.reps}).${priorityBit}`,
+        message: `Cel na dziś: utrzymaj ${prevWeightDisplay}${unit} i zrób co najmniej ${targetRepsMin} powt. (ostatnio ${prev.reps}).${priorityBit}`,
       };
     const nextReps = targetRepsMax ? Math.min(prev.reps + 1, targetRepsMax) : prev.reps + 1;
     return {
       kind: "add_reps",
-      message: `Cel na dziś: ${prev.weight}${unit} × ${nextReps}+ powt. (ostatnio ${prev.reps}).${prBit}${priorityBit}`,
+      message: `Cel na dziś: ${prevWeightDisplay}${unit} × ${nextReps}+ powt. (ostatnio ${prev.reps}).${prBit}${priorityBit}`,
     };
   }
 

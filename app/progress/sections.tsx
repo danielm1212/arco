@@ -5,6 +5,7 @@ import { Flame } from "lucide-react";
 import { Sparkline } from "@/components/Sparkline";
 import { MuscleHeatmapLazy } from "@/components/MuscleHeatmapLazy";
 import type { UnitSystem } from "@/lib/types";
+import { weightToDisplay } from "@/lib/format";
 import { PERIODS, type PrEntry, type StrengthRow } from "./stats";
 
 /**
@@ -241,8 +242,8 @@ export function RecordsSection({
               >
                 <span className="truncate">{r.name}</span>
                 <span className="shrink-0 text-muted-foreground">
-                  {r.e1rm ? `e1RM ${r.e1rm}${unit}` : ""}
-                  {r.maxWeight ? ` · maks. ${r.maxWeight}${unit}` : ""}
+                  {r.e1rm ? `e1RM ${weightToDisplay(r.e1rm, unit)}${unit}` : ""}
+                  {r.maxWeight ? ` · maks. ${weightToDisplay(r.maxWeight, unit)}${unit}` : ""}
                 </span>
               </Link>
             </li>

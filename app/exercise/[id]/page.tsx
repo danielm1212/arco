@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import type { ExerciseType, SessionSet, UnitSystem } from "@/lib/types";
-import { formatSet, LIMITS } from "@/lib/format";
+import { formatSet, LIMITS, weightToDisplay } from "@/lib/format";
 import { setMetric } from "@/lib/exerciseMetrics";
 import { repPRRows } from "@/lib/repPRs";
 import { Sparkline } from "@/components/Sparkline";
@@ -155,7 +155,10 @@ export default async function ExercisePage(props: {
     .slice()
     .reverse()
     .map((s) => seriesValue(s.sets))
-    .filter((v): v is number => v != null);
+    .filter((v): v is number => v != null)
+    // DATA-02: e1RM/najcięższa/objętość są liniowe w wadze — kanoniczny kg
+    // konwertujemy do jednostki profilu dopiero tutaj, na granicy wyświetlania.
+    .map((v) => (isWeighted ? weightToDisplay(v, unit) : v));
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
@@ -274,7 +277,7 @@ export default async function ExercisePage(props: {
                 <li key={r.reps} className="flex items-center justify-between">
                   <span className="text-muted-foreground">{r.reps} powt.</span>
                   <span className="font-medium tabular-nums">
-                    {r.weight} {unit}
+                    {weightToDisplay(r.weight, unit)} {unit}
                   </span>
                 </li>
               ))}

@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { clampNum, formatSet, LIMITS } from "@/lib/format";
+import { clampNum, formatSet, LIMITS, weightToCanonicalKg, weightToDisplay } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { TimedStopwatch } from "./TimedStopwatch";
 
@@ -57,6 +57,11 @@ export const SetRow = memo(function SetRow({
   const isWarmup = set.set_type === "warmup";
   // Placeholder = poprzedni wynik (szary podpowiadacz). Jednostki opisują nagłówki kolumn.
   const ph = (n: number | null | undefined) => (n != null ? String(n) : undefined);
+  // DATA-02: waga w stanie/DB jest zawsze kanonicznym kg — placeholder wagi
+  // konwertuje do jednostki profilu, tak samo jak sam input.
+  const phWeight = (n: number | null | undefined) =>
+    n != null ? String(weightToDisplay(n, unit)) : undefined;
+  const weightMax = weightToDisplay(LIMITS.weight, unit);
 
   // „Last set" — wynik z poprzedniej sesji; tap = skopiuj do pól (Strong/Hevy).
   // Audyt P2: formatowanie przez wspólny formatSet zamiast trzeciej inline-kopii
@@ -144,22 +149,22 @@ export const SetRow = memo(function SetRow({
             onPersist={(n) => onPersist({ reps: n })}
           />
           <Field
-            value={set.added_weight}
-            max={LIMITS.weight}
-            placeholder={ph(prev?.added_weight)}
-            onPatch={(n) => onPatch({ added_weight: n })}
-            onPersist={(n) => onPersist({ added_weight: n })}
+            value={set.added_weight != null ? weightToDisplay(set.added_weight, unit) : null}
+            max={weightMax}
+            placeholder={phWeight(prev?.added_weight)}
+            onPatch={(n) => onPatch({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
+            onPersist={(n) => onPersist({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
           />
         </>
       ) : (
         <>
           <Field
-            value={set.weight}
+            value={set.weight != null ? weightToDisplay(set.weight, unit) : null}
             step="0.5"
-            max={LIMITS.weight}
-            placeholder={ph(prev?.weight)}
-            onPatch={(n) => onPatch({ weight: n })}
-            onPersist={(n) => onPersist({ weight: n })}
+            max={weightMax}
+            placeholder={phWeight(prev?.weight)}
+            onPatch={(n) => onPatch({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
+            onPersist={(n) => onPersist({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
           />
           <Field
             value={set.reps}
