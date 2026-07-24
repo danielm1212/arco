@@ -18,7 +18,7 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
-| — | — | — | — | brak aktywnych rezerwacji |
+| Claude | CORE-0 / DATA-01 — poprawna zakończona seria | `app/actions/sets.ts`, `app/session/[id]/*`, `supabase/migrations` (guard, nowa migracja) | 2026-07-24 | w toku |
 
 ## Ostatnie wpisy
 

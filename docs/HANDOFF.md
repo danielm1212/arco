@@ -109,7 +109,12 @@ koordynacji (2026-07-23).
 1. **Sekret serwerowy:** legacy `service_role` został niezamierzenie ujawniony w prywatnym
    logu narzędzia CLI podczas release'u. Nie trafił do repo ani dokumentów, ale należy pilnie
    utworzyć nowy sekret, podmienić go w Vercel/automatyzacjach, sprawdzić akcje serwerowe i
-   dopiero wtedy odwołać stary klucz (`SEC-03`).
+   dopiero wtedy odwołać stary klucz (`SEC-03`). **2026-07-24: [Ty] wstrzymuje SEC-03 na razie
+   (czeka na zewnętrzne wsparcie), czas nieokreślony.** Świadoma decyzja: SEC-03 nie blokuje
+   CORE-0/R4A (brak zależności technicznej — integralność danych jest osobną osią od rotacji
+   sekretu), więc sprint jedzie dalej równolegle. Jedyne zadanie faktycznie zablokowane do
+   odwołania: **TRAIN-02A4** (release 5 brakujących programów), bo migracja produkcyjna wymaga
+   już obróconego klucza.
 2. **Treści i programy:** ryzykowne zdjęcia Barbell Hip Thrust są punktowo wstrzymane na
    produkcji; nowe media Dumbbell/Single-Leg oraz zatwierdzona para Chin-Up nadal wymagają
    przygotowania,
@@ -152,16 +157,19 @@ koordynacji (2026-07-23).
 
 ## 6. Najbliższa praca
 
-1. [Ty] pilnie wykonać kontrolowaną rotację legacy `service_role` (`SEC-03`): nowy sekret,
-   Vercel/automatyzacje, smoke akcji serwerowych, a na końcu odwołanie starego.
+1. [Ty] SEC-03 wstrzymane na razie (czeka na zewnętrzne wsparcie) — **nie blokuje** punktów
+   poniżej. Wykonać, gdy wsparcie się odblokuje: nowy sekret, Vercel/automatyzacje, smoke
+   akcji serwerowych, a na końcu odwołanie starego.
 2. [Codex] `TRAIN-02A1–A3` są gotowe technicznie: P01/P08 mają recepty v2, P11/P12 v3,
-   a P03/P11/P12 łącznie 29 wersjonowanych ścieżek sprzętowych. SQL point syncu powstaje
-   dopiero po kontrakcie TRAIN-03/05.
-3. [Ty] SEC-03 po przygotowaniu A1–A3. TRAIN-02A4 czeka na kontrakt alternatyw
-   TRAIN-03/05 w PLAN-Q, następnie backup i dry-run.
+   a P03/P11/P12 łącznie 29 wersjonowanych ścieżek sprzętowych. SQL point syncu (`TRAIN-02A4`)
+   powstaje dopiero po kontrakcie TRAIN-03/05 **i** po SEC-03 — oba warunki, więc realnie
+   czeka też na odwołanie z punktu 1.
+3. **CORE-0 w toku (Claude, 2026-07-24):** integralność danych nie zależy technicznie od
+   SEC-03, więc jedzie równolegle. Start od DATA-01 (poprawna zakończona seria), potem
+   DATA-02 (kanoniczne jednostki), DATA-03 (jedna definicja faktu) i SYNC-01 (outbox).
 4. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
-5. CORE-0 → R4A → SESSION-01A: integralność loggera i mała, opcjonalna rekomendacja
+5. Po CORE-0: R4A → SESSION-01A: integralność loggera i mała, opcjonalna rekomendacja
    rozgrzewki/zakończenia bez wpływu na ukończenie treningu.
 6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
 7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut

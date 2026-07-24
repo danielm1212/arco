@@ -158,6 +158,10 @@ fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 **Zależność:** Q1; wykonujemy przed R4A
 **Spec:** `audyt-core-i-plan-2026-07.md`
 
+**Stan:** rozpoczęte 2026-07-24 (Claude), start od DATA-01. **SEC-03 wstrzymane u [Ty]
+(czeka na zewnętrzne wsparcie) nie blokuje CORE-0** — integralność danych jest osobną osią
+od rotacji sekretu; jedyne zadanie realnie zablokowane przez SEC-03 to TRAIN-02A4.
+
 - DATA-01: zakończona seria ma wynik wymagany przez typ ćwiczenia; ten sam guard działa
   w UI, Server Action i bazie/RPC;
 - DATA-02: ciężary mają kanoniczną jednostkę w danych, a `kg/lbs` jest konwersją prezentacji;
