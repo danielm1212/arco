@@ -48,7 +48,6 @@ import {
   writeSessionContinuity,
   type SessionDraftPatch,
 } from "@/lib/sessionFlow";
-import { buildWarmupRecommendations } from "@/lib/sessionPreparation";
 import {
   isCompletedWorkingSet,
   isIncompleteWorkingSet,
@@ -361,28 +360,6 @@ export function Logger({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [summaryKey],
   );
-  const preparationKey = exercises
-    .map(
-      (exercise) =>
-        `${exercise.sessionExerciseId}:${exercise.exerciseId}:${exercise.type}:${
-          exercise.category ?? ""
-        }:${exercise.mechanic ?? ""}:${exercise.movementPattern ?? ""}:${exercise.skipped}`,
-    )
-    .join("|");
-  const warmupExerciseName = useMemo(
-    () => {
-      const first = buildWarmupRecommendations(exercises)[0];
-      return first
-        ? exercises.find(
-            (exercise) => exercise.sessionExerciseId === first.sessionExerciseId,
-          )?.name ?? null
-        : null;
-    },
-    // Metadane ćwiczeń są jedynym wejściem planu. Edycja pól serii nie może
-    // przebudowywać rekomendacji ani łamać memo wszystkich kart.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [preparationKey],
-  );
 
   // R7 (audyt-loggera.md §6): przenieś ⋯ wyżej/niżej — serwer przenumerowuje
   // `position` (jednostka = ćwiczenie LUB cała grupa SS), router.refresh()
@@ -674,11 +651,10 @@ export function Logger({
             kind="warmup"
             timerId={sessionId}
             title="Rozgrzewka"
-            description={
-              warmupExerciseName
-                ? `Lekki marsz, krążenia barków i bioder, potem 2 lekkie serie: ${warmupExerciseName}.`
-                : "Lekki marsz oraz spokojne krążenia barków i bioder."
-            }
+            // Karta jest timerem, nie instruktorem: nie narzucamy formy ruchu
+            // (bieżnia, rowerek, skakanka — obojętne) i nie każemy robić serii,
+            // których logger i tak nie zapisze.
+            description="Rozgrzej się jak lubisz — bieżnia, rowerek, skakanka."
           />
         )}
         <p className="px-2xs text-xs leading-relaxed text-muted-foreground">

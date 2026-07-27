@@ -81,6 +81,10 @@ export const SetRow = memo(function SetRow({
   const pf = (n: number | null | undefined) => (set.completed ? null : n ?? null);
   const pfWeight = (n: number | null | undefined) =>
     set.completed || n == null ? null : weightToDisplay(n, unit);
+  // Zaliczony wiersz czytamy jako JEDNĄ taflę: pola gubią własne wypełnienie i
+  // ramkę, więc tło nie przebija w 8 px szczelinach między pudełkami (wyglądało
+  // to jak wyciek, nie jak stan). Dotknięcie wiersza przywraca pola do edycji.
+  const doneSurface = set.completed && !active;
   const weightMax = weightToDisplay(LIMITS.weight, unit);
   const rowRef = useRef<HTMLLIElement>(null);
   const setButtonRef = useRef<HTMLButtonElement>(null);
@@ -164,20 +168,24 @@ export const SetRow = memo(function SetRow({
 
   // Po usunięciu wiersz znika razem z fokusem — bez tego fokus ląduje na <body>
   // i nawigacja klawiaturą zaczyna się od początku strony.
+  //
+  // Zapamiętujemy POZYCJĘ, nie referencję do sąsiedniego <li>: React potrafi
+  // odtworzyć element zamiast go przenieść, a wtedy trzymana referencja jest już
+  // odpięta od dokumentu i focus() na niej nic nie robi (fokus cicho zostaje na
+  // <body> — dokładnie ten błąd złapał test).
   function deleteSet() {
     const row = rowRef.current;
-    const sibling = (row?.nextElementSibling ?? row?.previousElementSibling) as
-      | HTMLElement
-      | null;
-    const addSetButton = row?.parentElement?.parentElement?.querySelector<HTMLElement>(
-      "[data-add-set]",
-    );
+    const list = row?.parentElement ?? null;
+    const position = row && list ? Array.from(list.children).indexOf(row) : -1;
     setSetMenuOpen(false);
     onActivate();
     onDelete();
     requestAnimationFrame(() => {
+      const rows = list?.querySelectorAll<HTMLElement>(":scope > li") ?? [];
+      const neighbour = rows[Math.min(position, rows.length - 1)];
       const next =
-        sibling?.querySelector<HTMLElement>("[aria-haspopup='menu']") ?? addSetButton;
+        neighbour?.querySelector<HTMLElement>("[aria-haspopup='menu']") ??
+        list?.parentElement?.querySelector<HTMLElement>("[data-add-set]");
       next?.focus();
     });
   }
@@ -209,7 +217,9 @@ export const SetRow = memo(function SetRow({
         className={`size-11 shrink-0 rounded-md border text-xs font-medium tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           isWarmup
             ? "border-warning bg-warning/15 text-warning"
-            : "border-input text-muted-foreground"
+            : doneSurface
+              ? "border-transparent text-success"
+              : "border-input text-muted-foreground"
         }`}
         aria-label={isWarmup ? "Opcje serii rozgrzewkowej" : `Opcje serii ${index}`}
         aria-expanded={setMenuOpen}
@@ -274,6 +284,7 @@ export const SetRow = memo(function SetRow({
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
             prefill={pf(prev?.reps)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
             onFocus={onActivate}
@@ -284,6 +295,7 @@ export const SetRow = memo(function SetRow({
             max={weightMax}
             placeholder={phWeight(prev?.added_weight)}
             prefill={pfWeight(prev?.added_weight)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onPersist={(n) => onPersist({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onFocus={onActivate}
@@ -299,6 +311,7 @@ export const SetRow = memo(function SetRow({
             max={weightMax}
             placeholder={phWeight(prev?.weight)}
             prefill={pfWeight(prev?.weight)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onPersist={(n) => onPersist({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onFocus={onActivate}
@@ -310,6 +323,7 @@ export const SetRow = memo(function SetRow({
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
             prefill={pf(prev?.reps)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
             onFocus={onActivate}
@@ -402,6 +416,7 @@ function Field({
   grow = true,
   placeholder,
   prefill = null,
+  flat = false,
   max,
   min = 0,
   onPatch,
@@ -416,6 +431,8 @@ function Field({
   placeholder?: string;
   /** Wynik z poprzedniej sesji: tap w PUSTE pole wpisuje go i zaznacza. */
   prefill?: number | null;
+  /** Zaliczona seria: pole zlewa się z tłem wiersza zamiast udawać puste pudełko. */
+  flat?: boolean;
   max: number;
   min?: number;
   onPatch: (n: number | null) => void;
@@ -480,7 +497,9 @@ function Field({
         event.preventDefault();
         onEnter?.();
       }}
-      className={`h-11 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"}`}
+      className={`h-11 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"} ${
+        flat ? "border-transparent bg-transparent" : ""
+      }`}
     />
   );
 }
