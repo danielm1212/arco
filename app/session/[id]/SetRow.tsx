@@ -166,28 +166,27 @@ export const SetRow = memo(function SetRow({
     setButtonRef.current?.focus();
   }
 
-  // Po usunięciu wiersz znika razem z fokusem — bez tego fokus ląduje na <body>
-  // i nawigacja klawiaturą zaczyna się od początku strony.
+  // Usuwany wiersz zabiera ze sobą fokus, więc bez jawnego przeniesienia ląduje on
+  // na <body> i nawigacja klawiaturą zaczyna się od początku strony.
   //
-  // Zapamiętujemy POZYCJĘ, nie referencję do sąsiedniego <li>: React potrafi
-  // odtworzyć element zamiast go przenieść, a wtedy trzymana referencja jest już
-  // odpięta od dokumentu i focus() na niej nic nie robi (fokus cicho zostaje na
-  // <body> — dokładnie ten błąd złapał test).
+  // Fokus przenosimy PRZED usunięciem, synchronicznie. Próby robienia tego po
+  // `onDelete()` w `requestAnimationFrame` przegrywały wyścig z commitem Reacta:
+  // raz trafiały w węzeł, który React zaraz zdejmował, raz w jeszcze nieodświeżoną
+  // listę (lokalnie przechodziło, CI łapało). Sąsiedni wiersz i „+ seria" przeżywają
+  // usunięcie, a klucz `set.id` gwarantuje, że React użyje tego samego węzła DOM —
+  // fokus zostaje tam, gdzie go postawiliśmy.
   function deleteSet() {
     const row = rowRef.current;
-    const list = row?.parentElement ?? null;
-    const position = row && list ? Array.from(list.children).indexOf(row) : -1;
+    const neighbour = (row?.nextElementSibling ?? row?.previousElementSibling) as
+      | HTMLElement
+      | null;
+    const target =
+      neighbour?.querySelector<HTMLElement>("[aria-haspopup='menu']") ??
+      row?.parentElement?.parentElement?.querySelector<HTMLElement>("[data-add-set]");
     setSetMenuOpen(false);
+    target?.focus();
     onActivate();
     onDelete();
-    requestAnimationFrame(() => {
-      const rows = list?.querySelectorAll<HTMLElement>(":scope > li") ?? [];
-      const neighbour = rows[Math.min(position, rows.length - 1)];
-      const next =
-        neighbour?.querySelector<HTMLElement>("[aria-haspopup='menu']") ??
-        list?.parentElement?.querySelector<HTMLElement>("[data-add-set]");
-      next?.focus();
-    });
   }
 
   return (
