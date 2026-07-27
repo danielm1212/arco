@@ -21,6 +21,32 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-27 · Claude · SESSION-01A3 — PODPOWIEDŹ STARTOWA: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** nowy `app/session/[id]/LoggerHint.tsx`, `lib/useFocusTrap.ts`,
+  `lib/bodyScrollLock.ts` (ekstrakcja z `components/ui/bottom-sheet.tsx`), `lib/prefs.ts`,
+  wpięcie w `Logger.tsx`, testy jednostkowe i przeglądarkowe, dokumentacja stanu.
+- **Wynik:** popover zakotwiczony pod pierwszym wierszem serii ze strzałką w check,
+  na przyciemnionym tle, z przyciskiem „Rozumiem". Raz na urządzenie; znika też po
+  pierwszej zaliczonej serii. Copy używa czasownika produktu („zalicz serię").
+- **Kontrakt overlayów:** portal do `body`, współdzielona blokada tła, Escape, klik w tło,
+  pułapka fokusu ze zwrotem fokusu. Lock wyciągnięty do wspólnego modułu, bo dwa
+  niezależne liczniki referencji zapisywałyby style `body` nawzajem po sobie.
+- **Znalezisko:** `prefs.ts` wołało `localStorage` bez `try/catch`. Poza testem oznacza to
+  wywrócenie ekranu treningu w Safari w trybie prywatnym i przy pełnej quocie — osłonięte,
+  z testem jednostkowym na rzucający storage.
+- **Dowód:** lint i TypeScript czyste; build zielony; unit **157/157**; przeglądarkowe
+  **31/31**, w tym TRUST-03 15/15 po ekstrakcji locka (ekstrakcja bez zmiany zachowania).
+- **Dogfood:** konto `session01a2@arco.test`, sesja `0a371297-7c3d-4473-ba99-7f7c9b6d30ba`.
+  Zmierzone: przyciemnienie `375×812 @ 0,0`, rodzic `BODY`, `body` `position: fixed`, tło
+  nieprzewijalne, Tab nie wychodzi poza overlay, po Escape wszystko wraca i podpowiedź
+  nie pokazuje się po przeładowaniu.
+- **Czego nie dotknięto:** migracji, seeda, treści treningowej, danych produkcyjnych,
+  samych `BottomSheet`ów (poza usunięciem zduplikowanego locka) oraz nieśledzonych plików
+  właściciela.
+- **Zaległości:** [Ty] merge PR i deploy; ryzyko 6 z HANDOFF wciąż otwarte — `useFocusTrap`
+  istnieje, ale nie jest jeszcze podpięty do sheetów.
+
 ### 2026-07-27 · Claude · SESSION-01A2 — ZWARTY LOGGER I TIMERY: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `app/session/[id]/**` (SetRow, ExerciseCard, Logger, RoutineTimer,

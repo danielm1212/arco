@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ import type {
 } from "@/lib/types";
 import { trainingPriorityMeta } from "@/lib/trainingPriority";
 import { useWakeLock } from "@/lib/useWakeLock";
-import { getKeepAwake } from "@/lib/prefs";
+import { getKeepAwake, getLoggerHintSeen } from "@/lib/prefs";
 import { ChevronDown, ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { reorderExercise } from "@/app/actions/sets";
@@ -53,6 +53,7 @@ import {
   isIncompleteWorkingSet,
 } from "@/lib/sessionSetFacts";
 import { RoutineTimer } from "./RoutineTimer";
+import { LoggerHint } from "./LoggerHint";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -421,6 +422,20 @@ export function Logger({
     (n, ex) => n + ex.sets.filter(isCompletedWorkingSet).length,
     0,
   );
+  // SESSION-01A3: podpowiedź startowa. Stan czytamy dopiero po montażu (jak w
+  // RoutineTimer), żeby serwer i pierwszy render klienta były zgodne.
+  const [hintOpen, setHintOpen] = useState(false);
+  useEffect(() => {
+    if (isFinished || isHistorical || getLoggerHintSeen()) return;
+    const frame = window.requestAnimationFrame(() => setHintOpen(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, [isFinished, isHistorical]);
+  const dismissHint = useCallback(() => setHintOpen(false), []);
+  // Zaliczona seria jest lepszym dowodem zrozumienia niż kliknięcie „Rozumiem",
+  // więc widoczność jest wyprowadzona, a nie ustawiana efektem. Zapis „widziane"
+  // robi sam LoggerHint przy odmontowaniu — każde zniknięcie liczy się tak samo.
+  const hintVisible = hintOpen && doneSets === 0;
+
   // R4: seria niezaliczone = kandydat do finish-sheeta zamiast confirm()
   const incompleteSets = factExercises.reduce(
     (n, ex) => n + ex.sets.filter(isIncompleteWorkingSet).length,
@@ -714,6 +729,8 @@ export function Logger({
 
         <ExercisePicker sessionId={sessionId} />
       </main>
+
+      {hintVisible && <LoggerHint onDismiss={dismissHint} />}
 
       {/* R1: "Usuń sesję" — akcja raz-na-miesiąc, dawniej zawsze widoczna
           tuż pod pickerem (strefa eksploracji); teraz w ⋯ sesji z headera */}

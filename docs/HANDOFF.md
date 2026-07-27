@@ -103,7 +103,17 @@ koordynacji (2026-07-23).
   158/158 unit, 26/26 testów przeglądarkowych i walidatory 907/15/308 oraz 60/60.
   CI PR oraz ponowne CI `main` są zielone, Vercel wdrożył `47f48ae`, a publiczny login
   po przeładowaniu nie zgłasza błędów. Pozostaje checkpoint urządzeniowy [Ty].
-- **SESSION-01A2 — gotowe technicznie na `agent/session-01a2`, czeka na merge i deploy [Ty]:**
+- **SESSION-01A3 — gotowe technicznie na `agent/session-01a3`, czeka na merge i deploy [Ty]:**
+  jednorazowa podpowiedź startowa loggera — popover zakotwiczony pod pierwszym wierszem serii,
+  strzałka celuje w check, tło przyciemnione, przycisk „Rozumiem". Pokazywana raz na urządzenie
+  (`prefs.loggerHintSeen`) i znikająca także po pierwszej zaliczonej serii. Pełny kontrakt
+  overlayów: portal do `body`, współdzielona blokada tła (`lib/bodyScrollLock.ts` wyciągnięte
+  z `BottomSheet` bez zmiany zachowania), Escape, klik w tło, pułapka fokusu ze zwrotem fokusu
+  (`lib/useFocusTrap.ts`). Przy okazji osłonięto `prefs.ts` — `localStorage` rzuca w Safari
+  w trybie prywatnym i przy pełnej quocie, co wywracało cleanup overlaya. Bramka: lint,
+  TypeScript, build, **157/157** unit, **31/31** przeglądarkowych (TRUST-03 15/15).
+  Szczegóły: `session-01a3-release-2026-07-27.md`.
+- **SESSION-01A2 — wdrożone w PR [#27](https://github.com/danielm1212/arco/pull/27), czeka na deploy [Ty]:**
   przebudowa prezentacji loggera po dogfoodzie SESSION-01A (ocena 4/10 za nadmiar instrukcji).
   Wiersz serii zszedł ze ~120 px do **44 px** — check 44×44 jest częścią wiersza, pełnoszerokie
   „Zalicz" zniknęło, a stały `×` zastąpiło menu pod numerem serii (robocza/rozgrzewkowa/usuń).
@@ -206,7 +216,11 @@ koordynacji (2026-07-23).
    usunięcie historii — zero P0/P1); brakuje wyłącznie regresji na fizycznym nowym
    urządzeniu (iPhone PWA, razem z TRUST-01/03).
 5. **Android:** brak pełnego checkpointu systemowego Back/PWA.
-6. **A11y:** funkcjonalne sheety nie mają jeszcze kompletnego focus trapu i zwrotu fokusu.
+6. **A11y:** funkcjonalne sheety nadal nie mają kompletnego focus trapu i zwrotu fokusu.
+   SESSION-01A3 dodało gotowe narzędzie — `lib/useFocusTrap.ts`, używane przez podpowiedź
+   startową loggera — ale **nie podpięło go do sheetów**. Spłata długu to podmiana obsługi
+   fokusu w `components/ui/bottom-sheet.tsx` na ten hook; blokada tła jest już współdzielona
+   (`lib/bodyScrollLock.ts`).
 7. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
 8. **Publiczność:** signup, RODO, eksport/usunięcie, abuse protection i publiczna Ekipa są zamknięte.
 9. **Badania:** większość wiedzy pochodzi z dogfoodu właściciela; wymagane są H2-Lab oraz
@@ -238,12 +252,11 @@ koordynacji (2026-07-23).
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
 3. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
-4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A i SESSION-01A2; fizyczna
-   regresja nie blokuje rozpoczęcia PLAN-Q.
-5. [Ty] merge i deploy SESSION-01A2 z `agent/session-01a2` (procedura `arco-release`).
-   Po merge'u SESSION-01A3: jednorazowa podpowiedź startowa w loggerze (przyciemnienie,
-   popover, „Rozumiem"), z pełnym kontraktem overlayów — blokada tła, Escape, focus trap
-   i zwrot fokusu, żeby nie dokładać do długu z ryzyka 6.
+4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A, SESSION-01A2 i SESSION-01A3;
+   fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
+5. [Ty] merge SESSION-01A3 z `agent/session-01a3` i deploy obu paczek loggera procedurą
+   `arco-release` (SESSION-01A2 jest już w `main`). Opcjonalny follow-up domykający ryzyko 6:
+   podpiąć `lib/useFocusTrap.ts` do `components/ui/bottom-sheet.tsx`.
 6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
 7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
