@@ -271,12 +271,13 @@ historii, wszystkie pochodne liczą te same fakty, a jedna błędna operacja nie
 - SESSION-01A po R4A: mała, opcjonalna rekomendacja rozgrzewki specyficznej i zakończenia;
   serie `warmup` nie liczą się do objętości/ukończenia, a rozciąganie nie obiecuje regeneracji.
 
-**Stan SESSION-01A:** gotowe technicznie 2026-07-27. Rekomendacja działa w loggerze bez
+**Stan SESSION-01A:** wdrożone produkcyjnie 2026-07-27 przez PR
+[#25](https://github.com/danielm1212/arco/pull/25). Rekomendacja działa w loggerze bez
 nowego schematu i bez interaktywnego rytuału; pierwszy ciężki/power/skill wzorzec dostaje
 2 serie, kolejny nowy wzorzec 1. Done ma opcjonalne wyciszenie/mobilność, a wspólna semantyka
 serii roboczej wyklucza `warmup` z ukończenia, objętości, Historii, progresji i finish guardu.
 Dogfood reloadu z oczekującym outboxem wykrył i domknął dodatkową regresję hydracji.
-Kandydat czeka na PR/CI/deploy oraz checkpoint fizycznego urządzenia [Ty].
+CI i Vercel dla `main` są zielone; pozostaje checkpoint fizycznego urządzenia [Ty].
 
 **Poza zakresem:** nowe programy, cel 1/tydzień, interaktywny SESSION-01B, obowiązkowe RIR,
 automatyczny deload, pełny model objętości oraz warianty Minimum/Standard/Plus. PROGRAM-01A

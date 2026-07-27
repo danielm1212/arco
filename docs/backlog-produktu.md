@@ -116,7 +116,7 @@ CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ogranic
 | TRAIN-05 | Prawda sprzętowa per slot | Kanoniczny słownik, wymagania ćwiczeń, aliasy i wykonalna ścieżka przez alternatywę | razem z TRAIN-03/04 |
 | TRAIN-06 | Czytelna karta i detal planu | Czas, akcent, sprzęt, przerwa, opcjonalność i warianty; pełne stany UX bez redesignu | po TRAIN-03/05 |
 | TRAIN-07 | Gate publikacji | Walidator CI, idempotentny seed, RLS, aktywne plany/sesje, E2E i macierz urządzeń | po TRAIN-04–06 |
-| SESSION-01A | Minimalna rekomendacja przygotowania i zakończenia | Kontekstowe serie rozgrzewkowe przed ciężkim/power/skill; po finishu opcjonalne wyciszenie/mobilność bez obietnicy lepszej regeneracji | gotowe technicznie 2026-07-27; czeka PR/CI/deploy i checkpoint [Ty] |
+| SESSION-01A | Minimalna rekomendacja przygotowania i zakończenia | Kontekstowe serie rozgrzewkowe przed ciężkim/power/skill; po finishu opcjonalne wyciszenie/mobilność bez obietnicy lepszej regeneracji | gotowe na produkcji 2026-07-27; pozostaje checkpoint [Ty] |
 
 PLAN-Q jest twardą bramką przed R2.2 i R4C. Pełny kontrakt danych, kompatybilności, testów,
 rollbacku i review jest w `spec-plan-q-biblioteka-treningow.md`.
