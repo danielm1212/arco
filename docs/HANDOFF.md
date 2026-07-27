@@ -127,6 +127,16 @@ koordynacji (2026-07-23).
   `previous_session_sets` wybierają globalnie najnowszą inną sesję, nie czasowo poprzedzającą
   przeglądaną — przy edycji starej historii z równolegle otwartym innym treningiem "poprzedni
   wynik" może być z późniejszej sesji. Rzadki przypadek, osobny finding na przyszłość.
+- **MOMENT-01 (confetti po rekordzie):** zaimplementowane na `agent/moment-pr-confetti`,
+  PR czeka na review/merge. Wystrzał CSS bez biblioteki na done-screenie, pod tym samym
+  sygnałem `hasPR` co nagłówek „Nowy rekord"; bez rekordu komponent nie jest renderowany.
+  Paleta rust + violet + amber to jawny wyjątek od reguły v1.4, zapisany jako **D-20**
+  w `decyzje-produktowe.md`. `prefers-reduced-motion` → zero cząstek (plus reguła CSS jako
+  pas bezpieczeństwa). Zweryfikowane: 120/120 unit, lint, build, a w realnej apce struktura,
+  34 cząstki, tokeny kolorów i przełączenie dark. **Nie zweryfikowano ruchu w locie** — preview
+  trzyma dokument jako `hidden`, więc animacje CSS i `rAF` nie tykają; jakość ruchu walidowana
+  na POC z identycznymi keyframe'ami. Do checkpointu [Ty]: płynność na Androidzie i zachowanie
+  przy „Ogranicz ruch" w iOS.
 
 ## 4. Otwarte ryzyka
 

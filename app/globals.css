@@ -390,4 +390,124 @@
   .animate-pulse-once {
     animation: none !important;
   }
+  /* MOMENT-01: warstwa konfetti i tak nie powstaje (komponent zwraca null przy
+     reduce) — to pas bezpieczeństwa, gdyby ktoś wyrenderował ją inną drogą. */
+  .confetti-layer {
+    display: none !important;
+  }
+}
+
+/* ── MOMENT-01 · wystrzał konfetti po rekordzie (done-screen) ────────────────
+   Barwy: rust + violet + amber. To ŚWIADOMY wyjątek od reguły v1.4 „violet nie
+   miesza się z rust w jednym komponencie" (decyzja [Ty] 2026-07-24, zapisana w
+   decyzje-produktowe.md D-20): reguła pilnuje warstwy NARZĘDZIA, a to jest
+   moment. W dark schodzimy o stopień jaśniej, żeby papierki nie ciążyły na
+   ciemnym canvasie. */
+:root {
+  --confetti-1: hsl(var(--arco-rust-500));
+  --confetti-2: hsl(var(--arco-rust-400));
+  --confetti-3: hsl(var(--arco-violet-500));
+  --confetti-4: hsl(var(--arco-violet-400));
+  --confetti-5: hsl(var(--arco-amber-500));
+}
+.dark {
+  --confetti-1: hsl(var(--arco-rust-400));
+  --confetti-2: hsl(var(--arco-rust-300));
+  --confetti-3: hsl(var(--arco-violet-400));
+  --confetti-4: hsl(var(--arco-violet-300));
+  --confetti-5: hsl(var(--arco-amber-500));
+}
+
+.confetti-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none; /* moment nie może przechwycić tapu w CTA */
+  perspective: 600px;   /* bez tego rotateX/Y nie skraca perspektywicznie */
+}
+
+/* Oś X osobno od Y — z rozdzielenia osi powstaje PRAWDZIWA parabola.
+   ease-out = opór powietrza wygaszający prędkość boczną. */
+.confetti-x {
+  position: absolute;
+  left: 50%;
+  top: 32%; /* start spod liczby-bohatera, żeby wystrzał miał źródło */
+  transform-style: preserve-3d;
+  will-change: transform;
+  animation: confetti-drift var(--confetti-dur) cubic-bezier(0.06, 0.72, 0.31, 1)
+    var(--confetti-delay) forwards;
+}
+.confetti-y {
+  display: block;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  animation: confetti-fall var(--confetti-dur) linear var(--confetti-delay) forwards;
+}
+.confetti-paper {
+  display: block;
+  width: var(--confetti-w);
+  height: var(--confetti-h);
+  background: var(--confetti-color);
+  border-radius: 1px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  /* Liczba obrotów policzona w modelu (duration/spin), nie `infinite`: obrót
+     kończy się sam, nawet gdyby odmontowanie warstwy kiedyś zawiodło (S3). */
+  animation: confetti-tumble var(--confetti-spin) linear var(--confetti-delay)
+    var(--confetti-iterations);
+}
+
+@keyframes confetti-drift {
+  to {
+    transform: translateX(var(--confetti-dx));
+  }
+}
+
+/* Wznoszenie zwalnia (grawitacja), opadanie przyspiesza tylko do PRĘDKOŚCI
+   GRANICZNEJ — confetti jest lekkie i ma duży opór, więc nie spada jak w próżni. */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.12, 0.66, 0.38, 1);
+  }
+  34% {
+    transform: translateY(var(--confetti-peak));
+    animation-timing-function: cubic-bezier(0.45, 0, 0.72, 0.86);
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(var(--confetti-floor));
+    opacity: 0;
+  }
+}
+
+/* Dwie osie o NIEWSPÓŁMIERNYCH okresach (720° : 584° ≈ 1 : 0,81) — tumbling nie
+   zapętla się widocznie. Świadomie BEZ `filter: brightness` („papier łapie
+   światło"): kanon dopuszcza w animacji wyłącznie `transform` i `opacity`
+   (S6 GPU-only), a 34 elementy z filtrem to 34 warstwy kompozytowe — realne
+   ryzyko gubienia klatek na słabszym Androidzie. Skracanie perspektywiczne
+   z rotacji 3D i tak niesie cały efekt papieru. */
+@keyframes confetti-tumble {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: rotateX(180deg) rotateY(146deg);
+  }
+  50% {
+    transform: rotateX(360deg) rotateY(292deg);
+  }
+  75% {
+    transform: rotateX(540deg) rotateY(438deg);
+  }
+  100% {
+    transform: rotateX(720deg) rotateY(584deg);
+  }
 }

@@ -5,6 +5,7 @@ import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import type { SessionSet, UnitSystem } from "@/lib/types";
 import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { CountUpNumber } from "./CountUpNumber";
+import { PrConfetti } from "./PrConfetti";
 import { weekStart, computeStreak, weeksMeetingGoal } from "@/lib/week";
 import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatGoalProgress } from "@/lib/programRecommendation";
@@ -131,6 +132,9 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
 
   return (
     <div className="bg-brand text-brand-foreground">
+    {/* MOMENT-01: ten sam sygnał, co nagłówek „Nowy rekord" — bez rekordu
+        komponent nie jest w ogóle renderowany, więc kosztuje zero. */}
+    {hasPR && <PrConfetti />}
     <div className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-xl p-lg text-center">
       {/* Hero — liczba-bohater. font-display (Gambarino, 2026-07-11): pierwszy
           z 3 ekranów testowych z roadmap.md (celebracja/kłódka premium/recap) */}
