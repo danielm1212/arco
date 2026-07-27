@@ -8,6 +8,13 @@ const warsawDateTimeFormatter = new Intl.DateTimeFormat("pl-PL", {
   timeZone: "Europe/Warsaw",
 });
 
+const warsawDateFormatter = new Intl.DateTimeFormat("pl-PL", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "Europe/Warsaw",
+});
+
 /**
  * Deterministiczny zapis daty dla UI Arco.
  *
@@ -18,4 +25,9 @@ const warsawDateTimeFormatter = new Intl.DateTimeFormat("pl-PL", {
 export function formatWarsawDateTime(value: string | Date): string {
   const date = typeof value === "string" ? new Date(value) : value;
   return warsawDateTimeFormatter.format(date);
+}
+
+export function formatWarsawDate(value: string | Date): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return warsawDateFormatter.format(date);
 }

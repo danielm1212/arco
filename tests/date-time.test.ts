@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { formatWarsawDateTime } from "../lib/dateTime";
+import { formatWarsawDate, formatWarsawDateTime } from "../lib/dateTime";
 
 test("Historia: data ma ten sam tekst na serwerze i w przeglądarce", () => {
   assert.equal(
@@ -14,4 +14,8 @@ test("Historia: formatowanie respektuje zmianę czasu Europe/Warsaw", () => {
     formatWarsawDateTime("2026-01-19T10:38:56.000Z"),
     "19.01.2026, 11:38:56",
   );
+});
+
+test("Logger historyczny: sam dzień jest stabilny blisko północy UTC", () => {
+  assert.equal(formatWarsawDate("2026-07-19T22:30:00.000Z"), "20.07.2026");
 });

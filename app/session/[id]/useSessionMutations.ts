@@ -40,6 +40,8 @@ export function useSessionMutations({
   startRest,
   allowRest,
   requestWeightReview,
+  onSetCompletionChange,
+  onCompletedEditSaved,
 }: {
   sessionId: string;
   setExercises: Dispatch<SetStateAction<LoggerExercise[]>>;
@@ -54,7 +56,14 @@ export function useSessionMutations({
     ex: LoggerExercise;
     set: SessionSet;
     review: SetWeightReview;
+    mode: "complete" | "edit";
   }) => void;
+  onSetCompletionChange: (
+    ex: LoggerExercise,
+    set: SessionSet,
+    completed: boolean,
+  ) => void;
+  onCompletedEditSaved: (setId: string) => void;
 }) {
   // S12: serie, które pobiły rep-PR w tej sesji (badge „PR" na wierszu)
   const [prSets, setPrSets] = useState<Record<string, boolean>>({});
@@ -113,6 +122,7 @@ export function useSessionMutations({
       ),
     );
     saveSet(newSet);
+    return newSet.id;
   }
 
   // R6a (audyt-loggera.md §5): superset ma świadomą przerwę — jeśli partner w
@@ -154,6 +164,7 @@ export function useSessionMutations({
 
   function commitToggle(ex: LoggerExercise, set: SessionSet) {
     patchSetLocal(ex.sessionExerciseId, set.id, { completed: !set.completed });
+    onSetCompletionChange(ex, set, !set.completed);
     if (!set.completed) maybeStartRest(ex);
     // S12: mikro-celebracja rep-PR — w momencie zaliczenia, nie na ekranie końcowym
     if (
@@ -192,7 +203,7 @@ export function useSessionMutations({
         previousWeight: previousValidWeight(ex),
       });
       if (review) {
-        requestWeightReview({ ex, set, review });
+        requestWeightReview({ ex, set, review, mode: "complete" });
         return;
       }
     }
@@ -208,8 +219,34 @@ export function useSessionMutations({
       return;
     }
     patchSetLocal(ex.sessionExerciseId, set.id, { duration_seconds: seconds, completed: true });
+    onSetCompletionChange(ex, set, true);
     if (!set.completed) maybeStartRest(ex);
     saveSet(set, { duration_seconds: seconds, completed: true });
+  }
+
+  function commitCompletedEdit(ex: LoggerExercise, set: SessionSet) {
+    saveSet(set);
+    onCompletedEditSaved(set.id);
+    toast.success("Zmiana zapisana");
+  }
+
+  function handleSaveCompletedEdit(ex: LoggerExercise, set: SessionSet) {
+    const blockReason = getCompletionBlockReason(ex.type, set);
+    if (blockReason) {
+      toast.error(blockReason);
+      return;
+    }
+    const review = reviewWorkingSetWeight({
+      type: ex.type,
+      setType: set.set_type,
+      weight: set.weight,
+      previousWeight: previousValidWeight(ex),
+    });
+    if (review) {
+      requestWeightReview({ ex, set, review, mode: "edit" });
+      return;
+    }
+    commitCompletedEdit(ex, set);
   }
 
   function persistSet(setId: string, patch: Partial<SessionSet>) {
@@ -340,6 +377,8 @@ export function useSessionMutations({
     handleAddSet,
     handleToggle,
     commitToggle,
+    handleSaveCompletedEdit,
+    commitCompletedEdit,
     handleTimedComplete,
     persistSet,
     handleDeleteSet,

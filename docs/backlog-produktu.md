@@ -144,8 +144,8 @@ rollbacku i review jest w `spec-plan-q-biblioteka-treningow.md`.
 
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
-| LOG-00 | Kontrakt stanu aktywnej sesji | Wspólne stany draft/ready/completed/edited/rest/minimized; brak podwójnego wolumenu i utraty szkicu | gotowe do podjęcia |
-| LOG-01 | Czytelny następny krok po wpisaniu wyniku | Subtelnie wyróżnić „Zalicz serię”, ustawić logiczny fokus; bez autozaliczania | gotowe do podjęcia |
+| LOG-00 | Kontrakt stanu aktywnej sesji | Wspólne stany draft/ready/completed/edited/rest/minimized; brak podwójnego wolumenu i utraty szkicu | w sprincie — R4A gotowe technicznie |
+| LOG-01 | Czytelny następny krok po wpisaniu wyniku | Subtelnie wyróżnić „Zalicz serię”, ustawić logiczny fokus; bez autozaliczania | w sprincie — R4A gotowe technicznie |
 | LOG-02 | Pierwszy trening w kontekście | Jednorazowe, pomijalne wskazówki: wynik, zaliczenie, timer, podmiana, minimalizacja, koniec | gotowe do podjęcia |
 | LOG-03 | „Zakończ trening” na dole | Druga droga po ostatnim ćwiczeniu; używa tego samego guarda i sheetu | gotowe do podjęcia |
 | LOG-04 | Potwierdzenie niepełnego/pustego treningu | Pusty: wróć/usuń; niepełny: wróć/zakończ. Serwer broni historii | gotowe |
@@ -160,6 +160,8 @@ rollbacku i review jest w `spec-plan-q-biblioteka-treningow.md`.
 Pełny kontrakt, kolejność podzadań i kryteria urządzeniowe R4 są w
 `spec-r4-logger.md`. LOG-00 i R4A zaczynają się po CORE-0; nie zaczynamy backfillu
 przed przejściem całej pętli wielu serii i ćwiczeń ani guidance R4E przed CORE-1.
+R4A przeszło lokalną pętlę dwóch ćwiczeń i pięciu serii, wznowienie, reload oraz
+macierz 320/375/393 px; status zmieni się na `gotowe` po release i checkpointcie PWA.
 
 ### CORE-1 — minimalny wiarygodny silnik przed R4E
 

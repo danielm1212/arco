@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { LoggerExercise } from "./Logger";
 
 /**
  * Stan przerwy między seriami + override długości per ćwiczenie (na czas sesji).
  * S9-cz.2 paczka 3: przeniesione 1:1 z Logger.tsx (bez zmiany zachowania).
  */
-export function useRestTimer(defaultRest: number) {
-  const [rest, setRest] = useState<{ endAt: number; label: string | null } | null>(null);
+export function useRestTimer(
+  defaultRest: number,
+  initialRest: { endAt: number; label: string | null } | null = null,
+) {
+  const [rest, setRest] = useState<{ endAt: number; label: string | null } | null>(
+    initialRest,
+  );
   // Override restu per ćwiczenie (na czas sesji)
   const [restOverride, setRestOverride] = useState<Record<string, number>>({});
 
@@ -28,8 +33,12 @@ export function useRestTimer(defaultRest: number) {
     }));
 
   const dismissRest = () => setRest(null);
+  const restoreRest = useCallback(
+    (value: { endAt: number; label: string | null } | null) => setRest(value),
+    [],
+  );
   const extendRest = (s: number) =>
     setRest((r) => (r ? { ...r, endAt: r.endAt + s * 1000 } : r));
 
-  return { rest, restFor, startRest, adjustRest, dismissRest, extendRest };
+  return { rest, restFor, startRest, adjustRest, dismissRest, restoreRest, extendRest };
 }

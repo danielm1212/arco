@@ -76,7 +76,11 @@ export function RestTimer({
 
   if (done) {
     return (
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t bg-primary pb-[env(safe-area-inset-bottom)] text-primary-foreground">
+      <div
+        className="fixed inset-x-0 bottom-0 z-50 border-t bg-primary pb-[env(safe-area-inset-bottom)] text-primary-foreground"
+        role="status"
+        aria-live="polite"
+      >
         <div className="mx-auto flex max-w-md items-center gap-sm p-md">
           <p className="flex-1 text-base font-semibold">
             Koniec przerwy. Czas na serię! 💪
@@ -101,6 +105,8 @@ export function RestTimer({
             Przerwa{label ? ` · ${label}` : ""}
           </p>
           <p
+            role="timer"
+            aria-label={`Pozostało ${remaining} sekund przerwy`}
             className={`font-mono text-2xl font-semibold tabular-nums transition-transform ${
               finishing ? "scale-110 text-primary" : ""
             }`}

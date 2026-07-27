@@ -166,6 +166,46 @@ async function pageOverflow(body: string): Promise<number> {
   }
 }
 
+test("R4A: tekstowe CTA serii nie zwęża pól ani nie powoduje overflow na 320/375/393 px", async () => {
+  const body = `<main class="mx-auto max-w-md p-md"><section class="rounded-xl bg-card p-md">
+    <ul class="space-y-xs">
+      <li class="flex flex-wrap items-center gap-xs rounded-md">
+        <button class="size-11 shrink-0 rounded-md border">1</button>
+        <input data-set-field class="h-11 flex-1 rounded-md border text-center" value="62.5">
+        <input data-set-field class="h-11 flex-1 rounded-md border text-center" value="8">
+        <button class="order-last flex min-h-11 w-full items-center justify-center rounded-md border px-sm text-sm font-semibold">
+          Zapisz zmianę
+        </button>
+        <button class="flex h-11 w-11 shrink-0 items-center justify-center">✕</button>
+      </li>
+    </ul>
+  </section></main>`;
+
+  for (const width of [320, 375, 393]) {
+    const ctx = await browser.newContext({ viewport: { width, height: 780 } });
+    try {
+      const page = await ctx.newPage();
+      await page.setContent(pageHtml(body), { waitUntil: "load" });
+      const metrics = await page.evaluate(() => ({
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        fieldWidths: [...document.querySelectorAll<HTMLElement>("[data-set-field]")].map(
+          (field) => field.getBoundingClientRect().width,
+        ),
+        actionHeight: document.querySelector<HTMLElement>("button.order-last")!
+          .getBoundingClientRect().height,
+      }));
+      assert.ok(metrics.overflow <= 1, `overflow ${metrics.overflow}px przy ${width}px`);
+      assert.ok(
+        metrics.fieldWidths.every((fieldWidth) => fieldWidth >= 56),
+        `pole serii węższe niż 56px przy ${width}px: ${metrics.fieldWidths.join(", ")}`,
+      );
+      assert.ok(metrics.actionHeight >= 44, `CTA niższe niż 44px przy ${width}px`);
+    } finally {
+      await ctx.close();
+    }
+  }
+});
+
 // Worst-case treść z realnej bazy (najdłuższe nazwy/notatki).
 const LONG_SUBTITLE = "Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi";
 const LONG_NOTES =

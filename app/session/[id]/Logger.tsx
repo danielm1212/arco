@@ -30,6 +30,17 @@ import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { useNavigationHistory } from "@/components/navigation/NavigationHistory";
 import { recoverableCount, restoreSessionDraft } from "@/lib/outbox";
 import type { SetWeightReview } from "@/lib/setValidation";
+import { formatWarsawDate } from "@/lib/dateTime";
+import {
+  applySessionEdits,
+  firstIncompleteSetId,
+  loggerSessionState,
+  loggerSetState,
+  nextIncompleteSetId,
+  readSessionContinuity,
+  writeSessionContinuity,
+  type SessionDraftPatch,
+} from "@/lib/sessionFlow";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -73,7 +84,7 @@ export function Logger({
   isFinished,
   startedAt,
   isHistorical,
-  recordedDurationSeconds,
+  initialElapsedSeconds,
   unit,
   defaultRest,
   trainingPriority,
@@ -87,7 +98,9 @@ export function Logger({
   isFinished: boolean;
   startedAt: string;
   isHistorical: boolean;
-  recordedDurationSeconds: number | null;
+  /** Liczone raz na serwerze i przekazane jako prop — pierwszy HTML klienta
+   *  musi mieć ten sam zegar, inaczej bezpośrednie wejście daje hydration #418. */
+  initialElapsedSeconds: number | null;
   unit: UnitSystem;
   defaultRest: number;
   trainingPriority: TrainingPriority;
@@ -95,19 +108,37 @@ export function Logger({
 }) {
   const router = useRouter();
   const { goBack, replace } = useNavigationHistory();
-  const [recoveredChanges] = useState(() => recoverableCount(sessionId));
-  const [recoveryVisible, setRecoveryVisible] = useState(recoveredChanges > 0);
-  const [exercises, setExercises] = useState(() =>
-    restoreSessionDraft(initialExercises, sessionId),
-  );
+  const [recoveredChanges, setRecoveredChanges] = useState(0);
+  const [recoveryVisible, setRecoveryVisible] = useState(false);
+  const [continuityReady, setContinuityReady] = useState(false);
+  const [draftEdits, setDraftEdits] = useState<Record<string, SessionDraftPatch>>({});
+  const draftEditsRef = useRef(draftEdits);
+  useEffect(() => {
+    draftEditsRef.current = draftEdits;
+  }, [draftEdits]);
+  const [exercises, setExercises] = useState(initialExercises);
   // Najświeższy stan dostępny w handlerach (do złożenia pełnego wiersza przy zapisie)
   const exercisesRef = useRef(exercises);
   useEffect(() => {
     exercisesRef.current = exercises;
   }, [exercises]);
 
-  const { rest, restFor, startRest, adjustRest, dismissRest, extendRest } =
-    useRestTimer(defaultRest);
+  const [activeSetId, setActiveSetId] = useState<string | null>(() =>
+    firstIncompleteSetId(initialExercises),
+  );
+  const [focusSetId, setFocusSetId] = useState<string | null>(null);
+  const [scrollY, setScrollY] = useState(0);
+  const [minimized, setMinimized] = useState(false);
+
+  const {
+    rest,
+    restFor,
+    startRest,
+    adjustRest,
+    dismissRest,
+    restoreRest,
+    extendRest,
+  } = useRestTimer(defaultRest);
   const { online, pending, quarantined, syncing, flush, saveSet, removeSet, saveNotes } =
     useSessionOutbox(sessionId);
   // Przed zaliczeniem wyniku mogącego utworzyć nieoczekiwany PR prosimy o
@@ -116,7 +147,44 @@ export function Logger({
     ex: LoggerExercise;
     set: SessionSet;
     review: SetWeightReview;
+    mode: "complete" | "edit";
   } | null>(null);
+
+  function handleSetCompletionChange(
+    ex: LoggerExercise,
+    set: SessionSet,
+    completed: boolean,
+  ) {
+    if (!completed) {
+      setActiveSetId(set.id);
+      setFocusSetId(set.id);
+      return;
+    }
+    const projected = exercisesRef.current.map((exercise) =>
+      exercise.sessionExerciseId !== ex.sessionExerciseId
+        ? exercise
+        : {
+            ...exercise,
+            sets: exercise.sets.map((candidate) =>
+              candidate.id === set.id ? { ...candidate, completed: true } : candidate,
+            ),
+          },
+    );
+    const nextId = nextIncompleteSetId(projected, set.id);
+    setActiveSetId(nextId);
+    setFocusSetId(nextId);
+  }
+
+  function clearCompletedEdit(setId: string) {
+    setDraftEdits((current) => {
+      if (!current[setId]) return current;
+      const next = { ...current };
+      delete next[setId];
+      draftEditsRef.current = next;
+      return next;
+    });
+  }
+
   const {
     prSets,
     patchSetLocal,
@@ -124,6 +192,8 @@ export function Logger({
     handleAddSet,
     handleToggle,
     commitToggle,
+    handleSaveCompletedEdit,
+    commitCompletedEdit,
     handleTimedComplete,
     persistSet,
     handleDeleteSet,
@@ -141,7 +211,122 @@ export function Logger({
     startRest,
     allowRest: !isFinished,
     requestWeightReview: (request) => setWeightReview(request),
+    onSetCompletionChange: handleSetCompletionChange,
+    onCompletedEditSaved: clearCompletedEdit,
   });
+
+  function patchSetFromInput(
+    sessionExerciseId: string,
+    setId: string,
+    patch: Partial<SessionSet>,
+  ) {
+    const current = exercisesRef.current
+      .find((exercise) => exercise.sessionExerciseId === sessionExerciseId)
+      ?.sets.find((set) => set.id === setId);
+    if (current?.completed) {
+      const editablePatch: SessionDraftPatch = {};
+      for (const key of [
+        "weight",
+        "reps",
+        "duration_seconds",
+        "added_weight",
+        "rpe",
+        "set_type",
+      ] as const) {
+        if (key in patch) editablePatch[key] = patch[key] as never;
+      }
+      const nextEdits = {
+        ...draftEditsRef.current,
+        [setId]: { ...draftEditsRef.current[setId], ...editablePatch },
+      };
+      draftEditsRef.current = nextEdits;
+      setDraftEdits({
+        ...nextEdits,
+      });
+    }
+    patchSetLocal(sessionExerciseId, setId, patch);
+    setActiveSetId(setId);
+    setMinimized(false);
+  }
+
+  function persistSetFromInput(setId: string, patch: Partial<SessionSet>) {
+    const current = exercisesRef.current
+      .flatMap((exercise) => exercise.sets)
+      .find((set) => set.id === setId);
+    if (current?.completed && draftEditsRef.current[setId]) return;
+    persistSet(setId, patch);
+  }
+
+  useEffect(() => {
+    let restoreScroll: number | null = null;
+    const hydrateContinuity = window.requestAnimationFrame(() => {
+      const recovered = recoverableCount(sessionId);
+      const continuity = readSessionContinuity(sessionId);
+      const restoredExercises = applySessionEdits(
+        restoreSessionDraft(initialExercises, sessionId),
+        continuity.edits,
+      );
+      setRecoveredChanges(recovered);
+      setRecoveryVisible(recovered > 0);
+      setDraftEdits(continuity.edits);
+      draftEditsRef.current = continuity.edits;
+      setExercises(restoredExercises);
+      exercisesRef.current = restoredExercises;
+      const rememberedExists = restoredExercises.some((exercise) =>
+        exercise.sets.some((set) => set.id === continuity.activeSetId),
+      );
+      setActiveSetId(
+        rememberedExists
+          ? continuity.activeSetId
+          : firstIncompleteSetId(restoredExercises),
+      );
+      setScrollY(continuity.scrollY);
+      restoreRest(isFinished || isHistorical ? null : continuity.rest);
+      restoreScroll = window.requestAnimationFrame(() => {
+        if (continuity.scrollY > 0) window.scrollTo({ top: continuity.scrollY });
+      });
+      setContinuityReady(true);
+    });
+    return () => {
+      window.cancelAnimationFrame(hydrateContinuity);
+      if (restoreScroll != null) window.cancelAnimationFrame(restoreScroll);
+    };
+  }, [initialExercises, isFinished, isHistorical, restoreRest, sessionId]);
+
+  useEffect(() => {
+    let frame: number | null = null;
+    const rememberScroll = () => {
+      if (frame != null) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = null;
+        setScrollY(window.scrollY);
+      });
+    };
+    window.addEventListener("scroll", rememberScroll, { passive: true });
+    return () => {
+      if (frame != null) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", rememberScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!continuityReady) return;
+    writeSessionContinuity(sessionId, {
+      activeSetId,
+      scrollY,
+      minimized,
+      rest,
+      edits: draftEdits,
+    });
+  }, [
+    activeSetId,
+    continuityReady,
+    draftEdits,
+    minimized,
+    rest,
+    scrollY,
+    sessionId,
+  ]);
 
   // R6b: lista nazw+grup dla pickera "Połącz w superset" w ⋯ karty. Referencyjnie
   // stabilna między toggle'ami serii (klucz = id+nazwa+grupa, nie cały `exercises`)
@@ -195,18 +380,19 @@ export function Logger({
   useWakeLock(!isFinished && getKeepAwake());
 
   // Licznik czasu trwania sesji (na żywo)
-  const [elapsed, setElapsed] = useState(() =>
-    isHistorical && recordedDurationSeconds != null
-      ? recordedDurationSeconds
-      : Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)),
-  );
+  const [elapsed, setElapsed] = useState(initialElapsedSeconds);
   useEffect(() => {
     if (isFinished || isHistorical) return;
-    const id = window.setInterval(
-      () => setElapsed(Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000))),
-      1000,
-    );
-    return () => window.clearInterval(id);
+    const tick = () =>
+      setElapsed(
+        Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000)),
+      );
+    const kickoff = window.setTimeout(tick, 0);
+    const id = window.setInterval(tick, 1000);
+    return () => {
+      window.clearTimeout(kickoff);
+      window.clearInterval(id);
+    };
   }, [startedAt, isFinished, isHistorical]);
 
   // Live podsumowanie z lokalnego stanu
@@ -229,11 +415,45 @@ export function Logger({
       ),
     0,
   );
-  const hh = Math.floor(elapsed / 3600);
-  const mm = Math.floor((elapsed % 3600) / 60);
-  const ss = elapsed % 60;
+  const elapsedSeconds = elapsed ?? 0;
+  const hh = Math.floor(elapsedSeconds / 3600);
+  const mm = Math.floor((elapsedSeconds % 3600) / 60);
+  const ss = elapsedSeconds % 60;
   const elapsedStr =
-    (hh > 0 ? `${hh}:${String(mm).padStart(2, "0")}` : `${mm}`) + `:${String(ss).padStart(2, "0")}`;
+    elapsed == null
+      ? "–:––"
+      : (hh > 0 ? `${hh}:${String(mm).padStart(2, "0")}` : `${mm}`) +
+        `:${String(ss).padStart(2, "0")}`;
+  const activeExercise = exercises.find((exercise) =>
+    exercise.sets.some((set) => set.id === activeSetId),
+  );
+  const activeSet = activeExercise?.sets.find((set) => set.id === activeSetId);
+  const activeSetState =
+    activeExercise && activeSet
+      ? loggerSetState(activeExercise.type, activeSet, !!draftEdits[activeSet.id])
+      : "completed";
+  const sessionState = loggerSessionState({
+    setState: activeSetState,
+    resting: rest != null,
+    minimized,
+    finishing,
+  });
+  const editedSetIds = Object.fromEntries(
+    Object.keys(draftEdits).map((setId) => [setId, true]),
+  );
+
+  function minimizeSession() {
+    const continuity = {
+      activeSetId,
+      scrollY: window.scrollY,
+      minimized: true,
+      rest,
+      edits: draftEdits,
+    };
+    writeSessionContinuity(sessionId, continuity);
+    setMinimized(true);
+    replace("/");
+  }
 
   return (
     // NIE kasuj globalnego pt-safe body ujemnym marginesem: z `-mt` naturalny top
@@ -241,7 +461,10 @@ export function Logger({
     // o pas safe-area W DÓŁ — nachodząc na pierwszą treść main (bug 2026-07-22:
     // zasłonięty pas priorytetu). Bez `-mt` header zachowuje się jak PageHeader:
     // naturalna pozycja == pozycja przyklejenia, zero przesunięcia.
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col pb-28">
+    <div
+      className="mx-auto flex min-h-dvh max-w-md flex-col pb-28"
+      data-session-state={sessionState}
+    >
       <ScreenChrome
         screenType={isFinished || isHistorical ? "session-edit" : "session-live"}
         showBottomNav={false}
@@ -261,7 +484,7 @@ export function Logger({
               onClick={() =>
                 isFinished || isHistorical
                   ? goBack(isFinished ? `/history/${sessionId}` : "/history")
-                  : replace("/")
+                  : minimizeSession()
               }
               aria-label={isFinished || isHistorical ? "Wróć" : "Zwiń trening"}
               className="flex size-11 shrink-0 -ml-2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -357,7 +580,7 @@ export function Logger({
         </div>
         {isHistorical && (
           <p className="mt-xs text-xs text-muted-foreground">
-            Wpisujesz trening z {new Date(startedAt).toLocaleDateString("pl-PL")}. Czas sesji: {Math.round(elapsed / 60)} min.
+            Wpisujesz trening z {formatWarsawDate(startedAt)}. Czas sesji: {Math.round(elapsedSeconds / 60)} min.
           </p>
         )}
         {isFinished && (
@@ -416,6 +639,9 @@ export function Logger({
             noteOpen={noteOpen[ex.sessionExerciseId]}
             rpeOn={!!rpeOn[ex.sessionExerciseId]}
             prSets={prSets}
+            activeSetId={ex.sets.some((set) => set.id === activeSetId) ? activeSetId : null}
+            focusSetId={ex.sets.some((set) => set.id === focusSetId) ? focusSetId : null}
+            editedSetIds={editedSetIds}
             exerciseSummaries={exerciseSummaries}
             onToggleSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: !o[id] }))}
             onCloseSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: false }))}
@@ -427,13 +653,27 @@ export function Logger({
             onAdjustRest={adjustRest}
             onOpenNote={(id) => setNoteOpen((o) => ({ ...o, [id]: true }))}
             onPersistNotes={persistNotes}
-            onAddSet={handleAddSet}
+            onAddSet={(exercise) => {
+              void handleAddSet(exercise).then((setId) => {
+                setActiveSetId(setId);
+                setFocusSetId(setId);
+              });
+            }}
             onToggleRpe={(id) => setRpeOn((o) => ({ ...o, [id]: !o[id] }))}
             onToggleSet={handleToggle}
+            onActivateSet={(setId) => {
+              setActiveSetId(setId);
+              setFocusSetId(null);
+              setMinimized(false);
+            }}
+            onSaveEditedSet={handleSaveCompletedEdit}
             onTimedComplete={handleTimedComplete}
-            onPatchSet={patchSetLocal}
-            onPersistSet={persistSet}
-            onDeleteSet={handleDeleteSet}
+            onPatchSet={patchSetFromInput}
+            onPersistSet={persistSetFromInput}
+            onDeleteSet={(sessionExerciseId, setId) => {
+              clearCompletedEdit(setId);
+              handleDeleteSet(sessionExerciseId, setId);
+            }}
           />
         ))}
 
@@ -476,7 +716,7 @@ export function Logger({
         onOpenChange={setFinishSheetOpen}
         doneSets={doneSets}
         incompleteSets={incompleteSets}
-        minutes={Math.floor(elapsed / 60)}
+        minutes={Math.floor(elapsedSeconds / 60)}
         onConfirm={() => confirmFinish()}
       />
 
@@ -527,13 +767,19 @@ export function Logger({
             <Button
               className="w-full"
               onClick={() => {
-                commitToggle(weightReview.ex, weightReview.set);
+                if (weightReview.mode === "edit") {
+                  commitCompletedEdit(weightReview.ex, weightReview.set);
+                } else {
+                  commitToggle(weightReview.ex, weightReview.set);
+                }
                 setWeightReview(null);
               }}
             >
               {weightReview.review.reasons.includes("very_high_weight")
                 ? "Na pewno zapisz ten wynik"
-                : "Wynik jest poprawny, zalicz serię"}
+                : weightReview.mode === "edit"
+                  ? "Wynik jest poprawny, zapisz zmianę"
+                  : "Wynik jest poprawny, zalicz serię"}
             </Button>
             <Button variant="ghost" className="w-full" onClick={() => setWeightReview(null)}>
               Wróć do edycji
