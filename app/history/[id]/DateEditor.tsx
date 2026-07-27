@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateSessionDate } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
+import { formatWarsawDateTime } from "@/lib/dateTime";
 
 /** S12: „Kiedy" — edycja daty/czasu sesji (logowanie po fakcie, wzorzec Hevy Save Workout). */
 export function DateEditor({ sessionId, startedAt }: { sessionId: string; startedAt: string }) {
@@ -22,7 +23,7 @@ export function DateEditor({ sessionId, startedAt }: { sessionId: string; starte
   if (!editing) {
     return (
       <p className="text-sm text-muted-foreground">
-        {new Date(startedAt).toLocaleString("pl-PL")}
+        {formatWarsawDateTime(startedAt)}
         <button
           onClick={() => setEditing(true)}
           className="ml-1 inline-flex min-h-11 items-center rounded-md px-2 text-sm underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
