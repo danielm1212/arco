@@ -48,8 +48,61 @@
   `eslint-config-next` → `eslint-plugin-react` → `minimatch`. To zależności **deweloperskie**,
   bramką CI jest `--omit=dev`, a naprawa wymaga `npm audit fix --force` (zmiany łamiące w
   toolingu lintu). Osobna decyzja, nie doklejam jej do odblokowania bramki.
-- **Następny krok:** [Ty] merge tego PR-a jako pierwszego — dopiero potem PR #17 (confetti)
-  i kolejne przejdą CI. Po merge zaciągnąć `main` do gałęzi confetti.
+- **Stan:** scalone do `main` jako PR #18.
+
+### 2026-07-27 · Claude · MOMENT-01 — confetti po rekordzie: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `lib/confetti.ts` (model cząstki, czysta funkcja z wstrzykiwanym RNG),
+  `app/session/[id]/done/PrConfetti.tsx` (komponent kliencki), `app/globals.css` (keyframes
+  `confetti-drift`/`confetti-fall`/`confetti-tumble`, zmienne `--confetti-1..5` z przełączeniem
+  dark, pas bezpieczeństwa w bloku reduced-motion), `app/session/[id]/done/page.tsx` (jedna
+  linia pod `hasPR`), `tests/confetti.test.ts`. Gałąź `agent/moment-pr-confetti`, z czystego
+  `main` (niezależne od CORE-0). Zero nowych zależności.
+- **Decyzje właściciela:** paleta rust + violet + amber (jawny wyjątek od reguły v1.4 — zapisany
+  jako **D-20** w `decyzje-produktowe.md`, żeby przyszła sesja tego nie „naprawiła"), gęstość
+  pełna (34 cząstki), wyzwalanie bez zmian (ten sam `hasPR` co nagłówek), tor = wystrzał.
+- **Fizyka (research, nie zgadywanie):** tor to parabola z ROZDZIELENIA OSI na dwa zagnieżdżone
+  elementy (X z oporem `ease-out`, Y wznoszenie `ease-out` → opadanie), bo tak właśnie rozkłada
+  się rzut ukośny; opadanie kończy PRĘDKOŚCIĄ GRANICZNĄ, nie przyspieszaniem bez końca
+  (canvas-confetti modeluje to jako `velocity *= 0.9` co klatkę); obrót w dwóch osiach o
+  niewspółmiernych okresach (720° : 584° ≈ 1 : 0,81), bo spadające kartki mają różne reżimy
+  (flutter/tumble, przejście przy Fr ≈ 0,67) i jeden wspólny rytm od razu czyta się jako sztuczny.
+  Źródła: varun.ca/confetti, canvas-confetti, Phys. Rev. Lett. 81, 345, J. Fluid Mech.
+- **Self-review skillem `arco-motion-review` — dwa findingi, oba naprawione:**
+  1. `filter: brightness()` w keyframie łamał **S6 GPU-only** („wyłącznie transform i opacity").
+     34 elementy × filter to 34 warstwy kompozytowe, a nie mam pomiaru na słabszym Androidzie —
+     usunięte. Skracanie perspektywiczne z rotacji 3D i tak niesie efekt papieru.
+  2. `animation: … infinite` opierało się na tym, że timer JS zdąży odmontować warstwę (**S3**).
+     Zastąpione policzonym `animation-iteration-count` (`ceil(duration/spin) + 1`) — obrót kończy
+     się sam, nawet gdyby odmontowanie zawiodło. Test pilnuje, że nie kończy się PRZED lotem.
+- **Test złapał realny błąd modelu:** przy niezależnym losowaniu szerokości i wysokości
+  skalowanie potrafiło dać kwadrat 11×11, a kwadrat w obrocie 3D czyta się jak migający piksel,
+  nie jak papier. Wysokość WYNIKA teraz z szerokości (proporcja 1:1,5–1:2,4).
+- **Dowód:** lint czysty, `test:unit` **120/120** (3 nowe testy MOMENT-01), `build` zielony.
+  Weryfikacja w realnej apce (świeże konto, prawdziwy trening z rekordem, 375×812): warstwa
+  renderuje się z **34 cząstkami**, `aria-hidden="true"`, `pointer-events: none`,
+  `position: fixed`, `z-index: 30`, `perspective: 600px`, `transform-style: preserve-3d`;
+  pięć barw rozwiązuje się dokładnie do tokenów (rust-500/400, violet-500/400, amber), a po
+  dodaniu klasy `.dark` **wszystkie schodzą o stopień jaśniej** (rust-400/300, violet-400/300);
+  każdy papierek wyższy niż szerszy (9×17, 10×16, 8×19…); reguła
+  `@media (prefers-reduced-motion) { .confetti-layer { display: none !important } }` jest
+  obecna w SKOMPILOWANYM CSS (sprawdzone przez `document.styleSheets`).
+- **Czego NIE udało się zweryfikować i dlaczego:** ruchu w locie (rozrzut cząstek, koziołkowanie)
+  nie obejrzałem w apce — preview trzyma dokument w stanie `visibilityState: "hidden"`, więc
+  `rAF` i animacje CSS nie tykają (widać to też po zamrożonym count-upie „0 kg"; cząstki stoją
+  w punkcie startu). Sama jakość ruchu była walidowana na POC z IDENTYCZNYMI keyframe'ami.
+  Do checkpointu [Ty] na urządzeniu: płynność wystrzału i brak gubienia klatek na Androidzie
+  oraz zachowanie przy włączonym „Ogranicz ruch" w iOS.
+- **Higiena:** na czas badania DOM podniosłem tymczasowo `CONFETTI_LIFETIME_MS` do 600000
+  (bo 3,4 s okna nie dało się złapać przy ukrytym dokumencie) — **przywrócone do 3400**,
+  zweryfikowane grepem, a lint/testy/build przebiegły ponownie już na wartości produkcyjnej.
+  Konto testowe usunięte po ID.
+- **Do obserwacji w H2 (zapisane w backlogu):** rekord powstaje przy KAŻDYM pierwszym wykonaniu
+  ćwiczenia, więc na pierwszych treningach confetti odpali się seryjnie i może spowszednieć.
+  Próg „tylko pobity rekord" świadomie odłożony.
+- **Czego nie dotknięto:** produkcji, migracji, danych, loggera, CORE-0.
+- **Następny krok:** [Ty] review + merge PR; checkpoint urządzeniowy przy najbliższej okazji.
+  Równolegle wraca kolejka CORE-0: **SYNC-01** (trwały błąd outboxa nie blokuje kolejki).
 
 ### 2026-07-24 · Claude · CORE-0 / DATA-03 — jedna definicja kwalifikowanego faktu: ZAKOŃCZONE TECHNICZNIE
 

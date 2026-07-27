@@ -295,6 +295,7 @@ offline, klawiaturę, systemowy Back, dostępność, wielkość migracji i koszt
 | VISUAL-03 | Synchronizacja tokenów z Figmą | Najpierw uzgodnić tokeny typografii, koloru, odstępów, stanów i komponentów; potem dopiero aktualizować plik projektowy |
 | VISUAL-04 | Licencja i pochodzenie 3D | Przed publicznym użyciem potwierdzić licencję, możliwość modyfikacji i źródła; 3dicons.co pozostaje inspiracją |
 | RECAP-01 | Share card po treningu | Po H2 i decyzji o prywatności; eksportowany obraz, nigdy obowiązkowy etap Done |
+| MOMENT-01 | Confetti po rekordzie na Done | Zrobione 2026-07-27 (`agent/moment-pr-confetti`). Wystrzał CSS bez biblioteki, ten sam sygnał co nagłówek „Nowy rekord". **Do obserwacji w H2:** rekord powstaje przy KAŻDYM pierwszym wykonaniu ćwiczenia, więc confetti odpala się na pierwszych treningach seryjnie i może spowszednieć — próg „tylko pobity rekord" jest świadomie odłożony (decyzja [Ty]) |
 | TOOLS-01 | Workflow Fable dla Arco | Tworzyć dopiero, gdy powtarzalny proces prototypowania flow ma jasne wejścia/wyjścia; nie jako zadanie dla samego narzędzia |
 | CONTENT-04 | Automatyczny inwentarz słabych mediów | Skrypt wykrywa placeholder, niską rozdzielczość i brak pary; decyzję techniczną zatwierdza wersjonowany review Codex |
 | ENGINE-10 | Objętość bezpośrednia i pośrednia | Model per mięsień z jawnymi wagami; kalibracja na literaturze i realnych planach |

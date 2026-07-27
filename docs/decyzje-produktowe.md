@@ -26,6 +26,7 @@
 | D-17 | Film/animacja nie zastępuje statycznych zdjęć | Słaba sieć i offline nie mogą blokować instrukcji |
 | D-18 | Własne ćwiczenia i ich media są prywatne domyślnie | Publikacja wymaga osobnej zgody i moderacji |
 | D-19 | Feedback aplikacji zapisujemy we własnym backendzie; Notion jest opcjonalnym widokiem operacyjnym | Prywatność, niezawodność i brak sekretów w kliencie |
+| D-20 | Warstwa MOMENTÓW może łączyć rust i violet w jednym komponencie; warstwa NARZĘDZIA nadal nie może (2026-07-27) | Reguła v1.4 „violet nie miesza się z rust w jednym komponencie" chroni czytelność i osie znaczeń w codziennym UI. Celebracja nie jest narzędziem — pierwszy przypadek to confetti po rekordzie (rust + violet + amber). Nie otwiera to mieszania w loggerze, Planach, nawigacji ani na kartach list |
 | D-20 | FAB startu nie wchodzi przed H2 | Obecne hero jest wystarczająco bezpośrednie; nie dublujemy akcji bez danych |
 | D-21 | Reverse trial Coach zaczyna się po pierwszym ukończonym treningu, nie przy utworzeniu konta | Użytkownik nie traci czasu triala, zanim Arco ma dane i pokaże wartość |
 | D-22 | Prognoza i guidance wymagają jawnego minimum danych; przy jego braku pokazujemy, czego jeszcze potrzeba | Wiarygodne „jeszcze 2 treningi” buduje więcej zaufania niż fałszywa precyzja |
