@@ -166,17 +166,23 @@ async function pageOverflow(body: string): Promise<number> {
   }
 }
 
-test("R4A: tekstowe CTA serii nie zwęża pól ani nie powoduje overflow na 320/375/393 px", async () => {
+test("SESSION-01A2: zwarty wiersz serii mieści pola i check na 320/375/393 px", async () => {
   const body = `<main class="mx-auto max-w-md p-md"><section class="rounded-xl bg-card p-md">
     <ul class="space-y-xs">
-      <li class="flex flex-wrap items-center gap-xs rounded-md">
+      <li data-compact-row class="relative flex flex-wrap items-center gap-xs rounded-md">
         <button class="size-11 shrink-0 rounded-md border">1</button>
-        <input data-set-field class="h-11 flex-1 rounded-md border text-center" value="62.5">
-        <input data-set-field class="h-11 flex-1 rounded-md border text-center" value="8">
-        <button class="order-last flex min-h-11 w-full items-center justify-center rounded-md border px-sm text-sm font-semibold">
+        <input data-set-field class="h-11 min-w-0 flex-1 rounded-md border text-center" value="62.5">
+        <input data-set-field class="h-11 min-w-0 flex-1 rounded-md border text-center" value="8">
+        <button data-inline-check class="flex size-11 shrink-0 items-center justify-center rounded-md border">✓</button>
+      </li>
+      <li class="relative flex flex-wrap items-center gap-xs rounded-md">
+        <button class="size-11 shrink-0 rounded-md border">2</button>
+        <input data-set-field class="h-11 min-w-0 flex-1 rounded-md border text-center" value="65">
+        <input data-set-field class="h-11 min-w-0 flex-1 rounded-md border text-center" value="8">
+        <button class="flex size-11 shrink-0 items-center justify-center rounded-md border">✓</button>
+        <button data-save-edit class="order-last flex min-h-11 w-full items-center justify-center rounded-md border px-sm text-sm font-semibold">
           Zapisz zmianę
         </button>
-        <button class="flex h-11 w-11 shrink-0 items-center justify-center">✕</button>
       </li>
     </ul>
   </section></main>`;
@@ -191,13 +197,25 @@ test("R4A: tekstowe CTA serii nie zwęża pól ani nie powoduje overflow na 320/
         fieldWidths: [...document.querySelectorAll<HTMLElement>("[data-set-field]")].map(
           (field) => field.getBoundingClientRect().width,
         ),
-        actionHeight: document.querySelector<HTMLElement>("button.order-last")!
+        rowHeight: document.querySelector<HTMLElement>("[data-compact-row]")!
+          .getBoundingClientRect().height,
+        checkSize: (() => {
+          const rect = document.querySelector<HTMLElement>("[data-inline-check]")!
+            .getBoundingClientRect();
+          return { width: rect.width, height: rect.height };
+        })(),
+        actionHeight: document.querySelector<HTMLElement>("[data-save-edit]")!
           .getBoundingClientRect().height,
       }));
       assert.ok(metrics.overflow <= 1, `overflow ${metrics.overflow}px przy ${width}px`);
       assert.ok(
         metrics.fieldWidths.every((fieldWidth) => fieldWidth >= 56),
         `pole serii węższe niż 56px przy ${width}px: ${metrics.fieldWidths.join(", ")}`,
+      );
+      assert.ok(metrics.rowHeight <= 45, `zwykły wiersz wyższy niż 44px przy ${width}px`);
+      assert.ok(
+        metrics.checkSize.width >= 44 && metrics.checkSize.height >= 44,
+        `check mniejszy niż 44px przy ${width}px`,
       );
       assert.ok(metrics.actionHeight >= 44, `CTA niższe niż 44px przy ${width}px`);
     } finally {
@@ -206,22 +224,29 @@ test("R4A: tekstowe CTA serii nie zwęża pól ani nie powoduje overflow na 320/
   }
 });
 
-test("SESSION-01A: długie rekomendacje mieszczą się na 320/375/393 px i zachowują target 44 px", async () => {
+test("SESSION-01A2: regulowane timery mieszczą się na 320/375/393 px i zachowują target 44 px", async () => {
   const body = `<main class="mx-auto max-w-md space-y-md p-md">
-    <aside class="rounded-xl border border-support/20 bg-support/5 p-sm">
-      <p class="text-xs font-medium text-support">Przygotowanie · opcjonalne</p>
-      <p class="mt-2xs text-xs text-muted-foreground">Po dłuższym bezruchu zacznij od 3–5 min lekkiego ruchu. Możesz przejść od razu do ćwiczeń — ta wskazówka nie blokuje treningu.</p>
-    </aside>
-    <section class="rounded-xl bg-card p-md">
-      <aside class="rounded-md border border-support/20 bg-support/5 p-sm">
-        <p class="text-xs font-medium text-support">Rozgrzewka · opcjonalnie</p>
-        <p class="mt-2xs text-xs text-muted-foreground">Zacznij od 2 lekkich, narastających serii. Jeśli potrzebujesz, dodaj kolejną ręcznie.</p>
-        <button data-session-prep-action class="mt-sm flex h-11 w-full items-center justify-center rounded-md bg-support px-5 text-sm font-medium text-support-foreground">Dodaj 2 serie rozgrzewkowe</button>
-      </aside>
+    <section class="rounded-xl border border-support/20 bg-card px-sm py-sm">
+      <p class="text-sm font-semibold">Rozgrzewka</p>
+      <p class="mt-2xs text-xs leading-relaxed text-muted-foreground">Lekki marsz, krążenia barków i bioder, potem 2 lekkie serie: Wykroki chodzone ze sztangą.</p>
+      <div class="mt-sm flex items-center gap-xs">
+        <div class="flex shrink-0 items-center rounded-md border">
+          <button data-routine-action class="flex size-11 items-center justify-center">−</button>
+          <span class="min-w-14 text-center text-sm font-semibold">5 min</span>
+          <button data-routine-action class="flex size-11 items-center justify-center">+</button>
+        </div>
+        <button data-routine-action class="flex h-11 min-w-0 flex-1 items-center justify-center rounded-md bg-primary px-sm">Start</button>
+      </div>
     </section>
-    <details class="w-full rounded-xl border border-support/20 bg-card">
-      <summary data-session-prep-action class="flex min-h-11 items-center justify-between gap-sm px-md py-sm text-sm font-medium text-support">Spokojne zakończenie · opcjonalnie <span>+</span></summary>
-    </details>
+    <section class="rounded-xl border border-support/20 bg-card px-sm py-sm">
+      <p class="text-sm font-semibold">Rozciąganie</p>
+      <p class="mt-2xs text-xs leading-relaxed text-muted-foreground">Spokojny oddech, potem łagodne pozycje na mięśnie czworogłowe i pośladki.</p>
+      <div class="mt-sm flex items-center gap-xs">
+        <span class="min-w-0 flex-1 font-mono text-xl font-semibold">02:41</span>
+        <button data-routine-action class="flex size-11 items-center justify-center rounded-md border">+1</button>
+        <button data-routine-action class="flex h-11 items-center justify-center rounded-md border px-sm">Zakończ</button>
+      </div>
+    </section>
   </main>`;
 
   for (const width of [320, 375, 393]) {
@@ -232,7 +257,7 @@ test("SESSION-01A: długie rekomendacje mieszczą się na 320/375/393 px i zacho
       const metrics = await page.evaluate(() => ({
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
         actionHeights: [
-          ...document.querySelectorAll<HTMLElement>("[data-session-prep-action]"),
+          ...document.querySelectorAll<HTMLElement>("[data-routine-action]"),
         ].map((action) => action.getBoundingClientRect().height),
       }));
       assert.ok(metrics.overflow <= 1, `overflow ${metrics.overflow}px przy ${width}px`);

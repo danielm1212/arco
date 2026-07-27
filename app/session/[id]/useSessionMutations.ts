@@ -126,46 +126,6 @@ export function useSessionMutations({
     return newSet.id;
   }
 
-  function handleAddWarmupSets(ex: LoggerExercise, count: number) {
-    const safeCount = Math.max(0, Math.min(4, Math.floor(count)));
-    if (safeCount === 0) return null;
-    const minIndex = ex.sets.reduce(
-      (minimum, set) => Math.min(minimum, set.set_index),
-      0,
-    );
-    const newSets: SessionSet[] = Array.from({ length: safeCount }, (_, index) => ({
-      id: uuid(),
-      session_exercise_id: ex.sessionExerciseId,
-      set_index: minIndex - safeCount + index,
-      set_type: "warmup",
-      weight: null,
-      reps: null,
-      duration_seconds: null,
-      added_weight: null,
-      rpe: null,
-      completed: false,
-    }));
-    setExercises((prev) =>
-      prev.map((exercise) =>
-        exercise.sessionExerciseId !== ex.sessionExerciseId
-          ? exercise
-          : {
-              ...exercise,
-              sets: [...newSets, ...exercise.sets].sort(
-                (a, b) => a.set_index - b.set_index,
-              ),
-            },
-      ),
-    );
-    newSets.forEach((set) => saveSet(set));
-    toast.success(
-      safeCount === 1
-        ? "Dodano serię rozgrzewkową"
-        : `Dodano ${safeCount} serie rozgrzewkowe`,
-    );
-    return newSets[0].id;
-  }
-
   // R6a (audyt-loggera.md §5): superset ma świadomą przerwę — jeśli partner w
   // grupie ma jeszcze niezaliczoną serię TEJ rundy, przerwa NIE startuje (sedno
   // metody: A→od razu B), zamiast tego mikro-hint kto teraz. Przerwa odpala się
@@ -420,7 +380,6 @@ export function useSessionMutations({
     patchSetLocal,
     persistNotes,
     handleAddSet,
-    handleAddWarmupSets,
     handleToggle,
     commitToggle,
     handleSaveCompletedEdit,

@@ -102,7 +102,7 @@ export function TimedStopwatch({
         >
           {mm}:{ss}
         </span>
-        <Button type="button" variant="outline" size="sm" onClick={stopEarly}>
+        <Button type="button" variant="outline" size="sm" className="min-h-11" onClick={stopEarly}>
           Stop
         </Button>
       </div>
@@ -128,7 +128,7 @@ export function TimedStopwatch({
       <Button
         type="button"
         size="sm"
-        className="flex-1"
+        className="min-h-11 flex-1"
         disabled={!target || target <= 0}
         onClick={start}
       >

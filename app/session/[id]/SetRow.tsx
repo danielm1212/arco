@@ -1,8 +1,9 @@
 "use client";
 
 import { memo, useEffect, useRef, useState } from "react";
+import { Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { clampNum, formatSet, LIMITS, weightToCanonicalKg, weightToDisplay } from "@/lib/format";
+import { clampNum, LIMITS, weightToCanonicalKg, weightToDisplay } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { loggerSetState } from "@/lib/sessionFlow";
 import { TimedStopwatch } from "./TimedStopwatch";
@@ -74,9 +75,11 @@ export const SetRow = memo(function SetRow({
     n != null ? String(weightToDisplay(n, unit)) : undefined;
   const weightMax = weightToDisplay(LIMITS.weight, unit);
   const rowRef = useRef<HTMLLIElement>(null);
+  const setButtonRef = useRef<HTMLButtonElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const repsFieldRef = useRef<HTMLInputElement>(null);
   const actionRef = useRef<HTMLButtonElement>(null);
+  const [setMenuOpen, setSetMenuOpen] = useState(false);
   const flowState = loggerSetState(type, set, edited);
 
   useEffect(() => {
@@ -89,33 +92,32 @@ export const SetRow = memo(function SetRow({
     }
   }, [focusRequested, type]);
 
-  // „Last set" — wynik z poprzedniej sesji; tap = skopiuj do pól (Strong/Hevy).
-  // Audyt P2: formatowanie przez wspólny formatSet zamiast trzeciej inline-kopii
-  // (jedyna zmiana wizualna: „45s" jak w historii, nie „45 s").
-  const prevFormatted = prev
-    ? formatSet(
-        type,
-        {
-          weight: prev.weight ?? null,
-          reps: prev.reps ?? null,
-          duration_seconds: prev.duration_seconds ?? null,
-          added_weight: prev.added_weight ?? null,
-        },
-        unit,
-      )
-    : null;
-  const prevText = prevFormatted === "Brak wyniku" ? null : prevFormatted;
+  useEffect(() => {
+    if (!setMenuOpen) return;
+    const closeOutside = (event: PointerEvent) => {
+      if (!rowRef.current?.contains(event.target as Node)) setSetMenuOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setSetMenuOpen(false);
+      setButtonRef.current?.focus();
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [setMenuOpen]);
 
-  function fillPrev() {
-    if (!prev) return;
-    const patch: Partial<SessionSet> =
-      type === "timed"
-        ? { duration_seconds: prev.duration_seconds }
-        : type === "bodyweight"
-          ? { reps: prev.reps, added_weight: prev.added_weight }
-          : { weight: prev.weight, reps: prev.reps };
-    onPatch(patch);
-    onPersist(patch);
+  function changeSetType(next: SetType) {
+    onActivate();
+    if (next !== set.set_type) {
+      onPatch({ set_type: next });
+      onPersist({ set_type: next });
+    }
+    setSetMenuOpen(false);
+    setButtonRef.current?.focus();
   }
 
   return (
@@ -124,43 +126,69 @@ export const SetRow = memo(function SetRow({
       tabIndex={-1}
       data-set-state={flowState}
       aria-current={active ? "step" : undefined}
-      className={`flex flex-wrap items-center gap-xs rounded-md transition-colors ${
+      className={`relative flex flex-wrap items-center gap-xs rounded-md transition-colors ${
         isPr ? "animate-pulse-once bg-primary/10 ring-1 ring-inset ring-primary/40" : ""
-      } ${active ? "bg-secondary/60 ring-2 ring-inset ring-primary/35" : ""}`}
+      } ${active ? "bg-secondary/60" : ""}`}
     >
-      {prevText && !set.completed && (
-        <button
-          type="button"
-          onClick={() => {
-            onActivate();
-            fillPrev();
-          }}
-          title="Dotknij, aby skopiować poprzedni wynik"
-          className="flex min-h-11 w-full items-center text-left text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          ↺ {prevText}
-        </button>
-      )}
-      {/* Jawny przełącznik typu serii — obramowany, więc widać że klikalny.
-          R5 (F9): aria-label obok title — samo title jest niedostępne na dotyku,
-          a widoczna treść przycisku ("W"/numer) nie tłumaczy się sama. */}
+      {/* Numer otwiera rzadkie akcje zamiast stale pokazywać przełącznik i „usuń". */}
       <button
+        ref={setButtonRef}
+        type="button"
         onClick={() => {
           onActivate();
-          const next: SetType = isWarmup ? "working" : "warmup";
-          onPatch({ set_type: next });
-          onPersist({ set_type: next });
+          setSetMenuOpen((open) => !open);
         }}
         className={`size-11 shrink-0 rounded-md border text-xs font-medium tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           isWarmup
             ? "border-warning bg-warning/15 text-warning"
             : "border-input text-muted-foreground"
         }`}
-        aria-label={isWarmup ? "Seria rozgrzewkowa. Dotknij, aby zmienić na roboczą" : "Seria robocza. Dotknij, aby zmienić na rozgrzewkową"}
-        title={isWarmup ? "Zmień na serię roboczą" : "Zmień na serię rozgrzewkową"}
+        aria-label={isWarmup ? "Opcje serii rozgrzewkowej" : `Opcje serii ${index}`}
+        aria-expanded={setMenuOpen}
+        aria-haspopup="menu"
       >
         {isWarmup ? "W" : index}
       </button>
+      {setMenuOpen && (
+        <div
+          role="menu"
+          aria-label="Opcje serii"
+          className="absolute left-0 top-12 z-30 w-52 overflow-hidden rounded-md border border-border bg-popover p-2xs text-popover-foreground shadow-lg"
+        >
+          <button
+            type="button"
+            role="menuitemradio"
+            aria-checked={!isWarmup}
+            onClick={() => changeSetType("working")}
+            className="flex min-h-11 w-full items-center justify-between rounded-md px-sm text-left text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Seria robocza
+            {!isWarmup && <Check className="size-4" aria-hidden />}
+          </button>
+          <button
+            type="button"
+            role="menuitemradio"
+            aria-checked={isWarmup}
+            onClick={() => changeSetType("warmup")}
+            className="flex min-h-11 w-full items-center justify-between rounded-md px-sm text-left text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Seria rozgrzewkowa
+            {isWarmup && <Check className="size-4" aria-hidden />}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setSetMenuOpen(false);
+              onActivate();
+              onDelete();
+            }}
+            className="flex min-h-11 w-full items-center rounded-md px-sm text-left text-sm text-danger hover:bg-danger/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Usuń serię
+          </button>
+        </div>
+      )}
 
       {type === "timed" ? (
         <TimedStopwatch
@@ -235,52 +263,48 @@ export const SetRow = memo(function SetRow({
         />
       )}
 
-      {/* Akcept serii ma własny, stały wiersz. Przy 320 px układ:
-          typ + dwa pola + usuń zachowuje użyteczne szerokości pól, a tekstowe
-          „Zalicz / Zapisz zmianę" nie przepycha ich ani nie zmienia layoutu. */}
       {isPr && (
-        <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground">
+        <span className="absolute -top-2 right-10 z-10 rounded-full bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground">
           PR
         </span>
       )}
-      {/* 44px = minimum z wytyczne-designu.md (było 40px — pod normą, feedback 2026-07-11) */}
       <button
         ref={actionRef}
         onClick={() => {
           onActivate();
-          if (edited) onSaveEdit();
-          else onToggle();
+          if (!edited) onToggle();
         }}
         aria-label={
           edited
-            ? "Zapisz zmianę zaliczonej serii"
+            ? "Seria ma niezapisaną zmianę"
             : set.completed
               ? "Cofnij zaliczenie"
               : "Zalicz serię"
         }
         aria-pressed={set.completed}
-        className={`order-last flex min-h-11 w-full items-center justify-center rounded-md border px-sm text-sm font-semibold ${
-          edited || flowState === "ready"
+        disabled={edited}
+        className={`flex size-11 shrink-0 items-center justify-center rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+          flowState === "ready"
             ? "border-primary bg-primary text-primary-foreground"
             : set.completed
-              ? "border-primary/30 bg-primary/10 text-primary"
+              ? "border-success bg-success text-white"
               : "border-input text-muted-foreground"
         }`}
       >
-        {edited ? "Zapisz zmianę" : set.completed ? "✓ Zaliczone" : "Zalicz"}
+        <Check className="size-5" aria-hidden />
       </button>
-      {/* R3 (audyt-loggera.md F3): w-11 zamiast w-9 — pełny 44×44 target jak ✓,
-          nie tylko wysokość (feedback 2026-07-11: "trzeba wyrównać") */}
-      <button
-        onClick={() => {
-          onActivate();
-          onDelete();
-        }}
-        aria-label="Usuń serię"
-        className="flex h-11 w-11 shrink-0 items-center justify-center text-xs text-muted-foreground hover:text-danger"
-      >
-        ✕
-      </button>
+      {edited && (
+        <button
+          type="button"
+          onClick={() => {
+            onActivate();
+            onSaveEdit();
+          }}
+          className="order-last flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-sm text-sm font-semibold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Zapisz zmianę
+        </button>
+      )}
     </li>
   );
 },

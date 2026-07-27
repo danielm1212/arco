@@ -18,6 +18,7 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
+| Codex | SESSION-01A2 — zwarty logger, rozgrzewka i rozciąganie | `app/session/[id]/**`, `lib/prefs.ts`, testy loggera, dokumentacja stanu | 2026-07-27 | w toku |
 
 ## Ostatnie wpisy
 
