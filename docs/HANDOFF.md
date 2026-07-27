@@ -103,6 +103,18 @@ koordynacji (2026-07-23).
   158/158 unit, 26/26 testów przeglądarkowych i walidatory 907/15/308 oraz 60/60.
   CI PR oraz ponowne CI `main` są zielone, Vercel wdrożył `47f48ae`, a publiczny login
   po przeładowaniu nie zgłasza błędów. Pozostaje checkpoint urządzeniowy [Ty].
+- **SESSION-01A2 — gotowe technicznie na `agent/session-01a2`, czeka na merge i deploy [Ty]:**
+  przebudowa prezentacji loggera po dogfoodzie SESSION-01A (ocena 4/10 za nadmiar instrukcji).
+  Wiersz serii zszedł ze ~120 px do **44 px** — check 44×44 jest częścią wiersza, pełnoszerokie
+  „Zalicz" zniknęło, a stały `×` zastąpiło menu pod numerem serii (robocza/rozgrzewkowa/usuń).
+  Per-ćwiczeniowe boksy rozgrzewkowe wycięte; zostały dwa moduły czasowe: rozgrzewka nad
+  pierwszym ćwiczeniem (2–15 min) i rozciąganie na Done (1–10 min), z zapamiętanym czasem
+  i licznikiem przeżywającym przeładowanie oraz tło. Świeże wejście zaczyna się na
+  `scrollY = 0`, bez fokusu i aktywnej serii; pozycja wraca tylko przy realnym wznowieniu.
+  Tap w puste pole kopiuje wynik z poprzedniej sesji. Semantyka `warmup` bez zmian, brak
+  migracji. Usunięto `lib/sessionPreparation.ts` (bez konsumenta w produkcie).
+  Bramka: lint, TypeScript, build, **155/155** unit, **29/29** przeglądarkowych,
+  katalog 907/15 i rekomendacje 60/60. Szczegóły: `session-01a2-release-2026-07-27.md`.
 
 ### Częściowe i szczegóły wdrożeń
 
@@ -226,10 +238,14 @@ koordynacji (2026-07-23).
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
 3. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
-4. [Ty] checkpoint starego cache/iPhone PWA dla R4A i SESSION-01A; fizyczna regresja
-   nie blokuje rozpoczęcia PLAN-Q.
-5. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
-6. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
+4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A i SESSION-01A2; fizyczna
+   regresja nie blokuje rozpoczęcia PLAN-Q.
+5. [Ty] merge i deploy SESSION-01A2 z `agent/session-01a2` (procedura `arco-release`).
+   Po merge'u SESSION-01A3: jednorazowa podpowiedź startowa w loggerze (przyciemnienie,
+   popover, „Rozumiem"), z pełnym kontraktem overlayów — blokada tła, Escape, focus trap
+   i zwrot fokusu, żeby nie dokładać do długu z ryzyka 6.
+6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
+7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
 
 ## 7. Reguły operacyjne

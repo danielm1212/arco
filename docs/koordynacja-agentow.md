@@ -18,9 +18,40 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
-| Codex | SESSION-01A2 — zwarty logger, rozgrzewka i rozciąganie | `app/session/[id]/**`, `lib/prefs.ts`, testy loggera, dokumentacja stanu | 2026-07-27 | w toku |
 
 ## Ostatnie wpisy
+
+### 2026-07-27 · Claude · SESSION-01A2 — ZWARTY LOGGER I TIMERY: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `app/session/[id]/**` (SetRow, ExerciseCard, Logger, RoutineTimer,
+  TimedStopwatch, done/page, useSessionMutations), `lib/prefs.ts`, `lib/sessionFlow.ts`,
+  testy loggera oraz `docs/session-01a2-release-2026-07-27.md`. Praca przejęta po sesji
+  Codex, przerwanej na przeglądzie dostępności (wyczerpany limit).
+- **Wynik:** wiersz serii **~120 px → 44 px** z checkiem 44×44 w wierszu; menu pod numerem
+  serii zamiast stałego `×`; per-ćwiczeniowe boksy rozgrzewkowe usunięte; regulowane timery
+  rozgrzewki (2–15 min) i rozciągania (1–10 min) z trwałym `endAt`; świeże wejście bez
+  fokusu, aktywnej serii i przywracania scrolla; tap w puste pole kopiuje poprzedni wynik.
+- **Dostępność:** klawiatura w menu serii (strzałki/Home/End/Tab/Escape + zwrot fokusu),
+  fokus po usunięciu serii, `aria-disabled` zamiast `disabled` na checku przy korekcie,
+  licznik bez `aria-live` ze stałym regionem `role="status"` na koniec.
+- **Usunięte:** `lib/sessionPreparation.ts` + jego testy (po wycięciu zdania o lekkich
+  seriach moduł stracił konsumenta w produkcie), `handleAddWarmupSets()`.
+- **Dowód:** lint i TypeScript czyste; build zielony; unit **155/155**; przeglądarkowe
+  **29/29** na 320/375/393 px; katalog **907/15**, 17 placeholderów w 54 slotach;
+  rekomendacje **60/60**. Trzy nowe testy montują prawdziwy `SetRow` — jeden z nich wykrył
+  realny błąd fokusu (referencja do odtworzonego węzła), niewidoczny dla lint/tsc/unit.
+- **Dogfood:** pełny przepływ na świeżym koncie: onboarding → plan → logger → seria → Done.
+  Potwierdzone `scrollY = 0`, `activeElement = BODY`, 4 wiersze bez scrolla, 0 overflow na
+  320 px, timer przeżywający wyjście z ekranu, edycja zaliczonej serii po dotknięciu wiersza.
+- **Dane testowe:** konto lokalne `session01a2@arco.test` (lokalna Supabase, nie produkcja)
+  zostaje świadomie; sesje `d8af7da9-31b3-44d6-92d3-76cc0c6c7308` (zakończona) i
+  `973c8fec-3306-4034-a0bd-14e3bbff0954` (otwarta) do punktowego usunięcia po ID.
+- **Czego nie dotknięto:** migracji, seeda, planów i treści treningowej, danych
+  produkcyjnych oraz nieśledzonych plików właściciela (`docs/linear-workflow 2.md`,
+  prezentacja onboardingowa).
+- **Zaległości:** [Ty] merge PR i deploy (procedura `arco-release`); [Ty] checkpoint
+  fizycznego iPhone PWA/Safari wspólnie z zaległą regresją R4A i SESSION-01A;
+  SESSION-01A3 — jednorazowa podpowiedź startowa w loggerze.
 
 ### 2026-07-27 · Codex · SESSION-01A — PRZYGOTOWANIE I ZAKOŃCZENIE: WDROŻONE
 
