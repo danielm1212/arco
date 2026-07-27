@@ -39,6 +39,7 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
   const { data: ses } = await supabase
     .from("session_exercises")
     .select("id, session_id, exercise_id, exercises(name, name_pl, exercise_type, primary_muscles)")
+    .eq("skipped", false)
     .in("session_id", sessionIds);
   type SeInfo = {
     date: Date;

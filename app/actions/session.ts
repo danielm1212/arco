@@ -161,9 +161,10 @@ export async function finishSession(sessionId: string) {
   // guard domyka regułę także dla odświeżenia, drugiej karty i przyszłych klientów.
   const { data: completedSets, error: completedSetsError } = await supabase
     .from("session_sets")
-    .select("id, session_exercises!inner(session_id)")
+    .select("id, session_exercises!inner(session_id, skipped)")
     .eq("completed", true)
     .eq("session_exercises.session_id", sessionId)
+    .eq("session_exercises.skipped", false)
     .limit(1);
   if (completedSetsError) throw new Error(completedSetsError.message);
   if ((completedSets?.length ?? 0) === 0) {

@@ -24,12 +24,13 @@ export async function getRepPRs(
   let q = supabase
     .from("session_sets")
     .select(
-      "weight, reps, session_exercises!inner(exercise_id, session_id, sessions!inner(finished_at))",
+      "weight, reps, session_exercises!inner(exercise_id, session_id, skipped, sessions!inner(finished_at))",
     )
     .eq("completed", true)
     .eq("set_type", "working")
     .not("weight", "is", null)
     .not("reps", "is", null)
+    .eq("session_exercises.skipped", false)
     .not("session_exercises.sessions.finished_at", "is", null)
     .in("session_exercises.exercise_id", exerciseIds);
   if (excludeSessionId) q = q.neq("session_exercises.session_id", excludeSessionId);

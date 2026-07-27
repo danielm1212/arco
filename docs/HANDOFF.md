@@ -1,10 +1,10 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-24
+**Aktualizacja:** 2026-07-27
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** Q1 → CORE-0 → R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
+**Najbliższy etap:** release CORE-0 → R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
@@ -44,25 +44,22 @@ Na `main` i w migracjach są:
 Ostatni fix `61717e6` przywraca sticky nagłówek loggera przy globalnym safe area. Automatyczna
 regresja overflow jest zielona; pozostaje krótki test iPhone PWA w Q1.
 
-**Design system (2026-07-23, DS-UI-v1.4, working tree, niezacommitowane):** wdrożone Fazy 1–2
+**Design system (DS-UI-v1.4, scalony do `main`):** wdrożone Fazy 1–2
 migracji „Arco UI v1.4" na warstwie tokenów — skala Violet + `support-*` (kolor uzupełniający:
 prowadzenie/plany/dane/wykresy), `chart-*`, elevation E1–E3, role `border-*`, chłodniejsze neutrale
 (canvas `#F7F7F5` / dark `#18171A`), focus ring → violet-400, `volt` usunięty (kolaps do `primary`).
 Kanon: `paleta-arco-warm.md` §„Adopcja Arco UI v1.4". Build/lint/unit zielone, weryfikacja wizualna
 (light+dark) OK. **Faza 3 — pierwszy slice wdrożony:** violet na `GuidanceChip`/`Sparkline`/
 `MuscleHeatmap`/`ProgramReviewInsight` + `Button variant="support"`, inputy na `border-control`,
-polished edge na karcie home. **Otwarte:** reszta mapowania violet per ekran; wizualna weryfikacja
-violet-surfaces wymaga konta z danymi (konto testowe puste). **Env:** `node_modules` ma duplikaty
-„ 2" (iCloud Desktop) — build tsc wywalał się na `@types/estree 2`, usunięte ad hoc; rozważyć
-`npm ci` + wyłączenie sync. Szczegóły w dzienniku koordynacji.
+polished edge na karcie home. **Otwarte:** reszta mapowania violet per ekran.
 
-**Ikony 3D (2026-07-23, PR [#13](https://github.com/danielm1212/arco/pull/13) otwarty, gałąź
-`agent/icon-swap-arco-performance-objects`):** podmienione z generycznego pakietu 3dicons.co
+**Ikony 3D (PR [#13](https://github.com/danielm1212/arco/pull/13), scalony do `main`):**
+podmienione z generycznego pakietu 3dicons.co
 na własny zestaw Arco Performance Objects v1.1 (`strategy/arco-3d-icon-system.md`
 w `Arco-Brand-System-v1.4`) — zamyka ryzyko licencyjne `VISUAL-04`. `MomentIcon3D` uproszczony do
 jednego pliku na ikonę (v1.1 nie rozróżnia light/dark). Osierocony `assets-source/icons-3d/`
 (~20 MB starego pipeline'u) usunięty. Lint/build zielone, 6 z 8 ekranów
-zweryfikowanych wizualnie light+dark. **[Ty]:** review + merge PR #13; doraz sprawdzić
+zweryfikowanych wizualnie light+dark. Do checkpointu urządzeniowego pozostaje sprawdzić
 `WelcomeOverlay` krok 8 („Plan gotowy") i baner potwierdzenia w `history/[id]` — nieodtworzone
 w tej sesji. Szczegóły w dzienniku
 koordynacji (2026-07-23).
@@ -112,27 +109,32 @@ koordynacji (2026-07-23).
   (`session_sets.weight`/`added_weight`); `unit_system` jest wyłącznie preferencją prezentacji.
   **Poza zakresem — follow-up:** `body_metrics.weight` (Postępy/Ciało) ma tę samą klasę
   problemu (kg/lbs jako etykieta bez konwersji), osobna tabela/funkcja, niedotknięta.
-- **CORE-0 / DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR
-  [#16](https://github.com/danielm1212/arco/pull/16) czeka na review/merge.
+- **CORE-0 / DATA-03:** PR
+  [#16](https://github.com/danielm1212/arco/pull/16) scalony do `main`; hardening
+  `agent/core0-hardening` domyka dodatkowo semantykę `skipped`.
   Audyt wykrył pięć miejsc liczących fakt treningowy bez `sessions.finished_at is not null`:
   `recompute_personal_records()`, `previous_working_set`/`previous_session_sets` (migracja
   `20260724143658_data03_qualified_fact_finished_only.sql`), `lib/repPRs.ts`,
   `app/exercise/[id]/page.tsx`, oraz `periodStats`/`getStrengthTrends` w `app/progress/stats.ts`
   (naprawione przez nowy współdzielony `lib/qualifiedFacts.ts::finishedSessions`). Home i Ekipa
-  już miały ten warunek poprawnie. Zweryfikowane: 117/117 unit, lint, build, `db reset`,
-  walidatory, smoke phase1/offline zielone (smoke:phase2 wymagał poprawki — testował stary,
-  błędny kontrakt bez `finished_at`); manualna weryfikacja end-to-end (seria w otwartej sesji →
-  poprawnie niewidoczna wszędzie → po zakończeniu poprawnie widoczna, w tym "poprzedni wynik"
-  w guidance nowej sesji). **Poza zakresem, odnotowane:** `previous_working_set`/
+  już miały ten warunek poprawnie. Nowa migracja
+  `20260727110435_data03_exclude_skipped_exercises.sql` wyklucza pominięte ćwiczenia z rekordów
+  i poprzednich wyników; aplikacja stosuje tę samą regułę w statystykach, guidance, Historii,
+  loggerze i Done. **Poza zakresem, odnotowane:** `previous_working_set`/
   `previous_session_sets` wybierają globalnie najnowszą inną sesję, nie czasowo poprzedzającą
   przeglądaną — przy edycji starej historii z równolegle otwartym innym treningiem "poprzedni
   wynik" może być z późniejszej sesji. Rzadki przypadek, osobny finding na przyszłość.
-- **MOMENT-01 (confetti po rekordzie):** zaimplementowane na `agent/moment-pr-confetti`,
-  PR czeka na review/merge. Wystrzał CSS bez biblioteki na done-screenie, pod tym samym
+- **CORE-0 / SYNC-01:** zaimplementowane lokalnie na `agent/core0-hardening`. Błędy chwilowe
+  pozostają w kolejce do retry; błędy trwałe trafiają do odzyskiwalnej kwarantanny i nie
+  blokują późniejszych zapisów. Finish czeka na flush i ocenia wyłącznie bieżącą sesję.
+- **MOMENT-01 (confetti po rekordzie):** PR
+  [#17](https://github.com/danielm1212/arco/pull/17) scalony do `main`. Wystrzał CSS bez
+  biblioteki na done-screenie, pod tym samym
   sygnałem `hasPR` co nagłówek „Nowy rekord"; bez rekordu komponent nie jest renderowany.
   Paleta rust + violet + amber to jawny wyjątek od reguły v1.4, zapisany jako **D-20**
   w `decyzje-produktowe.md`. `prefers-reduced-motion` → zero cząstek (plus reguła CSS jako
-  pas bezpieczeństwa). Zweryfikowane: 120/120 unit, lint, build, a w realnej apce struktura,
+  pas bezpieczeństwa). Hardening z 2026-07-27 wylicza czas życia warstwy z maksymalnego lotu,
+  więc ostatnia cząstka nie jest ucinana. Zweryfikowane: testy jednostkowe, lint, build, a w realnej apce struktura,
   34 cząstki, tokeny kolorów i przełączenie dark. **Nie zweryfikowano ruchu w locie** — preview
   trzyma dokument jako `hidden`, więc animacje CSS i `rAF` nie tykają; jakość ruchu walidowana
   na POC z identycznymi keyframe'ami. Do checkpointu [Ty]: płynność na Androidzie i zachowanie
@@ -187,7 +189,8 @@ koordynacji (2026-07-23).
 - 907 rekordów ćwiczeń lokalnie; bieżące liczby potwierdza `npm run validate:training`;
 - publiczna rejestracja wyłączona;
 - migracje produkcyjne do `20260722002735_content02_chin_up_review.sql` zostały zastosowane;
-  lokalna i zdalna historia migracji są zgodne.
+  migracje CORE-0 od `20260724133849` do `20260727110435` są zielone lokalnie i czekają na
+  kontrolowany release.
 
 ## 6. Najbliższa praca
 
@@ -198,11 +201,11 @@ koordynacji (2026-07-23).
    a P03/P11/P12 łącznie 29 wersjonowanych ścieżek sprzętowych. SQL point syncu (`TRAIN-02A4`)
    powstaje dopiero po kontrakcie TRAIN-03/05 **i** po SEC-03 — oba warunki, więc realnie
    czeka też na odwołanie z punktu 1.
-3. **CORE-0 w toku (Claude, 2026-07-24):** integralność danych nie zależy technicznie od
-   SEC-03, więc jedzie równolegle. **DATA-01 i DATA-02 scalone** (PR #14, #15). **DATA-03
-   zaimplementowane** na `agent/core-0-data-03`, PR
-   [#16](https://github.com/danielm1212/arco/pull/16) czeka na review/merge [Ty]. Następne:
-   SYNC-01 (outbox) — ostatni kawałek CORE-0. Follow-upy poza CORE-0: `body_metrics.weight`
+3. **CORE-0 technicznie domknięte lokalnie (Codex, 2026-07-27):** DATA-01–03 są scalone,
+   hardening `skipped` i SYNC-01 są na `agent/core0-hardening`. Pełna bramka: lint,
+   133/133 unit, build, świeży reset bazy, seed, audyt katalogu, wszystkie cztery smoke
+   i 24/24 testów UI. Następny krok to kontrolowany release migracji i kodu. Follow-upy
+   poza CORE-0: `body_metrics.weight`
    (jednostki, jak DATA-02) i `previous_working_set`/`previous_session_sets` liczące najnowszą
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
 4. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany

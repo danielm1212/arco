@@ -53,6 +53,7 @@ async function periodStats(
   const { data: ses } = await supabase
     .from("session_exercises")
     .select("id, exercise_id, exercises(primary_muscles)")
+    .eq("skipped", false)
     .in("session_id", ids);
   const bySe = new Map<string, { muscles: string[]; cats: MuscleCategory[] }>();
   (ses ?? []).forEach((se) => {
@@ -215,6 +216,7 @@ export async function getStrengthTrends(
     ? await supabase
         .from("session_exercises")
         .select("id, exercise_id, session_id, exercises(name, name_pl, exercise_type)")
+        .eq("skipped", false)
         .in("session_id", sSessIds)
     : { data: [] };
   const seMeta = new Map<

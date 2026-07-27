@@ -2,7 +2,11 @@
 
 import { useSync } from "@/lib/useSync";
 import type { SessionSet } from "@/lib/types";
-import type { OutboxSetRow } from "@/lib/outbox";
+import {
+  pendingCount,
+  quarantineCount,
+  type OutboxSetRow,
+} from "@/lib/outbox";
 
 /**
  * Integracja loggera z outboxem: serializacja wiersza serii + kolejkowanie
@@ -11,7 +15,7 @@ import type { OutboxSetRow } from "@/lib/outbox";
  * Callbacki z useSync są stabilne (useCallback) — bezpieczne dla memo niżej.
  */
 export function useSessionOutbox(sessionId: string) {
-  const { online, pending, syncing, queueUpsert, queueDelete, queueNotes, flush } = useSync();
+  const sync = useSync();
 
   function toRow(s: SessionSet): OutboxSetRow {
     return {
@@ -30,11 +34,20 @@ export function useSessionOutbox(sessionId: string) {
 
   /** Zakolejkuj zapis serii (opcjonalnie z nakładką zmian — jeden pełny wiersz). */
   const saveSet = (s: SessionSet, patch: Partial<SessionSet> = {}) =>
-    queueUpsert(sessionId, toRow({ ...s, ...patch }));
+    sync.queueUpsert(sessionId, toRow({ ...s, ...patch }));
 
-  const removeSet = (setId: string) => queueDelete(sessionId, setId);
+  const removeSet = (setId: string) => sync.queueDelete(sessionId, setId);
   const saveNotes = (sessionExerciseId: string, notes: string) =>
-    queueNotes(sessionId, sessionExerciseId, notes);
+    sync.queueNotes(sessionId, sessionExerciseId, notes);
 
-  return { online, pending, syncing, flush, saveSet, removeSet, saveNotes };
+  return {
+    online: sync.online,
+    pending: pendingCount(sessionId),
+    quarantined: quarantineCount(sessionId),
+    syncing: sync.syncing,
+    flush: sync.flush,
+    saveSet,
+    removeSet,
+    saveNotes,
+  };
 }

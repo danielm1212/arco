@@ -39,7 +39,7 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, session_exercises(id, exercises(exercise_type, primary_muscles), session_sets(id, weight, reps, set_type, completed))",
+        "id, started_at, finished_at, session_exercises(id, skipped, exercises(exercise_type, primary_muscles), session_sets(id, weight, reps, duration_seconds, set_type, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -56,9 +56,10 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
   const exercises =
     joinMany<{
       id: string;
+      skipped: boolean;
       exercises: Pick<ExerciseJoin, "exercise_type" | "primary_muscles">;
       session_sets: SessionSet[];
-    }>(session.session_exercises);
+    }>(session.session_exercises).filter((exercise) => !exercise.skipped);
 
   const allSets = exercises.flatMap((e) => e.session_sets);
   const completed = allSets.filter((s) => s.completed);

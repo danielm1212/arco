@@ -158,7 +158,8 @@ fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 **Zależność:** Q1; wykonujemy przed R4A
 **Spec:** `audyt-core-i-plan-2026-07.md`
 
-**Stan:** rozpoczęte 2026-07-24 (Claude). **SEC-03 wstrzymane u [Ty]
+**Stan:** technicznie domknięte lokalnie 2026-07-27; oczekuje kontrolowanego release'u.
+**SEC-03 wstrzymane u [Ty]
 (czeka na zewnętrzne wsparcie) nie blokuje CORE-0** — integralność danych jest osobną osią
 od rotacji sekretu; jedyne zadanie realnie zablokowane przez SEC-03 to TRAIN-02A4.
 
@@ -191,8 +192,8 @@ end-to-end na koncie `lbs`: wpis 225lbs×5 → baza `102.06`kg (225×0,45359237)
 objętość+rekordy zgodne. `smoke:team` nie uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`,
 niezwiązane.
 
-**Stan DATA-03:** zaimplementowane na `agent/core-0-data-03`, PR
-[#16](https://github.com/danielm1212/arco/pull/16) czeka na review/merge. Audyt
+**Stan DATA-03:** PR [#16](https://github.com/danielm1212/arco/pull/16) scalony do `main`;
+hardening z 2026-07-27 na `agent/core0-hardening` domyka także semantykę `skipped`. Audyt
 wykrył **pięć** miejsc liczących "fakt treningowy" bez sprawdzenia `sessions.finished_at is
 not null` — seria zaliczona w OTWARTEJ sesji mogła utworzyć rekord, wejść do trendu siły,
 zasilić rep-PR albo "poprzedni wynik" w guidance, mimo że spec wymaga: sesja otwarta pokazuje
@@ -217,6 +218,22 @@ poprawnie pokazują zero (brak historii/rekordów/objętości) → po zakończen
 strony poprawnie pokazują 150kg/165kg e1RM/450kg objętości → druga, nowa sesja poprawnie
 odczytuje "poprzedni wynik" (guidance: "Cel na dziś: 150kg × 4+ powt. (ostatnio 3)").
 `smoke:team` nie uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`, niezwiązane.
+
+Hardening dodaje migrację `20260727110435_data03_exclude_skipped_exercises.sql` oraz filtruje
+pominięte ćwiczenia w rekordach, poprzednich wynikach, statystykach, guidance, Historii,
+podsumowaniu loggera i ekranie Done. Zmiana `skipped` w zakończonej sesji przelicza pochodne,
+a pominięta seria nie może samodzielnie odblokować finishu.
+
+**Stan SYNC-01:** zaimplementowane i zweryfikowane lokalnie 2026-07-27 na
+`agent/core0-hardening`. Outbox rozróżnia błąd chwilowy od trwałego; trwały zapis trafia do
+odzyskiwalnej kwarantanny i nie blokuje późniejszych operacji. Ponowna edycja zastępuje
+wadliwy snapshot. Finish czeka na aktywny flush i rozlicza wyłącznie kolejkę bieżącej sesji,
+więc zaległość innego treningu nie blokuje zakończenia. UI pokazuje stan wymagający poprawy.
+
+**Dowód wspólny CORE-0 (2026-07-27):** lint; 133/133 unit; build produkcyjny; świeży
+`supabase db reset` ze wszystkimi migracjami; seed 907 ćwiczeń / 15 programów / 308 slotów;
+audyt katalogu bez driftu; rekomendacje 60/60; smoke phase1, phase2, offline i Ekipa;
+24/24 testów overflow/BottomSheet. Release produkcyjny pozostaje osobnym krokiem.
 
 - DATA-01: zakończona seria ma wynik wymagany przez typ ćwiczenia; ten sam guard działa
   w UI, Server Action i bazie/RPC;

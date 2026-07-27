@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-22
+**Aktualizacja:** 2026-07-27
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -18,9 +18,31 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
-| — | — | — | — | brak aktywnych rezerwacji |
+| Codex | CORE-0 hardening — DATA-03/SYNC-01/release | `session_exercises.skipped`, rekordy/statystyki/guidance, outbox/finish, done/confetti, migracje i docs | 2026-07-27 11:04 | w toku |
 
 ## Ostatnie wpisy
+
+### 2026-07-27 · Codex · CORE-0 hardening — DATA-03/SYNC-01/Done: GOTOWE LOKALNIE
+
+- **Zakres:** semantyka `session_exercises.skipped` w rekordach, poprzednich wynikach,
+  statystykach, guidance, Historii, loggerze i Done; migracja
+  `20260727110435_data03_exclude_skipped_exercises.sql`; przeliczanie pochodnych po edycji
+  zakończonej sesji; odporny outbox z rozróżnieniem retry/quarantine, odzyskiwalnym snapshotem
+  i flush bieżącej sesji przed finish; czas treningów timed na Done; policzony czas życia
+  confetti. Gałąź `agent/core0-hardening`.
+- **Decyzje:** trwały błąd nie jest kasowany ani nie więzi całej kolejki — trafia do lokalnej
+  kwarantanny, którą poprawiona edycja zastępuje. Finish nie czeka na operacje innych sesji.
+  Kwalifikowany fakt wymaga zakończonej sesji, prawidłowej zaliczonej serii roboczej i
+  niepominiętego ćwiczenia.
+- **Dowód:** lint czysty; unit **133/133**; build produkcyjny zielony; świeży
+  `supabase db reset` ze wszystkimi migracjami; seed **907/15/308**; audyt katalogu bez driftu;
+  rekomendacje **60/60**; smoke phase1, phase2, offline i Ekipa zielone; overflow/BottomSheet
+  **24/24**. Pierwszy przebieg overflow nie uruchomił Chromium przez sandbox, po kontrolowanym
+  uruchomieniu poza sandboxem testy przeszły w całości.
+- **Produkcja:** nietknięta. Migracje CORE-0 od `20260724133849` do `20260727110435` nadal
+  czekają na backup, dry-run i release; kod czeka na PR/CI/merge.
+- **Następny krok:** kontrolowany release według `arco-release`, potem checkpoint produkcyjny
+  i urządzeniowy. Po CORE-0 rozpocząć R4A.
 
 ### 2026-07-27 · Claude · SEC-04 — odblokowanie bramki `npm audit` (postcss, brace-expansion): ZAKOŃCZONE TECHNICZNIE
 

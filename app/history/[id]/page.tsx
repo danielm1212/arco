@@ -25,7 +25,7 @@ export default async function SessionDetailPage(props: {
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, exercises(name, name_pl, exercise_type, primary_muscles), session_sets(id, set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
+        "id, started_at, finished_at, program_days(label, programs(name)), session_exercises(id, position, superset_group, skipped, exercises(name, name_pl, exercise_type, primary_muscles), session_sets(id, set_index, set_type, weight, reps, duration_seconds, added_weight, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -43,15 +43,17 @@ export default async function SessionDetailPage(props: {
       id: string;
       position: number;
       superset_group: number | null;
+      skipped: boolean;
       exercises: Pick<ExerciseJoin, "name" | "name_pl" | "exercise_type" | "primary_muscles">;
       session_sets: SessionSet[];
     }>(session.session_exercises)
   )
     .slice()
     .sort((a, b) => a.position - b.position);
+  const factExercises = exercises.filter((exercise) => !exercise.skipped);
 
   // Podsumowanie
-  const allSets = exercises.flatMap((e) => e.session_sets);
+  const allSets = factExercises.flatMap((e) => e.session_sets);
   const completed = allSets.filter((s) => s.completed);
   const volume = completed.reduce(
     (n, s) => n + (s.weight ?? 0) * (s.reps ?? 0),
@@ -63,7 +65,7 @@ export default async function SessionDetailPage(props: {
 
   // S13: Muscle Split % — serie robocze per główna partia
   const perMuscle = new Map<string, number>();
-  exercises.forEach((e) => {
+  factExercises.forEach((e) => {
     const m = e.exercises.primary_muscles?.[0];
     if (!m) return;
     const n = e.session_sets.filter((s) => s.completed && s.set_type === "working").length;
@@ -193,25 +195,31 @@ export default async function SessionDetailPage(props: {
                 </span>
               )}
             </p>
-            <ul className="mt-xs space-y-2xs">
-              {ex.session_sets
-                .slice()
-                .sort((a, b) => a.set_index - b.set_index)
-                .map((s, i) => (
-                  <li
-                    key={`${ex.id}-${s.set_index}-${i}`}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span className="text-muted-foreground">
-                      {s.set_type === "warmup" ? "W" : i + 1}
-                    </span>
-                    <span className="font-medium">
-                      {formatSet(ex.exercises.exercise_type, s, unit)}
-                    </span>
-                    <span>{s.completed ? "✓" : "○"}</span>
-                  </li>
-                ))}
-            </ul>
+            {ex.skipped ? (
+              <p className="mt-xs text-sm italic text-muted-foreground">
+                Pominięte w tej sesji.
+              </p>
+            ) : (
+              <ul className="mt-xs space-y-2xs">
+                {ex.session_sets
+                  .slice()
+                  .sort((a, b) => a.set_index - b.set_index)
+                  .map((s, i) => (
+                    <li
+                      key={`${ex.id}-${s.set_index}-${i}`}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span className="text-muted-foreground">
+                        {s.set_type === "warmup" ? "W" : i + 1}
+                      </span>
+                      <span className="font-medium">
+                        {formatSet(ex.exercises.exercise_type, s, unit)}
+                      </span>
+                      <span>{s.completed ? "✓" : "○"}</span>
+                    </li>
+                  ))}
+              </ul>
+            )}
           </section>
         ))}
       </main>

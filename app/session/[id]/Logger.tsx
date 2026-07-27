@@ -28,7 +28,7 @@ import { useSessionMutations } from "./useSessionMutations";
 import { handleFinish, handleDeleteSession } from "./finish";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { useNavigationHistory } from "@/components/navigation/NavigationHistory";
-import { pendingCount, restoreSessionDraft } from "@/lib/outbox";
+import { recoverableCount, restoreSessionDraft } from "@/lib/outbox";
 import type { SetWeightReview } from "@/lib/setValidation";
 
 export interface LoggerExercise {
@@ -95,7 +95,7 @@ export function Logger({
 }) {
   const router = useRouter();
   const { goBack, replace } = useNavigationHistory();
-  const [recoveredChanges] = useState(() => pendingCount(sessionId));
+  const [recoveredChanges] = useState(() => recoverableCount(sessionId));
   const [recoveryVisible, setRecoveryVisible] = useState(recoveredChanges > 0);
   const [exercises, setExercises] = useState(() =>
     restoreSessionDraft(initialExercises, sessionId),
@@ -108,7 +108,7 @@ export function Logger({
 
   const { rest, restFor, startRest, adjustRest, dismissRest, extendRest } =
     useRestTimer(defaultRest);
-  const { online, pending, syncing, flush, saveSet, removeSet, saveNotes } =
+  const { online, pending, quarantined, syncing, flush, saveSet, removeSet, saveNotes } =
     useSessionOutbox(sessionId);
   // Przed zaliczeniem wyniku mogącego utworzyć nieoczekiwany PR prosimy o
   // świadome potwierdzenie. Stan przechowuje pełny wiersz tylko na czas sheeta.
@@ -186,7 +186,7 @@ export function Logger({
     if (finishing) return;
     setFinishing(true);
     try {
-      await handleFinish({ sessionId, exercises, online, flush });
+      await handleFinish({ sessionId, online, flush });
     } finally {
       setFinishing(false);
     }
@@ -210,13 +210,17 @@ export function Logger({
   }, [startedAt, isFinished, isHistorical]);
 
   // Live podsumowanie z lokalnego stanu
-  const doneSets = exercises.reduce((n, ex) => n + ex.sets.filter((s) => s.completed).length, 0);
+  const factExercises = exercises.filter((exercise) => !exercise.skipped);
+  const doneSets = factExercises.reduce(
+    (n, ex) => n + ex.sets.filter((s) => s.completed).length,
+    0,
+  );
   // R4: seria niezaliczone = kandydat do finish-sheeta zamiast confirm()
-  const incompleteSets = exercises.reduce(
+  const incompleteSets = factExercises.reduce(
     (n, ex) => n + ex.sets.filter((s) => !s.completed).length,
     0,
   );
-  const volume = exercises.reduce(
+  const volume = factExercises.reduce(
     (n, ex) =>
       n +
       ex.sets.reduce(
@@ -278,18 +282,30 @@ export function Logger({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-sm">
-            {(!online || pending > 0) && (
+            {(!online || pending > 0 || quarantined > 0) && (
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                  !online ? "bg-warning/15 text-warning" : "bg-muted text-muted-foreground"
+                  !online
+                    ? "bg-warning/15 text-warning"
+                    : quarantined > 0
+                      ? "bg-danger/10 text-danger"
+                      : "bg-muted text-muted-foreground"
                 }`}
                 title={
                   !online
                     ? "Brak internetu. Zmiany zapiszą się po powrocie sieci"
-                    : `${pending} zmian(y) do synchronizacji`
+                    : quarantined > 0
+                      ? `${quarantined} zmian(y) wymaga poprawy`
+                      : `${pending} zmian(y) do synchronizacji`
                 }
               >
-                {!online ? "● offline" : syncing ? "synchronizuję…" : `↑ ${pending}`}
+                {!online
+                  ? "● offline"
+                  : quarantined > 0
+                    ? "wymaga poprawy"
+                    : syncing
+                      ? "synchronizuję…"
+                      : `↑ ${pending}`}
               </span>
             )}
             {!isFinished && (
@@ -364,7 +380,11 @@ export function Logger({
                 {recoveredChanges === 1
                   ? "Ostatnia zmiana była zapisana na tym urządzeniu."
                   : `${recoveredChanges} ostatnie zmiany były zapisane na tym urządzeniu.`}{" "}
-                {online ? "Synchronizujemy je z kontem." : "Wyślemy je po powrocie internetu."}
+                {quarantined > 0
+                  ? "Co najmniej jedna wymaga poprawy; pozostałe zapisują się normalnie."
+                  : online
+                    ? "Synchronizujemy je z kontem."
+                    : "Wyślemy je po powrocie internetu."}
               </p>
             </div>
             <Button
