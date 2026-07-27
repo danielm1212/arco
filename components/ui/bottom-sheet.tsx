@@ -15,76 +15,11 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { acquireBodyScrollLock, releaseBodyScrollLock } from "@/lib/bodyScrollLock";
 
 type TriggerProps = {
   onClick?: (event: MouseEvent<HTMLElement>) => void;
 };
-
-/**
- * Współdzielona blokada scrolla body — JEDNA na wszystkie instancje BottomSheet.
- *
- * Sheet-w-sheecie („Podmień ćwiczenie": menu karty zamyka się i w tym samym
- * commicie Reacta otwiera się SwapPanel) to dwie różne instancje. Blokada per
- * instancja gubiła pozycję strony: cleanup pierwszego sheeta przywracał scroll
- * w rAF, a efekt drugiego czytał `window.scrollY` ZANIM ten rAF się wykonał —
- * zapamiętywał 0 i po zamknięciu drugiego arkusza strona skakała na górę.
- * Licznik referencji + jedna zapamiętana pozycja rozwiązują wyścig niezależnie
- * od kolejności montowania instancji.
- */
-let bodyLockCount = 0;
-let lockedScroll: { x: number; y: number } | null = null;
-let lockedBodyStyles: Record<string, string> | null = null;
-let restoreScrollFrame: number | null = null;
-
-function acquireBodyScrollLock() {
-  bodyLockCount += 1;
-  if (bodyLockCount > 1) return;
-  if (restoreScrollFrame !== null) {
-    // Poprzednia instancja dopiero co zwolniła blokadę; jej przywrócenie scrolla
-    // wciąż wisi w rAF, a `window.scrollY` jest chwilowo wyzerowane. Przejmujemy
-    // zapamiętaną pozycję zamiast utrwalić zero.
-    window.cancelAnimationFrame(restoreScrollFrame);
-    restoreScrollFrame = null;
-  } else {
-    lockedScroll = { x: window.scrollX, y: window.scrollY };
-  }
-  const scroll = lockedScroll ?? { x: 0, y: 0 };
-  lockedBodyStyles = {
-    position: document.body.style.position,
-    top: document.body.style.top,
-    left: document.body.style.left,
-    right: document.body.style.right,
-    width: document.body.style.width,
-    overflow: document.body.style.overflow,
-  };
-  // iOS nie respektuje `overscroll-behavior` dla documentu. Bez fizycznego
-  // unieruchomienia body gest z krótkiego albo przewiniętego do końca sheeta
-  // przechodzi na ekran pod nim. Ujemny top zachowuje pikselową pozycję tła.
-  Object.assign(document.body.style, {
-    position: "fixed",
-    top: `${-scroll.y}px`,
-    left: `${-scroll.x}px`,
-    right: "0",
-    width: "100%",
-    overflow: "hidden",
-  });
-}
-
-function releaseBodyScrollLock() {
-  if (bodyLockCount === 0) return;
-  bodyLockCount -= 1;
-  if (bodyLockCount > 0) return;
-  if (lockedBodyStyles) {
-    Object.assign(document.body.style, lockedBodyStyles);
-    lockedBodyStyles = null;
-  }
-  restoreScrollFrame = window.requestAnimationFrame(() => {
-    restoreScrollFrame = null;
-    const scroll = lockedScroll;
-    lockedScroll = null;
-    if (scroll) window.scrollTo(scroll.x, scroll.y);
-  });
-}
 
 /**
  * Stabilny arkusz modalny dla PWA.

@@ -26,6 +26,7 @@ const SAFE_AREA = "47px"; // wymuszona wartość notcha (headless zwraca 0)
 let cssCache: string | null = null;
 let bottomSheetBundleCache: string | null = null;
 let setRowBundleCache: string | null = null;
+let loggerHintBundleCache: string | null = null;
 function builtCss(): string {
   if (cssCache !== null) return cssCache;
   let files: string[];
@@ -440,6 +441,138 @@ test("SESSION-01A2: usunięcie serii przenosi fokus na sąsiedni wiersz", async 
       () => document.activeElement?.textContent?.trim() ?? null,
     );
     assert.equal(fallback, "+ seria", "po usunięciu ostatniej serii fokus nie wrócił do „+ seria”");
+  } finally {
+    await context.close();
+  }
+});
+
+// SESSION-01A3: podpowiedź startowa jest overlayem, więc obowiązuje ją pełny
+// kontrakt z CLAUDE.md — blokada tła, Escape, pułapka fokusu i zwrot fokusu.
+// Harness montuje prawdziwy LoggerHint razem z wierszem serii jako kotwicą.
+async function loggerHintBundle(): Promise<string> {
+  if (loggerHintBundleCache !== null) return loggerHintBundleCache;
+
+  const result = await build({
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    write: false,
+    absWorkingDir: ROOT,
+    stdin: {
+      loader: "tsx",
+      resolveDir: ROOT,
+      sourcefile: "session01a3-logger-hint-harness.tsx",
+      contents: `
+        import React, { useState } from "react";
+        import { createRoot } from "react-dom/client";
+        import { LoggerHint } from "./app/session/[id]/LoggerHint";
+
+        function Harness() {
+          const [open, setOpen] = useState(false);
+          return <main className="mx-auto max-w-md p-md">
+            <button type="button" onClick={() => setOpen(true)}>Otwórz logger</button>
+            <div style={{ height: 600 }} />
+            <ul>
+              <li data-set-state="empty" className="relative flex items-center gap-xs">
+                <button type="button" aria-haspopup="menu" className="size-11">1</button>
+                <input className="h-11 flex-1" />
+                <input className="h-11 flex-1" />
+                <button type="button" aria-label="Zalicz serię" className="size-11">✓</button>
+              </li>
+            </ul>
+            <div style={{ height: 1400 }} />
+            {open && <LoggerHint onDismiss={() => setOpen(false)} />}
+          </main>;
+        }
+
+        createRoot(document.getElementById("root")).render(<Harness />);
+      `,
+    },
+  });
+
+  loggerHintBundleCache = result.outputFiles[0]?.text ?? null;
+  assert.ok(loggerHintBundleCache, "esbuild nie zwrócił bundla harnessu LoggerHint");
+  return loggerHintBundleCache;
+}
+
+async function loggerHintPage() {
+  const context = await browser.newContext({ viewport: VIEWPORT });
+  const page = await context.newPage();
+  await page.setContent(pageHtml('<div id="root"></div>'), { waitUntil: "load" });
+  await page.addScriptTag({ content: await loggerHintBundle() });
+  const opener = page.getByRole("button", { name: "Otwórz logger" });
+  await opener.waitFor();
+  await opener.click();
+  await page.getByRole("dialog").waitFor();
+  return { context, page };
+}
+
+test("SESSION-01A3: podpowiedź kotwiczy się pod wierszem serii i pokrywa cały ekran", async () => {
+  const { context, page } = await loggerHintPage();
+  try {
+    const geometry = await page.evaluate(() => {
+      const dialog = document.querySelector<HTMLElement>('[role="dialog"]')!;
+      const scrim = dialog.parentElement!;
+      const row = document.querySelector<HTMLElement>("li[data-set-state]")!;
+      const scrimRect = scrim.getBoundingClientRect();
+      const dialogRect = dialog.getBoundingClientRect();
+      return {
+        scrimParent: scrim.parentElement?.tagName ?? null,
+        scrim: { w: scrimRect.width, h: scrimRect.height, x: scrimRect.left, y: scrimRect.top },
+        viewport: { w: window.innerWidth, h: window.innerHeight },
+        dialogBelowRow: dialogRect.top >= row.getBoundingClientRect().bottom,
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+
+    // Portal do body: wewnątrz drzewa loggera przodek z `transform` zabrałby
+    // `position: fixed` cały ekran i przyciemnienie przestałoby pokrywać widok.
+    assert.equal(geometry.scrimParent, "BODY", "overlay nie jest portalowany do body");
+    assert.deepEqual(
+      { w: geometry.scrim.w, h: geometry.scrim.h, x: geometry.scrim.x, y: geometry.scrim.y },
+      { w: geometry.viewport.w, h: geometry.viewport.h, x: 0, y: 0 },
+      "przyciemnienie nie pokrywa całego widoku",
+    );
+    assert.ok(geometry.dialogBelowRow, "podpowiedź nie jest zakotwiczona pod wierszem serii");
+    assert.ok(geometry.overflow <= 1, `poziomy overflow ${geometry.overflow}px`);
+  } finally {
+    await context.close();
+  }
+});
+
+test("SESSION-01A3: overlay blokuje tło, trzyma fokus i oddaje go po zamknięciu", async () => {
+  const { context, page } = await loggerHintPage();
+  try {
+    const locked = await page.evaluate(() => {
+      const before = window.scrollY;
+      window.scrollTo(0, 500);
+      const after = window.scrollY;
+      return { moved: after !== before, bodyPosition: getComputedStyle(document.body).position };
+    });
+    assert.equal(locked.bodyPosition, "fixed", "tło nie jest unieruchomione");
+    assert.equal(locked.moved, false, "tło przewija się pod podpowiedzią");
+
+    // Pułapka fokusu: Tab nie może wyprowadzić poza overlay.
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    const trapped = await page.evaluate(() =>
+      document.querySelector('[role="dialog"]')!.contains(document.activeElement),
+    );
+    assert.ok(trapped, "Tab wyprowadził fokus poza overlay");
+
+    await page.keyboard.press("Escape");
+    await page.getByRole("dialog").waitFor({ state: "detached" });
+    // `setContent` daje origin bez dostępu do localStorage — i dobrze, bo dzięki
+    // temu ten sam test pilnuje, że zapis preferencji nie wywala komponentu.
+    // Samą trwałość flagi sprawdzają testy jednostkowe `prefs`.
+    const released = await page.evaluate(() => ({
+      bodyPosition: getComputedStyle(document.body).position,
+      focus: document.activeElement?.textContent?.trim() ?? null,
+      opener: document.body.innerText.includes("Otwórz logger"),
+    }));
+    assert.notEqual(released.bodyPosition, "fixed", "blokada tła została po zamknięciu");
+    assert.ok(released.opener, "harness rozpadł się przy zamykaniu podpowiedzi");
+    assert.equal(released.focus, "Otwórz logger", "fokus nie wrócił do elementu otwierającego");
   } finally {
     await context.close();
   }
