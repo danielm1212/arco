@@ -205,7 +205,9 @@ select jsonb_build_object(
   )
 ) as payload;
 
+\ir ../../supabase/migrations/20260727134000_train02a4_required_exercises.sql
 \ir ../../supabase/migrations/20260727134500_train02a4_missing_programs.sql
+\ir ../../supabase/migrations/20260727134000_train02a4_required_exercises.sql
 \ir ../../supabase/migrations/20260727134500_train02a4_missing_programs.sql
 
 do $assertions$
@@ -439,6 +441,30 @@ where user_id is null
     'advanced-bodyweight-upper-lower4'
   );
 
+update public.program_day_slots as slot
+set default_exercise_id = (
+  select exercise.id
+  from public.exercises as exercise
+  where exercise.id not in ('Band_Lat_Pulldown', 'Single_Leg_Calf_Raise')
+  order by exercise.id
+  limit 1
+)
+where slot.default_exercise_id in ('Band_Lat_Pulldown', 'Single_Leg_Calf_Raise')
+  and exists (
+    select 1
+    from public.program_days as day
+    join public.programs as program on program.id = day.program_id
+    where day.id = slot.program_day_id
+      and program.user_id is null
+      and program.slug not in (
+        'beginner-gym-fbw2',
+        'beginner-home-fbw2',
+        'intermediate-bodyweight-fbw3',
+        'advanced-home-upper-lower4',
+        'advanced-bodyweight-upper-lower4'
+      )
+  );
+
 delete from public.programs
 where user_id is null
   and slug in (
@@ -449,15 +475,29 @@ where user_id is null
     'advanced-bodyweight-upper-lower4'
   );
 
+delete from public.exercises
+where user_id is null
+  and id in ('Band_Lat_Pulldown', 'Single_Leg_Calf_Raise');
+
 do $assertions$
 begin
   if (select count(*) from public.programs where user_id is null) <> 10 then
     raise exception 'TRAIN-02A4 production-shape fixture did not reach 10 system programs.';
   end if;
+
+  if exists (
+    select 1
+    from public.exercises
+    where id in ('Band_Lat_Pulldown', 'Single_Leg_Calf_Raise')
+  ) then
+    raise exception 'TRAIN-02A4 production-shape fixture still contains required exercise rows.';
+  end if;
 end
 $assertions$;
 
+\ir ../../supabase/migrations/20260727134000_train02a4_required_exercises.sql
 \ir ../../supabase/migrations/20260727134500_train02a4_missing_programs.sql
+\ir ../../supabase/migrations/20260727134000_train02a4_required_exercises.sql
 \ir ../../supabase/migrations/20260727134500_train02a4_missing_programs.sql
 
 do $assertions$
@@ -497,6 +537,23 @@ begin
 
   if (select count(*) from public.programs where user_id is null) <> 15 then
     raise exception 'TRAIN-02A4 did not restore the 15-program system catalog.';
+  end if;
+
+  if (
+    select count(*)
+    from public.exercises
+    where user_id is null
+      and id in ('Band_Lat_Pulldown', 'Single_Leg_Calf_Raise')
+      and (
+        (id = 'Band_Lat_Pulldown' and movement_pattern = 'pull' and exercise_type = 'weighted')
+        or (
+          id = 'Single_Leg_Calf_Raise'
+          and movement_pattern = 'squat'
+          and exercise_type = 'bodyweight'
+        )
+      )
+  ) <> 2 then
+    raise exception 'TRAIN-02A4 did not restore both reviewed required exercise rows.';
   end if;
 
   if exists (
