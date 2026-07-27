@@ -2,11 +2,7 @@
 
 import { useSync } from "@/lib/useSync";
 import type { SessionSet } from "@/lib/types";
-import {
-  pendingCount,
-  quarantineCount,
-  type OutboxSetRow,
-} from "@/lib/outbox";
+import { type OutboxSetRow } from "@/lib/outbox";
 
 /**
  * Integracja loggera z outboxem: serializacja wiersza serii + kolejkowanie
@@ -15,7 +11,7 @@ import {
  * Callbacki z useSync są stabilne (useCallback) — bezpieczne dla memo niżej.
  */
 export function useSessionOutbox(sessionId: string) {
-  const sync = useSync();
+  const sync = useSync(sessionId);
 
   function toRow(s: SessionSet): OutboxSetRow {
     return {
@@ -42,8 +38,8 @@ export function useSessionOutbox(sessionId: string) {
 
   return {
     online: sync.online,
-    pending: pendingCount(sessionId),
-    quarantined: quarantineCount(sessionId),
+    pending: sync.pending,
+    quarantined: sync.quarantined,
     syncing: sync.syncing,
     flush: sync.flush,
     saveSet,

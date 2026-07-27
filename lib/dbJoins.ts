@@ -1,4 +1,4 @@
-import type { ExerciseType } from "@/lib/types";
+import type { ExerciseType, MechanicType, MovementPattern } from "@/lib/types";
 
 /**
  * Kształty zagnieżdżonych joinów PostgREST (audyt kodu P2, „zdrowie kodu").
@@ -14,6 +14,9 @@ export interface ExerciseJoin {
   name_pl: string | null;
   exercise_type: ExerciseType;
   equipment: string | null;
+  category: string | null;
+  mechanic: MechanicType | null;
+  movement_pattern: MovementPattern | null;
   primary_muscles: string[];
   images: string[] | null;
   user_id: string | null;

@@ -18,7 +18,7 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
-| — | — | — | — | brak aktywnej rezerwacji |
+| Codex | SESSION-01A | logger, Done, semantyka `warmup`, testy i dokumentacja | 2026-07-27 | w toku |
 
 ## Ostatnie wpisy
 

@@ -206,6 +206,46 @@ test("R4A: tekstowe CTA serii nie zwęża pól ani nie powoduje overflow na 320/
   }
 });
 
+test("SESSION-01A: długie rekomendacje mieszczą się na 320/375/393 px i zachowują target 44 px", async () => {
+  const body = `<main class="mx-auto max-w-md space-y-md p-md">
+    <aside class="rounded-xl border border-support/20 bg-support/5 p-sm">
+      <p class="text-xs font-medium text-support">Przygotowanie · opcjonalne</p>
+      <p class="mt-2xs text-xs text-muted-foreground">Po dłuższym bezruchu zacznij od 3–5 min lekkiego ruchu. Możesz przejść od razu do ćwiczeń — ta wskazówka nie blokuje treningu.</p>
+    </aside>
+    <section class="rounded-xl bg-card p-md">
+      <aside class="rounded-md border border-support/20 bg-support/5 p-sm">
+        <p class="text-xs font-medium text-support">Rozgrzewka · opcjonalnie</p>
+        <p class="mt-2xs text-xs text-muted-foreground">Zacznij od 2 lekkich, narastających serii. Jeśli potrzebujesz, dodaj kolejną ręcznie.</p>
+        <button data-session-prep-action class="mt-sm flex h-11 w-full items-center justify-center rounded-md bg-support px-5 text-sm font-medium text-support-foreground">Dodaj 2 serie rozgrzewkowe</button>
+      </aside>
+    </section>
+    <details class="w-full rounded-xl border border-support/20 bg-card">
+      <summary data-session-prep-action class="flex min-h-11 items-center justify-between gap-sm px-md py-sm text-sm font-medium text-support">Spokojne zakończenie · opcjonalnie <span>+</span></summary>
+    </details>
+  </main>`;
+
+  for (const width of [320, 375, 393]) {
+    const ctx = await browser.newContext({ viewport: { width, height: 780 } });
+    try {
+      const page = await ctx.newPage();
+      await page.setContent(pageHtml(body), { waitUntil: "load" });
+      const metrics = await page.evaluate(() => ({
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        actionHeights: [
+          ...document.querySelectorAll<HTMLElement>("[data-session-prep-action]"),
+        ].map((action) => action.getBoundingClientRect().height),
+      }));
+      assert.ok(metrics.overflow <= 1, `overflow ${metrics.overflow}px przy ${width}px`);
+      assert.ok(
+        metrics.actionHeights.every((height) => height >= 44),
+        `target niższy niż 44px przy ${width}px: ${metrics.actionHeights.join(", ")}`,
+      );
+    } finally {
+      await ctx.close();
+    }
+  }
+});
+
 // Worst-case treść z realnej bazy (najdłuższe nazwy/notatki).
 const LONG_SUBTITLE = "Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi";
 const LONG_NOTES =

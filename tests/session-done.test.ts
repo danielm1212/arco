@@ -14,3 +14,14 @@ test("Done: zapytanie pobiera czas serii potrzebny treningom timed", () => {
 test("Done: podsumowanie nie celebruje pominiętych ćwiczeń", () => {
   assert.match(source, /\.filter\(\(exercise\) => !exercise\.skipped\)/);
 });
+
+test("SESSION-01A: Done celebruje wyłącznie zaliczone serie robocze", () => {
+  assert.match(source, /const completed = allSets\.filter\(isCompletedWorkingSet\)/);
+  assert.match(source, /e\.session_sets\.some\(isCompletedWorkingSet\)/);
+});
+
+test("SESSION-01A: zakończenie jest opcjonalne i bez obietnic regeneracji", () => {
+  assert.match(source, /Spokojne zakończenie · opcjonalnie/);
+  assert.match(source, /nie wpływa na zaliczenie treningu/);
+  assert.doesNotMatch(source, /przyspiesza regenerację|zapobiega urazom/i);
+});

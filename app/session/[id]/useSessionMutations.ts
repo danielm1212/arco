@@ -18,6 +18,7 @@ import {
   type SetWeightReview,
 } from "@/lib/setValidation";
 import { LIMITS } from "@/lib/format";
+import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
 import type { LoggerExercise } from "./Logger";
 
 const SAVE_ERR = "Nie udało się zapisać. Sprawdź internet i spróbuj ponownie.";
@@ -125,13 +126,57 @@ export function useSessionMutations({
     return newSet.id;
   }
 
+  function handleAddWarmupSets(ex: LoggerExercise, count: number) {
+    const safeCount = Math.max(0, Math.min(4, Math.floor(count)));
+    if (safeCount === 0) return null;
+    const minIndex = ex.sets.reduce(
+      (minimum, set) => Math.min(minimum, set.set_index),
+      0,
+    );
+    const newSets: SessionSet[] = Array.from({ length: safeCount }, (_, index) => ({
+      id: uuid(),
+      session_exercise_id: ex.sessionExerciseId,
+      set_index: minIndex - safeCount + index,
+      set_type: "warmup",
+      weight: null,
+      reps: null,
+      duration_seconds: null,
+      added_weight: null,
+      rpe: null,
+      completed: false,
+    }));
+    setExercises((prev) =>
+      prev.map((exercise) =>
+        exercise.sessionExerciseId !== ex.sessionExerciseId
+          ? exercise
+          : {
+              ...exercise,
+              sets: [...newSets, ...exercise.sets].sort(
+                (a, b) => a.set_index - b.set_index,
+              ),
+            },
+      ),
+    );
+    newSets.forEach((set) => saveSet(set));
+    toast.success(
+      safeCount === 1
+        ? "Dodano serię rozgrzewkową"
+        : `Dodano ${safeCount} serie rozgrzewkowe`,
+    );
+    return newSets[0].id;
+  }
+
   // R6a (audyt-loggera.md §5): superset ma świadomą przerwę — jeśli partner w
   // grupie ma jeszcze niezaliczoną serię TEJ rundy, przerwa NIE startuje (sedno
   // metody: A→od razu B), zamiast tego mikro-hint kto teraz. Przerwa odpala się
   // dopiero po ostatnim ogniwie rundy, z labelem "Przerwa po supersecie".
-  function maybeStartRest(ex: LoggerExercise) {
+  function maybeStartRest(ex: LoggerExercise, set: SessionSet) {
     if (!allowRest) return;
     if (!getAutoRest()) return;
+    if (set.set_type !== "working") {
+      startRest(ex, "Przerwa po rozgrzewce");
+      return;
+    }
     if (ex.supersetGroup == null) {
       startRest(ex);
       return;
@@ -139,11 +184,11 @@ export function useSessionMutations({
     const partners = exercisesRef.current.filter(
       (e) => e.supersetGroup === ex.supersetGroup && e.sessionExerciseId !== ex.sessionExerciseId,
     );
-    const curDone = ex.sets.filter((s) => s.completed).length + 1;
+    const curDone = ex.sets.filter(isCompletedWorkingSet).length + 1;
     const behind = partners.find(
       (p) =>
-        p.sets.some((s) => !s.completed) &&
-        p.sets.filter((s) => s.completed).length < curDone,
+        p.sets.some((s) => s.set_type === "working" && !s.completed) &&
+        p.sets.filter(isCompletedWorkingSet).length < curDone,
     );
     if (behind) {
       toast(`→ teraz: ${behind.name}`);
@@ -165,7 +210,7 @@ export function useSessionMutations({
   function commitToggle(ex: LoggerExercise, set: SessionSet) {
     patchSetLocal(ex.sessionExerciseId, set.id, { completed: !set.completed });
     onSetCompletionChange(ex, set, !set.completed);
-    if (!set.completed) maybeStartRest(ex);
+    if (!set.completed) maybeStartRest(ex, set);
     // S12: mikro-celebracja rep-PR — w momencie zaliczenia, nie na ekranie końcowym
     if (
       !set.completed &&
@@ -220,7 +265,7 @@ export function useSessionMutations({
     }
     patchSetLocal(ex.sessionExerciseId, set.id, { duration_seconds: seconds, completed: true });
     onSetCompletionChange(ex, set, true);
-    if (!set.completed) maybeStartRest(ex);
+    if (!set.completed) maybeStartRest(ex, set);
     saveSet(set, { duration_seconds: seconds, completed: true });
   }
 
@@ -375,6 +420,7 @@ export function useSessionMutations({
     patchSetLocal,
     persistNotes,
     handleAddSet,
+    handleAddWarmupSets,
     handleToggle,
     commitToggle,
     handleSaveCompletedEdit,

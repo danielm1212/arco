@@ -29,7 +29,7 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
     supabase
       .from("session_exercises")
       .select(
-        "id, exercise_id, position, slot_id, superset_group, notes, skipped, exercises(name, name_pl, exercise_type, equipment), slot:program_day_slots(default_exercise_id, target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
+        "id, exercise_id, position, slot_id, superset_group, notes, skipped, exercises(name, name_pl, exercise_type, equipment, category, mechanic, movement_pattern), slot:program_day_slots(default_exercise_id, target_sets, target_reps_min, target_reps_max, rest_seconds, notes)",
       )
       .eq("session_id", sessionId)
       .order("position"),
@@ -64,7 +64,10 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
 
   const model: LoggerExercise[] = (exercises ?? []).map((e) => {
     const ex = joinOne<
-      Pick<ExerciseJoin, "name" | "name_pl" | "equipment"> & {
+      Pick<
+        ExerciseJoin,
+        "name" | "name_pl" | "equipment" | "category" | "mechanic" | "movement_pattern"
+      > & {
         exercise_type: LoggerExercise["type"];
       }
     >(e.exercises);
@@ -76,6 +79,9 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
       name: exerciseDisplayName(ex),
       type: ex.exercise_type,
       equipment: ex.equipment,
+      category: ex.category,
+      mechanic: ex.mechanic,
+      movementPattern: ex.movement_pattern,
       slot: slot ?? null,
       supersetGroup: e.superset_group ?? null,
       notes: e.notes ?? null,

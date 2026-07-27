@@ -28,7 +28,7 @@ const ALERT_MESSAGES: Record<OutboxAlertKind, string> = {
  * Silnik synchronizacji offline dla loggera.
  * Mutacje serii lądują w outboxie i są odtwarzane gdy jest sieć.
  */
-export function useSync() {
+export function useSync(scopeSessionId?: string) {
   const online = useSyncExternalStore(
     (notify) => {
       window.addEventListener("online", notify);
@@ -41,10 +41,10 @@ export function useSync() {
     () => navigator.onLine,
     () => true,
   );
-  const [pending, setPending] = useState(() => (typeof window === "undefined" ? 0 : pendingCount()));
-  const [quarantined, setQuarantined] = useState(() =>
-    typeof window === "undefined" ? 0 : quarantineCount(),
-  );
+  // Pierwszy render klienta musi być identyczny z HTML-em z serwera.
+  // Liczniki z localStorage odczytujemy dopiero po zamontowaniu komponentu.
+  const [pending, setPending] = useState(0);
+  const [quarantined, setQuarantined] = useState(0);
   const [syncing, setSyncing] = useState(false);
   const activeFlush = useRef<Promise<FlushOutboxResult> | null>(null);
 
@@ -67,8 +67,8 @@ export function useSync() {
       let result: FlushOutboxResult;
       do {
         result = await flushOutbox(syncOutboxOperation, sessionId);
-        setPending(pendingCount());
-        setQuarantined(quarantineCount());
+        setPending(pendingCount(scopeSessionId));
+        setQuarantined(quarantineCount(scopeSessionId));
       } while (!result.retryableFailure && pendingCount(sessionId) > 0);
 
       if (quarantineCount() > quarantinedBefore) {
@@ -86,14 +86,14 @@ export function useSync() {
     } finally {
       if (activeFlush.current === request) activeFlush.current = null;
       setSyncing(false);
-      setPending(pendingCount());
-      setQuarantined(quarantineCount());
+      setPending(pendingCount(scopeSessionId));
+      setQuarantined(quarantineCount(scopeSessionId));
     }
-  }, []);
+  }, [scopeSessionId]);
 
   // Problemy trwałości outboxa (korupcja JSON, pełny storage) → toast.
-  // Alert może odpalić przed montażem (odczyt w inicjalizatorze stanu),
-  // więc oprócz nasłuchu konsumujemy też zaległe zgłoszenia.
+  // Oprócz nasłuchu konsumujemy też zaległe zgłoszenia, które mogły
+  // powstać przed zamontowaniem komponentu.
   const notifiedAlerts = useRef(new Set<OutboxAlertKind>());
   useEffect(() => {
     const notify = (kind: OutboxAlertKind) => {
@@ -109,6 +109,14 @@ export function useSync() {
     for (const kind of pendingOutboxAlerts()) notify(kind);
     return () => window.removeEventListener(OUTBOX_ALERT_EVENT, onAlert);
   }, []);
+
+  useEffect(() => {
+    const hydrateCounts = window.requestAnimationFrame(() => {
+      setPending(pendingCount(scopeSessionId));
+      setQuarantined(quarantineCount(scopeSessionId));
+    });
+    return () => window.cancelAnimationFrame(hydrateCounts);
+  }, [scopeSessionId]);
 
   useEffect(() => {
     const kickoff = window.setTimeout(() => void flush(), 0);
@@ -129,31 +137,31 @@ export function useSync() {
   const queueUpsert = useCallback(
     (sessionId: string, row: OutboxSetRow) => {
       enqueueUpsert(sessionId, row);
-      setPending(pendingCount());
-      setQuarantined(quarantineCount());
+      setPending(pendingCount(scopeSessionId));
+      setQuarantined(quarantineCount(scopeSessionId));
       void flush();
     },
-    [flush],
+    [flush, scopeSessionId],
   );
 
   const queueDelete = useCallback(
     (sessionId: string, setId: string) => {
       enqueueDelete(sessionId, setId);
-      setPending(pendingCount());
-      setQuarantined(quarantineCount());
+      setPending(pendingCount(scopeSessionId));
+      setQuarantined(quarantineCount(scopeSessionId));
       void flush();
     },
-    [flush],
+    [flush, scopeSessionId],
   );
 
   const queueNotes = useCallback(
     (sessionId: string, sessionExerciseId: string, notes: string) => {
       enqueueNotes(sessionId, sessionExerciseId, notes);
-      setPending(pendingCount());
-      setQuarantined(quarantineCount());
+      setPending(pendingCount(scopeSessionId));
+      setQuarantined(quarantineCount(scopeSessionId));
       void flush();
     },
-    [flush],
+    [flush, scopeSessionId],
   );
 
   return {

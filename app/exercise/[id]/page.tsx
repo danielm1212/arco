@@ -10,6 +10,7 @@ import { Sparkline } from "@/components/Sparkline";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { joinMany } from "@/lib/dbJoins";
+import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
@@ -69,11 +70,11 @@ export default async function ExercisePage(props: {
     sessions: { started_at: string } | null;
     session_sets: SessionSet[];
   }>(occurrences)
-    .filter((o) => o.sessions && o.session_sets.some((s) => s.completed))
+    .filter((o) => o.sessions && o.session_sets.some(isCompletedWorkingSet))
     .map((o) => ({
       date: o.sessions!.started_at,
       sets: o.session_sets
-        .filter((s) => s.completed)
+        .filter(isCompletedWorkingSet)
         .sort((a, b) => a.set_index - b.set_index),
     }))
     .sort((a, b) => +new Date(b.date) - +new Date(a.date));

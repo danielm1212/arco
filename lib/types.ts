@@ -12,6 +12,7 @@ export type SessionSet = Tables["session_sets"]["Row"];
 export type UserSettings = Tables["user_settings"]["Row"];
 
 export type ExerciseType = Database["public"]["Enums"]["exercise_type"];
+export type MechanicType = Database["public"]["Enums"]["mechanic_type"];
 export type SetType = Database["public"]["Enums"]["set_type"];
 export type MovementPattern = Database["public"]["Enums"]["movement_pattern"];
 export type UnitSystem = Database["public"]["Enums"]["unit_system"];

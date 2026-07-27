@@ -163,12 +163,13 @@ export async function finishSession(sessionId: string) {
     .from("session_sets")
     .select("id, session_exercises!inner(session_id, skipped)")
     .eq("completed", true)
+    .eq("set_type", "working")
     .eq("session_exercises.session_id", sessionId)
     .eq("session_exercises.skipped", false)
     .limit(1);
   if (completedSetsError) throw new Error(completedSetsError.message);
   if ((completedSets?.length ?? 0) === 0) {
-    throw new Error("Nie możesz zakończyć treningu bez ani jednej zaliczonej serii.");
+    throw new Error("Nie możesz zakończyć treningu bez ani jednej zaliczonej serii roboczej.");
   }
   if (!existing.finished_at) {
     const finishedAt =
