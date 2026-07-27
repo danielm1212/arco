@@ -60,6 +60,7 @@ export default async function ExercisePage(props: {
       "id, sessions!inner(started_at, finished_at), session_sets(set_index, set_type, weight, reps, duration_seconds, added_weight, completed)",
     )
     .eq("exercise_id", exerciseId)
+    .eq("skipped", false)
     .not("sessions.finished_at", "is", null)
     .order("sessions(started_at)", { ascending: false, nullsFirst: false })
     .limit(100);

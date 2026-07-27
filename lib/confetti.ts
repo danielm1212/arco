@@ -19,8 +19,20 @@
 /** Ile cząstek leci w wystrzale. Powyżej ~40 robi się szum, nie święto. */
 export const CONFETTI_COUNT = 34;
 
-/** Po tym czasie komponent znika z DOM — moment ma koniec, nie zostaje w tle. */
-export const CONFETTI_LIFETIME_MS = 3400;
+const CONFETTI_MAX_BASE_DURATION_SECONDS = 2.9;
+const CONFETTI_FAR_DURATION_MULTIPLIER = 1.15;
+const CONFETTI_MAX_DELAY_SECONDS = 0.18;
+
+/**
+ * Po tym czasie komponent znika z DOM. Wartość wynika z najdłuższego lotu
+ * (łącznie z opóźnieniem) i ma 100 ms zapasu na zaokrąglenie/timer przeglądarki.
+ */
+export const CONFETTI_LIFETIME_MS =
+  Math.ceil(
+    (CONFETTI_MAX_BASE_DURATION_SECONDS * CONFETTI_FAR_DURATION_MULTIPLIER +
+      CONFETTI_MAX_DELAY_SECONDS) *
+      1000,
+  ) + 100;
 
 /** Pięć barw momentu: rust + violet + amber (świadomy wyjątek od reguły v1.4). */
 export const CONFETTI_COLOR_COUNT = 5;
@@ -59,7 +71,9 @@ export function buildConfettiParticles(
     // Część cząstek leci „dalej" — mniejsze i wolniejsze, żeby wystrzał miał głębię.
     const far = random() < 0.35;
     const scale = far ? between(0.62, 0.82) : between(0.95, 1.25);
-    const duration = between(1.9, 2.9) * (far ? 1.15 : 1);
+    const duration =
+      between(1.9, CONFETTI_MAX_BASE_DURATION_SECONDS) *
+      (far ? CONFETTI_FAR_DURATION_MULTIPLIER : 1);
     // Wysokość WYNIKA z szerokości, a nie z osobnego losowania: przy niezależnych
     // zakresach skalowanie potrafiło dać kwadrat (11×11), a kwadrat w obrocie 3D
     // czyta się jak migający piksel, nie jak pasek papieru. Proporcja 1:1,5–1:2,4.
@@ -79,7 +93,7 @@ export function buildConfettiParticles(
       spinIterations: Math.ceil(duration / spinSeconds) + 1,
       durationSeconds: round(duration),
       // Krótki rozrzut startu: wystrzał ma być jednym zdarzeniem, nie kapaniem.
-      delaySeconds: round(between(0, 0.18)),
+      delaySeconds: round(between(0, CONFETTI_MAX_DELAY_SECONDS)),
       opacity: far ? 0.8 : 1,
     };
   });

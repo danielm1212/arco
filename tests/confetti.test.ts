@@ -4,6 +4,7 @@ import {
   buildConfettiParticles,
   CONFETTI_COUNT,
   CONFETTI_COLOR_COUNT,
+  CONFETTI_LIFETIME_MS,
 } from "../lib/confetti";
 
 /** Deterministyczny RNG — te same cząstki w każdym przebiegu testu. */
@@ -59,4 +60,17 @@ test("MOMENT-01: cząstki nie są identyczne — brak wspólnego rytmu obrotu", 
   // Głębia: część cząstek musi być przygaszona, inaczej wystrzał jest płaski
   assert.ok(particles.some((p) => p.opacity < 1), "brak cząstek „dalszych”");
   assert.ok(particles.some((p) => p.opacity === 1), "brak cząstek „bliższych”");
+});
+
+test("MOMENT-01: warstwa nie znika przed końcem najdłuższego możliwego lotu", () => {
+  // Pierwsza wartość wybiera cząstkę „daleką”, kolejne trafiają w górne granice.
+  const values = [0, ...Array.from({ length: 20 }, () => 1)];
+  let index = 0;
+  const [particle] = buildConfettiParticles(1, () => values[index++] ?? 1);
+  const flightMs = (particle.durationSeconds + particle.delaySeconds) * 1000;
+
+  assert.ok(
+    CONFETTI_LIFETIME_MS > flightMs,
+    `warstwa znika po ${CONFETTI_LIFETIME_MS} ms, a lot trwa ${flightMs} ms`,
+  );
 });

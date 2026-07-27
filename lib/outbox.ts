@@ -39,11 +39,29 @@ export type OutboxOp = (
   token?: string;
 };
 
+export type SyncOperationResult =
+  | { ok: true }
+  | { ok: false; retryable: boolean; message: string };
+
+export type QuarantinedOutboxOp = {
+  op: OutboxOp;
+  failedAt: string;
+  reason: string;
+};
+
+export type FlushOutboxResult = {
+  pending: number;
+  quarantined: number;
+  retryableFailure: boolean;
+};
+
 const newToken = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
 const KEY = "arco-outbox-v1";
 const CORRUPT_KEY = "arco-outbox-v1-corrupt";
+const QUARANTINE_KEY = "arco-outbox-v1-quarantine";
+const QUARANTINE_CORRUPT_KEY = "arco-outbox-v1-quarantine-corrupt";
 
 export type OutboxAlertKind = "corrupt" | "quota";
 export const OUTBOX_ALERT_EVENT = "arco:outbox-alert";
@@ -53,6 +71,7 @@ export const OUTBOX_ALERT_EVENT = "arco:outbox-alert";
  * Żyją do zamknięcia karty — flush wysyła je normalnie, ale nie przetrwają restartu.
  */
 let volatileOps: Record<string, OutboxOp> | null = null;
+let volatileQuarantine: Record<string, QuarantinedOutboxOp> | null = null;
 
 const firedAlerts = new Set<OutboxAlertKind>();
 
@@ -119,19 +138,66 @@ function write(map: Record<string, OutboxOp>) {
   }
 }
 
+function readQuarantine(): Record<string, QuarantinedOutboxOp> {
+  if (typeof window === "undefined") return {};
+  let stored: Record<string, QuarantinedOutboxOp> = {};
+  const raw = window.localStorage.getItem(QUARANTINE_KEY);
+  if (raw) {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+        throw new Error("zły kształt kwarantanny");
+      }
+      stored = parsed as Record<string, QuarantinedOutboxOp>;
+    } catch {
+      try {
+        if (window.localStorage.getItem(QUARANTINE_CORRUPT_KEY) === null) {
+          window.localStorage.setItem(QUARANTINE_CORRUPT_KEY, raw);
+        }
+        window.localStorage.removeItem(QUARANTINE_KEY);
+      } catch {
+        // backup best-effort — brak miejsca jest już obsługiwany przez alert quota
+      }
+      fireAlert("corrupt");
+    }
+  }
+  return volatileQuarantine ? { ...stored, ...volatileQuarantine } : stored;
+}
+
+function writeQuarantine(map: Record<string, QuarantinedOutboxOp>) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(QUARANTINE_KEY, JSON.stringify(map));
+    volatileQuarantine = null;
+  } catch {
+    volatileQuarantine = map;
+    fireAlert("quota");
+  }
+}
+
+function clearQuarantinedKey(key: string) {
+  const quarantined = readQuarantine();
+  if (!(key in quarantined)) return;
+  delete quarantined[key];
+  writeQuarantine(quarantined);
+}
+
 export function enqueueUpsert(sessionId: string, row: OutboxSetRow) {
+  clearQuarantinedKey(row.id);
   const map = read();
   map[row.id] = { kind: "upsert", sessionId, row, token: newToken() };
   write(map);
 }
 
 export function enqueueDelete(sessionId: string, setId: string) {
+  clearQuarantinedKey(setId);
   const map = read();
   map[setId] = { kind: "delete", sessionId, setId, token: newToken() };
   write(map);
 }
 
 export function enqueueNotes(sessionId: string, sessionExerciseId: string, notes: string) {
+  clearQuarantinedKey(`notes:${sessionExerciseId}`);
   const map = read();
   map[`notes:${sessionExerciseId}`] = {
     kind: "notes",
@@ -151,6 +217,19 @@ export function sessionOps(sessionId: string): OutboxOp[] {
   return allOps().filter((op) => op.sessionId === sessionId);
 }
 
+export function quarantinedOps(sessionId?: string): QuarantinedOutboxOp[] {
+  const ops = Object.values(readQuarantine());
+  return sessionId ? ops.filter(({ op }) => op.sessionId === sessionId) : ops;
+}
+
+export function quarantineCount(sessionId?: string): number {
+  return quarantinedOps(sessionId).length;
+}
+
+export function recoverableCount(sessionId?: string): number {
+  return pendingCount(sessionId) + quarantineCount(sessionId);
+}
+
 /**
  * Usuwa operację z kolejki tylko jeśli wpis nie został w międzyczasie nadpisany
  * nowszą wersją (porównanie tokenów). Wpisy sprzed wprowadzenia tokenów
@@ -164,6 +243,29 @@ export function removeOp(op: OutboxOp) {
   write(map);
 }
 
+/**
+ * Trwały błąd nie blokuje kolejnych zapisów: dokładny snapshot operacji trafia
+ * do odzyskiwalnej kwarantanny. Token chroni nowszą wersję zakolejkowaną w trakcie
+ * wysyłki — starego błędu nie wolno przypisać do poprawionych danych.
+ */
+export function quarantineOp(op: OutboxOp, reason: string): boolean {
+  const map = read();
+  const key = keyOf(op);
+  if (map[key]?.token !== op.token) return false;
+
+  const quarantined = readQuarantine();
+  quarantined[key] = {
+    op,
+    failedAt: new Date().toISOString(),
+    reason,
+  };
+  writeQuarantine(quarantined);
+
+  delete map[key];
+  write(map);
+  return true;
+}
+
 export function pendingCount(sessionId?: string): number {
   return sessionId ? sessionOps(sessionId).length : Object.keys(read()).length;
 }
@@ -174,6 +276,56 @@ export function clearSessionOps(sessionId: string) {
     if (op.sessionId === sessionId) delete map[key];
   }
   write(map);
+
+  const quarantined = readQuarantine();
+  for (const [key, entry] of Object.entries(quarantined)) {
+    if (entry.op.sessionId === sessionId) delete quarantined[key];
+  }
+  writeQuarantine(quarantined);
+}
+
+/**
+ * Jeden przebieg synchronizacji. Błąd chwilowy zatrzymuje przebieg i zostawia
+ * operację do retry; błąd trwały odkłada snapshot do kwarantanny i przepuszcza
+ * późniejsze zapisy. Opcjonalny sessionId ogranicza finish do bieżącej sesji.
+ */
+export async function flushOutbox(
+  send: (op: OutboxOp) => Promise<SyncOperationResult>,
+  sessionId?: string,
+): Promise<FlushOutboxResult> {
+  const ops = sessionId ? sessionOps(sessionId) : allOps();
+
+  for (const op of ops) {
+    let result: SyncOperationResult;
+    try {
+      result = await send(op);
+    } catch {
+      return {
+        pending: pendingCount(sessionId),
+        quarantined: quarantineCount(sessionId),
+        retryableFailure: true,
+      };
+    }
+
+    if (result.ok) {
+      removeOp(op);
+      continue;
+    }
+    if (result.retryable) {
+      return {
+        pending: pendingCount(sessionId),
+        quarantined: quarantineCount(sessionId),
+        retryableFailure: true,
+      };
+    }
+    quarantineOp(op, result.message);
+  }
+
+  return {
+    pending: pendingCount(sessionId),
+    quarantined: quarantineCount(sessionId),
+    retryableFailure: false,
+  };
 }
 
 /**
@@ -184,7 +336,10 @@ export function clearSessionOps(sessionId: string) {
 export function restoreSessionDraft<
   T extends { sessionExerciseId: string; notes: string | null; sets: OutboxSetRow[] },
 >(exercises: T[], sessionId: string): T[] {
-  const ops = sessionOps(sessionId);
+  const active = sessionOps(sessionId);
+  const quarantined = quarantinedOps(sessionId).map((entry) => entry.op);
+  const activeKeys = new Set(active.map(keyOf));
+  const ops = [...quarantined.filter((op) => !activeKeys.has(keyOf(op))), ...active];
   if (ops.length === 0) return exercises;
 
   return exercises.map((exercise) => {

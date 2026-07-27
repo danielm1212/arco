@@ -2,8 +2,12 @@
 
 import { toast } from "sonner";
 import { finishSession, deleteSession } from "@/app/actions/session";
-import { clearSessionOps, pendingCount } from "@/lib/outbox";
-import type { LoggerExercise } from "./Logger";
+import {
+  clearSessionOps,
+  pendingCount,
+  quarantineCount,
+  type FlushOutboxResult,
+} from "@/lib/outbox";
 
 /**
  * Zakończenie / usunięcie sesji z walidacjami (offline, zaległy outbox).
@@ -13,17 +17,20 @@ import type { LoggerExercise } from "./Logger";
  */
 export async function handleFinish(args: {
   sessionId: string;
-  exercises: LoggerExercise[];
   online: boolean;
-  flush: () => Promise<void>;
+  flush: (sessionId?: string) => Promise<FlushOutboxResult>;
 }) {
   const { sessionId, online, flush } = args;
   if (!online) {
     toast.error("Brak internetu. Serie są zapisane na tym urządzeniu. Zakończ trening po powrocie sieci.");
     return;
   }
-  await flush(); // dosynchronizuj zaległe serie, żeby PR-y liczyły się z kompletu
-  if (pendingCount() > 0) {
+  const result = await flush(sessionId); // finish rozlicza tylko operacje tej sesji
+  if (quarantineCount(sessionId) > 0) {
+    toast.error("Jedna zmiana wymaga poprawy przed zakończeniem treningu. Sprawdź wpisane serie.");
+    return;
+  }
+  if (result.retryableFailure || pendingCount(sessionId) > 0) {
     toast.error("Serie nadal się synchronizują. Spróbuj za chwilę.");
     return;
   }

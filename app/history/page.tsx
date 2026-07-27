@@ -26,7 +26,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
       let q = supabase
         .from("sessions")
         .select(
-          "id, date, started_at, finished_at, program_days(label, programs(name)), session_exercises(session_sets(completed))",
+          "id, date, started_at, finished_at, program_days(label, programs(name)), session_exercises(skipped, session_sets(completed))",
         )
         .order("started_at", { ascending: false })
         .limit(PAGE_SIZE + 1); // +1 = detekcja "czy są starsze"
@@ -90,9 +90,9 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
         {sessions.map((s) => {
           const day = joinMaybe<DayJoin>(s.program_days);
           const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Własny trening";
-          const exs = joinMany<{ session_sets: { completed: boolean }[] }>(
+          const exs = joinMany<{ skipped: boolean; session_sets: { completed: boolean }[] }>(
             s.session_exercises,
-          );
+          ).filter((exercise) => !exercise.skipped);
           const doneSets = exs.reduce(
             (n, e) => n + e.session_sets.filter((x) => x.completed).length,
             0,

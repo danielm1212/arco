@@ -6,7 +6,12 @@ import {
   enqueueDelete,
   enqueueNotes,
   enqueueUpsert,
+  flushOutbox,
   pendingCount,
+  quarantineCount,
+  quarantineOp,
+  quarantinedOps,
+  recoverableCount,
   removeOp,
   restoreSessionDraft,
   type OutboxSetRow,
@@ -148,6 +153,90 @@ test("uszkodzony JSON nie znika po cichu — backup pod kluczem awaryjnym", () =
   window.localStorage.setItem("arco-outbox-v1", "[1,2,3]");
   assert.equal(pendingCount(), 0);
   assert.equal(window.localStorage.getItem("arco-outbox-v1-corrupt"), "{zepsuty json");
+});
+
+test("SYNC-01: trwały błąd zachowuje snapshot, a poprawiona wersja wraca do kolejki", () => {
+  enqueueUpsert("session-1", { ...baseSet, weight: 1001, completed: true });
+  const invalid = allOps()[0];
+
+  assert.equal(quarantineOp(invalid, "Ciężar poza zakresem."), true);
+  assert.equal(pendingCount("session-1"), 0);
+  assert.equal(quarantineCount("session-1"), 1);
+  assert.equal(recoverableCount("session-1"), 1);
+  assert.equal(quarantinedOps("session-1")[0].reason, "Ciężar poza zakresem.");
+
+  const restored = restoreSessionDraft(
+    [{ sessionExerciseId: "exercise-1", notes: null, sets: [baseSet] }],
+    "session-1",
+  );
+  assert.equal(restored[0].sets[0].weight, 1001, "kwarantanna musi pozostać odzyskiwalna");
+
+  enqueueUpsert("session-1", { ...baseSet, weight: 100, completed: true });
+  assert.equal(quarantineCount("session-1"), 0, "poprawiona wersja czyści stary błąd");
+  assert.equal(pendingCount("session-1"), 1);
+});
+
+test("SYNC-01: stary błąd nie kwarantannuje nowszej wersji zakolejkowanej w trakcie", () => {
+  enqueueUpsert("session-1", { ...baseSet, weight: 1001 });
+  const inFlight = allOps()[0];
+  enqueueUpsert("session-1", { ...baseSet, weight: 100 });
+
+  assert.equal(quarantineOp(inFlight, "stary błąd"), false);
+  assert.equal(quarantineCount("session-1"), 0);
+  assert.equal(pendingCount("session-1"), 1);
+  const current = allOps()[0];
+  assert.equal(current.kind === "upsert" && current.row.weight, 100);
+});
+
+test("SYNC-01: błąd trwały nie blokuje późniejszych operacji", async () => {
+  enqueueUpsert("session-1", { ...baseSet, id: "bad-set", weight: 1001 });
+  enqueueUpsert("session-2", { ...baseSet, id: "good-set", weight: 80 });
+  const sent: string[] = [];
+
+  const result = await flushOutbox(async (op) => {
+    const id = op.kind === "upsert" ? op.row.id : "";
+    sent.push(id);
+    return id === "bad-set"
+      ? { ok: false, retryable: false, message: "Nieprawidłowy ciężar." }
+      : { ok: true };
+  });
+
+  assert.deepEqual(sent, ["bad-set", "good-set"]);
+  assert.equal(result.retryableFailure, false);
+  assert.equal(pendingCount(), 0);
+  assert.equal(quarantineCount("session-1"), 1);
+});
+
+test("SYNC-01: błąd chwilowy zatrzymuje przebieg i zostawia operacje do retry", async () => {
+  enqueueUpsert("session-1", { ...baseSet, id: "first-set" });
+  enqueueUpsert("session-1", { ...baseSet, id: "second-set" });
+  const sent: string[] = [];
+
+  const result = await flushOutbox(async (op) => {
+    sent.push(op.kind === "upsert" ? op.row.id : "");
+    return { ok: false, retryable: true, message: "Brak sieci." };
+  });
+
+  assert.deepEqual(sent, ["first-set"]);
+  assert.equal(result.retryableFailure, true);
+  assert.equal(pendingCount("session-1"), 2);
+  assert.equal(quarantineCount(), 0);
+});
+
+test("SYNC-01: flush finishu obejmuje wyłącznie bieżącą sesję", async () => {
+  enqueueUpsert("session-1", { ...baseSet, id: "current-set" });
+  enqueueUpsert("session-2", { ...baseSet, id: "other-set" });
+  const sent: string[] = [];
+
+  const result = await flushOutbox(async (op) => {
+    sent.push(op.kind === "upsert" ? op.row.id : "");
+    return { ok: true };
+  }, "session-1");
+
+  assert.deepEqual(sent, ["current-set"]);
+  assert.equal(result.pending, 0);
+  assert.equal(pendingCount("session-1"), 0);
+  assert.equal(pendingCount("session-2"), 1);
 });
 
 test("pełny storage nie gubi operacji w trakcie życia karty (quota fallback)", () => {

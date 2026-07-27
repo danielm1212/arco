@@ -6,6 +6,23 @@ import type { SetType } from "@/lib/types";
 import { assertValidSetNumbers, getCompletionBlockReason } from "@/lib/setValidation";
 import { joinOne } from "@/lib/dbJoins";
 import type { ExerciseType } from "@/lib/types";
+import type { OutboxOp, SyncOperationResult } from "@/lib/outbox";
+
+class PermanentOutboxError extends Error {}
+
+type DbWriteError = { message: string; code?: string };
+
+function throwWriteError(error: DbWriteError): never {
+  const code = error.code ?? "";
+  const permanent =
+    code === "PGRST116" ||
+    code === "P0001" ||
+    code === "42501" ||
+    code.startsWith("22") ||
+    code.startsWith("23");
+  if (permanent) throw new PermanentOutboxError(error.message);
+  throw new Error(error.message);
+}
 
 async function db() {
   const supabase = await createClient();
@@ -32,11 +49,11 @@ async function assertCompletableSet(
     .select("exercises(exercise_type)")
     .eq("id", sessionExerciseId)
     .single();
-  if (error) throw new Error(error.message);
+  if (error) throwWriteError(error);
   const exercise = joinOne<{ exercise_type: ExerciseType } | null>(data.exercises);
   if (!exercise) return;
   const reason = getCompletionBlockReason(exercise.exercise_type, merged);
-  if (reason) throw new Error(reason);
+  if (reason) throw new PermanentOutboxError(reason);
 }
 
 /**
@@ -130,11 +147,17 @@ export async function upsertSet(
     completed: boolean;
   },
 ) {
-  assertValidSetNumbers(row);
+  try {
+    assertValidSetNumbers(row);
+  } catch (error) {
+    throw new PermanentOutboxError(
+      error instanceof Error ? error.message : "Nieprawidłowe dane serii.",
+    );
+  }
   const supabase = await db();
   await assertCompletableSet(supabase, row.session_exercise_id, row);
   const { error } = await supabase.from("session_sets").upsert(row, { onConflict: "id" });
-  if (error) throw new Error(error.message);
+  if (error) throwWriteError(error);
   await refreshFinishedSessionDerivedData(supabase, _sessionId);
 }
 
@@ -165,7 +188,7 @@ export async function updateSet(sessionId: string, setId: string, values: SetVal
 export async function deleteSet(sessionId: string, setId: string) {
   const supabase = await db();
   const { error } = await supabase.from("session_sets").delete().eq("id", setId);
-  if (error) throw new Error(error.message);
+  if (error) throwWriteError(error);
   revalidatePath(`/session/${sessionId}`);
   await refreshFinishedSessionDerivedData(supabase, sessionId);
 }
@@ -199,8 +222,31 @@ export async function updateSessionExerciseNotes(
     .from("session_exercises")
     .update({ notes: notes || null })
     .eq("id", sessionExerciseId);
-  if (error) throw new Error(error.message);
+  if (error) throwWriteError(error);
   revalidatePath(`/session/${sessionId}`);
+}
+
+/**
+ * Jedyna publiczna granica replayu outboxa. Błędy danych wracają jako trwałe,
+ * dzięki czemu klient może zachować snapshot do naprawy i wysyłać kolejne
+ * operacje; błędy sieci/serwera zostają w aktywnej kolejce do ponowienia.
+ */
+export async function syncOutboxOperation(op: OutboxOp): Promise<SyncOperationResult> {
+  try {
+    if (op.kind === "upsert") await upsertSet(op.sessionId, op.row);
+    else if (op.kind === "delete") await deleteSet(op.sessionId, op.setId);
+    else await updateSessionExerciseNotes(op.sessionId, op.sessionExerciseId, op.notes);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof PermanentOutboxError) {
+      return { ok: false, retryable: false, message: error.message };
+    }
+    return {
+      ok: false,
+      retryable: true,
+      message: "Nie udało się połączyć z serwerem. Spróbujemy ponownie.",
+    };
+  }
 }
 
 /** Ustaw grupę supersetu dla wielu ćwiczeń naraz (group = null → rozłącz). */
@@ -232,6 +278,7 @@ export async function setSessionExerciseSkipped(
     .eq("id", sessionExerciseId);
   if (error) throw new Error(error.message);
   revalidatePath(`/session/${sessionId}`);
+  await refreshFinishedSessionDerivedData(supabase, sessionId);
 }
 
 /**

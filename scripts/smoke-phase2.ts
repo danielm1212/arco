@@ -67,6 +67,41 @@ async function main() {
     return fail(`PR max_e1rm = ${e1rm}, oczekiwano ${expectedE1rm}`);
   ok(`PR: max_weight 120kg, e1RM ${e1rm}kg (Epley)`);
 
+  // DATA-03: pominięte ćwiczenie zachowuje dane robocze, ale nie może nadpisać
+  // rekordu ani zasilić „poprzedniego wyniku”.
+  const { data: skippedSe, error: skippedSeErr } = await sb
+    .from("session_exercises")
+    .insert({
+      session_id: sess!.id,
+      slot_id: null,
+      exercise_id: "Barbell_Squat",
+      position: 1,
+      skipped: true,
+    })
+    .select("id")
+    .single();
+  if (skippedSeErr || !skippedSe) return fail(`insert skipped exercise: ${skippedSeErr?.message}`);
+  const { error: skippedSetErr } = await sb.from("session_sets").insert({
+    session_exercise_id: skippedSe.id,
+    set_index: 0,
+    set_type: "working",
+    weight: 200,
+    reps: 5,
+    completed: true,
+  });
+  if (skippedSetErr) return fail(`insert skipped set: ${skippedSetErr.message}`);
+  const { error: recomputeAfterSkipped } = await sb.rpc("recompute_personal_records");
+  if (recomputeAfterSkipped) return fail(`rpc recompute skipped: ${recomputeAfterSkipped.message}`);
+  const { data: afterSkipped } = await sb
+    .from("personal_records")
+    .select("value")
+    .eq("exercise_id", "Barbell_Squat")
+    .eq("record_type", "max_weight")
+    .maybeSingle();
+  if (Number(afterSkipped?.value) !== 120)
+    return fail(`PR po pominiętym ćwiczeniu = ${afterSkipped?.value}, oczekiwano 120`);
+  ok("DATA-03: pominięte ćwiczenie nie zasila rekordów");
+
   // F0.3: długa seria jest prawidłowym logiem, ale nie może zostać użyta jako
   // e1RM. Constraint bazy ma też odrzucić wartość poza zakresem produktu.
   const { error: highRepErr } = await sb.from("session_sets").insert({

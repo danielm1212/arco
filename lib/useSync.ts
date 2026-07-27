@@ -2,16 +2,17 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
-import { upsertSet, deleteSet, updateSessionExerciseNotes } from "@/app/actions/sets";
+import { syncOutboxOperation } from "@/app/actions/sets";
 import {
-  allOps,
   enqueueDelete,
   enqueueNotes,
   enqueueUpsert,
+  flushOutbox,
   OUTBOX_ALERT_EVENT,
   pendingCount,
   pendingOutboxAlerts,
-  removeOp,
+  quarantineCount,
+  type FlushOutboxResult,
   type OutboxAlertKind,
   type OutboxSetRow,
 } from "@/lib/outbox";
@@ -41,46 +42,52 @@ export function useSync() {
     () => true,
   );
   const [pending, setPending] = useState(() => (typeof window === "undefined" ? 0 : pendingCount()));
+  const [quarantined, setQuarantined] = useState(() =>
+    typeof window === "undefined" ? 0 : quarantineCount(),
+  );
   const [syncing, setSyncing] = useState(false);
-  const flushing = useRef(false);
-  const flushRequested = useRef(false);
+  const activeFlush = useRef<Promise<FlushOutboxResult> | null>(null);
 
-  const flush = useCallback(async () => {
-    if (flushing.current) {
-      // Trwający flush domówi kolejny przebieg — nowa operacja nie czeka na interval.
-      flushRequested.current = true;
-      return;
+  const flush = useCallback(async (sessionId?: string): Promise<FlushOutboxResult> => {
+    // Finish może wejść, gdy automatyczny flush już trwa. Czekamy na ten przebieg,
+    // a potem wykonujemy własny, ograniczony do bieżącej sesji — bez wyścigu.
+    while (activeFlush.current) await activeFlush.current;
+
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      return {
+        pending: pendingCount(sessionId),
+        quarantined: quarantineCount(sessionId),
+        retryableFailure: true,
+      };
     }
-    if (typeof navigator !== "undefined" && !navigator.onLine) return;
-    if (allOps().length === 0) return;
 
-    flushing.current = true;
-    setSyncing(true);
-    try {
-      let failed = false;
+    const run = async () => {
+      setSyncing(true);
+      const quarantinedBefore = quarantineCount();
+      let result: FlushOutboxResult;
       do {
-        flushRequested.current = false;
-        // Świeży odczyt w każdym przebiegu: operacje nadpisane w trakcie wysyłki
-        // (token mismatch w removeOp) zostają w kolejce i wychodzą tutaj.
-        const ops = allOps();
-        if (ops.length === 0) break;
-        for (const op of ops) {
-          try {
-            if (op.kind === "upsert") await upsertSet(op.sessionId, op.row);
-            else if (op.kind === "delete") await deleteSet(op.sessionId, op.setId);
-            else await updateSessionExerciseNotes(op.sessionId, op.sessionExerciseId, op.notes);
-            removeOp(op);
-            setPending(pendingCount());
-          } catch {
-            failed = true; // brak sieci / błąd — spróbujemy ponownie później
-            break;
-          }
-        }
-      } while (!failed && (flushRequested.current || pendingCount() > 0));
+        result = await flushOutbox(syncOutboxOperation, sessionId);
+        setPending(pendingCount());
+        setQuarantined(quarantineCount());
+      } while (!result.retryableFailure && pendingCount(sessionId) > 0);
+
+      if (quarantineCount() > quarantinedBefore) {
+        toast.error(
+          "Jedna zmiana wymaga poprawy. Zachowaliśmy ją na tym urządzeniu; pozostałe zapisują się normalnie.",
+        );
+      }
+      return result;
+    };
+
+    const request = run();
+    activeFlush.current = request;
+    try {
+      return await request;
     } finally {
-      flushing.current = false;
+      if (activeFlush.current === request) activeFlush.current = null;
       setSyncing(false);
       setPending(pendingCount());
+      setQuarantined(quarantineCount());
     }
   }, []);
 
@@ -123,6 +130,7 @@ export function useSync() {
     (sessionId: string, row: OutboxSetRow) => {
       enqueueUpsert(sessionId, row);
       setPending(pendingCount());
+      setQuarantined(quarantineCount());
       void flush();
     },
     [flush],
@@ -132,6 +140,7 @@ export function useSync() {
     (sessionId: string, setId: string) => {
       enqueueDelete(sessionId, setId);
       setPending(pendingCount());
+      setQuarantined(quarantineCount());
       void flush();
     },
     [flush],
@@ -141,10 +150,20 @@ export function useSync() {
     (sessionId: string, sessionExerciseId: string, notes: string) => {
       enqueueNotes(sessionId, sessionExerciseId, notes);
       setPending(pendingCount());
+      setQuarantined(quarantineCount());
       void flush();
     },
     [flush],
   );
 
-  return { online, pending, syncing, queueUpsert, queueDelete, queueNotes, flush };
+  return {
+    online,
+    pending,
+    quarantined,
+    syncing,
+    queueUpsert,
+    queueDelete,
+    queueNotes,
+    flush,
+  };
 }
