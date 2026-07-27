@@ -58,6 +58,17 @@ Skrypt obsługuje katalog z `schema.sql` i `data.sql`, pojedynczy plik SQL oraz 
 
 ## Zweryfikowane wykonania
 
+### 2026-07-27
+
+- Przed release'em TRAIN-02A4 wykonano backup bazy
+  `backups/20260727T110823Z`: `roles.sql`, `schema.sql`, `data.sql` i `manifest.sha256`.
+  Wszystkie trzy sumy plików dumpa przeszły kontrolę SHA-256.
+- Po wdrożeniu odczytowa kontrola potwierdziła 15 programów systemowych, w tym pięć planów
+  point syncu (15 dni, 99 slotów i 29 alternatyw), oraz brak zmian w aktywnych planach,
+  sesjach, seriach, rekordach i ustawieniach.
+- Szczegół release'u, w tym bezpieczne wycofanie pierwszej niekompletnej próby, jest w
+  `train-02a4-release-2026-07-27.md`.
+
 ### 2026-07-22
 
 - Przed produkcyjnym release'em Q1 wykonano i zweryfikowano backup bazy

@@ -26,5 +26,6 @@ Walking Lunge 3 × 12–20 / noga · Step-up with Knee Raise 3 × 10–15 / noga
 - Handstand Push-up tylko przy stabilnej ścianie; brak kontroli oznacza powrót do elevated Pike Push-up.
 - Jump Squat kończ, gdy wysokość skoku wyraźnie spada — to ćwiczenie jakościowe, nie seria do upadku.
 - Niski drążek, poręcze, stabilne podwyższenie i kotwica hamstring nie są ukrytym „body only”:
-  12 wersjonowanych ścieżek sprzętowych czeka na publikację w TRAIN-03/05.
+  12 wersjonowanych ścieżek sprzętowych jest zapisanych jako alternatywy; pełna ocena
+  wykonalności i UI należą jeszcze do TRAIN-05/06.
 - Gdy potrzebujesz stale dokładać plecak, plan nadal działa, ale profil sprzętu warto zmienić na domowy.

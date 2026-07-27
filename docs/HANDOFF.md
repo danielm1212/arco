@@ -4,7 +4,7 @@
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** release CORE-0 → R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
+**Najbliższy etap:** R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
@@ -77,8 +77,16 @@ koordynacji (2026-07-23).
   poprawioną receptę v3, a brakujące P11/P12 nie zostały utworzone „przy okazji”.
 - release CONTENT-01A/CONTENT-02: blokada starego Barbell Hip Thrust, zamiana trzech slotów,
   instrukcje wariantów i review Chin-Up są aktywne na produkcji.
+- **TRAIN-02A4:** kontrolowany point sync P01/P03/P08/P11/P12 jest na produkcji od
+  2026-07-27. Minimalny kontrakt `program_slot_alternatives` ma RLS; pięć planów wnosi 15 dni,
+  99 slotów i 29 alternatyw. Backup, dry-run, RLS A/B oraz odczytowy smoke aplikacji przeszły.
+  Pełny ślad wdrożenia: `train-02a4-release-2026-07-27.md`.
+- **CORE-0:** DATA-01/02/03 i SYNC-01 są na `main` oraz produkcji. Trigger i funkcje DB,
+  kwalifikowane fakty, kanoniczne kg oraz odporny outbox przeszły kontrolę danych i smoke.
+  Follow-up usuwa znaleziony przy smoke błąd hydratacji daty Historii. Pełny ślad:
+  `core-0-release-2026-07-27.md`.
 
-### Częściowe
+### Częściowe i szczegóły wdrożeń
 
 - **CONTENT-01:** część A jest na produkcji: Barbell Hip Thrust jest wstrzymany, systemowe sloty
   używają sprawdzonego Barbell Glute Bridge, a wszystkie trzy warianty mają poprawione
@@ -124,7 +132,7 @@ koordynacji (2026-07-23).
   `previous_session_sets` wybierają globalnie najnowszą inną sesję, nie czasowo poprzedzającą
   przeglądaną — przy edycji starej historii z równolegle otwartym innym treningiem "poprzedni
   wynik" może być z późniejszej sesji. Rzadki przypadek, osobny finding na przyszłość.
-- **CORE-0 / SYNC-01:** zaimplementowane lokalnie na `agent/core0-hardening`. Błędy chwilowe
+- **CORE-0 / SYNC-01:** scalone do `main` i wdrożone. Błędy chwilowe
   pozostają w kolejce do retry; błędy trwałe trafiają do odzyskiwalnej kwarantanny i nie
   blokują późniejszych zapisów. Finish czeka na flush i ocenia wyłącznie bieżącą sesję.
 - **MOMENT-01 (confetti po rekordzie):** PR
@@ -146,24 +154,20 @@ koordynacji (2026-07-23).
    logu narzędzia CLI podczas release'u. Nie trafił do repo ani dokumentów, ale należy pilnie
    utworzyć nowy sekret, podmienić go w Vercel/automatyzacjach, sprawdzić akcje serwerowe i
    dopiero wtedy odwołać stary klucz (`SEC-03`). **2026-07-24: [Ty] wstrzymuje SEC-03 na razie
-   (czeka na zewnętrzne wsparcie), czas nieokreślony.** Świadoma decyzja: SEC-03 nie blokuje
-   CORE-0/R4A (brak zależności technicznej — integralność danych jest osobną osią od rotacji
-   sekretu), więc sprint jedzie dalej równolegle. Jedyne zadanie faktycznie zablokowane do
-   odwołania: **TRAIN-02A4** (release 5 brakujących programów), bo migracja produkcyjna wymaga
-   już obróconego klucza.
+   (czeka na zewnętrzne wsparcie), czas nieokreślony.** SEC-03 nie blokuje CORE-0/R4A ani
+   kolejnych punktowych migracji wykonywanych przez kontrolowane połączenie z bazą, ale pozostaje
+   osobnym pilnym ryzykiem do zamknięcia przed publicznym rozszerzaniem dostępu.
 2. **Treści i programy:** ryzykowne zdjęcia Barbell Hip Thrust są punktowo wstrzymane na
    produkcji; nowe media Dumbbell/Single-Leg oraz zatwierdzona para Chin-Up nadal wymagają
    przygotowania,
    a audyt 15 planów wykazał błędy kolejności/objętości, brakujące
    regresje i nieprawdziwe metadane sprzętu. Q1 zawiera pilny patch, a PLAN-Q jest pełną
    bramką treści, danych i wersjonowanego audytu Codex przed H2. Docelowe recepty 15/15 są
-   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`. Produkcja ma obecnie 10/15 planów
-   systemowych; P11/P12 nie istnieją, więc ich bezpieczna migracja prawidłowo wykonała no-op.
-   Brakujące P01/P03/P08/P11/P12 nie są gotowe do prostego point syncu: wszystkie recepty
-   są domknięte w TRAIN-02A2/A3, ale P03/P11/P12 czekają na zapis relacji TRAIN-03/05.
-   TRAIN-02A1–A4
-   rozdziela audyt, korekty i release bez pełnego reseedu oraz bez naruszania planów własnych,
-   aktywnych sesji lub historii.
+   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`. Produkcja ma 15/15 programów
+   systemowych. TRAIN-02A4 opublikował pięć brakujących planów po dodaniu minimalnego zapisu
+   alternatyw; bez pełnego reseedu i bez naruszania planów własnych, aktywnych sesji lub historii.
+   Pełne TRAIN-03/05 (kanoniczny sprzęt, wykonalność per slot i rozszerzona recepta) pozostaje
+   częścią PLAN-Q.
    Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
 3. **PWA:** ostatni fix sticky i techniczna poprawka pozycji bottom sheeta (`TRUST-03`)
    wymagają potwierdzenia na iPhone PWA/Safari i przy starym cache.
@@ -188,32 +192,25 @@ koordynacji (2026-07-23).
 - Supabase Auth/Postgres/Storage/RLS, Serwist i Vercel;
 - 907 rekordów ćwiczeń lokalnie; bieżące liczby potwierdza `npm run validate:training`;
 - publiczna rejestracja wyłączona;
-- migracje produkcyjne do `20260722002735_content02_chin_up_review.sql` zostały zastosowane;
-  migracje CORE-0 od `20260724133849` do `20260727110435` są zielone lokalnie i czekają na
-  kontrolowany release.
+- migracje produkcyjne do `20260727134500_train02a4_missing_programs.sql` zostały zastosowane;
+  obejmuje to migracje CORE-0 od `20260724133849` do `20260727110435`.
 
 ## 6. Najbliższa praca
 
 1. [Ty] SEC-03 wstrzymane na razie (czeka na zewnętrzne wsparcie) — **nie blokuje** punktów
    poniżej. Wykonać, gdy wsparcie się odblokuje: nowy sekret, Vercel/automatyzacje, smoke
    akcji serwerowych, a na końcu odwołanie starego.
-2. [Codex] `TRAIN-02A1–A3` są gotowe technicznie: P01/P08 mają recepty v2, P11/P12 v3,
-   a P03/P11/P12 łącznie 29 wersjonowanych ścieżek sprzętowych. SQL point syncu (`TRAIN-02A4`)
-   powstaje dopiero po kontrakcie TRAIN-03/05 **i** po SEC-03 — oba warunki, więc realnie
-   czeka też na odwołanie z punktu 1.
-3. **CORE-0 technicznie domknięte lokalnie (Codex, 2026-07-27):** DATA-01–03 są scalone,
-   hardening `skipped` i SYNC-01 są na `agent/core0-hardening`. Pełna bramka: lint,
-   133/133 unit, build, świeży reset bazy, seed, audyt katalogu, wszystkie cztery smoke
-   i 24/24 testów UI. Następny krok to kontrolowany release migracji i kodu. Follow-upy
-   poza CORE-0: `body_metrics.weight`
+2. **CORE-0 zamknięte produkcyjnie (Codex, 2026-07-27):** DATA-01–03 i SYNC-01 są wdrożone.
+   Produkcyjny schemat, dane, Home, Historia i Postępy przeszły kontrolę; po poprawce hydratacji
+   bramka ma lint, build i 140/140 unit. Follow-upy poza CORE-0: `body_metrics.weight`
    (jednostki, jak DATA-02) i `previous_working_set`/`previous_session_sets` liczące najnowszą
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
-4. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
+3. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
-5. Po CORE-0: R4A → SESSION-01A: integralność loggera i mała, opcjonalna rekomendacja
+4. R4A → SESSION-01A: prowadzenie loggera i mała, opcjonalna rekomendacja
    rozgrzewki/zakończenia bez wpływu na ukończenie treningu.
-6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
-7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
+5. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
+6. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
 
 ## 7. Reguły operacyjne

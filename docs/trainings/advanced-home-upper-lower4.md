@@ -25,6 +25,7 @@ DB Step-up 3 × 8–12 / noga · DB Stiff-Leg Deadlift 3 × 10–15 · Single-Le
 - Pull-up: po 4 × 8 dodaj 3-sekundowe opuszczanie, pauzę albo lekki plecak.
 - Handstand Push-up wykonuj przy ścianie; bez kontroli zamień na trudny Pike Push-up.
 - Brak ławki, drążka, podwyższenia albo kotwicy nie oznacza improwizacji: 14 wersjonowanych
-  ścieżek sprzętowych czeka na publikację w kontrakcie TRAIN-03/05.
+  ścieżek sprzętowych jest zapisanych jako alternatywy; ich pełna ocena wykonalności i UI
+  należą jeszcze do TRAIN-05/06.
 - Piąty dzień jest opcjonalnym przyspieszeniem cyklu tylko przy dobrej regeneracji. Cztery dni są pełną realizacją planu.
 - Deload: po 6–8 tygodniach albo przy wyraźnym spadku wyników zmniejsz serie o około 40% na tydzień.

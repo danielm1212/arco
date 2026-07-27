@@ -10,6 +10,7 @@ import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { joinMany, joinMaybe, type DayJoin, type ExerciseJoin } from "@/lib/dbJoins";
+import { formatWarsawDateTime } from "@/lib/dateTime";
 
 export const dynamic = "force-dynamic";
 
@@ -132,7 +133,7 @@ export default async function SessionDetailPage(props: {
           <DateEditor sessionId={session.id} startedAt={session.started_at} />
         ) : (
           <p className="text-sm text-muted-foreground">
-            {new Date(session.started_at).toLocaleString("pl-PL")} · w toku
+            {formatWarsawDateTime(session.started_at)} · w toku
           </p>
         )}
 
