@@ -40,19 +40,19 @@ import type { SetWeightReview } from "@/lib/setValidation";
 import { formatWarsawDate } from "@/lib/dateTime";
 import {
   applySessionEdits,
-  firstIncompleteSetId,
   loggerSessionState,
   loggerSetState,
   nextIncompleteSetId,
   readSessionContinuity,
+  shouldRestoreSessionPosition,
   writeSessionContinuity,
   type SessionDraftPatch,
 } from "@/lib/sessionFlow";
-import { buildWarmupRecommendations } from "@/lib/sessionPreparation";
 import {
   isCompletedWorkingSet,
   isIncompleteWorkingSet,
 } from "@/lib/sessionSetFacts";
+import { RoutineTimer } from "./RoutineTimer";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -138,9 +138,9 @@ export function Logger({
     exercisesRef.current = exercises;
   }, [exercises]);
 
-  const [activeSetId, setActiveSetId] = useState<string | null>(() =>
-    firstIncompleteSetId(initialExercises),
-  );
+  // Świeże wejście nie zaznacza serii za użytkownika. Aktywny wiersz pojawia się
+  // dopiero po interakcji albo przy prawdziwym wznowieniu zapisanej ciągłości.
+  const [activeSetId, setActiveSetId] = useState<string | null>(null);
   const [focusSetId, setFocusSetId] = useState<string | null>(null);
   const [scrollY, setScrollY] = useState(0);
   const [minimized, setMinimized] = useState(false);
@@ -205,7 +205,6 @@ export function Logger({
     patchSetLocal,
     persistNotes,
     handleAddSet,
-    handleAddWarmupSets,
     handleToggle,
     commitToggle,
     handleSaveCompletedEdit,
@@ -288,18 +287,23 @@ export function Logger({
       draftEditsRef.current = continuity.edits;
       setExercises(restoredExercises);
       exercisesRef.current = restoredExercises;
-      const rememberedExists = restoredExercises.some((exercise) =>
-        exercise.sets.some((set) => set.id === continuity.activeSetId),
+      const rememberedSet = restoredExercises
+        .flatMap((exercise) => exercise.sets)
+        .find((set) => set.id === continuity.activeSetId);
+      const rememberedActiveRelevant =
+        rememberedSet != null &&
+        (!rememberedSet.completed ||
+          (continuity.activeSetId != null &&
+            continuity.edits[continuity.activeSetId] != null));
+      const hasResumableContinuity = shouldRestoreSessionPosition(
+        continuity,
+        rememberedActiveRelevant,
       );
-      setActiveSetId(
-        rememberedExists
-          ? continuity.activeSetId
-          : firstIncompleteSetId(restoredExercises),
-      );
+      setActiveSetId(rememberedActiveRelevant ? continuity.activeSetId : null);
       setScrollY(continuity.scrollY);
       restoreRest(isFinished || isHistorical ? null : continuity.rest);
       restoreScroll = window.requestAnimationFrame(() => {
-        if (continuity.scrollY > 0) window.scrollTo({ top: continuity.scrollY });
+        window.scrollTo({ top: hasResumableContinuity ? continuity.scrollY : 0 });
       });
       setContinuityReady(true);
     });
@@ -355,27 +359,6 @@ export function Logger({
     () => exercises.map((e) => ({ id: e.sessionExerciseId, name: e.name, group: e.supersetGroup })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [summaryKey],
-  );
-  const preparationKey = exercises
-    .map(
-      (exercise) =>
-        `${exercise.sessionExerciseId}:${exercise.exerciseId}:${exercise.type}:${
-          exercise.category ?? ""
-        }:${exercise.mechanic ?? ""}:${exercise.movementPattern ?? ""}:${exercise.skipped}`,
-    )
-    .join("|");
-  const warmupRecommendations = useMemo(
-    () =>
-      new Map(
-        buildWarmupRecommendations(exercises).map((recommendation) => [
-          recommendation.sessionExerciseId,
-          recommendation,
-        ]),
-      ),
-    // Metadane ćwiczeń są jedynym wejściem planu. Edycja pól serii nie może
-    // przebudowywać rekomendacji ani łamać memo wszystkich kart.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [preparationKey],
   );
 
   // R7 (audyt-loggera.md §6): przenieś ⋯ wyżej/niżej — serwer przenumerowuje
@@ -663,19 +646,21 @@ export function Logger({
           </aside>
         )}
 
-        <aside className="rounded-lg bg-secondary px-sm py-xs text-xs text-muted-foreground">
+        {!isFinished && !isHistorical && (
+          <RoutineTimer
+            kind="warmup"
+            timerId={sessionId}
+            title="Rozgrzewka"
+            // Karta jest timerem, nie instruktorem: nie narzucamy formy ruchu
+            // (bieżnia, rowerek, skakanka — obojętne) i nie każemy robić serii,
+            // których logger i tak nie zapisze.
+            description="Rozgrzej się jak lubisz — bieżnia, rowerek, skakanka."
+          />
+        )}
+        <p className="px-2xs text-xs leading-relaxed text-muted-foreground">
           <span className="font-medium text-foreground">{trainingPriorityMeta(trainingPriority).label}:</span>{" "}
           {trainingPriorityMeta(trainingPriority).loggerHint}
-        </aside>
-        {!isFinished && !isHistorical && warmupRecommendations.size > 0 && (
-          <aside className="rounded-xl border border-support/20 bg-support/5 p-sm">
-            <p className="text-xs font-medium text-support">Przygotowanie · opcjonalne</p>
-            <p className="mt-2xs text-xs text-muted-foreground">
-              Po dłuższym bezruchu zacznij od 3–5 min lekkiego ruchu. Możesz przejść
-              od razu do ćwiczeń — ta wskazówka nie blokuje treningu.
-            </p>
-          </aside>
-        )}
+        </p>
         {exercises.map((ex, i) => (
           <ExerciseCard
             key={ex.sessionExerciseId}
@@ -692,11 +677,6 @@ export function Logger({
             activeSetId={ex.sets.some((set) => set.id === activeSetId) ? activeSetId : null}
             focusSetId={ex.sets.some((set) => set.id === focusSetId) ? focusSetId : null}
             editedSetIds={editedSetIds}
-            warmupRecommendation={
-              !isFinished && !isHistorical
-                ? (warmupRecommendations.get(ex.sessionExerciseId) ?? null)
-                : null
-            }
             exerciseSummaries={exerciseSummaries}
             onToggleSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: !o[id] }))}
             onCloseSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: false }))}
@@ -713,18 +693,6 @@ export function Logger({
                 setActiveSetId(setId);
                 setFocusSetId(setId);
               });
-            }}
-            onAddWarmupSets={(exercise, recommendedCount) => {
-              const existingCount = exercise.sets.filter(
-                (set) => set.set_type === "warmup",
-              ).length;
-              const missingCount = Math.max(0, recommendedCount - existingCount);
-              if (missingCount === 0) return;
-              const firstId = handleAddWarmupSets(exercise, missingCount);
-              if (firstId) {
-                setActiveSetId(firstId);
-                setFocusSetId(firstId);
-              }
             }}
             onToggleRpe={(id) => setRpeOn((o) => ({ ...o, [id]: !o[id] }))}
             onToggleSet={handleToggle}

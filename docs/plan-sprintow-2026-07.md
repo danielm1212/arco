@@ -279,6 +279,17 @@ serii roboczej wyklucza `warmup` z ukończenia, objętości, Historii, progresji
 Dogfood reloadu z oczekującym outboxem wykrył i domknął dodatkową regresję hydracji.
 CI i Vercel dla `main` są zielone; pozostaje checkpoint fizycznego urządzenia [Ty].
 
+**Stan SESSION-01A2:** gotowe technicznie 2026-07-27 na `agent/session-01a2`, czeka na merge
+i deploy [Ty]. Dogfood SESSION-01A dał loggerowi 4/10 za nadmiar instrukcji, więc przebudowana
+została warstwa prezentacji: wiersz serii ~120 px → 44 px z checkiem w wierszu, menu pod
+numerem serii zamiast stałego `×`, per-ćwiczeniowe boksy rozgrzewkowe wycięte na rzecz dwóch
+regulowanych timerów (rozgrzewka 2–15 min nad pierwszym ćwiczeniem, rozciąganie 1–10 min na
+Done), świeże wejście bez fokusu i przywracania scrolla, tap w puste pole kopiujący wynik
+z poprzedniej sesji. Semantyka `warmup` i kontrakt danych bez zmian; `lib/sessionPreparation.ts`
+usunięty jako martwy w produkcie. Bramka: lint, TypeScript, build, 155/155 unit, 29/29
+przeglądarkowych, katalog 907/15, rekomendacje 60/60. Kolejny krok to SESSION-01A3 —
+jednorazowa podpowiedź startowa w loggerze.
+
 **Poza zakresem:** nowe programy, cel 1/tydzień, interaktywny SESSION-01B, obowiązkowe RIR,
 automatyczny deload, pełny model objętości oraz warianty Minimum/Standard/Plus. PROGRAM-01A
 20–30 minut pozostaje eksperymentem po sygnale H2, nie dodatkowym treningiem do aktywnego planu.

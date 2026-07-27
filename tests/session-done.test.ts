@@ -20,8 +20,9 @@ test("SESSION-01A: Done celebruje wyłącznie zaliczone serie robocze", () => {
   assert.match(source, /e\.session_sets\.some\(isCompletedWorkingSet\)/);
 });
 
-test("SESSION-01A: zakończenie jest opcjonalne i bez obietnic regeneracji", () => {
-  assert.match(source, /Spokojne zakończenie · opcjonalnie/);
-  assert.match(source, /nie wpływa na zaliczenie treningu/);
+test("SESSION-01A2: rozciąganie jest widoczne, regulowane i bez obietnic regeneracji", () => {
+  assert.match(source, /kind="stretching"/);
+  assert.match(source, /title="Rozciąganie"/);
+  assert.match(source, /łagodne pozycje/);
   assert.doesNotMatch(source, /przyspiesza regenerację|zapobiega urazom/i);
 });

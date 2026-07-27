@@ -147,6 +147,18 @@ export function writeSessionContinuity(
   }
 }
 
+export function shouldRestoreSessionPosition(
+  continuity: SessionContinuity,
+  activeSetExists: boolean,
+) {
+  return (
+    activeSetExists ||
+    continuity.rest != null ||
+    continuity.minimized ||
+    Object.keys(continuity.edits).length > 0
+  );
+}
+
 export function clearSessionContinuity(sessionId: string) {
   if (typeof window === "undefined") return;
   try {

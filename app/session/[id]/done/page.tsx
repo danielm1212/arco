@@ -11,6 +11,7 @@ import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatGoalProgress } from "@/lib/programRecommendation";
 import { weightToDisplay } from "@/lib/format";
 import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
+import { RoutineTimer } from "../RoutineTimer";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,13 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
     if (n > 0) perMuscle.set(m, (perMuscle.get(m) ?? 0) + n);
   });
   const split = muscleSplit(perMuscle);
+  const stretchingFocus = split
+    .slice(0, 2)
+    .map((row) => row.label.toLocaleLowerCase("pl-PL"));
+  const stretchingDescription =
+    stretchingFocus.length > 0
+      ? `Spokojny oddech, potem łagodne pozycje na ${stretchingFocus.join(" i ")}.`
+      : "Spokojny oddech, potem 2 łagodne pozycje dla trenowanych partii.";
 
   // PR-y zdobyte w tej sesji
   const setIds = allSets.map((s) => s.id);
@@ -176,21 +184,13 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
         </div>
       )}
 
-      <details className="w-full rounded-xl border border-support/20 bg-card text-left shadow-sm">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-sm px-md py-sm text-sm font-medium text-support focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          Spokojne zakończenie · opcjonalnie
-          <span aria-hidden>+</span>
-        </summary>
-        <div className="space-y-xs border-t border-support/15 px-md py-sm text-sm text-muted-foreground">
-          <p>
-            Jeśli masz ochotę, poświęć 2–5 min na spokojny marsz lub oddech.
-            Możesz dodać 1–2 łagodne pozycje mobilności dla komfortu.
-          </p>
-          <p className="text-xs font-medium text-foreground">
-            To opcjonalne i nie wpływa na zaliczenie treningu.
-          </p>
-        </div>
-      </details>
+      <RoutineTimer
+        kind="stretching"
+        timerId={params.id}
+        title="Rozciąganie"
+        description={stretchingDescription}
+        className="w-full"
+      />
 
       {/* CTA */}
       <div className="flex w-full flex-col gap-sm pt-lg">

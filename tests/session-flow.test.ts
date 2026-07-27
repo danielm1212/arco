@@ -7,6 +7,7 @@ import {
   loggerSetState,
   nextIncompleteSetId,
   readSessionContinuity,
+  shouldRestoreSessionPosition,
   writeSessionContinuity,
 } from "../lib/sessionFlow";
 import type { SessionSet } from "../lib/types";
@@ -140,4 +141,60 @@ test("R4A: ciągłość odtwarza aktywną serię, korektę i działający timer"
   });
   assert.equal(readSessionContinuity("session-1", 30_000).rest, null);
   Reflect.deleteProperty(globalThis, "window");
+});
+
+test("SESSION-01A2: świeże wejście zaczyna u góry, a prawdziwe wznowienie zachowuje pozycję", () => {
+  // Sam zapis scrolla nie może utrwalać starej, zakończonej pozycji na świeżym wejściu.
+  assert.equal(
+    shouldRestoreSessionPosition(
+      {
+        activeSetId: null,
+        scrollY: 0,
+        minimized: false,
+        rest: null,
+        edits: {},
+      },
+      false,
+    ),
+    false,
+  );
+  assert.equal(
+    shouldRestoreSessionPosition(
+      {
+        activeSetId: null,
+        scrollY: 640,
+        minimized: false,
+        rest: null,
+        edits: {},
+      },
+      false,
+    ),
+    false,
+  );
+  assert.equal(
+    shouldRestoreSessionPosition(
+      {
+        activeSetId: "set-2",
+        scrollY: 0,
+        minimized: false,
+        rest: null,
+        edits: {},
+      },
+      true,
+    ),
+    true,
+  );
+  assert.equal(
+    shouldRestoreSessionPosition(
+      {
+        activeSetId: null,
+        scrollY: 640,
+        minimized: true,
+        rest: null,
+        edits: {},
+      },
+      false,
+    ),
+    true,
+  );
 });

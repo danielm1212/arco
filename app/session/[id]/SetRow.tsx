@@ -1,8 +1,9 @@
 "use client";
 
 import { memo, useEffect, useRef, useState } from "react";
+import { Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { clampNum, formatSet, LIMITS, weightToCanonicalKg, weightToDisplay } from "@/lib/format";
+import { clampNum, LIMITS, weightToCanonicalKg, weightToDisplay } from "@/lib/format";
 import type { ExerciseType, SessionSet, SetType, UnitSystem } from "@/lib/types";
 import { loggerSetState } from "@/lib/sessionFlow";
 import { TimedStopwatch } from "./TimedStopwatch";
@@ -72,11 +73,26 @@ export const SetRow = memo(function SetRow({
   // konwertuje do jednostki profilu, tak samo jak sam input.
   const phWeight = (n: number | null | undefined) =>
     n != null ? String(weightToDisplay(n, unit)) : undefined;
+  // SESSION-01A2: zwarty wiersz nie ma już osobnego „↺ poprzedni wynik", więc
+  // kopiowanie wróciło do samego pola — tap w puste pole wpisuje wartość z
+  // poprzedniej sesji i zaznacza ją, żeby wpisanie innej liczby nic nie kosztowało.
+  // Tylko dla niezaliczonych serii: zaliczona nie może się zrobić „edytowana" od
+  // samego dotknięcia pola.
+  const pf = (n: number | null | undefined) => (set.completed ? null : n ?? null);
+  const pfWeight = (n: number | null | undefined) =>
+    set.completed || n == null ? null : weightToDisplay(n, unit);
+  // Zaliczony wiersz czytamy jako JEDNĄ taflę: pola gubią własne wypełnienie i
+  // ramkę, więc tło nie przebija w 8 px szczelinach między pudełkami (wyglądało
+  // to jak wyciek, nie jak stan). Dotknięcie wiersza przywraca pola do edycji.
+  const doneSurface = set.completed && !active;
   const weightMax = weightToDisplay(LIMITS.weight, unit);
   const rowRef = useRef<HTMLLIElement>(null);
+  const setButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const repsFieldRef = useRef<HTMLInputElement>(null);
   const actionRef = useRef<HTMLButtonElement>(null);
+  const [setMenuOpen, setSetMenuOpen] = useState(false);
   const flowState = loggerSetState(type, set, edited);
 
   useEffect(() => {
@@ -89,33 +105,88 @@ export const SetRow = memo(function SetRow({
     }
   }, [focusRequested, type]);
 
-  // „Last set" — wynik z poprzedniej sesji; tap = skopiuj do pól (Strong/Hevy).
-  // Audyt P2: formatowanie przez wspólny formatSet zamiast trzeciej inline-kopii
-  // (jedyna zmiana wizualna: „45s" jak w historii, nie „45 s").
-  const prevFormatted = prev
-    ? formatSet(
-        type,
-        {
-          weight: prev.weight ?? null,
-          reps: prev.reps ?? null,
-          duration_seconds: prev.duration_seconds ?? null,
-          added_weight: prev.added_weight ?? null,
-        },
-        unit,
-      )
-    : null;
-  const prevText = prevFormatted === "Brak wyniku" ? null : prevFormatted;
+  const menuItems = () =>
+    Array.from(
+      menuRef.current?.querySelectorAll<HTMLButtonElement>("[role^='menuitem']") ?? [],
+    );
 
-  function fillPrev() {
-    if (!prev) return;
-    const patch: Partial<SessionSet> =
-      type === "timed"
-        ? { duration_seconds: prev.duration_seconds }
-        : type === "bodyweight"
-          ? { reps: prev.reps, added_weight: prev.added_weight }
-          : { weight: prev.weight, reps: prev.reps };
-    onPatch(patch);
-    onPersist(patch);
+  useEffect(() => {
+    if (!setMenuOpen) return;
+    // role="menu" obiecuje obsługę klawiatury, więc musi ją mieć: fokus wchodzi
+    // w menu po otwarciu, strzałki krążą po pozycjach, Tab i Escape zamykają.
+    menuItems()[0]?.focus();
+    const closeOutside = (event: PointerEvent) => {
+      if (!rowRef.current?.contains(event.target as Node)) setSetMenuOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      const items = menuItems();
+      if (items.length === 0) return;
+      const current = items.indexOf(document.activeElement as HTMLButtonElement);
+      switch (event.key) {
+        case "Escape":
+        case "Tab":
+          setSetMenuOpen(false);
+          setButtonRef.current?.focus();
+          if (event.key === "Tab") event.preventDefault();
+          return;
+        case "ArrowDown":
+          event.preventDefault();
+          items[(current + 1) % items.length]?.focus();
+          return;
+        case "ArrowUp":
+          event.preventDefault();
+          items[(current - 1 + items.length) % items.length]?.focus();
+          return;
+        case "Home":
+          event.preventDefault();
+          items[0]?.focus();
+          return;
+        case "End":
+          event.preventDefault();
+          items[items.length - 1]?.focus();
+          return;
+        default:
+      }
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [setMenuOpen]);
+
+  function changeSetType(next: SetType) {
+    onActivate();
+    if (next !== set.set_type) {
+      onPatch({ set_type: next });
+      onPersist({ set_type: next });
+    }
+    setSetMenuOpen(false);
+    setButtonRef.current?.focus();
+  }
+
+  // Usuwany wiersz zabiera ze sobą fokus, więc bez jawnego przeniesienia ląduje on
+  // na <body> i nawigacja klawiaturą zaczyna się od początku strony.
+  //
+  // Fokus przenosimy PRZED usunięciem, synchronicznie. Próby robienia tego po
+  // `onDelete()` w `requestAnimationFrame` przegrywały wyścig z commitem Reacta:
+  // raz trafiały w węzeł, który React zaraz zdejmował, raz w jeszcze nieodświeżoną
+  // listę (lokalnie przechodziło, CI łapało). Sąsiedni wiersz i „+ seria" przeżywają
+  // usunięcie, a klucz `set.id` gwarantuje, że React użyje tego samego węzła DOM —
+  // fokus zostaje tam, gdzie go postawiliśmy.
+  function deleteSet() {
+    const row = rowRef.current;
+    const neighbour = (row?.nextElementSibling ?? row?.previousElementSibling) as
+      | HTMLElement
+      | null;
+    const target =
+      neighbour?.querySelector<HTMLElement>("[aria-haspopup='menu']") ??
+      row?.parentElement?.parentElement?.querySelector<HTMLElement>("[data-add-set]");
+    setSetMenuOpen(false);
+    target?.focus();
+    onActivate();
+    onDelete();
   }
 
   return (
@@ -124,43 +195,74 @@ export const SetRow = memo(function SetRow({
       tabIndex={-1}
       data-set-state={flowState}
       aria-current={active ? "step" : undefined}
-      className={`flex flex-wrap items-center gap-xs rounded-md transition-colors ${
+      className={`relative flex flex-wrap items-center gap-xs rounded-md transition-colors ${
         isPr ? "animate-pulse-once bg-primary/10 ring-1 ring-inset ring-primary/40" : ""
-      } ${active ? "bg-secondary/60 ring-2 ring-inset ring-primary/35" : ""}`}
+      } ${
+        active
+          ? "bg-secondary/60"
+          : set.completed
+            ? "bg-success/10"
+            : ""
+      }`}
     >
-      {prevText && !set.completed && (
-        <button
-          type="button"
-          onClick={() => {
-            onActivate();
-            fillPrev();
-          }}
-          title="Dotknij, aby skopiować poprzedni wynik"
-          className="flex min-h-11 w-full items-center text-left text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          ↺ {prevText}
-        </button>
-      )}
-      {/* Jawny przełącznik typu serii — obramowany, więc widać że klikalny.
-          R5 (F9): aria-label obok title — samo title jest niedostępne na dotyku,
-          a widoczna treść przycisku ("W"/numer) nie tłumaczy się sama. */}
+      {/* Numer otwiera rzadkie akcje zamiast stale pokazywać przełącznik i „usuń". */}
       <button
+        ref={setButtonRef}
+        type="button"
         onClick={() => {
           onActivate();
-          const next: SetType = isWarmup ? "working" : "warmup";
-          onPatch({ set_type: next });
-          onPersist({ set_type: next });
+          setSetMenuOpen((open) => !open);
         }}
         className={`size-11 shrink-0 rounded-md border text-xs font-medium tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           isWarmup
             ? "border-warning bg-warning/15 text-warning"
-            : "border-input text-muted-foreground"
+            : doneSurface
+              ? "border-transparent text-success"
+              : "border-input text-muted-foreground"
         }`}
-        aria-label={isWarmup ? "Seria rozgrzewkowa. Dotknij, aby zmienić na roboczą" : "Seria robocza. Dotknij, aby zmienić na rozgrzewkową"}
-        title={isWarmup ? "Zmień na serię roboczą" : "Zmień na serię rozgrzewkową"}
+        aria-label={isWarmup ? "Opcje serii rozgrzewkowej" : `Opcje serii ${index}`}
+        aria-expanded={setMenuOpen}
+        aria-haspopup="menu"
       >
         {isWarmup ? "W" : index}
       </button>
+      {setMenuOpen && (
+        <div
+          ref={menuRef}
+          role="menu"
+          aria-label="Opcje serii"
+          className="absolute left-0 top-12 z-30 w-52 overflow-hidden rounded-md border border-border bg-popover p-2xs text-popover-foreground shadow-lg"
+        >
+          <button
+            type="button"
+            role="menuitemradio"
+            aria-checked={!isWarmup}
+            onClick={() => changeSetType("working")}
+            className="flex min-h-11 w-full items-center justify-between rounded-md px-sm text-left text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Seria robocza
+            {!isWarmup && <Check className="size-4" aria-hidden />}
+          </button>
+          <button
+            type="button"
+            role="menuitemradio"
+            aria-checked={isWarmup}
+            onClick={() => changeSetType("warmup")}
+            className="flex min-h-11 w-full items-center justify-between rounded-md px-sm text-left text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Seria rozgrzewkowa
+            {isWarmup && <Check className="size-4" aria-hidden />}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={deleteSet}
+            className="flex min-h-11 w-full items-center rounded-md px-sm text-left text-sm text-danger hover:bg-danger/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Usuń serię
+          </button>
+        </div>
+      )}
 
       {type === "timed" ? (
         <TimedStopwatch
@@ -180,6 +282,8 @@ export const SetRow = memo(function SetRow({
             value={set.reps}
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
+            prefill={pf(prev?.reps)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
             onFocus={onActivate}
@@ -189,6 +293,8 @@ export const SetRow = memo(function SetRow({
             value={set.added_weight != null ? weightToDisplay(set.added_weight, unit) : null}
             max={weightMax}
             placeholder={phWeight(prev?.added_weight)}
+            prefill={pfWeight(prev?.added_weight)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onPersist={(n) => onPersist({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onFocus={onActivate}
@@ -203,6 +309,8 @@ export const SetRow = memo(function SetRow({
             step="0.5"
             max={weightMax}
             placeholder={phWeight(prev?.weight)}
+            prefill={pfWeight(prev?.weight)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onPersist={(n) => onPersist({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onFocus={onActivate}
@@ -213,6 +321,8 @@ export const SetRow = memo(function SetRow({
             value={set.reps}
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
+            prefill={pf(prev?.reps)}
+            flat={doneSurface}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
             onFocus={onActivate}
@@ -235,52 +345,52 @@ export const SetRow = memo(function SetRow({
         />
       )}
 
-      {/* Akcept serii ma własny, stały wiersz. Przy 320 px układ:
-          typ + dwa pola + usuń zachowuje użyteczne szerokości pól, a tekstowe
-          „Zalicz / Zapisz zmianę" nie przepycha ich ani nie zmienia layoutu. */}
       {isPr && (
-        <span className="shrink-0 rounded-full bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground">
+        <span className="absolute -top-2 right-10 z-10 rounded-full bg-primary px-1.5 py-0.5 text-xs font-semibold text-primary-foreground">
           PR
         </span>
       )}
-      {/* 44px = minimum z wytyczne-designu.md (było 40px — pod normą, feedback 2026-07-11) */}
       <button
         ref={actionRef}
         onClick={() => {
           onActivate();
-          if (edited) onSaveEdit();
-          else onToggle();
+          if (!edited) onToggle();
         }}
         aria-label={
           edited
-            ? "Zapisz zmianę zaliczonej serii"
+            ? "Najpierw zapisz zmianę serii"
             : set.completed
               ? "Cofnij zaliczenie"
               : "Zalicz serię"
         }
         aria-pressed={set.completed}
-        className={`order-last flex min-h-11 w-full items-center justify-center rounded-md border px-sm text-sm font-semibold ${
-          edited || flowState === "ready"
-            ? "border-primary bg-primary text-primary-foreground"
-            : set.completed
-              ? "border-primary/30 bg-primary/10 text-primary"
-              : "border-input text-muted-foreground"
+        // aria-disabled zamiast disabled: check zostaje w kolejności Tab, więc czytnik
+        // zdąży powiedzieć, dlaczego nie działa. Klik i tak jest bez skutku (patrz onClick).
+        aria-disabled={edited}
+        className={`flex size-11 shrink-0 items-center justify-center rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+          edited
+            ? "border-input text-muted-foreground opacity-40"
+            : flowState === "ready"
+              ? "border-primary bg-primary text-primary-foreground"
+              : set.completed
+                ? "border-success bg-success text-white"
+                : "border-input text-muted-foreground"
         }`}
       >
-        {edited ? "Zapisz zmianę" : set.completed ? "✓ Zaliczone" : "Zalicz"}
+        <Check className="size-5" aria-hidden />
       </button>
-      {/* R3 (audyt-loggera.md F3): w-11 zamiast w-9 — pełny 44×44 target jak ✓,
-          nie tylko wysokość (feedback 2026-07-11: "trzeba wyrównać") */}
-      <button
-        onClick={() => {
-          onActivate();
-          onDelete();
-        }}
-        aria-label="Usuń serię"
-        className="flex h-11 w-11 shrink-0 items-center justify-center text-xs text-muted-foreground hover:text-danger"
-      >
-        ✕
-      </button>
+      {edited && (
+        <button
+          type="button"
+          onClick={() => {
+            onActivate();
+            onSaveEdit();
+          }}
+          className="order-last flex min-h-11 w-full items-center justify-center rounded-md border border-primary bg-primary px-sm text-sm font-semibold text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Zapisz zmianę
+        </button>
+      )}
     </li>
   );
 },
@@ -304,6 +414,8 @@ function Field({
   step,
   grow = true,
   placeholder,
+  prefill = null,
+  flat = false,
   max,
   min = 0,
   onPatch,
@@ -316,6 +428,10 @@ function Field({
   step?: string;
   grow?: boolean;
   placeholder?: string;
+  /** Wynik z poprzedniej sesji: tap w PUSTE pole wpisuje go i zaznacza. */
+  prefill?: number | null;
+  /** Zaliczona seria: pole zlewa się z tłem wiersza zamiast udawać puste pudełko. */
+  flat?: boolean;
   max: number;
   min?: number;
   onPatch: (n: number | null) => void;
@@ -351,8 +467,18 @@ function Field({
       max={max}
       placeholder={placeholder}
       value={raw}
-      onFocus={() => {
+      onFocus={(e) => {
         focused.current = true;
+        // Kopiujemy tylko do pustego pola — nigdy nie nadpisujemy tego, co user już wpisał.
+        // select() zaraz po wpisaniu sprawia, że inna liczba po prostu zastępuje podpowiedź,
+        // więc tap nie kosztuje nic w sesji, w której zmieniasz ciężar.
+        if (prefill != null && e.currentTarget.value === "") {
+          const input = e.currentTarget;
+          const next = String(prefill);
+          setRaw(next);
+          onPatch(clamp(next));
+          requestAnimationFrame(() => input.select());
+        }
         onFocus?.();
       }}
       onChange={(e) => {
@@ -370,7 +496,9 @@ function Field({
         event.preventDefault();
         onEnter?.();
       }}
-      className={`h-11 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"}`}
+      className={`h-11 text-center font-medium tabular-nums ${grow ? "flex-1" : "w-16"} ${
+        flat ? "border-transparent bg-transparent" : ""
+      }`}
     />
   );
 }
