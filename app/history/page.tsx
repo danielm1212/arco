@@ -7,6 +7,7 @@ import { DeleteSessionButton } from "./DeleteSessionButton";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { joinMany, joinMaybe, type DayJoin } from "@/lib/dbJoins";
+import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
       let q = supabase
         .from("sessions")
         .select(
-          "id, date, started_at, finished_at, program_days(label, programs(name)), session_exercises(skipped, session_sets(completed))",
+          "id, date, started_at, finished_at, program_days(label, programs(name)), session_exercises(skipped, session_sets(completed, set_type))",
         )
         .order("started_at", { ascending: false })
         .limit(PAGE_SIZE + 1); // +1 = detekcja "czy są starsze"
@@ -90,11 +91,12 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
         {sessions.map((s) => {
           const day = joinMaybe<DayJoin>(s.program_days);
           const title = day ? `${day.programs?.name ?? ""} · ${day.label}` : "Własny trening";
-          const exs = joinMany<{ skipped: boolean; session_sets: { completed: boolean }[] }>(
-            s.session_exercises,
-          ).filter((exercise) => !exercise.skipped);
+          const exs = joinMany<{
+            skipped: boolean;
+            session_sets: { completed: boolean; set_type: "warmup" | "working" | "drop" }[];
+          }>(s.session_exercises).filter((exercise) => !exercise.skipped);
           const doneSets = exs.reduce(
-            (n, e) => n + e.session_sets.filter((x) => x.completed).length,
+            (n, e) => n + e.session_sets.filter(isCompletedWorkingSet).length,
             0,
           );
           return (

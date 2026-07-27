@@ -6,7 +6,14 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { STICKY_HEADER_SAFE_AREA } from "@/components/navigation/stickyHeader";
-import type { ExerciseType, SessionSet, TrainingPriority, UnitSystem } from "@/lib/types";
+import type {
+  ExerciseType,
+  MechanicType,
+  MovementPattern,
+  SessionSet,
+  TrainingPriority,
+  UnitSystem,
+} from "@/lib/types";
 import { trainingPriorityMeta } from "@/lib/trainingPriority";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getKeepAwake } from "@/lib/prefs";
@@ -41,6 +48,11 @@ import {
   writeSessionContinuity,
   type SessionDraftPatch,
 } from "@/lib/sessionFlow";
+import { buildWarmupRecommendations } from "@/lib/sessionPreparation";
+import {
+  isCompletedWorkingSet,
+  isIncompleteWorkingSet,
+} from "@/lib/sessionSetFacts";
 
 export interface LoggerExercise {
   sessionExerciseId: string;
@@ -48,6 +60,9 @@ export interface LoggerExercise {
   name: string;
   type: ExerciseType;
   equipment: string | null;
+  category: string | null;
+  mechanic: MechanicType | null;
+  movementPattern: MovementPattern | null;
   slot: {
     default_exercise_id: string;
     target_sets: number;
@@ -190,6 +205,7 @@ export function Logger({
     patchSetLocal,
     persistNotes,
     handleAddSet,
+    handleAddWarmupSets,
     handleToggle,
     commitToggle,
     handleSaveCompletedEdit,
@@ -340,6 +356,27 @@ export function Logger({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [summaryKey],
   );
+  const preparationKey = exercises
+    .map(
+      (exercise) =>
+        `${exercise.sessionExerciseId}:${exercise.exerciseId}:${exercise.type}:${
+          exercise.category ?? ""
+        }:${exercise.mechanic ?? ""}:${exercise.movementPattern ?? ""}:${exercise.skipped}`,
+    )
+    .join("|");
+  const warmupRecommendations = useMemo(
+    () =>
+      new Map(
+        buildWarmupRecommendations(exercises).map((recommendation) => [
+          recommendation.sessionExerciseId,
+          recommendation,
+        ]),
+      ),
+    // Metadane ćwiczeń są jedynym wejściem planu. Edycja pól serii nie może
+    // przebudowywać rekomendacji ani łamać memo wszystkich kart.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [preparationKey],
+  );
 
   // R7 (audyt-loggera.md §6): przenieś ⋯ wyżej/niżej — serwer przenumerowuje
   // `position` (jednostka = ćwiczenie LUB cała grupa SS), router.refresh()
@@ -398,19 +435,23 @@ export function Logger({
   // Live podsumowanie z lokalnego stanu
   const factExercises = exercises.filter((exercise) => !exercise.skipped);
   const doneSets = factExercises.reduce(
-    (n, ex) => n + ex.sets.filter((s) => s.completed).length,
+    (n, ex) => n + ex.sets.filter(isCompletedWorkingSet).length,
     0,
   );
   // R4: seria niezaliczone = kandydat do finish-sheeta zamiast confirm()
   const incompleteSets = factExercises.reduce(
-    (n, ex) => n + ex.sets.filter((s) => !s.completed).length,
+    (n, ex) => n + ex.sets.filter(isIncompleteWorkingSet).length,
     0,
   );
   const volume = factExercises.reduce(
     (n, ex) =>
       n +
       ex.sets.reduce(
-        (m, s) => m + (s.completed && s.weight != null && s.reps != null ? s.weight * s.reps : 0),
+        (m, s) =>
+          m +
+          (isCompletedWorkingSet(s) && s.weight != null && s.reps != null
+            ? s.weight * s.reps
+            : 0),
         0,
       ),
     0,
@@ -626,6 +667,15 @@ export function Logger({
           <span className="font-medium text-foreground">{trainingPriorityMeta(trainingPriority).label}:</span>{" "}
           {trainingPriorityMeta(trainingPriority).loggerHint}
         </aside>
+        {!isFinished && !isHistorical && warmupRecommendations.size > 0 && (
+          <aside className="rounded-xl border border-support/20 bg-support/5 p-sm">
+            <p className="text-xs font-medium text-support">Przygotowanie · opcjonalne</p>
+            <p className="mt-2xs text-xs text-muted-foreground">
+              Po dłuższym bezruchu zacznij od 3–5 min lekkiego ruchu. Możesz przejść
+              od razu do ćwiczeń — ta wskazówka nie blokuje treningu.
+            </p>
+          </aside>
+        )}
         {exercises.map((ex, i) => (
           <ExerciseCard
             key={ex.sessionExerciseId}
@@ -642,6 +692,11 @@ export function Logger({
             activeSetId={ex.sets.some((set) => set.id === activeSetId) ? activeSetId : null}
             focusSetId={ex.sets.some((set) => set.id === focusSetId) ? focusSetId : null}
             editedSetIds={editedSetIds}
+            warmupRecommendation={
+              !isFinished && !isHistorical
+                ? (warmupRecommendations.get(ex.sessionExerciseId) ?? null)
+                : null
+            }
             exerciseSummaries={exerciseSummaries}
             onToggleSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: !o[id] }))}
             onCloseSwap={(id) => setSwapOpen((o) => ({ ...o, [id]: false }))}
@@ -658,6 +713,18 @@ export function Logger({
                 setActiveSetId(setId);
                 setFocusSetId(setId);
               });
+            }}
+            onAddWarmupSets={(exercise, recommendedCount) => {
+              const existingCount = exercise.sets.filter(
+                (set) => set.set_type === "warmup",
+              ).length;
+              const missingCount = Math.max(0, recommendedCount - existingCount);
+              if (missingCount === 0) return;
+              const firstId = handleAddWarmupSets(exercise, missingCount);
+              if (firstId) {
+                setActiveSetId(firstId);
+                setFocusSetId(firstId);
+              }
             }}
             onToggleRpe={(id) => setRpeOn((o) => ({ ...o, [id]: !o[id] }))}
             onToggleSet={handleToggle}

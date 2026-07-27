@@ -22,3 +22,13 @@ test("DATA-03: podsumowanie loggera ignoruje pominięte ćwiczenia", () => {
   assert.match(source, /const incompleteSets = factExercises\.reduce/);
   assert.match(source, /const volume = factExercises\.reduce/);
 });
+
+test("SESSION-01A: logger i serwer nie uznają rozgrzewki za ukończenie treningu", () => {
+  const logger = readFileSync("app/session/[id]/Logger.tsx", "utf8");
+  const actions = readFileSync("app/actions/session.ts", "utf8");
+
+  assert.match(logger, /filter\(isCompletedWorkingSet\)/);
+  assert.match(logger, /filter\(isIncompleteWorkingSet\)/);
+  assert.match(actions, /\.eq\("set_type", "working"\)/);
+  assert.match(actions, /zaliczonej serii roboczej/);
+});

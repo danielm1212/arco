@@ -10,6 +10,10 @@ import { SwapPanel } from "./SwapPanel";
 import { SetRow } from "./SetRow";
 import { ExerciseCardMenu } from "./ExerciseCardMenu";
 import type { LoggerExercise } from "./Logger";
+import {
+  warmupRecommendationText,
+  type WarmupRecommendation,
+} from "@/lib/sessionPreparation";
 
 /** Cel progresji na dzisiejszą sesję — jawny i zawsze nadpisywalny przez użytkownika. */
 function progressionGoal(ex: LoggerExercise, unit: UnitSystem, trainingPriority: TrainingPriority) {
@@ -44,6 +48,7 @@ export interface ExerciseCardProps {
   activeSetId: string | null;
   focusSetId: string | null;
   editedSetIds: Record<string, boolean>;
+  warmupRecommendation: WarmupRecommendation | null;
   /** R6b: nazwy+grupy wszystkich ćwiczeń sesji (picker "Połącz w superset") — referencyjnie
    *  stabilne między toggle'ami serii, patrz komentarz w Logger.tsx przy useMemo. */
   exerciseSummaries: { id: string; name: string; group: number | null }[];
@@ -59,6 +64,7 @@ export interface ExerciseCardProps {
   onOpenNote: (seId: string) => void;
   onPersistNotes: (seId: string, notes: string) => void;
   onAddSet: (ex: LoggerExercise) => void;
+  onAddWarmupSets: (ex: LoggerExercise, recommendedCount: number) => void;
   onToggleRpe: (seId: string) => void;
   onToggleSet: (ex: LoggerExercise, set: SessionSet) => void;
   onActivateSet: (setId: string) => void;
@@ -91,6 +97,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   activeSetId,
   focusSetId,
   editedSetIds,
+  warmupRecommendation,
   exerciseSummaries,
   onToggleSwap,
   onCloseSwap,
@@ -103,6 +110,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   onOpenNote,
   onPersistNotes,
   onAddSet,
+  onAddWarmupSets,
   onToggleRpe,
   onToggleSet,
   onActivateSet,
@@ -113,7 +121,13 @@ export const ExerciseCard = memo(function ExerciseCard({
   onDeleteSet,
 }: ExerciseCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [addingWarmup, setAddingWarmup] = useState(false);
   const grouped = ex.supersetGroup != null;
+  const warmupCount = ex.sets.filter((set) => set.set_type === "warmup").length;
+  const missingWarmupCount = Math.max(
+    0,
+    (warmupRecommendation?.series ?? 0) - warmupCount,
+  );
   // Po podmianie slot-note opisuje stare ćwiczenie — wtedy pokaż sprzęt nowego
   const swapped = ex.slot != null && ex.exerciseId !== ex.slot.default_exercise_id;
   return (
@@ -227,6 +241,39 @@ export const ExerciseCard = memo(function ExerciseCard({
             />
           )}
 
+          {warmupRecommendation && (
+            <aside className="rounded-md border border-support/20 bg-support/5 p-sm">
+              <p className="text-xs font-medium text-support">
+                Rozgrzewka · opcjonalnie
+              </p>
+              <p className="mt-2xs text-xs text-muted-foreground">
+                {warmupRecommendationText(warmupRecommendation)}
+              </p>
+              {missingWarmupCount > 0 ? (
+                <Button
+                  type="button"
+                  variant="support"
+                  className="mt-sm w-full"
+                  disabled={addingWarmup}
+                  onClick={() => {
+                    setAddingWarmup(true);
+                    onAddWarmupSets(ex, warmupRecommendation.series);
+                  }}
+                >
+                  {addingWarmup
+                    ? "Dodaję…"
+                    : missingWarmupCount === 1
+                    ? "Dodaj serię rozgrzewkową"
+                    : `Dodaj ${missingWarmupCount} serie rozgrzewkowe`}
+                </Button>
+              ) : (
+                <p className="mt-xs text-xs font-medium text-support" role="status">
+                  Serie rozgrzewkowe są już w loggerze.
+                </p>
+              )}
+            </aside>
+          )}
+
           {(() => {
             const goal = progressionGoal(ex, unit, trainingPriority);
             return goal ? (
@@ -265,28 +312,35 @@ export const ExerciseCard = memo(function ExerciseCard({
           {/* space-y-xs (nie 2xs): 4px między wierszami z 44px checkboxem = łatwo trafić
               w sąsiedni rząd (feedback 2026-07-11); wytyczne-designu.md §touch targets */}
           <ul className="space-y-xs">
-            {ex.sets.map((set, i) => (
-              <SetRow
-                key={set.id}
-                index={i + 1}
-                set={set}
-                prev={ex.previousSets[i] ?? null}
-                type={ex.type}
-                unit={unit}
-                showRpe={rpeOn}
-                isPr={!!prSets[set.id]}
-                active={activeSetId === set.id}
-                focusRequested={focusSetId === set.id}
-                edited={!!editedSetIds[set.id]}
-                onPatch={(patch) => onPatchSet(ex.sessionExerciseId, set.id, patch)}
-                onPersist={(patch) => onPersistSet(set.id, patch)}
-                onToggle={() => onToggleSet(ex, set)}
-                onActivate={() => onActivateSet(set.id)}
-                onSaveEdit={() => onSaveEditedSet(ex, set)}
-                onDelete={() => onDeleteSet(ex.sessionExerciseId, set.id)}
-                onTimedComplete={(sec) => onTimedComplete(ex, set, sec)}
-              />
-            ))}
+            {(() => {
+              let workingIndex = 0;
+              return ex.sets.map((set) => {
+                const warmup = set.set_type === "warmup";
+                const displayIndex = warmup ? 0 : ++workingIndex;
+                return (
+                  <SetRow
+                    key={set.id}
+                    index={displayIndex}
+                    set={set}
+                    prev={warmup ? null : (ex.previousSets[displayIndex - 1] ?? null)}
+                    type={ex.type}
+                    unit={unit}
+                    showRpe={rpeOn}
+                    isPr={!!prSets[set.id]}
+                    active={activeSetId === set.id}
+                    focusRequested={focusSetId === set.id}
+                    edited={!!editedSetIds[set.id]}
+                    onPatch={(patch) => onPatchSet(ex.sessionExerciseId, set.id, patch)}
+                    onPersist={(patch) => onPersistSet(set.id, patch)}
+                    onToggle={() => onToggleSet(ex, set)}
+                    onActivate={() => onActivateSet(set.id)}
+                    onSaveEdit={() => onSaveEditedSet(ex, set)}
+                    onDelete={() => onDeleteSet(ex.sessionExerciseId, set.id)}
+                    onTimedComplete={(sec) => onTimedComplete(ex, set, sec)}
+                  />
+                );
+              });
+            })()}
           </ul>
 
           {/* RPE toggle przeniesiony do ⋯ (R1) — tu tylko "+ seria", pełna szerokość */}
@@ -311,6 +365,8 @@ export const ExerciseCard = memo(function ExerciseCard({
   prev.rpeOn === next.rpeOn &&
   prev.activeSetId === next.activeSetId &&
   prev.focusSetId === next.focusSetId &&
+  prev.warmupRecommendation?.series === next.warmupRecommendation?.series &&
+  prev.warmupRecommendation?.kind === next.warmupRecommendation?.kind &&
   prev.exerciseSummaries === next.exerciseSummaries &&
   // PR-y: porównaj tylko wpisy dotyczące serii TEGO ćwiczenia
   next.ex.sets.every(

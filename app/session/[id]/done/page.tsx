@@ -10,6 +10,7 @@ import { weekStart, computeStreak, weeksMeetingGoal } from "@/lib/week";
 import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatGoalProgress } from "@/lib/programRecommendation";
 import { weightToDisplay } from "@/lib/format";
+import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
 
 export const dynamic = "force-dynamic";
 
@@ -62,12 +63,12 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
     }>(session.session_exercises).filter((exercise) => !exercise.skipped);
 
   const allSets = exercises.flatMap((e) => e.session_sets);
-  const completed = allSets.filter((s) => s.completed);
+  const completed = allSets.filter(isCompletedWorkingSet);
   const volume = completed.reduce((n, s) => n + (s.weight ?? 0) * (s.reps ?? 0), 0);
   const totalReps = completed.reduce((n, s) => n + (s.reps ?? 0), 0);
   const totalSeconds = completed.reduce((n, s) => n + (s.duration_seconds ?? 0), 0);
   const exCount = exercises.filter((e) =>
-    e.session_sets.some((s) => s.completed),
+    e.session_sets.some(isCompletedWorkingSet),
   ).length;
   const durationMin = Math.round(
     (+new Date(session.finished_at) - +new Date(session.started_at)) / 60000,
@@ -174,6 +175,22 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
           <MuscleSplitBars rows={split} max={4} />
         </div>
       )}
+
+      <details className="w-full rounded-xl border border-support/20 bg-card text-left shadow-sm">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-sm px-md py-sm text-sm font-medium text-support focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Spokojne zakończenie · opcjonalnie
+          <span aria-hidden>+</span>
+        </summary>
+        <div className="space-y-xs border-t border-support/15 px-md py-sm text-sm text-muted-foreground">
+          <p>
+            Jeśli masz ochotę, poświęć 2–5 min na spokojny marsz lub oddech.
+            Możesz dodać 1–2 łagodne pozycje mobilności dla komfortu.
+          </p>
+          <p className="text-xs font-medium text-foreground">
+            To opcjonalne i nie wpływa na zaliczenie treningu.
+          </p>
+        </div>
+      </details>
 
       {/* CTA */}
       <div className="flex w-full flex-col gap-sm pt-lg">
