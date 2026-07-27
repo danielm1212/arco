@@ -397,6 +397,63 @@ export type Database = {
           },
         ]
       }
+      program_slot_alternatives: {
+        Row: {
+          alternative_equipment: string[]
+          alternative_exercise_id: string
+          content_version: number
+          created_at: string
+          id: string
+          missing_equipment: string[]
+          note_pl: string
+          pattern_coverage: string
+          position: number
+          program_day_slot_id: string
+          updated_at: string
+        }
+        Insert: {
+          alternative_equipment: string[]
+          alternative_exercise_id: string
+          content_version?: number
+          created_at?: string
+          id?: string
+          missing_equipment: string[]
+          note_pl: string
+          pattern_coverage: string
+          position?: number
+          program_day_slot_id: string
+          updated_at?: string
+        }
+        Update: {
+          alternative_equipment?: string[]
+          alternative_exercise_id?: string
+          content_version?: number
+          created_at?: string
+          id?: string
+          missing_equipment?: string[]
+          note_pl?: string
+          pattern_coverage?: string
+          position?: number
+          program_day_slot_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_slot_alternatives_alternative_exercise_id_fkey"
+            columns: ["alternative_exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_slot_alternatives_program_day_slot_id_fkey"
+            columns: ["program_day_slot_id"]
+            isOneToOne: false
+            referencedRelation: "program_day_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       program_days: {
         Row: {
           id: string

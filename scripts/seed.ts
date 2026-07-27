@@ -7,11 +7,13 @@
  */
 import { config } from "dotenv";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createHash } from "node:crypto";
 import { pathToFileURL } from "node:url";
 import rawExercises from "./data/exercises.json";
 import rawContentReviews from "./data/exercise-content-reviews.json";
 import polishInstructionOverrides from "./data/exercise-instructions-pl.json";
 import polishNames from "./data/exercise-names-pl.json";
+import { PLANNED_PROGRAM_ALTERNATIVES } from "./data/program-slot-alternatives";
 import { withNormalizedAliases } from "../lib/exerciseSearch";
 
 config({ path: ".env.local" });
@@ -57,6 +59,17 @@ export const POLISH_NAMES = polishNames as Record<
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SeedClient = SupabaseClient<any>;
 let db: SeedClient;
+
+export function deterministicSeedUuid(value: string) {
+  const hex = createHash("md5").update(value).digest("hex");
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    hex.slice(12, 16),
+    hex.slice(16, 20),
+    hex.slice(20),
+  ].join("-");
+}
 
 export type MovementPattern = "push" | "pull" | "squat" | "hinge" | "lunge" | "carry" | "core";
 export type ExerciseType = "weighted" | "bodyweight" | "timed";
@@ -1258,7 +1271,14 @@ async function seedPrograms() {
       const { error } = await db.from("programs").update(programValues).eq("id", programId);
       if (error) throw new Error(`program update (${prog.name}): ${error.message}`);
     } else {
-      const { data, error } = await db.from("programs").insert(programValues).select("id").single();
+      const { data, error } = await db
+        .from("programs")
+        .insert({
+          id: deterministicSeedUuid(`arco:system-program:${prog.slug}`),
+          ...programValues,
+        })
+        .select("id")
+        .single();
       if (error || !data) throw new Error(`program insert (${prog.name}): ${error?.message}`);
       programId = data.id;
     }
@@ -1288,7 +1308,12 @@ async function seedPrograms() {
       } else {
         const { data, error } = await db
           .from("program_days")
-          .insert({ program_id: programId, label: day.label, position: dIdx })
+          .insert({
+            id: deterministicSeedUuid(`arco:system-program-day:${prog.slug}:${dIdx}`),
+            program_id: programId,
+            label: day.label,
+            position: dIdx,
+          })
           .select("id")
           .single();
         if (error || !data) throw new Error(`day insert (${day.label}): ${error?.message}`);
@@ -1327,7 +1352,12 @@ async function seedPrograms() {
         const slotId = slotsByPosition.get(sIdx)?.id;
         const { error } = slotId
           ? await db.from("program_day_slots").update(slotValues).eq("id", slotId)
-          : await db.from("program_day_slots").insert(slotValues);
+          : await db.from("program_day_slots").insert({
+              id: deterministicSeedUuid(
+                `arco:system-program-slot:${prog.slug}:${dIdx}:${sIdx}`,
+              ),
+              ...slotValues,
+            });
         if (error) throw new Error(`slot sync (${prog.name} / ${day.label} / ${sIdx}): ${error.message}`);
       }
     }
@@ -1341,6 +1371,109 @@ async function seedPrograms() {
       `⚠ pominięto ${stalePrograms.length} starych programów systemowych — safe seed nigdy nie usuwa danych automatycznie`,
     );
   }
+}
+
+async function seedProgramAlternatives() {
+  const programSlugs = [...new Set(
+    PLANNED_PROGRAM_ALTERNATIVES.map((alternative) => alternative.programSlug),
+  )];
+  const { data: programs, error: programsError } = await db
+    .from("programs")
+    .select("id, slug")
+    .is("user_id", null)
+    .in("slug", programSlugs);
+  if (programsError) {
+    throw new Error(`program alternatives / programs select: ${programsError.message}`);
+  }
+
+  const programById = new Map(
+    (programs ?? []).map((program) => [program.id, program.slug as string]),
+  );
+  const programIds = [...programById.keys()];
+  const { data: days, error: daysError } = await db
+    .from("program_days")
+    .select("id, program_id, label")
+    .in("program_id", programIds);
+  if (daysError) {
+    throw new Error(`program alternatives / days select: ${daysError.message}`);
+  }
+
+  const dayById = new Map(
+    (days ?? []).map((day) => [
+      day.id,
+      {
+        programSlug: programById.get(day.program_id),
+        label: day.label as string,
+      },
+    ]),
+  );
+  const dayIds = [...dayById.keys()];
+  const { data: slots, error: slotsError } = await db
+    .from("program_day_slots")
+    .select("id, program_day_id, default_exercise_id")
+    .in("program_day_id", dayIds);
+  if (slotsError) {
+    throw new Error(`program alternatives / slots select: ${slotsError.message}`);
+  }
+
+  const slotsBySource = new Map<string, string[]>();
+  for (const slot of slots ?? []) {
+    const day = dayById.get(slot.program_day_id);
+    if (!day?.programSlug) continue;
+    const key = [day.programSlug, day.label, slot.default_exercise_id].join("\u0000");
+    slotsBySource.set(key, [...(slotsBySource.get(key) ?? []), slot.id]);
+  }
+
+  const rows = PLANNED_PROGRAM_ALTERNATIVES.map((alternative) => {
+    const sourceKey = [
+      alternative.programSlug,
+      alternative.dayLabel,
+      alternative.defaultExerciseId,
+    ].join("\u0000");
+    const matchingSlots = slotsBySource.get(sourceKey) ?? [];
+    if (matchingSlots.length !== 1) {
+      throw new Error(
+        `SANITY: alternatywa ${sourceKey.replaceAll("\u0000", " / ")} wskazuje ${matchingSlots.length} slotów.`,
+      );
+    }
+    const slotId = matchingSlots[0];
+    return {
+      id: deterministicSeedUuid(
+        `arco:program-slot-alternative:${slotId}:${alternative.alternativeExerciseId}`,
+      ),
+      program_day_slot_id: slotId,
+      alternative_exercise_id: alternative.alternativeExerciseId,
+      position: 0,
+      missing_equipment: alternative.missingEquipment,
+      alternative_equipment: alternative.alternativeEquipment,
+      pattern_coverage: alternative.patternCoverage,
+      note_pl: alternative.notePl,
+      content_version: 1,
+      updated_at: new Date().toISOString(),
+    };
+  });
+
+  const { error: upsertError } = await db
+    .from("program_slot_alternatives")
+    .upsert(rows, { onConflict: "program_day_slot_id,alternative_exercise_id" });
+  if (upsertError) {
+    throw new Error(`program alternatives upsert: ${upsertError.message}`);
+  }
+
+  const { count, error: countError } = await db
+    .from("program_slot_alternatives")
+    .select("id", { count: "exact", head: true })
+    .in("id", rows.map((row) => row.id));
+  if (countError) {
+    throw new Error(`program alternatives count: ${countError.message}`);
+  }
+  if (count !== rows.length) {
+    throw new Error(
+      `SANITY: zapisano ${count ?? 0}/${rows.length} wersjonowanych alternatyw programów.`,
+    );
+  }
+
+  console.log(`✓ program alternatives: ${rows.length} ścieżek`);
 }
 
 async function sanityCheck() {
@@ -1377,6 +1510,7 @@ async function main() {
   console.log("Seeding Arco…");
   await seedExercises();
   await seedPrograms();
+  await seedProgramAlternatives();
   await sanityCheck();
   const activeProgramsAfter = await getActiveProgramSnapshot();
   if (activeProgramsAfter !== activeProgramsBefore) {
