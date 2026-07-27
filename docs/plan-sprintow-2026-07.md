@@ -298,17 +298,17 @@ sprzętowej wchodzą w PLAN-Q, ale nowe marketingowe profile biblioteki czekają
 
 **Czas:** 6–7 dni implementacji R4 + 3–4 dni CORE-1 + dwa osobne checkpointy regresji PWA.
 
-**Kolejność wykonawcza:** R4A (pętla serii; gotowe technicznie 2026-07-27) → R4B (pierwsza sesja) → R4C
+**Kolejność wykonawcza:** R4A (pętla serii; wdrożone 2026-07-27) → R4B (pierwsza sesja) → R4C
 (finish, własny trening i podmiana) → R4D (Historia/backfill) → CORE-1 (minimalny
 wiarygodny silnik) → R4E (wartość drugiego treningu). Szczegółowy, agent-ready kontrakt
 i Definition of Done są w `spec-r4-logger.md`. R4A zaczyna się po CORE-0; R2.2 nadal
 wchodzi po checkpointcie R4A.
 
-**Stan R4A:** implementacja jest gotowa na `agent/r4a-logger`. Obejmuje aktywną serię,
+**Stan R4A:** wdrożone produkcyjnie przez PR #23. Obejmuje aktywną serię,
 jawne CTA „Zalicz”/„Zapisz zmianę”, logiczny fokus, przejście między ćwiczeniami,
 nieblokujący timer i odtworzenie kontekstu po minimalizacji lub reloadzie. Automatyczna
-bramka 320/375/393 px jest zielona; do zamknięcia etapu pozostaje release i checkpoint
-starego Service Workera/iPhone PWA.
+bramka 320/375/393 px i pełne CI są zielone. Checkpoint starego Service Workera/iPhone PWA
+pozostaje w macierzy urządzeniowej i nie blokuje SESSION-01A.
 
 ### R4.1 — prowadzenie serii
 

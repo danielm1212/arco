@@ -22,7 +22,7 @@
 
 ## Ostatnie wpisy
 
-### 2026-07-27 · Codex · R4A — AKTYWNA SERIA I CIĄGŁOŚĆ: GOTOWE TECHNICZNIE
+### 2026-07-27 · Codex · R4A — AKTYWNA SERIA I CIĄGŁOŚĆ: WDROŻONE
 
 - **Zakres:** jawne stany `draft/ready/completed/edited/resting/minimized/finishing`,
   aktywny wiersz i fokus kg → powtórzenia → „Zalicz”, przejście między ćwiczeniami,
@@ -33,8 +33,10 @@
 - **Dowód:** lint i TypeScript czyste, build produkcyjny zielony, unit **146/146**,
   przeglądarkowe overflow/BottomSheet **25/25** dla 320/375/393 px; brak błędów
   hydracji po świeżym wejściu do sesji.
-- **Produkcja:** jeszcze nietknięta; gałąź `agent/r4a-logger` czeka na PR/CI/release.
-- **Następny krok:** release R4A i checkpoint PWA, potem SESSION-01A → PLAN-Q.
+- **Produkcja:** PR [#23](https://github.com/danielm1212/arco/pull/23) scalony jako
+  `53be049`; Vercel i ponowne pełne CI na `main` zielone. Szczegół:
+  `r4a-release-2026-07-27.md`.
+- **Następny krok:** checkpoint starego cache/iPhone PWA, potem SESSION-01A → PLAN-Q.
 
 ### 2026-07-27 · Codex · CORE-0 — KONTROLA PRODUKCJI + FIX HYDRATACJI
 
