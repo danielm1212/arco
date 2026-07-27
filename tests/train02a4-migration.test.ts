@@ -17,8 +17,15 @@ const alternativesContractPath = fileURLToPath(
     import.meta.url,
   ),
 );
+const requiredExercisesPath = fileURLToPath(
+  new URL(
+    "../supabase/migrations/20260727134000_train02a4_required_exercises.sql",
+    import.meta.url,
+  ),
+);
 const pointSyncSql = readFileSync(pointSyncPath, "utf8");
 const alternativesContractSql = readFileSync(alternativesContractPath, "utf8");
+const requiredExercisesSql = readFileSync(requiredExercisesPath, "utf8");
 
 const targetSlugs = new Set([
   "beginner-gym-fbw2",
@@ -98,4 +105,13 @@ test("minimalny kontrakt alternatyw ma FK, RLS i write policy tylko dla właści
     alternativesContractSql,
     /grant all\s+on public\.program_slot_alternatives\s+to service_role/,
   );
+});
+
+test("SQL prerequisite uzupełnia punktowo dwa brakujące ćwiczenia bez service_role", () => {
+  assert.match(requiredExercisesSql, /'Band_Lat_Pulldown'/);
+  assert.match(requiredExercisesSql, /'Single_Leg_Calf_Raise'/);
+  assert.match(requiredExercisesSql, /on conflict \(id\)/);
+  assert.match(requiredExercisesSql, /where public\.exercises\.user_id is null/);
+  assert.match(requiredExercisesSql, /if not exists \(select 1 from public\.exercises\)/);
+  assert.doesNotMatch(requiredExercisesSql, /SUPABASE_SERVICE_ROLE_KEY/);
 });
