@@ -91,11 +91,18 @@ całym wierszu, podczas gdy pola miały własne kryjące wypełnienie i 8 px szc
 Zieleń przebijała wyłącznie w przerwach i przy zaokrągleniach rogów, co wyglądało na
 usterkę renderowania, nie na stan. Stąd wersja z jedną taflą.
 
-**Fokus po usunięciu serii.** Pierwsza implementacja trzymała referencję do sąsiedniego
-`<li>`. React potrafi odtworzyć element zamiast go przenieść, a `focus()` na węźle
-odpiętym od dokumentu cicho nie robi nic — fokus zostawał na `<body>`. Poprawka trzyma
-pozycję i odpytuje DOM dopiero w momencie fokusowania. Błąd wykrył test dodany w tej
-samej sesji; lint, TypeScript i testy jednostkowe go nie widziały.
+**Fokus po usunięciu serii — dwa podejścia i wyścig z Reactem.** Pierwsza implementacja
+przenosiła fokus po `onDelete()`, w `requestAnimationFrame`, trzymając referencję do
+sąsiedniego `<li>`; `focus()` na węźle odpiętym od dokumentu cicho nic nie robi i fokus
+zostawał na `<body>`. Druga wersja zapamiętywała pozycję zamiast referencji — przechodziła
+lokalnie, ale padła na CI, bo tam commit Reacta następował **po** klatce i wyszukiwanie
+po pozycji trafiało w wiersz, który zaraz znikał.
+
+Wersja końcowa przenosi fokus **synchronicznie, przed usunięciem**. Sąsiedni wiersz
+i „+ seria" przeżywają operację, a klucz `set.id` gwarantuje ten sam węzeł DOM po
+rerenderze, więc nie ma czego przegrać. Oba warianty błędu wykrył ten sam test dodany
+w tej sesji — pierwszy lokalnie, drugi dopiero na CI; lint, TypeScript i testy
+jednostkowe nie widziały żadnego.
 
 ## Walidacja
 
@@ -104,7 +111,9 @@ samej sesji; lint, TypeScript i testy jednostkowe go nie widziały.
 - testy przeglądarkowe: 29/29 na 320, 375 i 393 px;
 - build produkcyjny: zielony;
 - walidator treści: 907 ćwiczeń / 15 programów, 17 placeholderów mediów w 54 slotach;
-- rekomendacje: 60/60 profili.
+- rekomendacje: 60/60 profili;
+- CI na PR [#27](https://github.com/danielm1212/arco/pull/27): oba joby „Jakość" zielone,
+  Vercel Preview wdrożony.
 
 Trzy nowe testy przeglądarkowe montują **prawdziwy** `SetRow` (nie makietę klas): tap
 kopiujący poprzedni wynik wraz z zaznaczeniem, nawigacja klawiaturą po menu serii oraz
