@@ -190,7 +190,13 @@ export const SetRow = memo(function SetRow({
       aria-current={active ? "step" : undefined}
       className={`relative flex flex-wrap items-center gap-xs rounded-md transition-colors ${
         isPr ? "animate-pulse-once bg-primary/10 ring-1 ring-inset ring-primary/40" : ""
-      } ${active ? "bg-secondary/60" : ""}`}
+      } ${
+        active
+          ? "bg-secondary/60"
+          : set.completed
+            ? "bg-success/10"
+            : ""
+      }`}
     >
       {/* Numer otwiera rzadkie akcje zamiast stale pokazywać przełącznik i „usuń". */}
       <button
