@@ -22,6 +22,34 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-27 · Claude · SEC-04 — odblokowanie bramki `npm audit` (postcss, brace-expansion): ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `package.json` (`overrides` + podbicie devDependency `postcss`), `package-lock.json`.
+  Gałąź `agent/sec-audit-postcss-brace-expansion` z czystego `main`. Zero zmian w kodzie apki.
+- **Powód:** dwa świeże advisory wysypały krok „Sprawdź podatności produkcyjnych zależności"
+  w jobie **Jakość / Kod i treść**, blokując KAŻDY PR (nie tylko bieżący — `main` ma te same
+  zależności): `postcss` ≤8.5.17 (path traversal przy auto-ładowaniu source map) i
+  `brace-expansion` ≤5.0.7 (DoS przez nieograniczoną ekspansję).
+- **Diagnoza:** override `postcss` istniał, ale był zagnieżdżony **tylko pod `next`** — Tailwind
+  ciągnął własny, niezałatany egzemplarz (8.5.16). `brace-expansion` wchodzi produkcyjnie przez
+  `@serwist/next` → `glob` → `minimatch`.
+- **Dwie ślepe uliczki po drodze (zapisane, żeby nikt nie powtórzył):**
+  1. globalny override `"postcss": "8.5.23"` → `npm error EOVERRIDE` (kolizja z bezpośrednią
+     devDependency). Rozwiązanie: podbić bezpośrednią zależność do `^8.5.23` i użyć wzorca
+     npm `"postcss": "$postcss"`;
+  2. globalny override `"brace-expansion": "5.0.8"` **zepsuł ESLint** (`TypeError: expand is not
+     a function`) — `@eslint/config-array` używa minimatch v3, który woła `expand()` jako
+     funkcję, a v5 eksportuje obiekt. Rozwiązanie: **zawęzić override do podrzewa
+     `@serwist/next`**, czyli dokładnie tam, gdzie siedzi podatna ścieżka produkcyjna.
+- **Dowód:** `npm audit --omit=dev` → **0 podatności** (to jest bramka CI); `npm run lint` czysty
+  (po zawężeniu overrideu); `test:unit` 117/117; `npm run build` zielony. Wersje potwierdzone:
+  `postcss@8.5.23` we wszystkich gałęziach, `brace-expansion@5.0.8 overridden` pod serwistem.
+- **Świadomie NIE naprawione:** pełny `npm audit` (z dev) nadal pokazuje 9 high w łańcuchu
+  `eslint-config-next` → `eslint-plugin-react` → `minimatch`. To zależności **deweloperskie**,
+  bramką CI jest `--omit=dev`, a naprawa wymaga `npm audit fix --force` (zmiany łamiące w
+  toolingu lintu). Osobna decyzja, nie doklejam jej do odblokowania bramki.
+- **Stan:** scalone do `main` jako PR #18.
+
 ### 2026-07-27 · Claude · MOMENT-01 — confetti po rekordzie: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `lib/confetti.ts` (model cząstki, czysta funkcja z wstrzykiwanym RNG),
