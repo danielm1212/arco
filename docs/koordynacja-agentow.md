@@ -22,7 +22,7 @@
 
 ## Ostatnie wpisy
 
-### 2026-07-24 · Claude · MOMENT-01 — confetti po rekordzie: ZAKOŃCZONE TECHNICZNIE
+### 2026-07-27 · Claude · MOMENT-01 — confetti po rekordzie: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `lib/confetti.ts` (model cząstki, czysta funkcja z wstrzykiwanym RNG),
   `app/session/[id]/done/PrConfetti.tsx` (komponent kliencki), `app/globals.css` (keyframes

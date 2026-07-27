@@ -399,7 +399,7 @@
 
 /* ── MOMENT-01 · wystrzał konfetti po rekordzie (done-screen) ────────────────
    Barwy: rust + violet + amber. To ŚWIADOMY wyjątek od reguły v1.4 „violet nie
-   miesza się z rust w jednym komponencie" (decyzja [Ty] 2026-07-24, zapisana w
+   miesza się z rust w jednym komponencie" (decyzja [Ty] 2026-07-27, zapisana w
    decyzje-produktowe.md D-20): reguła pilnuje warstwy NARZĘDZIA, a to jest
    moment. W dark schodzimy o stopień jaśniej, żeby papierki nie ciążyły na
    ciemnym canvasie. */
