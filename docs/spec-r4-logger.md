@@ -1,7 +1,7 @@
 # R4 — refinement loggera i Historii
 
-**Status:** gotowe do podjęcia
-**Aktualizacja:** 2026-07-21
+**Status:** R4A gotowe technicznie; R4B–R4E oczekują na swoje bramki
+**Aktualizacja:** 2026-07-27
 **Źródło decyzji:** `wizja-i-strategia-v3.md`, `userflows-docelowe-2026-07.md`,
 `decyzje-produktowe.md`, `audyt-core-i-plan-2026-07.md`, `spec-plan-q-biblioteka-treningow.md`,
 audyt klikalnego POC z 2026-07-21.
@@ -50,6 +50,9 @@ R4. To są dni testowe, a nie „ukryty” czas implementacji.
 ## R4A — aktywna seria i ciągłość treningu
 
 **Mapowanie:** LOG-01 oraz techniczne doprecyzowanie istniejącego rdzenia loggera.
+
+**Stan 2026-07-27:** implementacja i lokalna bramka automatyczna zakończone. Pozostaje
+release oraz checkpoint starego Service Workera/iPhone PWA przed formalnym zamknięciem etapu.
 
 **Wynik użytkownika:** po każdej serii bez zastanawiania wie, co zrobić dalej,
 a dane nie zapisują się przypadkiem.

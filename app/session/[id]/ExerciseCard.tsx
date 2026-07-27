@@ -41,6 +41,9 @@ export interface ExerciseCardProps {
   rpeOn: boolean;
   /** setId → pobity rep-PR w tej sesji (badge). Comparator porównuje tylko wpisy tego ćwiczenia. */
   prSets: Record<string, boolean>;
+  activeSetId: string | null;
+  focusSetId: string | null;
+  editedSetIds: Record<string, boolean>;
   /** R6b: nazwy+grupy wszystkich ćwiczeń sesji (picker "Połącz w superset") — referencyjnie
    *  stabilne między toggle'ami serii, patrz komentarz w Logger.tsx przy useMemo. */
   exerciseSummaries: { id: string; name: string; group: number | null }[];
@@ -58,6 +61,8 @@ export interface ExerciseCardProps {
   onAddSet: (ex: LoggerExercise) => void;
   onToggleRpe: (seId: string) => void;
   onToggleSet: (ex: LoggerExercise, set: SessionSet) => void;
+  onActivateSet: (setId: string) => void;
+  onSaveEditedSet: (ex: LoggerExercise, set: SessionSet) => void;
   onTimedComplete: (ex: LoggerExercise, set: SessionSet, seconds: number) => void;
   onPatchSet: (seId: string, setId: string, patch: Partial<SessionSet>) => void;
   onPersistSet: (setId: string, patch: Partial<SessionSet>) => void;
@@ -83,6 +88,9 @@ export const ExerciseCard = memo(function ExerciseCard({
   noteOpen,
   rpeOn,
   prSets,
+  activeSetId,
+  focusSetId,
+  editedSetIds,
   exerciseSummaries,
   onToggleSwap,
   onCloseSwap,
@@ -97,6 +105,8 @@ export const ExerciseCard = memo(function ExerciseCard({
   onAddSet,
   onToggleRpe,
   onToggleSet,
+  onActivateSet,
+  onSaveEditedSet,
   onTimedComplete,
   onPatchSet,
   onPersistSet,
@@ -246,9 +256,8 @@ export const ExerciseCard = memo(function ExerciseCard({
                 </>
               )}
               {ex.type !== "timed" && rpeOn && <span className="w-16 text-center">RPE</span>}
-              {/* w-11+w-11 = dokładna szerokość ✓/✕ w SetRow (R3: oba 44×44 — nagłówek
-                  KG/POWT. musi celować w środek pól, feedback 2026-07-11) */}
-              <span className="w-11 shrink-0" />
+              {/* Pierwszy rząd SetRow kończy 44 px akcja usunięcia. Tekstowe CTA
+                  zaliczenia ma własny pełny wiersz, żeby pola nie zwężały się na 320 px. */}
               <span className="w-11 shrink-0" />
             </div>
           )}
@@ -266,9 +275,14 @@ export const ExerciseCard = memo(function ExerciseCard({
                 unit={unit}
                 showRpe={rpeOn}
                 isPr={!!prSets[set.id]}
+                active={activeSetId === set.id}
+                focusRequested={focusSetId === set.id}
+                edited={!!editedSetIds[set.id]}
                 onPatch={(patch) => onPatchSet(ex.sessionExerciseId, set.id, patch)}
                 onPersist={(patch) => onPersistSet(set.id, patch)}
                 onToggle={() => onToggleSet(ex, set)}
+                onActivate={() => onActivateSet(set.id)}
+                onSaveEdit={() => onSaveEditedSet(ex, set)}
                 onDelete={() => onDeleteSet(ex.sessionExerciseId, set.id)}
                 onTimedComplete={(sec) => onTimedComplete(ex, set, sec)}
               />
@@ -295,6 +309,12 @@ export const ExerciseCard = memo(function ExerciseCard({
   prev.swapOpen === next.swapOpen &&
   prev.noteOpen === next.noteOpen &&
   prev.rpeOn === next.rpeOn &&
+  prev.activeSetId === next.activeSetId &&
+  prev.focusSetId === next.focusSetId &&
   prev.exerciseSummaries === next.exerciseSummaries &&
   // PR-y: porównaj tylko wpisy dotyczące serii TEGO ćwiczenia
-  next.ex.sets.every((s) => prev.prSets[s.id] === next.prSets[s.id]));
+  next.ex.sets.every(
+    (s) =>
+      prev.prSets[s.id] === next.prSets[s.id] &&
+      prev.editedSetIds[s.id] === next.editedSetIds[s.id],
+  ));

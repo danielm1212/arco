@@ -4,7 +4,7 @@
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
+**Najbliższy etap:** domknięcie release'u R4A → SESSION-01A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
@@ -85,6 +85,12 @@ koordynacji (2026-07-23).
   kwalifikowane fakty, kanoniczne kg oraz odporny outbox przeszły kontrolę danych i smoke.
   Follow-up usuwa znaleziony przy smoke błąd hydratacji daty Historii. Pełny ślad:
   `core-0-release-2026-07-27.md`.
+- **R4A — gotowe technicznie na `agent/r4a-logger`:** logger ma jawne stany serii i sesji,
+  aktywny wiersz, logiczny fokus kg → powtórzenia → „Zalicz”, przejście między ćwiczeniami,
+  osobny zapis korekty zaliczonej serii oraz trwałe odtworzenie szkicu, timera, aktywnego
+  wiersza i scrolla po minimalizacji lub przeładowaniu. Timer nie blokuje dalszego wpisywania.
+  Bramka lokalna: lint, TypeScript, build, 146/146 unit i 25/25 testów przeglądarkowych;
+  bezpośredni reload produkcyjnego buildu nie zgłasza błędu hydracji.
 
 ### Częściowe i szczegóły wdrożeń
 
@@ -96,8 +102,9 @@ koordynacji (2026-07-23).
   pary.
 - **R3b:** istnieje dużo v0, ale hub nie ma jeszcze trwałego ostatniego wyboru, unread na tabie,
   jednego kontekstowego zdarzenia Home i finalnego dogfoodu dwóch kont.
-- **R4:** rdzeń loggera, edycji i backfillu działa. Brakuje prowadzenia pierwszej sesji,
-  wyróżnienia zaliczenia serii, CTA finish na dole, zapisu własnej sesji jako programu,
+- **R4:** R4A domyka aktywną serię, jawne zaliczenie/korektę, logiczny fokus i ciągłość
+  timera/szkicu. Brakuje prowadzenia pierwszej sesji,
+  CTA finish na dole, zapisu własnej sesji jako programu,
   pełnoekranowych mediów i części zachowania scrolla/kontekstu Historii.
 - **R5b:** brakuje pełnego focus trapu/zwrotu fokusu, radiogroup oraz pełnej macierzy Android.
 - **TRUST-03:** scalone do `main` i wdrożone: wspólny scroll-lock nie restartuje
@@ -207,8 +214,8 @@ koordynacji (2026-07-23).
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
 3. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
-4. R4A → SESSION-01A: prowadzenie loggera i mała, opcjonalna rekomendacja
-   rozgrzewki/zakończenia bez wpływu na ukończenie treningu.
+4. Dokończyć release R4A i checkpoint starego cache/iPhone PWA; następnie SESSION-01A:
+   mała, opcjonalna rekomendacja rozgrzewki/zakończenia bez wpływu na ukończenie treningu.
 5. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
 6. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.

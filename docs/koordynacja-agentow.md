@@ -22,6 +22,20 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-27 · Codex · R4A — AKTYWNA SERIA I CIĄGŁOŚĆ: GOTOWE TECHNICZNIE
+
+- **Zakres:** jawne stany `draft/ready/completed/edited/resting/minimized/finishing`,
+  aktywny wiersz i fokus kg → powtórzenia → „Zalicz”, przejście między ćwiczeniami,
+  jawny zapis korekty oraz odtworzenie szkicu, timera, aktywnej serii i scrolla.
+- **Dogfood:** nowe konto QA, własna sesja z dwoma ćwiczeniami i pięcioma seriami;
+  potwierdzone zaliczenie, brak autozapisu po blurze, korekta, timer, minimalizacja,
+  wznowienie i bezpośredni reload. Konto pozostaje wyłącznie do dalszej regresji R4.
+- **Dowód:** lint i TypeScript czyste, build produkcyjny zielony, unit **146/146**,
+  przeglądarkowe overflow/BottomSheet **25/25** dla 320/375/393 px; brak błędów
+  hydracji po świeżym wejściu do sesji.
+- **Produkcja:** jeszcze nietknięta; gałąź `agent/r4a-logger` czeka na PR/CI/release.
+- **Następny krok:** release R4A i checkpoint PWA, potem SESSION-01A → PLAN-Q.
+
 ### 2026-07-27 · Codex · CORE-0 — KONTROLA PRODUKCJI + FIX HYDRATACJI
 
 - **Stan:** kod PR #19 i cztery migracje CORE-0 są na produkcji; ponowny push nie był potrzebny.

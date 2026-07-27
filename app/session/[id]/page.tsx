@@ -106,7 +106,11 @@ export default async function SessionPage(props: { params: Promise<{ id: string 
         isFinished={!!session.finished_at}
         startedAt={session.started_at}
         isHistorical={session.is_historical}
-        recordedDurationSeconds={session.recorded_duration_seconds}
+        initialElapsedSeconds={
+          session.is_historical && session.recorded_duration_seconds != null
+            ? session.recorded_duration_seconds
+            : null
+        }
         unit={settings?.unit_system ?? "kg"}
         defaultRest={settings?.default_rest_seconds ?? 120}
         trainingPriority={settings?.training_priority ?? "general_fitness"}
