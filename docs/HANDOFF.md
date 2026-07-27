@@ -93,14 +93,16 @@ koordynacji (2026-07-23).
   Bramka lokalna i CI: lint, TypeScript, build, 146/146 unit, 25/25 testów
   przeglądarkowych oraz pełny smoke bazy/offline/Ekipy; bezpośredni reload buildu nie zgłasza
   błędu hydracji. Pełny ślad: `r4a-release-2026-07-27.md`.
-- **SESSION-01A — gotowe technicznie:** logger pokazuje pomijalne przygotowanie po bezruchu
+- **SESSION-01A — wdrożone produkcyjnie w PR [#25](https://github.com/danielm1212/arco/pull/25):**
+  logger pokazuje pomijalne przygotowanie po bezruchu
   oraz rekomenduje 2 lekkie serie przed pierwszym ciężkim/power/skill wzorcem i 1 serię przed
   kolejnym nowym wzorcem. Serie można dodać jednym CTA jako `warmup`; nie liczą się do
   ukończenia, objętości, Historii, rekordów ani progresji. Done ma zwinięte, opcjonalne
   2–5 min spokojnego zakończenia bez obietnic regeneracji. Dogfood potwierdził zapis,
   reload i odzyskanie szkicu bez błędu hydracji; bramka: lint, TypeScript, build,
   158/158 unit, 26/26 testów przeglądarkowych i walidatory 907/15/308 oraz 60/60.
-  Czeka wyłącznie PR/CI/deploy i checkpoint urządzeniowy [Ty].
+  CI PR oraz ponowne CI `main` są zielone, Vercel wdrożył `47f48ae`, a publiczny login
+  po przeładowaniu nie zgłasza błędów. Pozostaje checkpoint urządzeniowy [Ty].
 
 ### Częściowe i szczegóły wdrożeń
 
@@ -224,8 +226,8 @@ koordynacji (2026-07-23).
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
 3. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
-4. [Ty] checkpoint starego cache/iPhone PWA dla R4A i SESSION-01A; kandydat SESSION-01A
-   czeka na PR/CI/deploy, a fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
+4. [Ty] checkpoint starego cache/iPhone PWA dla R4A i SESSION-01A; fizyczna regresja
+   nie blokuje rozpoczęcia PLAN-Q.
 5. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
 6. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.

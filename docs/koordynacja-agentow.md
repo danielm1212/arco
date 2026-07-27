@@ -18,9 +18,31 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
-| Codex | SESSION-01A | logger, Done, semantyka `warmup`, testy i dokumentacja | 2026-07-27 | w toku |
 
 ## Ostatnie wpisy
+
+### 2026-07-27 · Codex · SESSION-01A — PRZYGOTOWANIE I ZAKOŃCZENIE: WDROŻONE
+
+- **Zakres:** opcjonalne przygotowanie po bezruchu, 2 lekkie serie przed pierwszym
+  ciężkim/power/skill wzorcem i 1 seria przed kolejnym nowym wzorcem, CTA tworzące
+  `warmup`, poprawna numeracja/fokus oraz zwinięte, spokojne zakończenie na Done.
+- **Semantyka:** `warmup` nie liczy się do ukończenia, objętości, Historii, progresji,
+  rekordów ani serwerowego finish guardu. Brak nowego schematu i migracji; SESSION-01B
+  pozostaje poza zakresem.
+- **Dogfood:** konto QA i znana sesja `4bbf32bf-8da9-468e-a113-f9368a731125`; potwierdzone
+  dodanie, kolejność W → 1/2/3, fokus, zapis oraz natychmiastowy reload z odzyskaniem
+  szkicu. Test odkrył rozjazd hydracji liczników outboxa — poprawiony i ponownie
+  zweryfikowany bez błędów konsoli. Dwie serie testowe `warmup` usunięto punktowo przez UI;
+  konto i otwarta sesja pozostają zgodnie z wcześniejszym kontraktem regresji R4A.
+- **Dowód:** lint i TypeScript czyste; build zielony; unit **158/158**; przeglądarkowe
+  **26/26** na 320/375/393 px; katalog **907/15/308**; rekomendacje **60/60**.
+- **Produkcja:** PR [#25](https://github.com/danielm1212/arco/pull/25) scalony jako
+  `47f48ae`; Vercel oraz oba joby „Jakość” na PR i `main` zielone. Publiczny login
+  po przeładowaniu renderuje się bez błędów konsoli. Brak mutacji danych produkcyjnych.
+- **Czego nie dotknięto:** trzech cudzych, nieśledzonych plików dokumentacyjnych, migracji,
+  seeda, planów, SESSION-01B oraz danych innych kont.
+- **Zaległości:** [Ty] checkpoint iPhone PWA/Safari i starego Service Workera; kolejny
+  zakres produktu to PLAN-Q.
 
 ### 2026-07-27 · Codex · R4A — AKTYWNA SERIA I CIĄGŁOŚĆ: WDROŻONE
 
