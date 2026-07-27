@@ -296,7 +296,14 @@ export const ExerciseCard = memo(function ExerciseCard({
           </ul>
 
           {/* RPE toggle przeniesiony do ⋯ (R1) — tu tylko "+ seria", pełna szerokość */}
-          <Button variant="ghost" size="sm" className="min-h-11 w-full" onClick={() => onAddSet(ex)}>
+          {/* data-add-set: cel fokusu po usunięciu ostatniej serii (SetRow.deleteSet) */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="min-h-11 w-full"
+            data-add-set
+            onClick={() => onAddSet(ex)}
+          >
             + seria
           </Button>
         </>

@@ -25,6 +25,7 @@ const SAFE_AREA = "47px"; // wymuszona wartość notcha (headless zwraca 0)
 
 let cssCache: string | null = null;
 let bottomSheetBundleCache: string | null = null;
+let setRowBundleCache: string | null = null;
 function builtCss(): string {
   if (cssCache !== null) return cssCache;
   let files: string[];
@@ -268,6 +269,179 @@ test("SESSION-01A2: regulowane timery mieszczą się na 320/375/393 px i zachowu
     } finally {
       await ctx.close();
     }
+  }
+});
+
+// Harness montuje PRAWDZIWY SetRow (nie makietę klas jak testy layoutu wyżej),
+// bo prefill z poprzedniej sesji i klawiatura menu to zachowanie, którego statyczny
+// HTML nie sprawdzi, a lint/tsc/unit nie mają jak wykryć.
+async function setRowBundle(): Promise<string> {
+  if (setRowBundleCache !== null) return setRowBundleCache;
+
+  const result = await build({
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    write: false,
+    absWorkingDir: ROOT,
+    stdin: {
+      loader: "tsx",
+      resolveDir: ROOT,
+      sourcefile: "session01a2-set-row-harness.tsx",
+      contents: `
+        import React, { useState } from "react";
+        import { createRoot } from "react-dom/client";
+        import { SetRow } from "./app/session/[id]/SetRow";
+
+        const PREV = { set_index: 1, weight: 60, reps: 8, duration_seconds: null, added_weight: null };
+        const makeSet = (id, index) => ({
+          id,
+          session_exercise_id: "se-1",
+          set_index: index,
+          set_type: "working",
+          weight: null,
+          reps: null,
+          duration_seconds: null,
+          added_weight: null,
+          rpe: null,
+          completed: false,
+        });
+
+        function Harness() {
+          const [sets, setSets] = useState([makeSet("s1", 1), makeSet("s2", 2)]);
+          const [activeId, setActiveId] = useState(null);
+
+          return <main className="mx-auto max-w-md p-md">
+            <ul className="space-y-xs">
+              {sets.map((set, i) => (
+                <SetRow
+                  key={set.id}
+                  index={i + 1}
+                  set={set}
+                  prev={PREV}
+                  type="weighted"
+                  unit="kg"
+                  active={activeId === set.id}
+                  onPatch={(patch) =>
+                    setSets((all) => all.map((s) => (s.id === set.id ? { ...s, ...patch } : s)))
+                  }
+                  onPersist={() => {}}
+                  onToggle={() =>
+                    setSets((all) =>
+                      all.map((s) => (s.id === set.id ? { ...s, completed: !s.completed } : s)),
+                    )
+                  }
+                  onActivate={() => setActiveId(set.id)}
+                  onSaveEdit={() => {}}
+                  onDelete={() => setSets((all) => all.filter((s) => s.id !== set.id))}
+                />
+              ))}
+            </ul>
+            <button type="button" data-add-set>+ seria</button>
+          </main>;
+        }
+
+        createRoot(document.getElementById("root")).render(<Harness />);
+      `,
+    },
+  });
+
+  setRowBundleCache = result.outputFiles[0]?.text ?? null;
+  assert.ok(setRowBundleCache, "esbuild nie zwrócił bundla harnessu SetRow");
+  return setRowBundleCache;
+}
+
+async function setRowPage(): Promise<{ context: Awaited<ReturnType<Browser["newContext"]>>; page: Page }> {
+  const context = await browser.newContext({ viewport: VIEWPORT });
+  const page = await context.newPage();
+  await page.setContent(pageHtml('<div id="root"></div>'), { waitUntil: "load" });
+  await page.addScriptTag({ content: await setRowBundle() });
+  await page.getByRole("button", { name: "Opcje serii 1" }).waitFor();
+  return { context, page };
+}
+
+test("SESSION-01A2: tap w puste pole kopiuje poprzedni wynik i zaznacza go", async () => {
+  const { context, page } = await setRowPage();
+  try {
+    const weight = page.locator("input").first();
+    await weight.click();
+
+    assert.equal(await weight.inputValue(), "60", "pole nie przejęło wagi z poprzedniej sesji");
+    const selected = await weight.evaluate(
+      (el: HTMLInputElement) => el.value.slice(el.selectionStart ?? 0, el.selectionEnd ?? 0),
+    );
+    assert.equal(selected, "60", "skopiowana wartość nie jest zaznaczona");
+
+    // Sedno kompromisu: podpowiedź nie może kosztować nic w cięższej sesji.
+    await page.keyboard.type("65");
+    assert.equal(await weight.inputValue(), "65", "wpisanie innej liczby nie zastąpiło podpowiedzi");
+
+    // Powrót do pola z treścią niczego nie nadpisuje.
+    await page.locator("input").nth(1).click();
+    await weight.click();
+    assert.equal(await weight.inputValue(), "65", "ponowny tap nadpisał wpisaną wartość");
+  } finally {
+    await context.close();
+  }
+});
+
+test("SESSION-01A2: menu serii obsługuje klawiaturę i oddaje fokus", async () => {
+  const { context, page } = await setRowPage();
+  try {
+    const trigger = page.getByRole("button", { name: "Opcje serii 1" });
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+
+    const focusedRole = () =>
+      page.evaluate(() => ({
+        role: document.activeElement?.getAttribute("role") ?? null,
+        text: document.activeElement?.textContent?.trim() ?? null,
+      }));
+    assert.deepEqual(
+      await focusedRole(),
+      { role: "menuitemradio", text: "Seria robocza" },
+      "fokus nie wszedł w menu po otwarciu",
+    );
+
+    await page.keyboard.press("ArrowDown");
+    assert.equal((await focusedRole()).text, "Seria rozgrzewkowa", "ArrowDown nie przesuwa fokusu");
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("ArrowUp");
+    assert.equal((await focusedRole()).text, "Usuń serię", "ArrowUp nie zawija na koniec listy");
+
+    await page.keyboard.press("Escape");
+    await page.getByRole("menu").waitFor({ state: "detached" });
+    const returned = await page.evaluate(
+      () => document.activeElement?.getAttribute("aria-label") ?? null,
+    );
+    assert.equal(returned, "Opcje serii 1", "Escape nie oddał fokusu przyciskowi numeru");
+  } finally {
+    await context.close();
+  }
+});
+
+test("SESSION-01A2: usunięcie serii przenosi fokus na sąsiedni wiersz", async () => {
+  const { context, page } = await setRowPage();
+  try {
+    await page.getByRole("button", { name: "Opcje serii 1" }).click();
+    await page.getByRole("menuitem", { name: "Usuń serię" }).click();
+
+    // Wiersz znika razem z fokusem — bez jawnego przeniesienia ląduje on na <body>.
+    await page.waitForFunction(() => document.querySelectorAll("li").length === 1);
+    const focused = await page.evaluate(
+      () => document.activeElement?.getAttribute("aria-label") ?? document.activeElement?.tagName ?? null,
+    );
+    assert.equal(focused, "Opcje serii 1", "fokus nie trafił na pozostały wiersz");
+
+    await page.getByRole("button", { name: "Opcje serii 1" }).click();
+    await page.getByRole("menuitem", { name: "Usuń serię" }).click();
+    await page.waitForFunction(() => document.querySelectorAll("li").length === 0);
+    const fallback = await page.evaluate(
+      () => document.activeElement?.textContent?.trim() ?? null,
+    );
+    assert.equal(fallback, "+ seria", "po usunięciu ostatniej serii fokus nie wrócił do „+ seria”");
+  } finally {
+    await context.close();
   }
 });
 

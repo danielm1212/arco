@@ -73,9 +73,18 @@ export const SetRow = memo(function SetRow({
   // konwertuje do jednostki profilu, tak samo jak sam input.
   const phWeight = (n: number | null | undefined) =>
     n != null ? String(weightToDisplay(n, unit)) : undefined;
+  // SESSION-01A2: zwarty wiersz nie ma już osobnego „↺ poprzedni wynik", więc
+  // kopiowanie wróciło do samego pola — tap w puste pole wpisuje wartość z
+  // poprzedniej sesji i zaznacza ją, żeby wpisanie innej liczby nic nie kosztowało.
+  // Tylko dla niezaliczonych serii: zaliczona nie może się zrobić „edytowana" od
+  // samego dotknięcia pola.
+  const pf = (n: number | null | undefined) => (set.completed ? null : n ?? null);
+  const pfWeight = (n: number | null | undefined) =>
+    set.completed || n == null ? null : weightToDisplay(n, unit);
   const weightMax = weightToDisplay(LIMITS.weight, unit);
   const rowRef = useRef<HTMLLIElement>(null);
   const setButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const repsFieldRef = useRef<HTMLInputElement>(null);
   const actionRef = useRef<HTMLButtonElement>(null);
@@ -92,21 +101,54 @@ export const SetRow = memo(function SetRow({
     }
   }, [focusRequested, type]);
 
+  const menuItems = () =>
+    Array.from(
+      menuRef.current?.querySelectorAll<HTMLButtonElement>("[role^='menuitem']") ?? [],
+    );
+
   useEffect(() => {
     if (!setMenuOpen) return;
+    // role="menu" obiecuje obsługę klawiatury, więc musi ją mieć: fokus wchodzi
+    // w menu po otwarciu, strzałki krążą po pozycjach, Tab i Escape zamykają.
+    menuItems()[0]?.focus();
     const closeOutside = (event: PointerEvent) => {
       if (!rowRef.current?.contains(event.target as Node)) setSetMenuOpen(false);
     };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setSetMenuOpen(false);
-      setButtonRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      const items = menuItems();
+      if (items.length === 0) return;
+      const current = items.indexOf(document.activeElement as HTMLButtonElement);
+      switch (event.key) {
+        case "Escape":
+        case "Tab":
+          setSetMenuOpen(false);
+          setButtonRef.current?.focus();
+          if (event.key === "Tab") event.preventDefault();
+          return;
+        case "ArrowDown":
+          event.preventDefault();
+          items[(current + 1) % items.length]?.focus();
+          return;
+        case "ArrowUp":
+          event.preventDefault();
+          items[(current - 1 + items.length) % items.length]?.focus();
+          return;
+        case "Home":
+          event.preventDefault();
+          items[0]?.focus();
+          return;
+        case "End":
+          event.preventDefault();
+          items[items.length - 1]?.focus();
+          return;
+        default:
+      }
     };
     document.addEventListener("pointerdown", closeOutside);
-    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("pointerdown", closeOutside);
-      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [setMenuOpen]);
 
@@ -118,6 +160,26 @@ export const SetRow = memo(function SetRow({
     }
     setSetMenuOpen(false);
     setButtonRef.current?.focus();
+  }
+
+  // Po usunięciu wiersz znika razem z fokusem — bez tego fokus ląduje na <body>
+  // i nawigacja klawiaturą zaczyna się od początku strony.
+  function deleteSet() {
+    const row = rowRef.current;
+    const sibling = (row?.nextElementSibling ?? row?.previousElementSibling) as
+      | HTMLElement
+      | null;
+    const addSetButton = row?.parentElement?.parentElement?.querySelector<HTMLElement>(
+      "[data-add-set]",
+    );
+    setSetMenuOpen(false);
+    onActivate();
+    onDelete();
+    requestAnimationFrame(() => {
+      const next =
+        sibling?.querySelector<HTMLElement>("[aria-haspopup='menu']") ?? addSetButton;
+      next?.focus();
+    });
   }
 
   return (
@@ -151,6 +213,7 @@ export const SetRow = memo(function SetRow({
       </button>
       {setMenuOpen && (
         <div
+          ref={menuRef}
           role="menu"
           aria-label="Opcje serii"
           className="absolute left-0 top-12 z-30 w-52 overflow-hidden rounded-md border border-border bg-popover p-2xs text-popover-foreground shadow-lg"
@@ -178,11 +241,7 @@ export const SetRow = memo(function SetRow({
           <button
             type="button"
             role="menuitem"
-            onClick={() => {
-              setSetMenuOpen(false);
-              onActivate();
-              onDelete();
-            }}
+            onClick={deleteSet}
             className="flex min-h-11 w-full items-center rounded-md px-sm text-left text-sm text-danger hover:bg-danger/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Usuń serię
@@ -208,6 +267,7 @@ export const SetRow = memo(function SetRow({
             value={set.reps}
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
+            prefill={pf(prev?.reps)}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
             onFocus={onActivate}
@@ -217,6 +277,7 @@ export const SetRow = memo(function SetRow({
             value={set.added_weight != null ? weightToDisplay(set.added_weight, unit) : null}
             max={weightMax}
             placeholder={phWeight(prev?.added_weight)}
+            prefill={pfWeight(prev?.added_weight)}
             onPatch={(n) => onPatch({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onPersist={(n) => onPersist({ added_weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onFocus={onActivate}
@@ -231,6 +292,7 @@ export const SetRow = memo(function SetRow({
             step="0.5"
             max={weightMax}
             placeholder={phWeight(prev?.weight)}
+            prefill={pfWeight(prev?.weight)}
             onPatch={(n) => onPatch({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onPersist={(n) => onPersist({ weight: n == null ? null : weightToCanonicalKg(n, unit) })}
             onFocus={onActivate}
@@ -241,6 +303,7 @@ export const SetRow = memo(function SetRow({
             value={set.reps}
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
+            prefill={pf(prev?.reps)}
             onPatch={(n) => onPatch({ reps: n })}
             onPersist={(n) => onPersist({ reps: n })}
             onFocus={onActivate}
@@ -276,19 +339,23 @@ export const SetRow = memo(function SetRow({
         }}
         aria-label={
           edited
-            ? "Seria ma niezapisaną zmianę"
+            ? "Najpierw zapisz zmianę serii"
             : set.completed
               ? "Cofnij zaliczenie"
               : "Zalicz serię"
         }
         aria-pressed={set.completed}
-        disabled={edited}
+        // aria-disabled zamiast disabled: check zostaje w kolejności Tab, więc czytnik
+        // zdąży powiedzieć, dlaczego nie działa. Klik i tak jest bez skutku (patrz onClick).
+        aria-disabled={edited}
         className={`flex size-11 shrink-0 items-center justify-center rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-          flowState === "ready"
-            ? "border-primary bg-primary text-primary-foreground"
-            : set.completed
-              ? "border-success bg-success text-white"
-              : "border-input text-muted-foreground"
+          edited
+            ? "border-input text-muted-foreground opacity-40"
+            : flowState === "ready"
+              ? "border-primary bg-primary text-primary-foreground"
+              : set.completed
+                ? "border-success bg-success text-white"
+                : "border-input text-muted-foreground"
         }`}
       >
         <Check className="size-5" aria-hidden />
@@ -328,6 +395,7 @@ function Field({
   step,
   grow = true,
   placeholder,
+  prefill = null,
   max,
   min = 0,
   onPatch,
@@ -340,6 +408,8 @@ function Field({
   step?: string;
   grow?: boolean;
   placeholder?: string;
+  /** Wynik z poprzedniej sesji: tap w PUSTE pole wpisuje go i zaznacza. */
+  prefill?: number | null;
   max: number;
   min?: number;
   onPatch: (n: number | null) => void;
@@ -375,8 +445,18 @@ function Field({
       max={max}
       placeholder={placeholder}
       value={raw}
-      onFocus={() => {
+      onFocus={(e) => {
         focused.current = true;
+        // Kopiujemy tylko do pustego pola — nigdy nie nadpisujemy tego, co user już wpisał.
+        // select() zaraz po wpisaniu sprawia, że inna liczba po prostu zastępuje podpowiedź,
+        // więc tap nie kosztuje nic w sesji, w której zmieniasz ciężar.
+        if (prefill != null && e.currentTarget.value === "") {
+          const input = e.currentTarget;
+          const next = String(prefill);
+          setRaw(next);
+          onPatch(clamp(next));
+          requestAnimationFrame(() => input.select());
+        }
         onFocus?.();
       }}
       onChange={(e) => {

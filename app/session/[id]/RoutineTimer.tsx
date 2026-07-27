@@ -150,13 +150,24 @@ export function RoutineTimer({
       <p className="mt-2xs text-xs leading-relaxed text-muted-foreground">
         {description}
       </p>
+      {/* Region żyje od początku — czytnik ogłasza koniec tylko wtedy, gdy live region
+          istniał już przed zmianą treści. Dopisanie go dopiero na końcu bywa milczące. */}
+      <p className="sr-only" role="status">
+        {finished
+          ? kind === "warmup"
+            ? "Rozgrzewka zakończona"
+            : "Rozciąganie zakończone"
+          : ""}
+      </p>
 
       {running ? (
         <div className="mt-sm flex items-center gap-xs">
+          {/* Bez aria-live: licznik tyka co 250 ms, więc „polite" znaczyłoby nieprzerwane
+              czytanie przez całą rozgrzewkę. Koniec ogłasza status „Gotowe" niżej. */}
           <span
             className="min-w-0 flex-1 font-mono text-xl font-semibold tabular-nums text-foreground"
             role="timer"
-            aria-live="polite"
+            aria-label={`Pozostało ${Math.floor(remaining / 60)} min ${remaining % 60} s`}
           >
             {mm}:{ss}
           </span>
@@ -179,7 +190,7 @@ export function RoutineTimer({
         </div>
       ) : finished ? (
         <div className="mt-sm flex items-center gap-xs">
-          <span className="flex min-h-11 min-w-0 flex-1 items-center gap-xs text-sm font-medium text-success" role="status">
+          <span className="flex min-h-11 min-w-0 flex-1 items-center gap-xs text-sm font-medium text-success">
             <Check className="size-4" aria-hidden />
             Gotowe
           </span>
