@@ -118,7 +118,8 @@ CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ogranic
 | TRAIN-07 | Gate publikacji | Walidator CI, idempotentny seed, RLS, aktywne plany/sesje, E2E i macierz urządzeń | po TRAIN-04–06 |
 | SESSION-01A | Minimalna rekomendacja przygotowania i zakończenia | Kontekstowe serie rozgrzewkowe przed ciężkim/power/skill; po finishu opcjonalne wyciszenie/mobilność bez obietnicy lepszej regeneracji | gotowe na produkcji 2026-07-27; pozostaje checkpoint [Ty] |
 | SESSION-01A2 | Zwarty logger, rozgrzewka i rozciąganie jako timery | Wiersz serii 44 px z checkiem w wierszu, menu pod numerem serii, dwa regulowane moduły czasowe zamiast instrukcji w każdym ćwiczeniu, wejście bez fokusu i scrolla, tap kopiujący poprzedni wynik | gotowe technicznie 2026-07-27 na `agent/session-01a2`; czeka na merge/deploy i checkpoint [Ty] |
-| SESSION-01A3 | Jednorazowa podpowiedź startowa w loggerze | Przyciemnienie + popover „Wpisz ciężar i powtórzenia, potem zalicz serię ✓" z przyciskiem „Rozumiem"; raz w życiu, znika też po pierwszej zaliczonej serii; pełny kontrakt overlayów | następne po SESSION-01A2 |
+| SESSION-01A3 | Jednorazowa podpowiedź startowa w loggerze | Przyciemnienie + popover „Wpisz ciężar i powtórzenia, potem zalicz serię ✓" z przyciskiem „Rozumiem"; raz na urządzenie, znika też po pierwszej zaliczonej serii; pełny kontrakt overlayów, wspólny `bodyScrollLock` i `useFocusTrap` | gotowe technicznie 2026-07-27 na `agent/session-01a3`; czeka na merge/deploy i checkpoint [Ty] |
+| A11Y-SHEETS | Focus trap w bottom sheetach (ryzyko 6) | Podpiąć `lib/useFocusTrap.ts` (powstał w SESSION-01A3) do `components/ui/bottom-sheet.tsx`; blokada tła jest już współdzielona | drobny follow-up, bez zależności |
 
 PLAN-Q jest twardą bramką przed R2.2 i R4C. Pełny kontrakt danych, kompatybilności, testów,
 rollbacku i review jest w `spec-plan-q-biblioteka-treningow.md`.
