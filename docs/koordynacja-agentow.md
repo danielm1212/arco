@@ -18,9 +18,33 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
-| Codex | CORE-0 hardening — DATA-03/SYNC-01/release | `session_exercises.skipped`, rekordy/statystyki/guidance, outbox/finish, done/confetti, migracje i docs | 2026-07-27 11:04 | w toku |
+| — | — | — | — | brak aktywnej rezerwacji |
 
 ## Ostatnie wpisy
+
+### 2026-07-27 · Codex · CORE-0 — KONTROLA PRODUKCJI + FIX HYDRATACJI
+
+- **Stan:** kod PR #19 i cztery migracje CORE-0 są na produkcji; ponowny push nie był potrzebny.
+- **Dowód danych:** trigger i funkcje obecne; 32 zaliczone serie, 0 nieprawidłowych; 15 rekordów,
+  0 opartych na niekwalifikowanym fakcie. Historia pokazuje 22 kwalifikowane serie, a Postępy
+  nie liczą otwartej sesji.
+- **Follow-up:** smoke wykrył rozjazd tekstu daty UTC/Warszawa w `history/[id]`. Wspólny
+  formatter z `Europe/Warsaw` usuwa błąd; regresje obejmują czas letni i zimowy.
+- **Bramka:** 140/140 unit, lint i build produkcyjny zielone. Szczegół:
+  `core-0-release-2026-07-27.md`.
+- **Następny krok:** R4A; SEC-03 pozostaje osobnym zadaniem właściciela.
+
+### 2026-07-27 · Codex · TRAIN-02A4 — point sync pięciu planów: WDROŻONE
+
+- **Zakres:** minimalna tabela `program_slot_alternatives` z RLS, punktowe uzupełnienie dwóch
+  ćwiczeń oraz idempotentny sync P01/P03/P08/P11/P12.
+- **Dowód:** lokalny reset/seed/dry-run, RLS A/B, 138/138 testów i lint; backup
+  `backups/20260727T110823Z` ze sprawdzonymi sumami; po deployu 15 programów systemowych,
+  15 dni/99 slotów/29 alternatyw w pięciu planach i smoke aplikacji bez błędów konsoli.
+- **Produkcja:** wdrożona. Aktywne plany, sesje, serie, rekordy i ustawienia nie zmieniły się.
+  Pierwsza próba A4 wycofała się w całości po wykryciu brakujących ćwiczeń; druga przeszła po
+  ich punktowym uzupełnieniu. Szczegół: `train-02a4-release-2026-07-27.md`.
+- **Następny krok:** SEC-03 pozostaje zadaniem właściciela; po kontroli CORE-0 przejść do R4A.
 
 ### 2026-07-27 · Codex · CORE-0 hardening — DATA-03/SYNC-01/Done: GOTOWE LOKALNIE
 

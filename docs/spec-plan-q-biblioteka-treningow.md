@@ -10,8 +10,9 @@ a aplikacja nie obiecuje dopasowania, którego nie potrafi policzyć.
 zatwierdzone przez Codex, bez zewnętrznej bramki trenerskiej przed H2.
 
 **Reconciliation produkcji i kompletność sesji:**
-`audyt-train-02a-kompletnosc-planow-2026-07.md`; pięć brakujących planów nie może zostać
-opublikowane przed pełnymi korektami i kontraktem alternatyw TRAIN-03/05.
+`audyt-train-02a-kompletnosc-planow-2026-07.md`; pięć planów zostało opublikowanych
+2026-07-27 przez minimalny, addytywny kontrakt alternatyw. Pełne TRAIN-03/05 nadal realizuje
+kanoniczny sprzęt, wykonalność per slot i rozszerzoną receptę v2.
 
 ## 1. Wynik użytkownika i dowód problemu
 
@@ -103,9 +104,9 @@ test A+B/C w tej samej migracji.
 
 ### TRAIN-02A — pięć planów nieobecnych na produkcji
 
-P01/P03/P08/P11/P12 przechodzą A1–A3 bez dotykania produkcji. Ich pierwszy release A4 jest
-częścią PLAN-Q po gotowym kontrakcie alternatyw/prawdy sprzętowej TRAIN-03/05, SEC-03,
-backupie i dry-runie. Szczegół i pozostałe korekty per plan:
+P01/P03/P08/P11/P12 przeszły A1–A3 bez dotykania produkcji, a A4 został wdrożony 2026-07-27
+po minimalnym kontrakcie alternatyw, backupie i dry-runie. Szczegół release'u i pozostałe
+korekty per plan: `train-02a4-release-2026-07-27.md` oraz
 `audyt-train-02a-kompletnosc-planow-2026-07.md`.
 
 Samo uzyskanie liczności 15 nie jest Definition of Done. Point sync nie może publikować

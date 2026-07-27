@@ -1,6 +1,6 @@
 # Dokumentacja Arco
 
-**Aktualizacja:** 2026-07-21
+**Aktualizacja:** 2026-07-27
 
 ## Źródła prawdy
 
@@ -37,8 +37,10 @@ audytu jako backlogu.
 - `r0-5-wynik-prototypu.md` — decyzje potwierdzone przez prototyp przed wdrożeniem.
 - `spec-r4-logger.md` — agent-ready refinement loggera, Historii i wartości drugiego treningu.
 - `audyt-core-i-plan-2026-07.md` — ocena silnika, dowody, architektura CORE-0/CORE-1 i granice pracy po H2.
+- `core-0-release-2026-07-27.md` — produkcyjne migracje, kontrola kwalifikowanych faktów i smoke CORE-0.
 - `spec-plan-q-biblioteka-treningow.md` — agent-ready kontrakt danych, treści, sprzętu, UI i walidacji 15 programów.
 - `audyt-biblioteki-programow-2026-07.md` — wersjonowane zatwierdzenie recept P01–P15 i dokładna lista korekt.
+- `train-02a4-release-2026-07-27.md` — wykonany backup, point sync P01/P03/P08/P11/P12 i kontrola produkcji.
 - `../prototypes/product-vision-poc/README.md` — aktualny klikalny POC docelowego kręgosłupa produktu.
 
 ### Jakość, bezpieczeństwo i badania

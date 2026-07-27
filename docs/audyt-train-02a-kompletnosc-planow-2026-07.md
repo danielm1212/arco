@@ -1,7 +1,8 @@
 # TRAIN-02A — audyt brakujących planów i kompletności sesji
 
 **Data:** 2026-07-22  
-**Status:** TRAIN-02A1–A3 gotowe technicznie; bez zmian produkcji
+**Status:** historyczny audyt A1–A3. TRAIN-02A4 wdrożony na produkcji 2026-07-27; aktualny
+ślad: `train-02a4-release-2026-07-27.md`.
 
 **Źródła prawdy:** `scripts/seed.ts`, `audyt-biblioteki-programow-2026-07.md`,
 `spec-plan-q-biblioteka-treningow.md` i odczyt produkcji z release'u Q1  
@@ -10,10 +11,12 @@ oddzielić pełną receptę siłową od rozgrzewki, zakończenia i krótkiego pl
 
 ## 1. Werdykt
 
-Obecnych 15 presetów nie można jeszcze nazywać kompletnymi planami 10/10. Audyt zatwierdził
-docelowe recepty po wdrożeniu korekt, ale:
+W dniu audytu obecnych 15 presetów nie można było jeszcze nazywać kompletnymi planami 10/10.
+Pięć brakujących planów zostało później opublikowanych przez TRAIN-02A4, ale pełny PLAN-Q
+nadal pozostaje otwarty dla wykonalności per slot, rozszerzonej recepty i UI wariantów. W chwili
+audytu obowiązywały następujące ograniczenia:
 
-- produkcja ma 10/15 planów systemowych;
+- produkcja miała 10/15 planów systemowych;
 - pięć brakujących planów nie jest gotowych do prostego point syncu;
 - aplikacja obsługuje serie oznaczone jako `warmup`, lecz preset nie prowadzi przez rozgrzewkę;
 - plan nie zawiera rekomendacji zakończenia/mobilności;

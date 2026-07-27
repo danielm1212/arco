@@ -112,14 +112,13 @@ a historia nie steruje stanem onboardingu, a zamknięcie sheeta nie przenosi uż
 - CONTENT-03a: opisy i media z planów początkujących oraz głównych ruchów;
 - TRAIN-01: pilny patch kolejności/objętości P11/P12 i brakującego hinge P14;
 - TRAIN-02A1–A3: audyt i korekty recept brakujących P01/P03/P08/P11/P12 bez produkcji;
-- TRAIN-02A4 pozostaje w PLAN-Q: point sync dopiero po TRAIN-03/05, SEC-03, backupie i dry-runie;
+- TRAIN-02A4: wdrożony 2026-07-27 po minimalnym kontrakcie alternatyw, backupie i dry-runie;
 - wynik review zapisać jako wersjonowane dane.
 
 **Stan TRAIN-01:** wdrożone produkcyjnie 2026-07-22 po backupie, audycie otwartych sesji,
-dry-runie i zgodności historii migracji. P14 ma receptę v3. P11/P12 nie istnieją na produkcji,
-więc migracja zgodnie z kontraktem wykonała dla nich no-op. Nie należy ich teraz dosiewać:
-recepty P11/P12 zostały domknięte w TRAIN-02A3, ale pierwszy release nadal czeka na
-TRAIN-03/05, SEC-03, backup i dry-run.
+dry-runie i zgodności historii migracji. P14 ma receptę v3. P11/P12 były wtedy nieobecne,
+więc migracja wykonała dla nich no-op; zostały później opublikowane przez kontrolowany
+TRAIN-02A4 wraz z trzema pozostałymi planami.
 
 **Stan CONTENT-01:** część A jest na produkcji: ryzykowne media Barbell są zablokowane, trzy
 sloty mają wersjonowany zamiennik, a instrukcje trzech wariantów są sprawdzone. Część B
@@ -131,23 +130,23 @@ oraz nowe pary Dumbbell/Single-Leg.
 przeszedł wersjonowany review, a dwa niejednoznaczne kadry zastępuje placeholder do czasu
 zatwierdzonej pary start/koniec.
 
-**Stan produkcji po release 2026-07-22:** trzy migracje Q1 są zastosowane, historia lokalna i
-zdalna jest zgodna, a punktowa kontrola danych przeszła wszystkie 8 asercji. Aplikacja na Vercel
-ma zielony status, ekran logowania renderuje się bez błędów konsoli. Otwarte pozostają SEC-03,
-TRAIN-02A4 oraz checkpoint iPhone PWA/Safari; A1–A3 są gotowe technicznie.
+**Stan produkcji po TRAIN-02A4 (2026-07-27):** historia lokalna i zdalna jest zgodna do
+`20260727134500`; biblioteka ma 15 programów systemowych. Point sync pięciu planów wniósł
+15 dni, 99 slotów i 29 alternatyw. Odczytowa kontrola danych, RLS i smoke aplikacji przeszły;
+nie zmieniono aktywnych planów, sesji ani historii. SEC-03 i checkpoint iPhone PWA/Safari
+pozostają otwarte, lecz A4 jest zamknięte.
 
-**Stan TRAIN-02A1:** read-only `audit:program-catalog` i testy wykrywają dokładnie brakujące
-P01/P03/P08/P11/P12, rozjazdy wersji/slugów i blokują point sync każdego niegotowego planu.
-Po zakończonych A2/A3 migracja SQL celowo czeka na kontrakt alternatyw TRAIN-03/05.
+**Stan TRAIN-02A1:** read-only `audit:program-catalog` i testy ustaliły listę pięciu brakujących
+planów, rozjazdy wersji/slugów i guardy point syncu. Ten kontrakt został wykorzystany w A4.
 
 **Stan TRAIN-02A2:** P01 v2 dodaje 2 serie Lying Leg Curl i redukuje łydki do 2 serii
 (19 serii, ok. 46 min w B), P08 v2 redukuje C z 24 do 18 serii (ok. 42 min), a P03 ma
-testowane mapowanie 3 alternatyw. Relacje P03 pozostają niepublikowane do TRAIN-03/05;
-produkcja i migracje są nietknięte.
+testowane mapowanie 3 alternatyw. Minimalny zapis relacji P03 jest opublikowany w A4;
+pełna prawda sprzętowa pozostaje w TRAIN-05.
 
 **Stan TRAIN-02A3:** P11/P12 mają recepty v3 i zatwierdzoną objętość wszystkich dni:
 P11 21/21/18/18, P12 22/22/21/19. Regresje pilnują czasu i 26 przygotowanych ścieżek
-sprzętowych. Relacje pozostają niepublikowane do TRAIN-03/05; produkcja i SQL są nietknięte.
+sprzętowych. Minimalne relacje są opublikowane w A4; pełna prawda sprzętowa pozostaje w TRAIN-05.
 
 **Done:** widoczne ruchy mają zgodny wariant, krótki start, klucz ruchu, bezpieczne zakończenie,
 fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
@@ -158,7 +157,7 @@ fallback, źródło i wersjonowany review Codex z dowodem wizualnym.
 **Zależność:** Q1; wykonujemy przed R4A
 **Spec:** `audyt-core-i-plan-2026-07.md`
 
-**Stan:** technicznie domknięte lokalnie 2026-07-27; oczekuje kontrolowanego release'u.
+**Stan:** wdrożone i zweryfikowane produkcyjnie 2026-07-27.
 **SEC-03 wstrzymane u [Ty]
 (czeka na zewnętrzne wsparcie) nie blokuje CORE-0** — integralność danych jest osobną osią
 od rotacji sekretu; jedyne zadanie realnie zablokowane przez SEC-03 to TRAIN-02A4.
@@ -224,16 +223,18 @@ pominięte ćwiczenia w rekordach, poprzednich wynikach, statystykach, guidance,
 podsumowaniu loggera i ekranie Done. Zmiana `skipped` w zakończonej sesji przelicza pochodne,
 a pominięta seria nie może samodzielnie odblokować finishu.
 
-**Stan SYNC-01:** zaimplementowane i zweryfikowane lokalnie 2026-07-27 na
-`agent/core0-hardening`. Outbox rozróżnia błąd chwilowy od trwałego; trwały zapis trafia do
+**Stan SYNC-01:** scalone do `main` i wdrożone produkcyjnie 2026-07-27. Outbox rozróżnia
+błąd chwilowy od trwałego; trwały zapis trafia do
 odzyskiwalnej kwarantanny i nie blokuje późniejszych operacji. Ponowna edycja zastępuje
 wadliwy snapshot. Finish czeka na aktywny flush i rozlicza wyłącznie kolejkę bieżącej sesji,
 więc zaległość innego treningu nie blokuje zakończenia. UI pokazuje stan wymagający poprawy.
 
-**Dowód wspólny CORE-0 (2026-07-27):** lint; 133/133 unit; build produkcyjny; świeży
+**Dowód wspólny CORE-0 (2026-07-27):** lint; 140/140 unit; build produkcyjny; świeży
 `supabase db reset` ze wszystkimi migracjami; seed 907 ćwiczeń / 15 programów / 308 slotów;
 audyt katalogu bez driftu; rekomendacje 60/60; smoke phase1, phase2, offline i Ekipa;
-24/24 testów overflow/BottomSheet. Release produkcyjny pozostaje osobnym krokiem.
+24/24 testów overflow/BottomSheet; produkcyjne funkcje i trigger, 32 zaliczone serie bez
+naruszeń, 15 kwalifikowanych rekordów oraz smoke Home/Historia/Postępy. Szczegół:
+`core-0-release-2026-07-27.md`.
 
 - DATA-01: zakończona seria ma wynik wymagany przez typ ćwiczenia; ten sam guard działa
   w UI, Server Action i bazie/RPC;
@@ -262,8 +263,8 @@ historii, wszystkie pochodne liczą te same fakty, a jedna błędna operacja nie
 - TRAIN-04: korekta wszystkich 15 programów, w tym P02/P07/P08/P13 oraz pełne review
   kolejności, wzorców, objętości, czasu, przerw i instrukcji;
 - TRAIN-05: kanoniczny sprzęt, wymagania per ćwiczenie i deterministyczna wykonalność per slot;
-- TRAIN-02A4: pierwsza publikacja P01/P03/P08/P11/P12 dopiero po gotowym kontrakcie
-  alternatyw i prawdy sprzętowej;
+- TRAIN-02A4: publikacja P01/P03/P08/P11/P12 zakończona 2026-07-27 na minimalnym,
+  addytywnym kontrakcie alternatyw; pełna prawda sprzętowa nadal należy do TRAIN-05;
 - TRAIN-06: karta i detal planu pokazują realny czas, sprzęt, przerwy, opcjonalność i dostępne
   warianty bez przeciążania głównego widoku;
 - TRAIN-07: walidator CI, bezpieczny seed, RLS, regresja aktywnych planów/sesji i urządzeń.

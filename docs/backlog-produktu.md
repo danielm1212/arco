@@ -1,6 +1,6 @@
 # Arco — backlog produktu
 
-**Aktualizacja:** 2026-07-22
+**Aktualizacja:** 2026-07-27
 **Właściciel priorytetów:** [Ty]
 **Rola dokumentu:** kompletna kolejka produktu. Bieżąca kolejność wykonania jest wyłącznie w `plan-sprintow-2026-07.md`.
 
@@ -66,10 +66,10 @@ checkpoint urządzeniowy; nie oznacza usunięcia regresji z macierzy.
 | CONTENT-02 | Zweryfikować zdjęcia Chin-Up względem zamierzonego wariantu i warunków drążka | Zatwierdzony tekst jest publikowany; niejednoznaczne zdjęcia zastępuje placeholder do nowej sesji | wdrożone produkcyjnie; nowa para nadal otwarta | Q1 |
 | CONTENT-03 | Audyt opisów ruchów używanych w planach: start, klucz ruchu, bezpieczne zakończenie, zwięzłość | Początkujący dostaje krótką i bezpieczną instrukcję | gotowe do podjęcia | Q1 + po H2 |
 | TRAIN-01 | Pilny patch P11/P12/P14 | Ruchy techniczne i mocy są przed zmęczeniem, a plan FBW ma hinge; wersja treści i zatwierdzenie Codex są jawne | wdrożone produkcyjnie 2026-07-22; P11/P12 nieobecne w prod wykonały bezpieczny no-op | Q1 |
-| TRAIN-02A1 | Audyt i kontrakt point syncu pięciu brakujących planów | Read-only audit P01/P03/P08/P11/P12, stabilne slugi/wersje i jawne blockery; SQL powstaje dopiero po korektach | na `main`; prod ma 10/15 | Q1 |
-| TRAIN-02A2 | Domknąć recepty P01/P03/P08 przed pierwszą publikacją | P01/P08 mają zatwierdzone recepty v2; P03 ma testowane mapowanie 3 alternatyw oczekujące na zapis w TRAIN-03/05 | na `main`; bez produkcji | Q1 |
-| TRAIN-02A3 | Domknąć recepty P11/P12 po pilnym TRAIN-01 | Pozostała objętość i czasy są zgodne z pełnym audytem; mapowanie sprzętu oczekuje na TRAIN-03/05 | gotowe technicznie na `agent/train-02a-p11-p12`; P11/P12 v3, 26 ścieżek; bez produkcji | Q1 |
-| TRAIN-02A4 | Kontrolowany release pięciu planów | Po TRAIN-03/05, SEC-03, backupie i dry-runie produkcja ma 15 planów bez zmiany własnych planów, aktywnych sesji i historii | PLAN-Q po A2/A3 |
+| TRAIN-02A1 | Audyt i kontrakt point syncu pięciu brakujących planów | Read-only audit P01/P03/P08/P11/P12, stabilne slugi/wersje i jawne guardy point syncu | gotowe; wykorzystane w A4 | Q1 |
+| TRAIN-02A2 | Domknąć recepty P01/P03/P08 przed pierwszą publikacją | P01/P08 v2; P03 z trzema wersjonowanymi alternatywami | gotowe; opublikowane w A4 | Q1 |
+| TRAIN-02A3 | Domknąć recepty P11/P12 po pilnym TRAIN-01 | P11/P12 v3, kontrola objętości/czasu i ścieżki sprzętowe | gotowe; opublikowane w A4 | Q1 |
+| TRAIN-02A4 | Kontrolowany release pięciu planów | Minimalna tabela alternatyw z RLS, punktowe uzupełnienie 2 ćwiczeń oraz idempotentny sync 5 planów; backup, dry-run i smoke bez zmiany danych treningowych użytkowników | gotowe na produkcji 2026-07-27 |
 | OPS-01 | Zaszyfrowana kopia backupu poza laptopem i checklista rollbacku | Awaria jednego urządzenia nie niszczy możliwości odtworzenia | gotowe do podjęcia | przed publicznymi kontami |
 | OPS-02 | Monitoring błędów z numerem wersji, źródłami map i alertem dla zapisu sesji | Krytyczny błąd jest widoczny zanim zgłosi go płacący użytkownik | po H2 | przed płatną betą |
 | PRIVACY-01 | Kontrakt zdjęć Ciała: zgoda, prywatność, retencja, pobranie i usunięcie | Wrażliwe zdjęcia mają jawny cykl życia i nie są elementem domyślnego socialu | po H2 | przed publicznymi kontami |
@@ -98,10 +98,10 @@ niewidoczne lub nieużywane rekordy są bezpiecznie ukryte.
 
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
-| DATA-01 | Prawidłowa zakończona seria | Wymagane pola wg typu ćwiczenia; wspólny guard UI/server/DB; pusta seria nie kończy treningu | scalone do `main`; release migracji CORE-0 oczekuje |
-| DATA-02 | Kanoniczne jednostki ciężaru | Dane w jednej jednostce, konwersja w UI, backup i jawna migracja istniejących kont | scalone do `main`; release migracji CORE-0 oczekuje |
-| DATA-03 | Jedna definicja faktu treningowego | Zakończona sesja, prawidłowa zaliczona seria robocza, niepominięte ćwiczenie; wspólne dla wszystkich pochodnych | scalone do `main`; hardening `skipped` zweryfikowany lokalnie 2026-07-27, release oczekuje |
-| SYNC-01 | Trwały błąd nie blokuje outboxa | Rozróżnienie retry/quarantine, odzyskiwalny zapis błędu i flush bieżącej sesji przed finish | zaimplementowane i zweryfikowane lokalnie 2026-07-27 (`agent/core0-hardening`); release oczekuje |
+| DATA-01 | Prawidłowa zakończona seria | Wymagane pola wg typu ćwiczenia; wspólny guard UI/server/DB; pusta seria nie kończy treningu | gotowe na produkcji 2026-07-27 |
+| DATA-02 | Kanoniczne jednostki ciężaru | Dane w jednej jednostce, konwersja w UI, backup i jawna migracja istniejących kont | gotowe na produkcji 2026-07-27 |
+| DATA-03 | Jedna definicja faktu treningowego | Zakończona sesja, prawidłowa zaliczona seria robocza, niepominięte ćwiczenie; wspólne dla wszystkich pochodnych | gotowe na produkcji 2026-07-27 |
+| SYNC-01 | Trwały błąd nie blokuje outboxa | Rozróżnienie retry/quarantine, odzyskiwalny zapis błędu i flush bieżącej sesji przed finish | gotowe na produkcji 2026-07-27 |
 
 CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ograniczeń jest w
 `audyt-core-i-plan-2026-07.md`.
