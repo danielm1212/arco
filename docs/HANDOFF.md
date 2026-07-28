@@ -1,6 +1,6 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-27
+**Aktualizacja:** 2026-07-28
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
@@ -252,11 +252,19 @@ koordynacji (2026-07-23).
    rozpisane w `spec-home-i-nawigacja.md`. HOME-NAV wchodzi **przed R2.2** — obie dotykają
    `/programs`. PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może
    iść równolegle.
-6. **PLAN-05 — zaplanowane, gotowe do podjęcia:** redesign karty i listy planu (zdjęcie/
-   fallback, poziom w paskach, CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej
-   karty „Jak robić postęp"). Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`.
-   05A (migracja `cover_image_url`) i 05C (`LevelMeter`) niezależne, mogą wejść od razu;
-   05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
+6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
+   CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").
+   Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`. **05C (`LevelMeter`) gotowe
+   technicznie 2026-07-28** — komponent + `lib/levelMeter.ts` (dane/copy jako czyste funkcje),
+   165/165 unit (na gałęzi bazowanej na `main` — bez testów HOME-01, który jest osobnym,
+   niezależnym PR-em), lint/tsc/build zielone; **jeszcze niewpięty** w `ProgramRow` ani
+   `/programs/[id]` — to zakres 05D/05E, które od niego zależą. Self-review a11y policzył
+   kontrast: `bg-primary/20` na pustym segmencie wychodzi 1.34:1 (poniżej progu 3:1 dla
+   elementów graficznych), więc pusty segment jest obrysem (`border-primary`), nie
+   przezroczystym wypełnieniem — odejście od dosłownego brzmienia spec-a („obniżona krycia"),
+   uzasadnione policzonym kontrastem, do potwierdzenia wizualnego przy 05D/05E. 05A (migracja
+   `cover_image_url`) nadal niezależne, może wejść od razu. 05D (przebudowa `/programs/[id]`)
+   wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
    Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do
