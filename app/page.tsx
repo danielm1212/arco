@@ -12,6 +12,7 @@ import { DayPickerSheet } from "./DayPickerSheet";
 import { FreestyleStartButton } from "./FreestyleStartButton";
 import { GuidanceChip } from "./GuidanceChip";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
+import { StreakCard } from "./StreakCard";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { WeeklyGoalBadge } from "@/components/WeeklyGoalBadge";
@@ -131,6 +132,10 @@ export default async function HomePage() {
     weeklyGoal,
   );
   const streak = computeStreak(weeks);
+  // HOME-01: karta passy renderuje się tylko z historią (POC data-when="rich") —
+  // świeże konto nie widzi zer, nie brakującej karty z zerowaną liczbą.
+  const hasHistory = (finished ?? []).length > 0;
+  const greetingName = settings?.display_name?.trim() || null;
 
   // Sugestia kolejnego dnia: rotacja liczona z już pobranej historii (bez
   // dodatkowego zapytania). Ostatnia ukończona sesja aktywnego planu → następna
@@ -202,6 +207,13 @@ export default async function HomePage() {
       <TrainingSubnav active="today" />
 
       <main className="flex-1 space-y-lg p-md">
+        {/* HOME-01: powitanie jest linią treści nad hero, nie modułem — karta
+            startu zostaje pierwszym modułem (D-03, audyt R2.1). Brak imienia =
+            węzeł w ogóle nie istnieje (POC: "brak imienia = brak powitania"). */}
+        {greetingName && (
+          <p className="text-xl font-semibold tracking-tight">Cześć, {greetingName}</p>
+        )}
+
         {/* R2.1 (audyt P0): pełna karta tygodnia zniknęła z domyślnego Home —
             szczegół tygodnia żyje w sheecie badge'a w headerze. Hero jest
             pierwszym merytorycznym modułem po subnavie. */}
@@ -282,6 +294,10 @@ export default async function HomePage() {
             </div>
             <FreestyleStartButton variant="card" />
           </div>
+        )}
+
+        {hasHistory && (
+          <StreakCard streak={streak} week={week} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />
         )}
 
         {/* R2: przegląd planu jako kontekstowy, dismissowalny insight —

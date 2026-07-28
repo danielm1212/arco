@@ -1,6 +1,6 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-27
+**Aktualizacja:** 2026-07-28
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
@@ -27,7 +27,8 @@ Docelowa IA na produkcji dziś: **Trening · Postępy · Historia · Ekipa**, lo
 **Dziś | Plany** oraz **Trening | Ciało**, profil przez awatar. Floating nav ma równy margines
 12 px i respektuje safe area. **Kontrakt jest już zrewidowany na trzy przestrzenie**
 (Home · Trening · Ekipa, D-38…D-41 w `decyzje-produktowe.md`) — wdrożenie w kolejce jako
-HOME-NAV, patrz §6 punkt 5.
+HOME-NAV, patrz §6 punkt 5. **HOME-01 (powitanie + passa) gotowe technicznie 2026-07-28**,
+lokalnie na `main` bez commita — patrz dziennik koordynacji dla szczegółów i decyzji o gałęzi.
 
 ## 2. Co jest wdrożone
 
@@ -247,11 +248,14 @@ koordynacji (2026-07-23).
 4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A i SESSION-01A2…01A4
    (procedura `arco-release` krok 5/6 — merge już wykonany, patrz punkt 7 poniżej);
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
-5. **HOME-NAV — zaplanowane, gotowe do podjęcia:** kontrakt IA zrewidowany (trzy taby
-   Home · Trening · Ekipa, D-38…D-41), POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04
-   rozpisane w `spec-home-i-nawigacja.md`. HOME-NAV wchodzi **przed R2.2** — obie dotykają
-   `/programs`. PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może
-   iść równolegle.
+5. **HOME-NAV — w toku:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
+   POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04 rozpisane w `spec-home-i-nawigacja.md`.
+   **HOME-01 (powitanie + karta passy) gotowe technicznie 2026-07-28** — lint/tsc/build zielone,
+   165/165 unit, zweryfikowane w apce na 320/375 px, light/dark; zmiany lokalne, nie
+   commitowane, czekają na decyzję [Ty] o gałęzi/PR. Kolejny krok: **HOME-02** (podsumowanie
+   okresu + kafle, Model: Opus 5 — budżet gorącej trasy). HOME-NAV wchodzi **przed R2.2** —
+   obie dotykają `/programs`. PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest
+   niezależny i może iść równolegle.
 6. **PLAN-05 — zaplanowane, gotowe do podjęcia:** redesign karty i listy planu (zdjęcie/
    fallback, poziom w paskach, CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej
    karty „Jak robić postęp"). Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`.

@@ -21,6 +21,44 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-28 · Claude · HOME-01 — powitanie i passa tygodniowa: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `app/page.tsx` (powitanie + wpięcie karty passy), nowy `app/StreakCard.tsx`,
+  nowy `lib/streakCopy.ts` (copy passy jako czyste funkcje, wzorzec jak `formatGoalSentence`
+  w `lib/programRecommendation.ts`), nowy `tests/streak-copy.test.ts`. Zero nowych zapytań —
+  `display_name`, `computeStreak`, `weeksMeetingGoal` były już liczone na Home.
+- **Wynik:** „Cześć, {imię}" jako pierwsza linia treści Home (węzeł w ogóle nie istnieje bez
+  imienia, potwierdzone w DOM); karta passy wchodzi pod hero (hero zostaje pierwszym modułem,
+  D-03) — liczba tygodni w Gambarino gdy streak>0, neutralny fallback „Ten tydzień" gdy
+  streak=0 (zero „0. tydzień passy" — zakaz straty z `tone-of-voice.md`), siedem kafelków dnia
+  (wypełniony/dziś-dashed/pusty — różnica kształtu, nie tylko koloru), jedno zdanie stanu.
+  Karta renderuje się wyłącznie z historią (brak historii → karty nie ma, nie pokazujemy zer),
+  zgodnie z POC (`data-when="rich"` vs `fresh-note`).
+- **A11y (self-review skillem `arco-a11y-review`):** jeden finding, naprawiony — `<ol>` z
+  `list-none` traci domyślną rolę listy w Safari/VoiceOver (udokumentowany bug WebKit), istotne
+  bo iPhone PWA/Safari jest głównym celem urządzeniowym repo; naprawione jawnym `role="list"`.
+  Stan per dzień nie tylko kolorem: sr-only sufiks „zaliczony"/„dziś" obok skrótu dnia.
+- **Dowód:** lint czysty; `tsc --noEmit` czysty (po `rm -rf .next` — stare typy `.next/types/*`
+  zdublowane przez sync iCloud psuły build, ten sam rodzaj problemu co w pamięci
+  `arco-node-modules-icloud-dupes`, tym razem poza `node_modules`); build produkcyjny zielony;
+  unit **165/165** (7 nowych: wybór copy dla streak 0/1/N i cel zrobiony/brakuje 1/brakuje N).
+  Weryfikacja w realnej apce (`next start`, lokalne konto): streak=0 → „Ten tydzień" +
+  „Jeszcze jeden trening domyka ten tydzień." na 320 i 375 px, light i dark, bez przełamania na
+  320 px. Chwilowo ustawiłem `display_name="Daniel"`, żeby potwierdzić powitanie („Cześć,
+  Daniel" nad hero) — imię i motyw przywrócone do stanu sprzed sesji po weryfikacji.
+- **Znalezisko przy okazji:** kilka nowych duplikatów iCloud „ 2" poza `node_modules`
+  (`.claude/skills/arco-motion-review/SKILL 2.md`/`3.md`,
+  `docs/audyt-train-02a-kompletnosc-planow-2026-07 2.md`,
+  `scripts/audit-program-catalog-drift 2.ts`, `scripts/data/program-slot-alternatives 2.ts`,
+  trzy pliki w `tests/`) — nieśledzone, nie moje, nie ruszone; rosnący koszt syncu iCloud na
+  katalogu repo, warto rozłączyć (patrz pamięć `arco-node-modules-icloud-dupes`).
+- **Czego nie dotknięto:** nawigacji, migracji, treści treningowej, danych produkcyjnych,
+  wymienionych wyżej duplikatów iCloud.
+- **Zaległości:** [Ty] review i decyzja o commicie/gałęzi — zmiany są tylko lokalnie, nie
+  commitowałem (czekam na wyraźną prośbę). Kolejna paczka w kolejności
+  `spec-home-i-nawigacja.md` §4 to HOME-02 (podsumowanie okresu + kafle — Model: Opus 5,
+  budżet gorącej trasy).
+
 ### 2026-07-27 · Claude · PLAN-05 — SPEC KARTY PLANU: ZAKOŃCZONE
 
 - **Zakres:** `docs/spec-plan-detail-card.md` (nowy), backlog, plan sprintów (dopisek do
