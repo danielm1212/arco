@@ -115,8 +115,9 @@ Trzy z czterech „braków” rozpłynęły się przy sprawdzeniu katalogu.
   wyłącznie hamstring walkout, do paczki domowej.
 - **D-3 — kanon:** v2.1 źródłem prawdy, stary audyt superseded z trzema wyjątkami kolejności.
   Zapisane jako **D-42** w `decyzje-produktowe.md` (plus D-43 i D-44 dla alternatyw i slotów).
-- **D-4 — usuwanie slotów:** zgoda. Zmierzone lokalnie na realnej historii: powiązania
-  `session_exercises.slot_id` 14 → 12, wszystkie 51 serii i 16 pozycji ćwiczeń zachowane.
+- **D-4 — usuwanie slotów:** zgoda udzielona i zmierzona (powiązania 14 → 12 przy 51/51 serii
+  zachowanych), ale **finalna recepta z niej nie korzysta** — dni zostały przy 7 pozycjach,
+  więc migracja nic nie usuwa. Reguła obowiązuje kolejne paczki (D-44).
 
 ## 8. Znalezione przy wdrożeniu PLAN-C1
 
@@ -124,14 +125,36 @@ Trzy z czterech „braków” rozpłynęły się przy sprawdzeniu katalogu.
   `position: 0` każdej alternatywie, a tabela ma `unique(program_day_slot_id, position)`.
   Błąd był uśpiony, bo 29 alternatyw z TRAIN-02A4 to przypadkiem jedna na slot. Naprawione:
   pozycja rośnie w obrębie slotu, kolejność wynika z kolejności wpisów w repo.
-- **Seed jest sprzężony z migracją przez `SAFE SEED STOP`.** Przy skróceniu dnia z 7 do 6 pozycji
-  seed odmawia pracy, dopóki migracja nie usunie nadmiarowego slotu. To działa jak zamierzono
-  i wymusza świadomą decyzję — warto o tym pamiętać przy każdej kolejnej paczce.
+- **Seed jest sprzężony z migracją przez `SAFE SEED STOP`.** Gdy dzień się skraca, seed odmawia
+  pracy, dopóki migracja nie usunie nadmiarowego slotu. Wyszło to przy pośrednim, 6-pozycyjnym
+  wariancie recepty. Działa jak zamierzono i wymusza świadomą decyzję — pamiętać przy każdej
+  paczce, która skraca dzień.
+- **Adopcja biblioteki bez policzenia objętości zabrała planowi nogi.** Wariant literalnie
+  przepisany z v2.1 miał 4 serie czworogłowych zamiast 7 i 4 dwugłowych zamiast 6, bo wypadły
+  wykroki i uginanie nóg dodane wcześniej przez TRAIN-01. Nazwy w tabeli wyglądały poprawnie.
+  Stąd `npm run audit:muscle-coverage` i **D-46**.
 - **Dwa sloty flagowca mają placeholder zdjęcia:** `Chest-Supported_Dumbbell_Row` i
   `Hanging_Knee_Raise`. Walidator to przepuszcza jako ostrzeżenie, ale audyt v2.1 stawia
   „przegląd trenerski bazy ćwiczeń" jako P0 przed testami. Do CONTENT przed betą tego planu.
 
-## 9. Co dalej
+## 9. Pokrycie mięśni całej biblioteki — przemiał z 2026-07-28
+
+`npm run audit:muscle-coverage` liczy serie bezpośrednie i pośrednie na mięsień w pełnym cyklu.
+Narzędzie powstało po tym, jak adopcja v2.1 zabrała flagowcowi trzy serie czworogłowych i dwie
+dwugłowych, a przegląd nazw ćwiczeń tego nie wyłapał (**D-46**).
+
+Sygnały do rozstrzygnięcia w kolejnych paczkach, od najmocniejszego:
+
+| Program | Znalezisko | Uwaga |
+|---|---|---|
+| `lower-body-gym3` | **brzuch: zero pracy bezpośredniej i pośredniej** | Audyt z 2026-07-21 §P05 zatwierdził `Pallof Press 2×10–12/stronę` dokładnie z tego powodu. **Korekta nigdy nie weszła.** |
+| `lower-body-home3` | zero bezpośredniej pracy najszerszego | Plan ma priorytet dołu, ale nie powinien kasować pionowego przyciągania |
+| `intermediate-home-fbw2` | zero bezpośredniej pracy najszerszego i łydek | Znane ograniczenie sprzętowe (brak drążka/gumy) — wymaga jawnego komunikatu, nie cichego braku |
+| `beginner-gym-fbw2`, `beginner-gym-fbw3`, `beginner-home-fbw2` | zero bezpośredniego bicepsa i tricepsa | Prawdopodobnie zgodne z intencją „opcjonalne ramiona” — do potwierdzenia, czy moduł jest widoczny |
+| `intermediate-gym-fbw2` | czworogłowe 4, dwugłowe 4, łydki 0 | **Świadome i zapisane w D-45**, nie do naprawiania bez zmiany decyzji |
+| większość planów | pośladki zero bezpośrednio | Mało groźne: katalog taguje pośladki jako wtórne w przysiadzie, RDL i wykrokach (8–19 serii pośrednio) |
+
+## 10. Co dalej
 
 1. **PLAN-C2** — braki mediów flagowca (2 placeholdery) plus `name_pl` dla
    `V-Bar_Pulldown`, `Bayesian_Cable_Curl`, `Cable_Pull-Through`, `Trap_Bar_Deadlift`

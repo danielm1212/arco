@@ -27,7 +27,8 @@
     "smoke": "node --import tsx scripts/smoke-phase1.ts",
     "smoke:phase2": "node --import tsx scripts/smoke-phase2.ts",
     "smoke:team": "node --import tsx scripts/smoke-team.ts",
-    "smoke:offline": "node --import tsx scripts/smoke-offline.ts"
+    "smoke:offline": "node --import tsx scripts/smoke-offline.ts",
+    "audit:muscle-coverage": "node --import tsx scripts/audit-muscle-coverage.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.0",

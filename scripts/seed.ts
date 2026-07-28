@@ -1127,7 +1127,7 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-gym-fbw2",
     name: "Średniozaawansowany · Siłownia · Całe ciało",
-    description: "Dwa treningi całego ciała na pełnym sprzęcie. Każda sesja ma jedno duże ćwiczenie na dół, pełny push i pull oraz bezpośrednią pracę ramion. Zostaw 1 lub 2 powtórzenia w zapasie.",
+    description: "Dwa krótkie treningi całego ciała na pełnym sprzęcie, z naciskiem na górę. Każda sesja ma jedno duże ćwiczenie na dół, pełny push i pull oraz bezpośredni biceps i triceps. Objętość nóg jest świadomie umiarkowana — przy priorytecie nóg włącz moduł opcjonalny albo wybierz plan „Pośladki i nogi”. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Siłownia · masa i siła",
     goal_key: "strength_hypertrophy",
     level: "średniozaawansowany",
