@@ -24,8 +24,8 @@ Zasady:
 
 - pokazywany raz na urządzenie (`prefs.loggerHintSeen`, ten sam wzorzec co R7
   `reorderHintSeen`);
-- znika po „Rozumiem", Escape, kliknięciu w tło **albo po pierwszej zaliczonej serii** —
-  kto zaczął logować, ten nie potrzebuje instrukcji;
+- znika po „Rozumiem", Escape **albo po pierwszej zaliczonej serii** — kto zaczął
+  logować, ten nie potrzebuje instrukcji;
 - każde zniknięcie liczy się jako pokazana, więc podpowiedź nie wraca;
 - nie pojawia się na sesji zakończonej ani historycznej.
 
@@ -46,7 +46,13 @@ Escape'em i poprawnie zarządzał fokusem. Wszystkie punkty są spełnione:
   `lib/bodyScrollLock.ts` **bez zmiany zachowania**. Dwa niezależne liczniki referencji
   zapisywałyby style `body` nawzajem po sobie i gubiły pozycję strony — dokładnie ten
   błąd TRUST-03 już raz naprawiał dla sheet-w-sheecie.
-- **Escape** zamyka, klik w tło zamyka.
+- **Zamyka wyłącznie „Rozumiem" i Escape — świadomy wyjątek od reguły overlayów.**
+  CLAUDE.md wymaga, żeby overlay dało się zamknąć także kliknięciem w tło. Tutaj tego
+  celowo nie ma (decyzja właściciela, 2026-07-27): podpowiedź pokazuje się **raz w życiu**,
+  więc przypadkowe muśnięcie ekranu w drodze do pierwszego pola kasowałoby ją bezpowrotnie
+  w jedynym momencie, w którym była potrzebna. To odróżnia ją od funkcjonalnych sheetów,
+  które użytkownik otwiera sam i może otworzyć ponownie. Escape zostaje, bo bez niego
+  overlay byłby nieobsługiwalny z klawiatury. Regresję pilnuje test przeglądarkowy.
 - **Pułapka fokusu** — nowy `lib/useFocusTrap.ts`: fokus wchodzi do overlaya, Tab
   i Shift+Tab krążą wewnątrz, `focusin` pilnuje ucieczek poza klawiaturą, a po
   zamknięciu fokus wraca do elementu, z którego przyszedł.

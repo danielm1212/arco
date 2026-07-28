@@ -19,9 +19,13 @@ const GAP = 12;
  * użytkownik po prostu zaliczy pierwszą serię — skoro zaczął logować, to znaczy
  * że nie potrzebuje instrukcji.
  *
- * Kontrakt overlayów z CLAUDE.md jest tu spełniony w całości: przyciemnienie blokuje
- * interakcję i przewijanie tła, Escape zamyka, fokus wchodzi do środka i wraca na
- * miejsce po zamknięciu, a pozycja respektuje safe areę.
+ * Zamyka WYŁĄCZNIE „Rozumiem" (i Escape, bo tego wymaga kontrakt overlayów oraz
+ * obsługa klawiaturą). Tap w tło świadomie NIE zamyka: podpowiedź pokazuje się raz
+ * w życiu, a przypadkowe muśnięcie ekranu w drodze do pierwszego pola kasowałoby ją
+ * bezpowrotnie — jedyny raz, kiedy była potrzebna.
+ *
+ * Reszta kontraktu z CLAUDE.md bez zmian: przyciemnienie blokuje interakcję
+ * i przewijanie tła, fokus wchodzi do środka i wraca na miejsce po zamknięciu.
  */
 export function LoggerHint({ onDismiss }: { onDismiss: () => void }) {
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -82,17 +86,13 @@ export function LoggerHint({ onDismiss }: { onDismiss: () => void }) {
   // z `transform` (przejścia ekranów) stałby się blokiem zawierającym dla
   // `position: fixed` i przyciemnienie przestałoby pokrywać cały ekran.
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 touch-none overscroll-contain bg-foreground/50"
-      onPointerDown={onDismiss}
-    >
+    <div className="fixed inset-0 z-50 touch-none overscroll-contain bg-foreground/50">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="logger-hint-text"
         tabIndex={-1}
-        onPointerDown={(event) => event.stopPropagation()}
         style={
           anchor
             ? {
