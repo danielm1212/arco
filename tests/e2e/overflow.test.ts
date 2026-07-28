@@ -27,6 +27,7 @@ let cssCache: string | null = null;
 let bottomSheetBundleCache: string | null = null;
 let setRowBundleCache: string | null = null;
 let loggerHintBundleCache: string | null = null;
+let confettiBundleCache: string | null = null;
 function builtCss(): string {
   if (cssCache !== null) return cssCache;
   let files: string[];
@@ -552,6 +553,15 @@ test("SESSION-01A3: overlay blokuje tło, trzyma fokus i oddaje go po zamknięci
     assert.equal(locked.bodyPosition, "fixed", "tło nie jest unieruchomione");
     assert.equal(locked.moved, false, "tło przewija się pod podpowiedzią");
 
+    // Tap w tło NIE zamyka: podpowiedź pokazuje się raz w życiu, więc przypadkowe
+    // muśnięcie ekranu nie może jej skasować w jedynym momencie, gdy jest potrzebna.
+    await page.mouse.click(VIEWPORT.width - 6, 6);
+    assert.equal(
+      await page.getByRole("dialog").count(),
+      1,
+      "kliknięcie w tło zamknęło podpowiedź",
+    );
+
     // Pułapka fokusu: Tab nie może wyprowadzić poza overlay.
     await page.keyboard.press("Tab");
     await page.keyboard.press("Tab");
@@ -573,6 +583,86 @@ test("SESSION-01A3: overlay blokuje tło, trzyma fokus i oddaje go po zamknięci
     assert.notEqual(released.bodyPosition, "fixed", "blokada tła została po zamknięciu");
     assert.ok(released.opener, "harness rozpadł się przy zamykaniu podpowiedzi");
     assert.equal(released.focus, "Otwórz logger", "fokus nie wrócił do elementu otwierającego");
+  } finally {
+    await context.close();
+  }
+});
+
+// MOMENT-01: zasięg wystrzału da się sprawdzić tylko w locie — statyczny HTML ani
+// model cząstki nie powiedzą, jak wysoko konfetti realnie dolatuje, bo wynik zależy
+// od jednostki `--confetti-peak` i punktu startu w CSS (`top: 32%`). Feedback
+// 2026-07-27: „powinno polecieć aż do topbara".
+async function confettiBundle(): Promise<string> {
+  if (confettiBundleCache !== null) return confettiBundleCache;
+
+  const result = await build({
+    bundle: true,
+    format: "iife",
+    platform: "browser",
+    write: false,
+    absWorkingDir: ROOT,
+    stdin: {
+      loader: "tsx",
+      resolveDir: ROOT,
+      sourcefile: "moment01-confetti-harness.tsx",
+      contents: `
+        import React from "react";
+        import { createRoot } from "react-dom/client";
+        import { PrConfetti } from "./app/session/[id]/done/PrConfetti";
+
+        createRoot(document.getElementById("root")).render(<PrConfetti />);
+      `,
+    },
+  });
+
+  confettiBundleCache = result.outputFiles[0]?.text ?? null;
+  assert.ok(confettiBundleCache, "esbuild nie zwrócił bundla harnessu konfetti");
+  return confettiBundleCache;
+}
+
+test("MOMENT-01: wystrzał dolatuje do góry ekranu i ma pełną liczbę cząstek", async () => {
+  const context = await browser.newContext({
+    viewport: VIEWPORT,
+    reducedMotion: "no-preference",
+  });
+  try {
+    const page = await context.newPage();
+    await page.setContent(pageHtml('<div id="root"></div>'), { waitUntil: "load" });
+    await page.addScriptTag({ content: await confettiBundle() });
+    await page.locator(".confetti-paper").first().waitFor();
+
+    // Próbkujemy CAŁY lot: szczyt paraboli wypada ok. 34% czasu trwania. Pętla
+    // siedzi po stronie Node — nazwana funkcja w `page.evaluate` dostaje od esbuilda
+    // wrapper `__name`, którego w przeglądarce nie ma.
+    const viewportHeight = await page.evaluate(() => window.innerHeight);
+    let minTop = Number.POSITIVE_INFINITY;
+    let maxCount = 0;
+    const deadline = Date.now() + 2600;
+    while (Date.now() < deadline) {
+      const frame = await page.evaluate(() => {
+        const papers = Array.from(
+          document.querySelectorAll<HTMLElement>(".confetti-paper"),
+        );
+        return {
+          count: papers.length,
+          top: papers.reduce(
+            (lowest, paper) => Math.min(lowest, paper.getBoundingClientRect().top),
+            Number.POSITIVE_INFINITY,
+          ),
+        };
+      });
+      maxCount = Math.max(maxCount, frame.count);
+      minTop = Math.min(minTop, frame.top);
+    }
+    const flight = { minTop, maxCount, viewportHeight };
+
+    assert.equal(flight.maxCount, 60, `w locie było ${flight.maxCount} cząstek`);
+    // Topbar to górne ~10% ekranu. Wystrzał ma tam dolecieć, a nie kończyć się
+    // w połowie — wcześniej `peak` był w px i na wyższych ekranach ginął nisko.
+    assert.ok(
+      flight.minTop <= flight.viewportHeight * 0.1,
+      `najwyższy punkt ${Math.round(flight.minTop)}px na ekranie ${flight.viewportHeight}px — za nisko`,
+    );
   } finally {
     await context.close();
   }

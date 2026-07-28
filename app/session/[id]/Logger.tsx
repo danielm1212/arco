@@ -727,6 +727,18 @@ export function Logger({
           />
         ))}
 
+        {/* Rozciąganie jest ostatnią pozycją TRENINGU, nie ekranu podsumowania:
+            na Done było już po wszystkim, a wtedy nikt do niego nie wraca.
+            Stoi za ostatnim ćwiczeniem, więc dołożenie kolejnego wchodzi nad nie. */}
+        {!isFinished && !isHistorical && (
+          <RoutineTimer
+            kind="stretching"
+            timerId={sessionId}
+            title="Rozciąganie"
+            description="Rozciągnij spokojnie to, co dziś pracowało."
+          />
+        )}
+
         <ExercisePicker sessionId={sessionId} />
       </main>
 

@@ -16,12 +16,22 @@
  *   jednocześnie, więc jeden wspólny rytm od razu czyta się jako sztuczny.
  */
 
-/** Ile cząstek leci w wystrzale. Powyżej ~40 robi się szum, nie święto. */
-export const CONFETTI_COUNT = 34;
+/**
+ * Ile cząstek leci w wystrzale.
+ *
+ * Pierwotne 34 z progiem „powyżej ~40 robi się szum" opierało się na krótszym
+ * locie: przy 2,9 s cząstki schodziły z ekranu razem i gęstość faktycznie
+ * męczyła. Po wydłużeniu lotu rozkładają się w czasie, więc 60 czyta się jako
+ * pełniejszy wystrzał, a nie ściana papieru (dogfood 2026-07-27).
+ */
+export const CONFETTI_COUNT = 60;
 
-const CONFETTI_MAX_BASE_DURATION_SECONDS = 2.9;
+/** Lot jest dłuższy, żeby moment zdążył wybrzmieć, a nie tylko mrugnąć. */
+const CONFETTI_MIN_BASE_DURATION_SECONDS = 2.8;
+const CONFETTI_MAX_BASE_DURATION_SECONDS = 4.3;
 const CONFETTI_FAR_DURATION_MULTIPLIER = 1.15;
-const CONFETTI_MAX_DELAY_SECONDS = 0.18;
+/** Rozrzut startu rośnie z liczbą cząstek, ale wystrzał ma zostać JEDNYM zdarzeniem. */
+export const CONFETTI_MAX_DELAY_SECONDS = 0.26;
 
 /**
  * Po tym czasie komponent znika z DOM. Wartość wynika z najdłuższego lotu
@@ -43,7 +53,14 @@ export interface ConfettiParticle {
   color: number;
   /** Dryf poziomy w px (opór wygasza prędkość boczną). */
   dx: number;
-  /** Szczyt paraboli w px (ujemny = w górę). */
+  /**
+   * Szczyt paraboli w `vh` (ujemny = w górę), liczony od punktu startu (`top: 32%`).
+   *
+   * Było w px, przez co na wyższych ekranach wystrzał wyglądał na coraz niższy —
+   * przy 812 px sięgał ledwie okolic liczby-bohatera. `vh` (jak `floor`) trzyma tę
+   * samą wysokość na każdym urządzeniu: -36vh od startu 32vh to lekkie wyjście nad
+   * krawędź, czyli wystrzał dobija do topbara.
+   */
   peak: number;
   /** Gdzie kończy lot — w `vh`, żeby zejść z ekranu niezależnie od urządzenia. */
   floor: number;
@@ -72,8 +89,10 @@ export function buildConfettiParticles(
     const far = random() < 0.35;
     const scale = far ? between(0.62, 0.82) : between(0.95, 1.25);
     const duration =
-      between(1.9, CONFETTI_MAX_BASE_DURATION_SECONDS) *
-      (far ? CONFETTI_FAR_DURATION_MULTIPLIER : 1);
+      between(
+        CONFETTI_MIN_BASE_DURATION_SECONDS,
+        CONFETTI_MAX_BASE_DURATION_SECONDS,
+      ) * (far ? CONFETTI_FAR_DURATION_MULTIPLIER : 1);
     // Wysokość WYNIKA z szerokości, a nie z osobnego losowania: przy niezależnych
     // zakresach skalowanie potrafiło dać kwadrat (11×11), a kwadrat w obrocie 3D
     // czyta się jak migający piksel, nie jak pasek papieru. Proporcja 1:1,5–1:2,4.
@@ -84,7 +103,7 @@ export function buildConfettiParticles(
       id,
       color: Math.floor(random() * CONFETTI_COLOR_COUNT) + 1,
       dx: Math.round(between(-150, 150)),
-      peak: Math.round(between(-165, -40)),
+      peak: Math.round(between(-36, -15)),
       floor: Math.round(between(70, 95)),
       widthPx,
       heightPx: Math.round(widthPx * between(1.5, 2.4)),

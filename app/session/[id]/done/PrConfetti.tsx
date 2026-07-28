@@ -65,7 +65,7 @@ export function PrConfetti() {
             className="confetti-y"
             style={
               {
-                "--confetti-peak": `${p.peak}px`,
+                "--confetti-peak": `${p.peak}vh`,
                 "--confetti-floor": `${p.floor}vh`,
                 "--confetti-dur": `${p.durationSeconds}s`,
                 "--confetti-delay": `${p.delaySeconds}s`,

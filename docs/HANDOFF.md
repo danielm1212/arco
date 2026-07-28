@@ -103,12 +103,22 @@ koordynacji (2026-07-23).
   158/158 unit, 26/26 testów przeglądarkowych i walidatory 907/15/308 oraz 60/60.
   CI PR oraz ponowne CI `main` są zielone, Vercel wdrożył `47f48ae`, a publiczny login
   po przeładowaniu nie zgłasza błędów. Pozostaje checkpoint urządzeniowy [Ty].
-- **SESSION-01A3 — gotowe technicznie na `agent/session-01a3`, czeka na merge i deploy [Ty]:**
+- **SESSION-01A4 — gotowe technicznie, PR [#29](https://github.com/danielm1212/arco/pull/29) do `main`, czeka na merge [Ty]:**
+  niesie też poprawkę do 01A3, która nie zdążyła do #28 — podpowiedź startowa nie zamyka się
+  już tapem w tło (zostają „Rozumiem" i Escape).
+  rozciąganie zeszło z ekranu Done do loggera jako **ostatnia pozycja treningu** — na
+  podsumowaniu było już po wszystkim, a wtedy nikt do niego nie wraca. Moment rekordu jest
+  mocniejszy: 34 → 60 cząstek, lot 1,9–2,9 s → 2,8–4,3 s, a `peak` przeszedł z pikseli na
+  `vh`. To ostatnie było realnym błędem: w px im wyższy ekran, tym niżej kończył się
+  wystrzał (przy 812 px sięgał okolic liczby-bohatera zamiast topbara), podczas gdy `floor`
+  był w vh od początku dokładnie z tego powodu. Bramka: lint, TypeScript, build,
+  **158/158** unit, **32/32** przeglądarkowych. Szczegóły: `session-01a4-release-2026-07-27.md`.
+- **SESSION-01A3 — scalone w PR [#28](https://github.com/danielm1212/arco/pull/28), czeka na deploy [Ty]:**
   jednorazowa podpowiedź startowa loggera — popover zakotwiczony pod pierwszym wierszem serii,
   strzałka celuje w check, tło przyciemnione, przycisk „Rozumiem". Pokazywana raz na urządzenie
   (`prefs.loggerHintSeen`) i znikająca także po pierwszej zaliczonej serii. Pełny kontrakt
   overlayów: portal do `body`, współdzielona blokada tła (`lib/bodyScrollLock.ts` wyciągnięte
-  z `BottomSheet` bez zmiany zachowania), Escape, klik w tło, pułapka fokusu ze zwrotem fokusu
+  z `BottomSheet` bez zmiany zachowania), Escape, pułapka fokusu ze zwrotem fokusu
   (`lib/useFocusTrap.ts`). Przy okazji osłonięto `prefs.ts` — `localStorage` rzuca w Safari
   w trybie prywatnym i przy pełnej quocie, co wywracało cleanup overlaya. Bramka: lint,
   TypeScript, build, **157/157** unit, **31/31** przeglądarkowych (TRUST-03 15/15).
@@ -254,9 +264,11 @@ koordynacji (2026-07-23).
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
 4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A, SESSION-01A2 i SESSION-01A3;
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
-5. [Ty] merge SESSION-01A3 z `agent/session-01a3` i deploy obu paczek loggera procedurą
-   `arco-release` (SESSION-01A2 jest już w `main`). Opcjonalny follow-up domykający ryzyko 6:
-   podpiąć `lib/useFocusTrap.ts` do `components/ui/bottom-sheet.tsx`.
+5. [Ty] merge SESSION-01A4 ([#29](https://github.com/danielm1212/arco/pull/29)), potem deploy
+   całej serii loggera procedurą `arco-release`. **Uwaga:** SESSION-01A3 zostało scalone (#28)
+   na commicie sprzed poprawki zamykania podpowiedzi, więc `main` ma dziś popover zamykany
+   tapem w tło — naprawia to dopiero #29. Opcjonalny follow-up domykający ryzyko 6: podpiąć
+   `lib/useFocusTrap.ts` do `components/ui/bottom-sheet.tsx`.
 6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
 7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
