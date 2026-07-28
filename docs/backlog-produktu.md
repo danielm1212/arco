@@ -124,6 +124,11 @@ CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ogranic
 | HOME-03 | Postęp ćwiczeń na Home | Widzę, które ćwiczenia idą do przodu, a które stoją, bez wchodzenia w Postępy | po HOME-02 |
 | NAV-01 | Trzy taby i zakładki Treningu | Nawigacja ma trzy jasne miejsca; Plany, Postępy, Ciało i Historia są w jednym pasku (D-38) | po HOME-01…03, **przed R2.2** (obie dotykają `/programs`) |
 | PLAN-04 | Start dowolnego planu bez zmiany aktywnego | Jestem w domu, robię dzień z planu domowego, a plan siłowni czeka nietknięty; rotacja się nie przesuwa (D-41) | gotowe do podjęcia, niezależne — może iść równolegle |
+| PLAN-05A | Migracja: slot medialny na kartę planu | `programs.cover_image_url` (nullable) — realne zdjęcie wchodzi później jako dane, nie jako kolejny redesign | gotowe do podjęcia, niezależne |
+| PLAN-05B | Komponent `ProgramCover` (zdjęcie / fallback) | Karta ma kotwicę wizualną nawet bez zdjęcia — gradient wg `focus_key` + istniejąca ikona 3D `plan`, zero nowych assetów | po PLAN-05A |
+| PLAN-05C | Komponent `LevelMeter` (poziom w paskach) | Poziom trudności czytelny jednym rzutem oka, z pełnym `aria-label` dla czytnika ekranu | gotowe do podjęcia, niezależne |
+| PLAN-05D | Przebudowa szczegółu planu (`/programs/[id]`) | Zdjęcie/fallback, jeden wiersz faktów, CTA nad zgięciem, opis w akordeonie, „Jak robić postęp” usunięte (identyczne na 15 planach) | po PLAN-05B/05C i **po NAV-01** (ten sam plik) |
+| PLAN-05E | Miniatura i poziom na liście planów | `ProgramRow` dostaje `ProgramCover` i `LevelMeter`; audyt R2.1 („nazwa + dwa fakty”) zostaje, to wzbogacenie nie powrót do tabeli filtrów | po PLAN-05D |
 | SESSION-01A4 | Rozciąganie w treningu i mocniejszy moment PR | Karta rozciągania jako ostatnia pozycja treningu zamiast ekranu Done; konfetti 60 cząstek, dłuższy lot, zasięg w `vh` (dobija do topbara na każdym ekranie) | gotowe technicznie 2026-07-27 na `agent/session-01a4`; merge po SESSION-01A3 |
 | A11Y-SHEETS | Focus trap w bottom sheetach (ryzyko 6) | Podpiąć `lib/useFocusTrap.ts` (powstał w SESSION-01A3) do `components/ui/bottom-sheet.tsx`; blokada tła jest już współdzielona | drobny follow-up, bez zależności |
 
