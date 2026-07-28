@@ -119,6 +119,23 @@ koordynacji (2026-07-23).
   Szczegóły: `session-01a2-release-2026-07-27.md`, `session-01a3-release-2026-07-27.md`,
   `session-01a4-release-2026-07-27.md`.
 
+- **PLAN-C0 / PLAN-C1 — gotowe lokalnie, gałąź `agent/plan-c1-fbw-gym`, NIE na produkcji:**
+  biblioteka v2.1 (`training_programs_v2`) została przyjęta jako kanon recept (**D-42**), a
+  `audyt-biblioteki-programow-2026-07.md` ma status superseded z trzema wyjątkami — kolejność
+  power/skill z TRAIN-01 zostaje. PLAN-C0 dał mapę 215 nazw → `exercise_id`
+  (`scripts/data/v21-exercise-map.json`, 30 zweryfikowanych ręcznie) i dokument metody
+  `plan-c0-mapowanie-cwiczen-v21.md`. PLAN-C1 wdrożył receptę v2.1 dla `intermediate-gym-fbw2`:
+  oba dni zostają przy 7 pozycjach i idą z 23/22 na 21/21 serii, 14 alternatyw sprzętowych, nowa karta
+  `docs/trainings/intermediate-gym-fbw2.md`, `content_version` 3 → 4, migracja
+  `20260728213337` z bramką „zero otwartych sesji" i payloadem alternatyw dla produkcji; migracja
+  **nie usuwa żadnego slotu**, więc historia nie traci powiązań. Po pytaniu [Ty] o ramiona każda
+  sesja dostała bezpośredni biceps i triceps (v2.1 dawała po 3 serie tygodniowo, teraz po 5). Przy okazji naprawiony uśpiony bug seeda:
+  wszystkie alternatywy dostawały `position: 0` przy `unique(program_day_slot_id, position)`,
+  więc dwie alternatywy na slot były niemożliwe. Bramka: lint, build, 181/181 unit,
+  32/32 przeglądarkowych, walidatory 907/15/308 oraz 60/60, smoke Phase 1/Phase 2/offline,
+  seed dwukrotnie idempotentny. **Nie zweryfikowano wizualnie** — `/programs/[id]` wymaga
+  zalogowania, a agent nie wprowadza haseł. Pozostaje checkpoint [Ty] i deploy.
+
 ### Częściowe i szczegóły wdrożeń
 
 - **CONTENT-01:** część A jest na produkcji: Barbell Hip Thrust jest wstrzymany, systemowe sloty

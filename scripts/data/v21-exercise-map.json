@@ -1,0 +1,4569 @@
+{
+ "_meta": {
+  "source": "training_programs_v2 (biblioteka v2.1)",
+  "catalog": "scripts/data/exercises.json",
+  "legend": "verified | proposed | review | missing",
+  "uwaga": "Programy kalisteniczne mają w 6. kolumnie wskazówki progresji, nie zamienniki — ich alternatywy trzeba dopisać osobno."
+ },
+ "map": {
+  "1-arm DB row": {
+   "exercise_id": "One-Arm_Dumbbell_Row",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 11,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-gym-fbw2",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "One-Arm_Dumbbell_Row",
+    "Dumbbell_One-Arm_Upright_Row",
+    "Bent_Over_Two-Dumbbell_Row"
+   ]
+  },
+  "1-arm DB row z pauzą": {
+   "exercise_id": "One-Arm_Dumbbell_Row",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "One-Arm_Dumbbell_Row",
+    "Dumbbell_One-Arm_Upright_Row",
+    "Bent_Over_Two-Dumbbell_Row"
+   ]
+  },
+  "1-arm band pulldown": {
+   "exercise_id": "Straight-Arm_Pulldown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Straight-Arm_Pulldown",
+    "Band_Lat_Pulldown",
+    "One_Arm_Lat_Pulldown"
+   ]
+  },
+  "2-DB bent-over row": {
+   "exercise_id": "Bent_Over_Two-Dumbbell_Row",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.89,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-home-fbw2",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bent_Over_Two-Dumbbell_Row",
+    "Bent_Over_Barbell_Row",
+    "Bent_Over_Two-Dumbbell_Row_With_Palms_In"
+   ]
+  },
+  "2-DB row": {
+   "exercise_id": "Bent_Over_Two-Dumbbell_Row",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-home-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bent_Over_Two-Dumbbell_Row",
+    "Dumbbell_Incline_Row",
+    "Bent_Over_Barbell_Row"
+   ]
+  },
+  "45° back extension": {
+   "exercise_id": "Leg_Extensions",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Leg_Extensions",
+    "Back_Flyes_-_With_Bands",
+    "Chain_Handle_Extension"
+   ]
+  },
+  "Ab wheel": {
+   "exercise_id": "Ab_Wheel_Rollout",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Ab_Wheel_Rollout",
+    "Ab_Roller",
+    "Conans_Wheel"
+   ]
+  },
+  "Arnold press": {
+   "exercise_id": "Arnold_Dumbbell_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Arnold_Dumbbell_Press",
+    "Kettlebell_Arnold_Press",
+    "Z_Press"
+   ]
+  },
+  "Assisted Nordic": {
+   "exercise_id": "Nordic_Hamstring_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Nordic_Hamstring_Curl",
+    "Reverse_Nordic_Curl",
+    "Band_Assisted_Pull-Up"
+   ]
+  },
+  "Assisted Nordic curl": {
+   "exercise_id": "Nordic_Hamstring_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "intermediate-bodyweight-fbw3",
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Nordic_Hamstring_Curl",
+    "Reverse_Nordic_Curl",
+    "Dumbbell_Bicep_Curl"
+   ]
+  },
+  "Assisted pull-up": {
+   "exercise_id": "Band_Assisted_Pull-Up",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 6,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "Jedyny wariant asystowany w katalogu; equipment \"other\" — do poprawy przy TRAIN-05.",
+   "machine_candidates": [
+    "Band_Assisted_Pull-Up",
+    "Pullups",
+    "Chin-Up"
+   ]
+  },
+  "Assisted pull-up / podciąganie": {
+   "exercise_id": "Band_Assisted_Pull-Up",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Band_Assisted_Pull-Up",
+    "Pullups",
+    "Chin-Up"
+   ]
+  },
+  "Band lat pulldown / DB row": {
+   "exercise_id": "Band_Lat_Pulldown",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-home-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Band_Lat_Pulldown",
+    "Wide-Grip_Lat_Pulldown",
+    "One_Arm_Lat_Pulldown"
+   ]
+  },
+  "Band pulldown": {
+   "exercise_id": "Band_Lat_Pulldown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Band_Lat_Pulldown",
+    "Wide-Grip_Lat_Pulldown",
+    "One_Arm_Lat_Pulldown"
+   ]
+  },
+  "Barbell / EZ curl": {
+   "exercise_id": "EZ-Bar_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "EZ-Bar_Curl",
+    "Barbell_Curl",
+    "Close-Grip_EZ_Bar_Curl"
+   ]
+  },
+  "Barbell / Smith squat": {
+   "exercise_id": "Barbell_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-gym3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Barbell_Squat",
+    "Barbell_Full_Squat",
+    "Barbell_Hack_Squat"
+   ]
+  },
+  "Barbell / cable curl": {
+   "exercise_id": "Barbell_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Barbell_Curl",
+    "Cable_Preacher_Curl",
+    "Cable_Wrist_Curl"
+   ]
+  },
+  "Barbell back squat": {
+   "exercise_id": "Barbell_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Squat",
+    "Barbell_Full_Squat",
+    "Barbell_Hack_Squat"
+   ]
+  },
+  "Barbell bench press": {
+   "exercise_id": "Barbell_Bench_Press_-_Medium_Grip",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Bench_Press_-_Medium_Grip",
+    "Barbell_Incline_Bench_Press_-_Medium_Grip",
+    "Decline_Barbell_Bench_Press"
+   ]
+  },
+  "Barbell hip thrust": {
+   "exercise_id": "Barbell_Hip_Thrust",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Hip_Thrust",
+    "Dumbbell_Hip_Thrust",
+    "Single-Leg_Hip_Thrust"
+   ]
+  },
+  "Bayesian curl": {
+   "exercise_id": "Bayesian_Cable_Curl",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Brak name_pl — do uzupełnienia.",
+   "machine_candidates": [
+    "Bayesian_Cable_Curl",
+    "Dumbbell_Bicep_Curl",
+    "Barbell_Curl"
+   ]
+  },
+  "Bez sprzętu: dodatkowa seria DB row; oznacz ograniczenie": {
+   "exercise_id": null,
+   "alternatives": [],
+   "status": "missing",
+   "confidence": 0.36,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bent_Over_Two-Dumbbell_Row",
+    "Dumbbell_Incline_Row",
+    "One-Arm_Dumbbell_Row"
+   ]
+  },
+  "Bez ławki: floor press": {
+   "exercise_id": "Floor_Press",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-home-fbw2",
+    "beginner-home-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Floor_Press",
+    "Alternating_Floor_Press",
+    "Dumbbell_Floor_Press"
+   ]
+  },
+  "Block pull": {
+   "exercise_id": "Clean_Pull",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Clean_Pull",
+    "Face_Pull",
+    "Pull_Through"
+   ]
+  },
+  "Body triceps press": {
+   "exercise_id": "Body_Tricep_Press",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Body_Tricep_Press",
+    "Lying_Triceps_Press",
+    "Seated_Triceps_Press"
+   ]
+  },
+  "Bodyweight squat": {
+   "exercise_id": "Bodyweight_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bodyweight_Squat",
+    "Barbell_Squat",
+    "Bodyweight_Flyes"
+   ]
+  },
+  "Bulgarian split squat": {
+   "exercise_id": "Bulgarian_Split_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 9,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4",
+    "intermediate-bodyweight-fbw3",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bulgarian_Split_Squat",
+    "Split_Squats",
+    "Split_Squat_with_Dumbbells"
+   ]
+  },
+  "Cable abduction": {
+   "exercise_id": "Cable_Crossover",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Crossover",
+    "Cable_Crunch",
+    "Cable_Deadlifts"
+   ]
+  },
+  "Cable crunch": {
+   "exercise_id": "Cable_Crunch",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Crunch",
+    "Cable_Reverse_Crunch",
+    "Cable_Seated_Crunch"
+   ]
+  },
+  "Cable curl": {
+   "exercise_id": "Cable_Preacher_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Preacher_Curl",
+    "Cable_Wrist_Curl",
+    "Lying_Cable_Curl"
+   ]
+  },
+  "Cable lateral raise": {
+   "exercise_id": "Cable_Seated_Lateral_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw3",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Seated_Lateral_Raise",
+    "Cable_Shrugs",
+    "Front_Cable_Raise"
+   ]
+  },
+  "Cable press": {
+   "exercise_id": "Cable_Chest_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Chest_Press",
+    "Cable_Shoulder_Press",
+    "Alternating_Cable_Shoulder_Press"
+   ]
+  },
+  "Cable pull-through": {
+   "exercise_id": "Cable_Pull-Through",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Pull-Through",
+    "Pull_Through",
+    "Band_Good_Morning_Pull_Through"
+   ]
+  },
+  "Cable row": {
+   "exercise_id": "Seated_Cable_Rows",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Cable_Rows",
+    "Upright_Cable_Row",
+    "Bent_Over_Barbell_Row"
+   ]
+  },
+  "Chest press": {
+   "exercise_id": "Leverage_Chest_Press",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Chest_Press",
+    "Leverage_Chest_Press",
+    "Incline_Cable_Chest_Press"
+   ]
+  },
+  "Chest-supported / 1-arm DB row": {
+   "exercise_id": "Chest-Supported_Dumbbell_Row",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.89,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-home-fbw2",
+    "beginner-home-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Chest-Supported_Dumbbell_Row",
+    "One-Arm_Dumbbell_Row",
+    "Dumbbell_One-Arm_Upright_Row"
+   ]
+  },
+  "Chest-supported DB row": {
+   "exercise_id": "Chest-Supported_Dumbbell_Row",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Chest-Supported_Dumbbell_Row",
+    "Bent_Over_Two-Dumbbell_Row",
+    "Dumbbell_Incline_Row"
+   ]
+  },
+  "Chest-supported row": {
+   "exercise_id": "Chest-Supported_Dumbbell_Row",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 10,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4",
+    "beginner-gym-fbw2",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Chest-Supported_Dumbbell_Row",
+    "Bent_Over_Barbell_Row",
+    "Inverted_Row"
+   ]
+  },
+  "Chin-up": {
+   "exercise_id": "Chin-Up",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Chin-Up",
+    "One_Arm_Chin-Up",
+    "3_4_Sit-Up"
+   ]
+  },
+  "Chin-up / band pulldown": {
+   "exercise_id": "Band_Lat_Pulldown",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Band_Lat_Pulldown",
+    "Chin-Up",
+    "Wide-Grip_Lat_Pulldown"
+   ]
+  },
+  "Chin-up assisted / negative": {
+   "exercise_id": "Chin-Up",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-bodyweight-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Chin-Up",
+    "Band_Assisted_Pull-Up",
+    "One_Arm_Chin-Up"
+   ]
+  },
+  "Conventional deadlift": {
+   "exercise_id": "Axle_Deadlift",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Axle_Deadlift",
+    "Barbell_Deadlift",
+    "Car_Deadlift"
+   ]
+  },
+  "Copenhagen plank": {
+   "exercise_id": "Copenhagen_Plank",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-home-upper-lower4",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Copenhagen_Plank",
+    "Plank",
+    "Push_Up_to_Side_Plank"
+   ]
+  },
+  "Cross-body extension": {
+   "exercise_id": "Cross-Body_Crunch",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cross-Body_Crunch",
+    "Cross_Body_Hammer_Curl",
+    "Body-Up"
+   ]
+  },
+  "DB Arnold press": {
+   "exercise_id": "Arnold_Dumbbell_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Arnold_Dumbbell_Press",
+    "Dumbbell_Bench_Press",
+    "Dumbbell_Floor_Press"
+   ]
+  },
+  "DB Bulgarian split squat": {
+   "exercise_id": "Bulgarian_Split_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.91,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 4,
+   "programs": [
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bulgarian_Split_Squat",
+    "Split_Squats",
+    "Dumbbell_Squat"
+   ]
+  },
+  "DB RDL": {
+   "exercise_id": "Romanian_Deadlift",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Romanian_Deadlift_from_Deficit",
+    "Stiff-Legged_Dumbbell_Deadlift"
+   ]
+  },
+  "DB Romanian deadlift": {
+   "exercise_id": "Romanian_Deadlift",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 6,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Romanian_Deadlift_from_Deficit",
+    "Stiff-Legged_Dumbbell_Deadlift"
+   ]
+  },
+  "DB bench": {
+   "exercise_id": "Dumbbell_Bench_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Bench_Press",
+    "Barbell_Bench_Press_-_Medium_Grip",
+    "Decline_Dumbbell_Bench_Press"
+   ]
+  },
+  "DB bench press": {
+   "exercise_id": "Dumbbell_Bench_Press",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 10,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-gym-fbw2",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Bench_Press",
+    "Decline_Dumbbell_Bench_Press",
+    "Incline_Dumbbell_Press"
+   ]
+  },
+  "DB calf raise": {
+   "exercise_id": "Calf_Raise_On_A_Dumbbell",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Calf_Raise_On_A_Dumbbell",
+    "Standing_Dumbbell_Calf_Raise",
+    "Dumbbell_Raise"
+   ]
+  },
+  "DB curl": {
+   "exercise_id": "Dumbbell_Bicep_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Bicep_Curl",
+    "Incline_Dumbbell_Curl",
+    "Seated_Dumbbell_Curl"
+   ]
+  },
+  "DB curl + overhead extension": {
+   "exercise_id": "Dumbbell_Bicep_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.57,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Bicep_Curl",
+    "Incline_Dumbbell_Curl",
+    "Overhead_Cable_Curl"
+   ]
+  },
+  "DB floor / bench press": {
+   "exercise_id": "Dumbbell_Bench_Press",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-home-fbw3",
+    "lower-body-home3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Dumbbell_Bench_Press",
+    "Dumbbell_Floor_Press",
+    "Decline_Dumbbell_Bench_Press"
+   ]
+  },
+  "DB floor press": {
+   "exercise_id": "Dumbbell_Floor_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 7,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Floor_Press",
+    "Floor_Press",
+    "Alternating_Floor_Press"
+   ]
+  },
+  "DB glute bridge": {
+   "exercise_id": "Barbell_Glute_Bridge",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Glute_Bridge",
+    "Single_Leg_Glute_Bridge",
+    "Dumbbell_Clean"
+   ]
+  },
+  "DB hip thrust": {
+   "exercise_id": "Dumbbell_Hip_Thrust",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 6,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Hip_Thrust",
+    "Barbell_Hip_Thrust",
+    "Single-Leg_Hip_Thrust"
+   ]
+  },
+  "DB lateral raise": {
+   "exercise_id": "Side_Lateral_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 11,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Side_Lateral_Raise",
+    "Dumbbell_Raise",
+    "Dumbbell_Lying_Rear_Lateral_Raise"
+   ]
+  },
+  "DB overhead triceps extension": {
+   "exercise_id": "Decline_Dumbbell_Triceps_Extension",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Decline_Dumbbell_Triceps_Extension",
+    "Sled_Overhead_Triceps_Extension",
+    "Standing_Dumbbell_Triceps_Extension"
+   ]
+  },
+  "DB reverse lunge": {
+   "exercise_id": "Crossover_Reverse_Lunge",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "lower-body-gym3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Crossover_Reverse_Lunge",
+    "Dumbbell_Rear_Lunge",
+    "Standing_Dumbbell_Reverse_Curl"
+   ]
+  },
+  "DB shoulder press": {
+   "exercise_id": "Dumbbell_Shoulder_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Shoulder_Press",
+    "Dumbbell_One-Arm_Shoulder_Press",
+    "Arnold_Dumbbell_Press"
+   ]
+  },
+  "DB skull crusher": {
+   "exercise_id": "Band_Skull_Crusher",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Band_Skull_Crusher",
+    "Cable_Lying_Triceps_Extension",
+    "Decline_Dumbbell_Triceps_Extension"
+   ]
+  },
+  "DB squeeze press": {
+   "exercise_id": "Arnold_Dumbbell_Press",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-home-fbw3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Arnold_Dumbbell_Press",
+    "Dumbbell_Bench_Press",
+    "Dumbbell_Floor_Press"
+   ]
+  },
+  "DB step-up": {
+   "exercise_id": "Dumbbell_Step_Ups",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Step_Ups",
+    "Step-up_with_Knee_Raise",
+    "Standing_Dumbbell_Upright_Row"
+   ]
+  },
+  "DB stiff-leg deadlift": {
+   "exercise_id": "Stiff-Legged_Dumbbell_Deadlift",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Stiff-Legged_Dumbbell_Deadlift",
+    "Stiff-Legged_Barbell_Deadlift",
+    "Smith_Machine_Stiff-Legged_Deadlift"
+   ]
+  },
+  "Dead bug": {
+   "exercise_id": "Dead_Bug",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 8,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-fbw2",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dead_Bug",
+    "Barbell_Deadlift",
+    "Kettlebell_Dead_Clean"
+   ]
+  },
+  "Dead bug 2 × 8–12 / strona": {
+   "exercise_id": "Dead_Bug",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Liczba serii z komórki swap należy do recepty, nie do nazwy.",
+   "machine_candidates": [
+    "Dead_Bug",
+    "Barbell_Deadlift",
+    "Kettlebell_Dead_Clean"
+   ]
+  },
+  "Dips assisted / dips": {
+   "exercise_id": "Bench_Dips",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.4,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Bench_Dips",
+    "Ring_Dips",
+    "Dips_-_Chest_Version"
+   ]
+  },
+  "Double-DB front squat": {
+   "exercise_id": "Dumbbell_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 6,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Squat",
+    "Dumbbell_Squat_To_A_Bench",
+    "Front_Barbell_Squat"
+   ]
+  },
+  "Face pull": {
+   "exercise_id": "Face_Pull",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Face_Pull",
+    "Clean_Pull",
+    "Pull_Through"
+   ]
+  },
+  "Feet-elevated inverted row": {
+   "exercise_id": "Inverted_Row",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Inverted_Row",
+    "Inverted_Row_with_Straps",
+    "Push-Ups_With_Feet_Elevated"
+   ]
+  },
+  "Feet-elevated pike push-up": {
+   "exercise_id": "Pike_Push-Up",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Pike_Push-Up",
+    "Push-Ups_With_Feet_Elevated",
+    "Clock_Push-Up"
+   ]
+  },
+  "Feet-elevated push-up": {
+   "exercise_id": "Push-Ups_With_Feet_Elevated",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Push-Ups_With_Feet_Elevated",
+    "Clock_Push-Up",
+    "Decline_Push-Up"
+   ]
+  },
+  "Floor press": {
+   "exercise_id": "Floor_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Floor_Press",
+    "Alternating_Floor_Press",
+    "Dumbbell_Floor_Press"
+   ]
+  },
+  "Glute bridge": {
+   "exercise_id": "Barbell_Glute_Bridge",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "beginner-gym-fbw3",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Glute_Bridge",
+    "Single_Leg_Glute_Bridge",
+    "Glute_Kickback"
+   ]
+  },
+  "Glute kickback": {
+   "exercise_id": "Glute_Kickback",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Glute_Kickback",
+    "Barbell_Glute_Bridge",
+    "Glute_Ham_Raise"
+   ]
+  },
+  "Goblet squat": {
+   "exercise_id": "Goblet_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Goblet_Squat",
+    "Barbell_Squat",
+    "Bodyweight_Squat"
+   ]
+  },
+  "Goblet squat 3-1-1": {
+   "exercise_id": "Goblet_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Goblet_Squat",
+    "Barbell_Squat",
+    "Bodyweight_Squat"
+   ]
+  },
+  "Hack squat": {
+   "exercise_id": "Hack_Squat",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 6,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Hack_Squat",
+    "Barbell_Hack_Squat",
+    "Narrow_Stance_Hack_Squats"
+   ]
+  },
+  "Hack squat / front squat": {
+   "exercise_id": "Hack_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Hack_Squat",
+    "Barbell_Hack_Squat",
+    "Front_Barbell_Squat"
+   ]
+  },
+  "Hammer curl": {
+   "exercise_id": "Alternate_Hammer_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Alternate_Hammer_Curl",
+    "Cross_Body_Hammer_Curl",
+    "Dumbbell_Bicep_Curl"
+   ]
+  },
+  "Hammer curl + overhead extension": {
+   "exercise_id": "Alternate_Hammer_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.57,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Alternate_Hammer_Curl",
+    "Overhead_Cable_Curl",
+    "Cross_Body_Hammer_Curl"
+   ]
+  },
+  "Hammer curl + skull crusher": {
+   "exercise_id": "Band_Skull_Crusher",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.73,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw3",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Band_Skull_Crusher",
+    "Cable_Lying_Triceps_Extension",
+    "Decline_Close-Grip_Bench_To_Skull_Crusher"
+   ]
+  },
+  "Hamstring walkout": {
+   "exercise_id": null,
+   "alternatives": [],
+   "status": "missing",
+   "confidence": 0.4,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "beginner-home-fbw3",
+    "intermediate-bodyweight-fbw3",
+    "lower-body-home3"
+   ],
+   "note": "Jedyny realny brak w katalogu. Do rozstrzygnięcia w paczce domowej.",
+   "machine_candidates": [
+    "Glute_Ham_Raise",
+    "Platform_Hamstring_Slides",
+    "Prone_Manual_Hamstring"
+   ]
+  },
+  "Hanging knee raise": {
+   "exercise_id": "Hanging_Knee_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "intermediate-bodyweight-fbw3",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Hanging_Knee_Raise",
+    "Hanging_Leg_Raise",
+    "Bent-Knee_Hip_Raise"
+   ]
+  },
+  "Hanging leg raise": {
+   "exercise_id": "Hanging_Leg_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Hanging_Leg_Raise",
+    "Hanging_Knee_Raise",
+    "Flat_Bench_Lying_Leg_Raise"
+   ]
+  },
+  "Heavy DB Bulgarian split squat": {
+   "exercise_id": "Bulgarian_Split_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.83,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bulgarian_Split_Squat",
+    "Split_Squats",
+    "Dumbbell_Squat"
+   ]
+  },
+  "Heavy lat pulldown": {
+   "exercise_id": "Wide-Grip_Lat_Pulldown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Wide-Grip_Lat_Pulldown",
+    "Band_Lat_Pulldown",
+    "One_Arm_Lat_Pulldown"
+   ]
+  },
+  "Heel-elevated goblet squat": {
+   "exercise_id": "Goblet_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Goblet_Squat",
+    "Barbell_Squat",
+    "Bodyweight_Squat"
+   ]
+  },
+  "Heel-elevated goblet squat 3-1-1": {
+   "exercise_id": "Goblet_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Goblet_Squat",
+    "Barbell_Squat",
+    "Bodyweight_Squat"
+   ]
+  },
+  "Heel-elevated squat": {
+   "exercise_id": "Barbell_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Squat",
+    "Bodyweight_Squat",
+    "Box_Squat"
+   ]
+  },
+  "Hip abduction machine": {
+   "exercise_id": "Machine_Hip_Abduction",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Machine_Hip_Abduction",
+    "Smith_Machine_Hip_Raise",
+    "Barbell_Hip_Thrust"
+   ]
+  },
+  "Hip hinge machine": {
+   "exercise_id": "Machine_Hip_Abduction",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Machine_Hip_Abduction",
+    "Smith_Machine_Hip_Raise",
+    "Barbell_Hip_Thrust"
+   ]
+  },
+  "Hip thrust": {
+   "exercise_id": "Barbell_Hip_Thrust",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw3",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Hip_Thrust",
+    "Dumbbell_Hip_Thrust",
+    "Single-Leg_Hip_Thrust"
+   ]
+  },
+  "Hollow-body hold": {
+   "exercise_id": "Hollow_Body_Hold",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Hollow_Body_Hold",
+    "Body-Up",
+    "Body_Tricep_Press"
+   ]
+  },
+  "Hollow-body regression": {
+   "exercise_id": "Hollow_Body_Hold",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Hollow_Body_Hold",
+    "Body-Up",
+    "Body_Tricep_Press"
+   ]
+  },
+  "Incline DB curl": {
+   "exercise_id": "Incline_Dumbbell_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Incline_Dumbbell_Curl",
+    "Alternate_Incline_Dumbbell_Curl",
+    "Dumbbell_Prone_Incline_Curl"
+   ]
+  },
+  "Incline DB press": {
+   "exercise_id": "Incline_Dumbbell_Press",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 11,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-gym-fbw2",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Incline_Dumbbell_Press",
+    "Hammer_Grip_Incline_DB_Bench_Press",
+    "Arnold_Dumbbell_Press"
+   ]
+  },
+  "Incline barbell press": {
+   "exercise_id": "Barbell_Incline_Bench_Press_-_Medium_Grip",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Incline_Bench_Press_-_Medium_Grip",
+    "Barbell_Shoulder_Press",
+    "Incline_Dumbbell_Press"
+   ]
+  },
+  "Incline chest press": {
+   "exercise_id": "Incline_Cable_Chest_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Incline_Cable_Chest_Press",
+    "Leverage_Incline_Chest_Press",
+    "Cable_Chest_Press"
+   ]
+  },
+  "Incline machine press": {
+   "exercise_id": "Leverage_Incline_Chest_Press",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-fbw2",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Leverage_Incline_Chest_Press",
+    "Smith_Machine_Incline_Bench_Press",
+    "Incline_Dumbbell_Press"
+   ]
+  },
+  "Incline push-up / push-up": {
+   "exercise_id": "Incline_Push-Up",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-bodyweight-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Incline_Push-Up",
+    "Incline_Push-Up_Medium",
+    "Incline_Push-Up_Wide"
+   ]
+  },
+  "Incline rear-delt raise": {
+   "exercise_id": "Lying_Rear_Delt_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Lying_Rear_Delt_Raise",
+    "Barbell_Incline_Shoulder_Raise",
+    "Dumbbell_Incline_Shoulder_Raise"
+   ]
+  },
+  "Inverted row": {
+   "exercise_id": "Inverted_Row",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Inverted_Row",
+    "Inverted_Row_with_Straps",
+    "Bent_Over_Barbell_Row"
+   ]
+  },
+  "Inverted row na certyfikowanym podparciu": {
+   "exercise_id": "Inverted_Row",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Inverted_Row",
+    "Inverted_Row_with_Straps",
+    "Bent_Over_Barbell_Row"
+   ]
+  },
+  "Jump squat": {
+   "exercise_id": "Freehand_Jump_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Freehand_Jump_Squat",
+    "Kneeling_Jump_Squat",
+    "Weighted_Jump_Squat"
+   ]
+  },
+  "L-sit progression": {
+   "exercise_id": "L-Sit_Hold",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "L-Sit_Hold",
+    "3_4_Sit-Up",
+    "Sit-Up"
+   ]
+  },
+  "Lat pulldown": {
+   "exercise_id": "Wide-Grip_Lat_Pulldown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw3",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Wide-Grip_Lat_Pulldown",
+    "Band_Lat_Pulldown",
+    "One_Arm_Lat_Pulldown"
+   ]
+  },
+  "Lean-away lateral raise": {
+   "exercise_id": "Lateral_Raise_-_With_Bands",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.57,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Lateral_Raise_-_With_Bands",
+    "Side_Lateral_Raise",
+    "Machine_Lateral_Raise"
+   ]
+  },
+  "Lean-away raise": {
+   "exercise_id": null,
+   "alternatives": [],
+   "status": "missing",
+   "confidence": 0.4,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Calf_Raise_On_A_Dumbbell",
+    "Dumbbell_Raise",
+    "Hanging_Leg_Raise"
+   ]
+  },
+  "Leg press": {
+   "exercise_id": "Leg_Press",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 10,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Leg_Press",
+    "Leg-Over_Floor_Press",
+    "Narrow_Stance_Leg_Press"
+   ]
+  },
+  "Leg-press calf raise": {
+   "exercise_id": "Calf_Press_On_The_Leg_Press_Machine",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.89,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Calf_Press_On_The_Leg_Press_Machine",
+    "Single_Leg_Calf_Raise",
+    "Calf_Press"
+   ]
+  },
+  "Lying leg curl": {
+   "exercise_id": "Lying_Leg_Curls",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 6,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw3",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Lying_Leg_Curls",
+    "Ball_Leg_Curl",
+    "Lying_Cable_Curl"
+   ]
+  },
+  "Lying leg raise": {
+   "exercise_id": "Flat_Bench_Lying_Leg_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Flat_Bench_Lying_Leg_Raise",
+    "Hanging_Leg_Raise",
+    "Superman"
+   ]
+  },
+  "Machine / chest-supported row": {
+   "exercise_id": "Chest-Supported_Dumbbell_Row",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Chest-Supported_Dumbbell_Row",
+    "Leverage_Iso_Row",
+    "Leverage_Chest_Press"
+   ]
+  },
+  "Machine chest press / dips": {
+   "exercise_id": "Leverage_Chest_Press",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Leverage_Chest_Press",
+    "Cable_Chest_Press",
+    "Dips_-_Chest_Version"
+   ]
+  },
+  "Machine shoulder press": {
+   "exercise_id": "Machine_Shoulder_Military_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Machine_Shoulder_Military_Press",
+    "Smith_Machine_Overhead_Shoulder_Press",
+    "Barbell_Shoulder_Press"
+   ]
+  },
+  "Martwy ciąg rumuński": {
+   "exercise_id": "Romanian_Deadlift",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Barbell_Deadlift",
+    "Sumo_Deadlift"
+   ]
+  },
+  "Natural GHR / assisted Nordic": {
+   "exercise_id": "Glute_Ham_Raise",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Glute_Ham_Raise",
+    "Natural_Glute_Ham_Raise",
+    "Floor_Glute-Ham_Raise"
+   ]
+  },
+  "Neutral-grip lat pulldown": {
+   "exercise_id": "Wide-Grip_Lat_Pulldown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Wide-Grip_Lat_Pulldown",
+    "Close-Grip_Front_Lat_Pulldown",
+    "Band_Lat_Pulldown"
+   ]
+  },
+  "Neutral-grip pulldown": {
+   "exercise_id": "V-Bar_Pulldown",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.67,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Brak name_pl — do uzupełnienia.",
+   "machine_candidates": [
+    "Wide-Grip_Lat_Pulldown",
+    "Close-Grip_Front_Lat_Pulldown",
+    "One_Arm_Lat_Pulldown"
+   ]
+  },
+  "Nordic curl": {
+   "exercise_id": "Nordic_Hamstring_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Nordic_Hamstring_Curl",
+    "Reverse_Nordic_Curl",
+    "Dumbbell_Bicep_Curl"
+   ]
+  },
+  "Odwrotne spięcia brzucha na podłodze": {
+   "exercise_id": "Reverse_Crunch",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Brak name_pl w katalogu — do uzupełnienia (PLAN-C0 / braki).",
+   "machine_candidates": [
+    "Reverse_Crunch",
+    "Cable_Reverse_Crunch",
+    "Decline_Reverse_Crunch"
+   ]
+  },
+  "Overhead cable extension": {
+   "exercise_id": "Overhead_Cable_Triceps_Extension",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Overhead_Cable_Triceps_Extension",
+    "Cable_Rope_Overhead_Triceps_Extension",
+    "Overhead_Cable_Curl"
+   ]
+  },
+  "Overhead extension": {
+   "exercise_id": "Sled_Overhead_Triceps_Extension",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Sled_Overhead_Triceps_Extension",
+    "Triceps_Overhead_Extension_with_Rope",
+    "Overhead_Cable_Triceps_Extension"
+   ]
+  },
+  "Overhead press": {
+   "exercise_id": "Standing_Military_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Standing_Military_Press",
+    "Z_Press",
+    "Smith_Machine_Overhead_Shoulder_Press"
+   ]
+  },
+  "Pallof press": {
+   "exercise_id": "Pallof_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Pallof_Press",
+    "Pallof_Press_With_Rotation",
+    "Z_Press"
+   ]
+  },
+  "Pike push-up": {
+   "exercise_id": "Pike_Push-Up",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Pike_Push-Up",
+    "Clock_Push-Up",
+    "Decline_Push-Up"
+   ]
+  },
+  "Pistol / assisted pistol squat": {
+   "exercise_id": "Kettlebell_Pistol_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.57,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Kettlebell_Pistol_Squat",
+    "Smith_Machine_Pistol_Squat",
+    "Barbell_Squat"
+   ]
+  },
+  "Plank": {
+   "exercise_id": "Plank",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "beginner-home-fbw3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Plank",
+    "Copenhagen_Plank",
+    "Push_Up_to_Side_Plank"
+   ]
+  },
+  "Plank 2 × 20–40 s": {
+   "exercise_id": "Plank",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "beginner-home-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Plank",
+    "Landmine_180s",
+    "Copenhagen_Plank"
+   ]
+  },
+  "Prostowanie grzbietu 45°": {
+   "exercise_id": "Hyperextensions_Back_Extensions",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.5,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Equipment \"other\" — nigdy nie da badge pełnej zgodności, do poprawy przy TRAIN-05.",
+   "machine_candidates": [
+    "Leg_Extensions",
+    "Chain_Handle_Extension",
+    "Hip_Extension_with_Bands"
+   ]
+  },
+  "Prostowanie ramion na wyciągu": {
+   "exercise_id": "Triceps_Pushdown",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Triceps_Pushdown",
+    "Cable_Incline_Triceps_Extension",
+    "Cable_One_Arm_Tricep_Extension"
+   ]
+  },
+  "Prostowanie ramion nad głową": {
+   "exercise_id": "Overhead_Cable_Triceps_Extension",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.57,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Triceps_Pushdown",
+    "Cable_Incline_Triceps_Extension",
+    "Cable_One_Arm_Tricep_Extension"
+   ]
+  },
+  "Przysiad goblet / ze sztangą": {
+   "exercise_id": "Barbell_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Barbell_Squat",
+    "Goblet_Squat",
+    "Barbell_Full_Squat"
+   ]
+  },
+  "Przysiad ze sztangą / Smith squat": {
+   "exercise_id": "Barbell_Squat",
+   "alternatives": [
+    "Smith_Machine_Squat"
+   ],
+   "status": "verified",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Slot złożony rozbity: sztanga jako podstawa, Smith jako alternatywa sprzętowa.",
+   "machine_candidates": [
+    "Barbell_Squat",
+    "Barbell_Full_Squat",
+    "Barbell_Hack_Squat"
+   ]
+  },
+  "Pull-up": {
+   "exercise_id": "Pullups",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-bodyweight-fbw3",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Pullups",
+    "Chin-Up",
+    "Scapular_Pull-Up"
+   ]
+  },
+  "Pull-up / band pulldown": {
+   "exercise_id": "Band_Assisted_Pull-Up",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Band_Assisted_Pull-Up",
+    "Band_Lat_Pulldown",
+    "Pullups"
+   ]
+  },
+  "Pull-up / lat pulldown": {
+   "exercise_id": "Wide-Grip_Lat_Pulldown",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.75,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Wide-Grip_Lat_Pulldown",
+    "Band_Lat_Pulldown",
+    "One_Arm_Lat_Pulldown"
+   ]
+  },
+  "Push-up": {
+   "exercise_id": "Clock_Push-Up",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Clock_Push-Up",
+    "Decline_Push-Up",
+    "Incline_Push-Up"
+   ]
+  },
+  "Push-up progression": {
+   "exercise_id": "Clock_Push-Up",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Clock_Push-Up",
+    "Decline_Push-Up",
+    "Incline_Push-Up"
+   ]
+  },
+  "Pushdown": {
+   "exercise_id": "Triceps_Pushdown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Triceps_Pushdown",
+    "Cable_Incline_Pushdown",
+    "Reverse_Grip_Triceps_Pushdown"
+   ]
+  },
+  "Quadruped hip extension": {
+   "exercise_id": "Hip_Extension_with_Bands",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Hip_Extension_with_Bands",
+    "Barbell_Hip_Thrust",
+    "Leg_Extensions"
+   ]
+  },
+  "RDL z trap barem": {
+   "exercise_id": null,
+   "alternatives": [],
+   "status": "missing",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "D-1: zamiennik usunięty z recepty; nie dodajemy rekordu przy jednym użyciu.",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Trap_Bar_Deadlift",
+    "Romanian_Deadlift_from_Deficit"
+   ]
+  },
+  "Rear-delt fly": {
+   "exercise_id": "Cable_Rear_Delt_Fly",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.89,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Rear_Delt_Fly",
+    "Barbell_Rear_Delt_Row",
+    "Lying_Rear_Delt_Raise"
+   ]
+  },
+  "Reverse Nordic": {
+   "exercise_id": "Reverse_Nordic_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Reverse_Nordic_Curl",
+    "Nordic_Hamstring_Curl",
+    "Reverse_Crunch"
+   ]
+  },
+  "Reverse crunch": {
+   "exercise_id": "Reverse_Crunch",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 6,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Reverse_Crunch",
+    "Cable_Reverse_Crunch",
+    "Decline_Reverse_Crunch"
+   ]
+  },
+  "Reverse fly": {
+   "exercise_id": "Reverse_Crunch",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Reverse_Crunch",
+    "Reverse_Flyes",
+    "Reverse_Hyperextension"
+   ]
+  },
+  "Reverse lunge": {
+   "exercise_id": "Crossover_Reverse_Lunge",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 10,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4",
+    "beginner-bodyweight-fbw3",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "beginner-home-fbw3",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Crossover_Reverse_Lunge",
+    "Barbell_Lunge",
+    "Lunge_Sprint"
+   ]
+  },
+  "Reverse pec deck": {
+   "exercise_id": "Butterfly",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Butterfly",
+    "Reverse_Crunch",
+    "Reverse_Flyes"
+   ]
+  },
+  "Ring push-up / weighted dip": {
+   "exercise_id": "Clock_Push-Up",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Clock_Push-Up",
+    "Decline_Push-Up",
+    "Incline_Push-Up"
+   ]
+  },
+  "Romanian deadlift": {
+   "exercise_id": "Romanian_Deadlift",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 4,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw3",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Romanian_Deadlift_from_Deficit",
+    "Axle_Deadlift"
+   ]
+  },
+  "Romanian deadlift z hantlami": {
+   "exercise_id": "Romanian_Deadlift",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Romanian_Deadlift_from_Deficit",
+    "Stiff-Legged_Dumbbell_Deadlift"
+   ]
+  },
+  "Scapular pull-up": {
+   "exercise_id": "Scapular_Pull-Up",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "beginner-bodyweight-fbw3",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Scapular_Pull-Up",
+    "Pullups",
+    "Chin-Up"
+   ]
+  },
+  "Seated / standing DB press": {
+   "exercise_id": "Seated_Dumbbell_Press",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-home3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Seated_Dumbbell_Press",
+    "Standing_Dumbbell_Press",
+    "Standing_Alternating_Dumbbell_Press"
+   ]
+  },
+  "Seated DB calf raise": {
+   "exercise_id": "Seated_Calf_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Calf_Raise",
+    "Dumbbell_Seated_One-Leg_Calf_Raise",
+    "Barbell_Seated_Calf_Raise"
+   ]
+  },
+  "Seated DB lateral raise": {
+   "exercise_id": "Cable_Seated_Lateral_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Seated_Lateral_Raise",
+    "Seated_Side_Lateral_Raise",
+    "Side_Lateral_Raise"
+   ]
+  },
+  "Seated DB press": {
+   "exercise_id": "Seated_Dumbbell_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 9,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Dumbbell_Press",
+    "Arnold_Dumbbell_Press",
+    "Dumbbell_Bench_Press"
+   ]
+  },
+  "Seated cable row": {
+   "exercise_id": "Seated_Cable_Rows",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 7,
+   "programs": [
+    "advanced-gym-ppl6",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Cable_Rows",
+    "Cable_Seated_Crunch",
+    "Upright_Cable_Row"
+   ]
+  },
+  "Seated calf raise": {
+   "exercise_id": "Seated_Calf_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Calf_Raise",
+    "Barbell_Seated_Calf_Raise",
+    "Calf_Raise_On_A_Dumbbell"
+   ]
+  },
+  "Seated leg curl": {
+   "exercise_id": "Seated_Leg_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Leg_Curl",
+    "Lying_Leg_Curls",
+    "Ball_Leg_Curl"
+   ]
+  },
+  "Short-lever side plank": {
+   "exercise_id": null,
+   "alternatives": [],
+   "status": "missing",
+   "confidence": 0.44,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Push_Up_to_Side_Plank",
+    "Plank",
+    "Side_Bridge"
+   ]
+  },
+  "Short-lever version": {
+   "exercise_id": null,
+   "alternatives": [],
+   "status": "missing",
+   "confidence": 0.33,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dips_-_Chest_Version",
+    "Dips_-_Triceps_Version",
+    "3_4_Sit-Up"
+   ]
+  },
+  "Side plank": {
+   "exercise_id": "Plank",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Plank",
+    "Push_Up_to_Side_Plank",
+    "Side_Bridge"
+   ]
+  },
+  "Single-arm cable row": {
+   "exercise_id": "Single-Arm_Cable_Crossover",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Single-Arm_Cable_Crossover",
+    "Kneeling_Single-Arm_High_Pulley_Row",
+    "Seated_Cable_Rows"
+   ]
+  },
+  "Single-arm pulldown": {
+   "exercise_id": "Straight-Arm_Pulldown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.75,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Straight-Arm_Pulldown",
+    "One_Arm_Lat_Pulldown",
+    "Rope_Straight-Arm_Pulldown"
+   ]
+  },
+  "Single-leg DB RDL": {
+   "exercise_id": "Romanian_Deadlift",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.57,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Single_Dumbbell_Raise",
+    "Romanian_Deadlift_from_Deficit"
+   ]
+  },
+  "Single-leg RDL": {
+   "exercise_id": "Romanian_Deadlift",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Romanian_Deadlift",
+    "Romanian_Deadlift_from_Deficit",
+    "Single-Leg_Hop_Progression"
+   ]
+  },
+  "Single-leg calf raise": {
+   "exercise_id": "Single_Leg_Calf_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 8,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-home-upper-lower4",
+    "beginner-bodyweight-fbw3",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-bodyweight-fbw3",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Single_Leg_Calf_Raise",
+    "Calf_Press_On_The_Leg_Press_Machine",
+    "Calf_Raise_On_A_Dumbbell"
+   ]
+  },
+  "Single-leg glute bridge": {
+   "exercise_id": "Single_Leg_Glute_Bridge",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 4,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "beginner-bodyweight-fbw3",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Single_Leg_Glute_Bridge",
+    "Barbell_Glute_Bridge",
+    "Single-Leg_Hop_Progression"
+   ]
+  },
+  "Single-leg hip thrust": {
+   "exercise_id": "Single-Leg_Hip_Thrust",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-home-upper-lower4",
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Single-Leg_Hip_Thrust",
+    "Barbell_Hip_Thrust",
+    "Dumbbell_Hip_Thrust"
+   ]
+  },
+  "Single-leg version": {
+   "exercise_id": "Single-Leg_Hop_Progression",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.57,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Single-Leg_Hop_Progression",
+    "Single-Leg_Lateral_Hop",
+    "Single-Leg_Leg_Extension"
+   ]
+  },
+  "Skull crusher": {
+   "exercise_id": "Band_Skull_Crusher",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.89,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Band_Skull_Crusher",
+    "Cable_Lying_Triceps_Extension",
+    "Decline_Close-Grip_Bench_To_Skull_Crusher"
+   ]
+  },
+  "Slider leg curl": {
+   "exercise_id": "Platform_Hamstring_Slides",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 7,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-home-fbw3",
+    "intermediate-home-fbw2",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "D-2: nie brakuje w katalogu — ten sam ruch nazywa się Platform Hamstring Slides.",
+   "machine_candidates": [
+    "Lying_Leg_Curls",
+    "Ball_Leg_Curl",
+    "Seated_Leg_Curl"
+   ]
+  },
+  "Smith hip thrust": {
+   "exercise_id": "Barbell_Hip_Thrust",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Hip_Thrust",
+    "Dumbbell_Hip_Thrust",
+    "Single-Leg_Hip_Thrust"
+   ]
+  },
+  "Smith squat": {
+   "exercise_id": "Smith_Machine_Squat",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Smith_Machine_Squat",
+    "Barbell_Squat",
+    "Smith_Machine_Pistol_Squat"
+   ]
+  },
+  "Split squat": {
+   "exercise_id": "Split_Squat_with_Dumbbells",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 5,
+   "programs": [
+    "beginner-bodyweight-fbw3",
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "beginner-home-fbw2",
+    "beginner-home-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Split_Squat_with_Dumbbells",
+    "Suspended_Split_Squat",
+    "Barbell_Side_Split_Squat"
+   ]
+  },
+  "Standing DB shoulder press": {
+   "exercise_id": "Dumbbell_Shoulder_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-home-fbw2",
+    "beginner-home-fbw3",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Dumbbell_Shoulder_Press",
+    "Standing_Dumbbell_Press",
+    "Standing_Alternating_Dumbbell_Press"
+   ]
+  },
+  "Standing calf raise": {
+   "exercise_id": "Rocking_Standing_Calf_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 8,
+   "programs": [
+    "advanced-gym-ppl6",
+    "advanced-home-upper-lower4",
+    "intermediate-gym-upper-lower4",
+    "intermediate-home-upper-lower4",
+    "lower-body-gym3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Rocking_Standing_Calf_Raise",
+    "Standing_Barbell_Calf_Raise",
+    "Standing_Dumbbell_Calf_Raise"
+   ]
+  },
+  "Step-up": {
+   "exercise_id": "Step-up_with_Knee_Raise",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Step-up_with_Knee_Raise",
+    "3_4_Sit-Up",
+    "Body-Up"
+   ]
+  },
+  "Superseria: DB curl + overhead extension": {
+   "exercise_id": "Dumbbell_Bicep_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Dumbbell_Bicep_Curl",
+    "Incline_Dumbbell_Curl",
+    "Overhead_Cable_Curl"
+   ]
+  },
+  "Superseria: DB curl + triceps extension": {
+   "exercise_id": "Decline_Dumbbell_Triceps_Extension",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-home-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Decline_Dumbbell_Triceps_Extension",
+    "Standing_Dumbbell_Triceps_Extension",
+    "Dumbbell_One-Arm_Triceps_Extension"
+   ]
+  },
+  "Superseria: curl + overhead extension": {
+   "exercise_id": "Overhead_Cable_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.57,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Overhead_Cable_Curl",
+    "Sled_Overhead_Triceps_Extension",
+    "Triceps_Overhead_Extension_with_Rope"
+   ]
+  },
+  "Superseria: curl + pushdown": {
+   "exercise_id": "Dumbbell_Bicep_Curl",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw3"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Dumbbell_Bicep_Curl",
+    "Triceps_Pushdown",
+    "Barbell_Curl"
+   ]
+  },
+  "Superseria: incline curl + skull crusher": {
+   "exercise_id": "Band_Skull_Crusher",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "intermediate-home-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Band_Skull_Crusher",
+    "Cable_Incline_Triceps_Extension",
+    "Cable_Lying_Triceps_Extension"
+   ]
+  },
+  "Tempo squat 3-1-1": {
+   "exercise_id": "Barbell_Squat",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Squat",
+    "Bodyweight_Squat",
+    "Box_Squat"
+   ]
+  },
+  "Tibialis raise": {
+   "exercise_id": "Tibialis_Raise",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Tibialis_Raise",
+    "Calf_Raise_On_A_Dumbbell",
+    "Dumbbell_Raise"
+   ]
+  },
+  "Trap-bar / conventional deadlift": {
+   "exercise_id": "Trap_Bar_Deadlift",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-gym-ppl6"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Trap_Bar_Deadlift",
+    "Axle_Deadlift",
+    "Barbell_Deadlift"
+   ]
+  },
+  "Trap-bar deadlift": {
+   "exercise_id": "Trap_Bar_Deadlift",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Trap_Bar_Deadlift",
+    "Axle_Deadlift",
+    "Barbell_Deadlift"
+   ]
+  },
+  "Triceps pushdown": {
+   "exercise_id": "Triceps_Pushdown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-gym-ppl6",
+    "intermediate-gym-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Triceps_Pushdown",
+    "Reverse_Grip_Triceps_Pushdown",
+    "Triceps_Pushdown_-_Rope_Attachment"
+   ]
+  },
+  "Uginanie hantli na ławce skośnej": {
+   "exercise_id": "Incline_Dumbbell_Curl",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.89,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Incline_Dumbbell_Curl",
+    "Alternate_Incline_Dumbbell_Curl",
+    "Dumbbell_Prone_Incline_Curl"
+   ]
+  },
+  "Uginanie na wyciągu": {
+   "exercise_id": "Standing_Biceps_Cable_Curl",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.8,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Preacher_Curl",
+    "Cable_Wrist_Curl",
+    "Lying_Cable_Curl"
+   ]
+  },
+  "Uginanie nóg na maszynie": {
+   "exercise_id": "Lying_Leg_Curls",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Lying_Leg_Curls",
+    "Seated_Leg_Curl",
+    "Leg_Press"
+   ]
+  },
+  "Uginanie nóg siedząc": {
+   "exercise_id": "Seated_Leg_Curl",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Leg_Curl",
+    "Lying_Leg_Curls",
+    "Ball_Leg_Curl"
+   ]
+  },
+  "Unoszenie bokiem na wyciągu": {
+   "exercise_id": "Cable_Seated_Lateral_Raise",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.75,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Cable_Seated_Lateral_Raise",
+    "Cable_Shrugs",
+    "Front_Cable_Raise"
+   ]
+  },
+  "Unoszenie kolan w zwisie": {
+   "exercise_id": "Hanging_Knee_Raise",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Hanging_Knee_Raise",
+    "Hanging_Leg_Raise",
+    "Bent-Knee_Hip_Raise"
+   ]
+  },
+  "Unoszenie ramion bokiem": {
+   "exercise_id": "Side_Lateral_Raise",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Lying_One-Arm_Lateral_Raise",
+    "One-Arm_Incline_Lateral_Raise",
+    "Lateral_Raise_-_With_Bands"
+   ]
+  },
+  "Walking lunge": {
+   "exercise_id": "Barbell_Walking_Lunge",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-bodyweight-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Walking_Lunge",
+    "Bodyweight_Walking_Lunge",
+    "Barbell_Lunge"
+   ]
+  },
+  "Walking lunge z plecakiem": {
+   "exercise_id": "Barbell_Walking_Lunge",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Walking_Lunge",
+    "Bodyweight_Walking_Lunge",
+    "Barbell_Lunge"
+   ]
+  },
+  "Wall HSPU progression": {
+   "exercise_id": "Clock_Push-Up",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.5,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-home-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Clock_Push-Up",
+    "Decline_Push-Up",
+    "Handstand_Push-Ups"
+   ]
+  },
+  "Weighted / tempo pull-up": {
+   "exercise_id": "Pullups",
+   "alternatives": [],
+   "status": "review",
+   "confidence": 0.67,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-home-upper-lower4"
+   ],
+   "note": "Slot złożony / superseria w jednej komórce — wymaga rozbicia.",
+   "machine_candidates": [
+    "Pullups",
+    "Chin-Up",
+    "Scapular_Pull-Up"
+   ]
+  },
+  "Weighted chin-up": {
+   "exercise_id": "Chin-Up",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "advanced-bodyweight-upper-lower4"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Chin-Up",
+    "One_Arm_Chin-Up",
+    "3_4_Sit-Up"
+   ]
+  },
+  "Weighted pull-up": {
+   "exercise_id": "Pullups",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "advanced-bodyweight-upper-lower4",
+    "advanced-gym-ppl6"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Pullups",
+    "Chin-Up",
+    "Scapular_Pull-Up"
+   ]
+  },
+  "Wersja obunóż": {
+   "exercise_id": null,
+   "alternatives": [],
+   "status": "missing",
+   "confidence": 0.0,
+   "used_as": [
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "advanced-home-upper-lower4",
+    "beginner-bodyweight-fbw3",
+    "intermediate-home-upper-lower4",
+    "lower-body-home3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "3_4_Sit-Up",
+    "Ab_Crunch_Machine",
+    "Ab_Roller"
+   ]
+  },
+  "Wiosłowanie siedząc": {
+   "exercise_id": "Seated_Cable_Rows",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "beginner-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Seated_Cable_Rows",
+    "Bent_Over_Barbell_Row",
+    "Inverted_Row"
+   ]
+  },
+  "Wiosłowanie z podparciem klatki": {
+   "exercise_id": "Chest-Supported_Dumbbell_Row",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Chest-Supported_Dumbbell_Row",
+    "Bent_Over_Barbell_Row",
+    "Inverted_Row"
+   ]
+  },
+  "Wspięcia na palce": {
+   "exercise_id": "Calf_Raise_On_A_Dumbbell",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Calf_Raise_On_A_Dumbbell",
+    "Single_Leg_Calf_Raise",
+    "Standing_Calf_Raises"
+   ]
+  },
+  "Wyciskanie Arnolda": {
+   "exercise_id": "Arnold_Dumbbell_Press",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Arnold_Dumbbell_Press",
+    "Z_Press",
+    "Barbell_Bench_Press_-_Medium_Grip"
+   ]
+  },
+  "Wyciskanie barkowe na maszynie": {
+   "exercise_id": "Machine_Shoulder_Military_Press",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.86,
+   "used_as": [
+    "slot",
+    "swap"
+   ],
+   "uses": 3,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3",
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Machine_Shoulder_Military_Press",
+    "Smith_Machine_Overhead_Shoulder_Press",
+    "Barbell_Shoulder_Press"
+   ]
+  },
+  "Wyciskanie hantli na skosie 30°": {
+   "exercise_id": "Incline_Dumbbell_Press",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Incline_Dumbbell_Press",
+    "Hammer_Grip_Incline_DB_Bench_Press",
+    "Arnold_Dumbbell_Press"
+   ]
+  },
+  "Wyciskanie na ławce": {
+   "exercise_id": "Bench_Press_-_Powerlifting",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Bench_Press_-_Powerlifting",
+    "Bench_Press_-_With_Bands",
+    "Bench_Press_with_Chains"
+   ]
+  },
+  "Wyciskanie na ławce 30°": {
+   "exercise_id": "Barbell_Incline_Bench_Press_-_Medium_Grip",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Kąt 30° to nota recepty, nie osobne ćwiczenie — katalog ma jeden wariant skosu ze sztangą.",
+   "machine_candidates": [
+    "Bench_Press_-_Powerlifting",
+    "Bench_Press_-_With_Bands",
+    "Bench_Press_with_Chains"
+   ]
+  },
+  "Wyciskanie na ławce płaskiej": {
+   "exercise_id": "Barbell_Bench_Press_-_Medium_Grip",
+   "alternatives": [],
+   "status": "verified",
+   "confidence": 0.86,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Barbell_Bench_Press_-_Medium_Grip",
+    "Dumbbell_Bench_Press",
+    "Bench_Press_-_Powerlifting"
+   ]
+  },
+  "Ściąganie drążka": {
+   "exercise_id": "Wide-Grip_Lat_Pulldown",
+   "alternatives": [],
+   "status": "proposed",
+   "confidence": 1.0,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 2,
+   "programs": [
+    "beginner-gym-fbw2",
+    "beginner-gym-fbw3"
+   ],
+   "note": "",
+   "machine_candidates": [
+    "Wide-Grip_Lat_Pulldown",
+    "Underhand_Cable_Pulldowns",
+    "Full_Range-Of-Motion_Lat_Pulldown"
+   ]
+  },
+  "Ściąganie drążka / podciąganie": {
+   "exercise_id": "Wide-Grip_Lat_Pulldown",
+   "alternatives": [
+    "Pullups"
+   ],
+   "status": "verified",
+   "confidence": 0.8,
+   "used_as": [
+    "slot"
+   ],
+   "uses": 1,
+   "programs": [
+    "intermediate-gym-fbw2"
+   ],
+   "note": "Slot złożony rozbity: ściąganie jako podstawa (pełnoprawny wariant wg guardów planu), podciąganie jako alternatywa.",
+   "machine_candidates": [
+    "Wide-Grip_Lat_Pulldown",
+    "Underhand_Cable_Pulldowns",
+    "Full_Range-Of-Motion_Lat_Pulldown"
+   ]
+  }
+ },
+ "progression_cues": {
+  "Bardziej pionowa pozycja": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Ciężar": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Ciężar / stopy wyżej": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Ciężar / trudniejsza dźwignia": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Ciężar lub trudniejsza dźwignia": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Dłuższa dźwignia": [
+   "advanced-bodyweight-upper-lower4",
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Dłuższy krok": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Elevated plank": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Glute bridge": [
+   "beginner-bodyweight-fbw3",
+   "beginner-gym-fbw3",
+   "lower-body-gym3"
+  ],
+  "HSPU progression": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Heel taps": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Incline push-up": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Jakość skoku, nie repy": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Kolana ugięte": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Krótszy zakres": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Mniej asysty": [
+   "advanced-bodyweight-upper-lower4",
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Mniej asysty / lekki ciężar": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Mniej asysty → pauza → ciężar": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Mniej pomocy dłoni": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Najmniejszy ciężar": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Niższe podparcie": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Pauza": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Pauza lub plecak": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Pauza → ciężar": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Pełna kontrola": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Pike z dłońmi na podwyższeniu": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Plecak": [
+   "advanced-bodyweight-upper-lower4",
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Plecak / pauza": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Plecak albo wolna ekscentryka": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Podparcie dłoni": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Prostsze kolana → nogi proste": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Scapular pull-up": [
+   "advanced-bodyweight-upper-lower4",
+   "beginner-bodyweight-fbw3",
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Scapular pull-up + controlled negative": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Sit-to-stand": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Split squat z podparciem": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Stopy wyżej": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Stopy wyżej / ciężar": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Toes-to-bar progression": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Trudniejsza dźwignia": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Wersja obunóż": [
+   "advanced-home-upper-lower4",
+   "beginner-bodyweight-fbw3",
+   "intermediate-home-upper-lower4",
+   "lower-body-home3"
+  ],
+  "Większy zakres": [
+   "advanced-bodyweight-upper-lower4"
+  ],
+  "Wyższe podparcie dłoni": [
+   "beginner-bodyweight-fbw3"
+  ],
+  "Wyższe podparcie stóp": [
+   "intermediate-bodyweight-fbw3"
+  ],
+  "Wyższe stabilne podparcie": [
+   "advanced-bodyweight-upper-lower4"
+  ]
+ }
+}
