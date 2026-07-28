@@ -36,7 +36,9 @@ a aktualny stan produkcji w `HANDOFF.md`. Agent realizuje zadania według
 ## 2. Sekwencja
 
 ```text
-RB0 ✓ → Q1 → CORE-0 → R4A → PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2-Lab → H2-Field → PRIV-1 → COMM/PREMIUM → PAY-01 → MOBILE-0 → STORE-BETA → STORE-1
+RB0 ✓ → Q1 → CORE-0 → R4A → PLAN-Q → HOME-NAV → R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2-Lab → H2-Field → PRIV-1 → COMM/PREMIUM → PAY-01 → MOBILE-0 → STORE-BETA → STORE-1
+
+HOME-NAV = HOME-01 → HOME-02 → HOME-03 → NAV-01; PLAN-04 równolegle.
 ```
 
 CORE-0 wyprzedza R4A, ponieważ interfejs aktywnej serii nie może utrwalać nieprawidłowego
@@ -46,7 +48,9 @@ Historii/backfillu R4D, ale przed R4E: guidance drugiego treningu wymaga snapsho
 wersjonowanej decyzji i jawnego minimum danych. R2.2 pozostaje krótkim, odizolowanym etapem
 zaufania do Planów po sprawdzeniu podstawowej pętli loggera. PLAN-Q wchodzi po R4A, aby nie
 blokować naprawy podstawowej pętli serii, ale przed R2.2 i R4C: filtr sprzętu potrzebuje
-wykonalności per slot, a finish musi znać semantykę ćwiczenia opcjonalnego.
+wykonalności per slot, a finish musi znać semantykę ćwiczenia opcjonalnego. **HOME-NAV wchodzi
+przed R2.2**, ponieważ obie paczki dotykają `/programs`: odwrotna kolejność oznaczałaby
+przepisywanie filtrów sprzętu w nowej strukturze zakładek. Pełny rozpis: `spec-home-i-nawigacja.md`.
 
 **Wpływ na sprint:** refinement dodaje przed H2 łącznie 5,5–7,5 dnia implementacji
 (CORE-0: 2,5–3,5; CORE-1: 3–4). To świadome przesunięcie startu badania, nie ukryty bufor.

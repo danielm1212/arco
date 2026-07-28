@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Arco — POC: Home + nowa nawigacja</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="stage">
+
+  <aside class="controls" id="controls">
+    <div class="controls-row">
+      <span class="controls-label">Motyw</span>
+      <div class="seg" role="group" aria-label="Motyw">
+        <button type="button" data-theme="light" class="on">Jasny</button>
+        <button type="button" data-theme="dark">Ciemny</button>
+      </div>
+    </div>
+    <div class="controls-row">
+      <span class="controls-label">Szerokość</span>
+      <div class="seg" role="group" aria-label="Szerokość ekranu">
+        <button type="button" data-width="320">320</button>
+        <button type="button" data-width="375" class="on">375</button>
+        <button type="button" data-width="393">393</button>
+      </div>
+    </div>
+    <div class="controls-row">
+      <span class="controls-label">Stan</span>
+      <div class="seg seg-stack" role="group" aria-label="Stan danych">
+        <button type="button" data-state="rich" class="on">Z historią</button>
+        <button type="button" data-state="fresh">Świeże konto</button>
+        <button type="button" data-state="noname">Bez imienia</button>
+      </div>
+    </div>
+    <p class="controls-note">
+      Panel jest tylko narzędziem oceny — nie jest częścią produktu i znika poniżej 900 px.
+    </p>
+  </aside>
+
+  <div class="phone" id="phone">
+    <div class="screen" id="screen">
+
+      <!-- ══════════════════ HOME ══════════════════ -->
+      <section class="view" data-view="home">
+
+        <header class="topbar">
+          <span class="wordmark">arco</span>
+          <div class="topbar-right">
+            <button type="button" class="goal-badge" aria-label="Cel tygodniowy: 2 z 3 treningów">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="ico-flame"><path d="M12 2c1.2 3.4-.6 5-2 6.3C8.3 9.9 7 11.3 7 13.7 7 17.2 9.7 20 13 20s6-2.6 6-6c0-3.3-2-5-3.4-7.2-.5 1-1.2 1.7-2 2.2.4-2.4-.6-5-1.6-7z"/></svg>
+              <span data-bind="goalText">2/3</span>
+            </button>
+            <button type="button" class="avatar" aria-label="Profil i ustawienia"><span data-bind="monogram">D</span></button>
+          </div>
+        </header>
+
+        <main class="content">
+
+          <!-- 1 · Powitanie (wariant B — w treści, nie w topbarze) -->
+          <p class="greeting" data-bind="greeting">Cześć, Daniel</p>
+
+          <!-- 2 · HERO: start treningu ZAWSZE pierwszy (D-03, audyt R2.1) -->
+          <article class="hero" data-when="rich">
+            <div class="hero-body">
+              <div class="hero-meta">
+                <span class="eyebrow">Następny trening</span>
+                <button type="button" class="plan-link">Średniozaawansowany · Siłownia<span aria-hidden="true"> ›</span></button>
+              </div>
+              <h1 class="hero-title">Trening B</h1>
+              <p class="hero-sub">Następny w rotacji A → B</p>
+              <p class="hero-facts">7 ćwiczeń · ~48 min</p>
+              <p class="hero-preview">Wykroki chodzone ze sztangą · Podciąganie nachwytem…</p>
+              <button type="button" class="cta">Zacznij trening</button>
+            </div>
+            <div class="hero-foot">
+              <button type="button">Podgląd ćwiczeń</button>
+              <span class="dot" aria-hidden="true"></span>
+              <button type="button">Zmień dzień</button>
+              <span class="dot" aria-hidden="true"></span>
+              <button type="button">Własny trening</button>
+            </div>
+          </article>
+
+          <article class="hero hero-empty" data-when="fresh">
+            <div class="hero-body">
+              <div class="clay" aria-hidden="true">
+                <svg viewBox="0 0 48 48"><rect x="8" y="14" width="32" height="22" rx="5"/><path d="M16 14V11a8 8 0 0 1 16 0v3"/></svg>
+              </div>
+              <h1 class="hero-title">Zacznij od planu</h1>
+              <p class="hero-sub">Wybierz jeden z 15 planów. Arco poprowadzi Cię serię po serii.</p>
+              <button type="button" class="cta">Wybierz program</button>
+            </div>
+            <div class="hero-foot">
+              <button type="button">Własny trening</button>
+            </div>
+          </article>
+
+          <!-- 3 · PASSA — motywacja, zawsze pozytywnie (tone-of-voice: nigdy „nie strać") -->
+          <section class="card streak" data-when="rich">
+            <div class="streak-head">
+              <div>
+                <p class="streak-number"><span data-bind="streakWeeks">4</span><span class="streak-unit">. tydzień passy</span></p>
+              </div>
+              <span class="flame-big" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 2c1.2 3.4-.6 5-2 6.3C8.3 9.9 7 11.3 7 13.7 7 17.2 9.7 20 13 20s6-2.6 6-6c0-3.3-2-5-3.4-7.2-.5 1-1.2 1.7-2 2.2.4-2.4-.6-5-1.6-7z"/></svg>
+              </span>
+            </div>
+            <ol class="weekdots" aria-label="Ten tydzień: 2 z 3 treningów">
+              <li class="on"><span>pon</span></li>
+              <li><span>wt</span></li>
+              <li class="on"><span>śr</span></li>
+              <li class="today"><span>czw</span></li>
+              <li><span>pt</span></li>
+              <li><span>sob</span></li>
+              <li><span>nd</span></li>
+            </ol>
+            <p class="streak-foot">Jeszcze jeden trening domyka ten tydzień.</p>
+          </section>
+
+          <!-- 4 · PODSUMOWANIE — trzy liczby, które niosą sens -->
+          <section class="card summary" data-when="rich">
+            <p class="card-eyebrow">Podsumowanie</p>
+            <div class="summary-grid">
+              <div class="summary-cell">
+                <p class="summary-value up">+20 kg</p>
+                <p class="summary-key">Największy progres</p>
+                <p class="summary-detail">Przysiad ze sztangą</p>
+              </div>
+              <div class="summary-cell">
+                <p class="summary-value up">+12%</p>
+                <p class="summary-key">Tonaż</p>
+                <p class="summary-detail">vs poprzedni tydzień</p>
+              </div>
+              <div class="summary-cell">
+                <p class="summary-value">3</p>
+                <p class="summary-key">Rekordy</p>
+                <p class="summary-detail">z ostatnich 30 dni</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5 · KAFLE — surowe liczby okresu -->
+          <section class="tiles" data-when="rich" aria-label="Statystyki okresu">
+            <div class="tile">
+              <p class="tile-key">Tonaż</p>
+              <p class="tile-value">13,4 <span>t</span></p>
+              <p class="tile-period">7 dni</p>
+            </div>
+            <div class="tile">
+              <p class="tile-key">Treningi</p>
+              <p class="tile-value">2<span class="tile-sep">/</span>7</p>
+              <p class="tile-period">7 dni / 30 dni</p>
+            </div>
+            <div class="tile">
+              <p class="tile-key">Serie robocze</p>
+              <p class="tile-value">37</p>
+              <p class="tile-period">30 dni</p>
+            </div>
+          </section>
+
+          <!-- 6 · POSTĘP ĆWICZEŃ — wiersze ze sparkline -->
+          <section class="card exercises" data-when="rich">
+            <div class="card-head">
+              <p class="card-eyebrow">Postęp ćwiczeń</p>
+              <button type="button" class="card-more">Wykresy<span aria-hidden="true"> ›</span></button>
+            </div>
+
+            <article class="exrow">
+              <div class="exrow-top">
+                <p class="exrow-name">Przysiad ze sztangą</p>
+                <svg class="spark" viewBox="0 0 72 26" aria-hidden="true" preserveAspectRatio="none">
+                  <polyline points="2,20 16,18 30,13 44,12 58,6 70,4"/>
+                  <circle cx="70" cy="4" r="2.6"/>
+                </svg>
+              </div>
+              <dl class="exrow-stats">
+                <div><dt>Rekord</dt><dd>145 kg × 10</dd></div>
+                <div><dt>1RM</dt><dd>212,7 kg</dd></div>
+                <div><dt>Progres</dt><dd class="up">+20 kg</dd></div>
+              </dl>
+            </article>
+
+            <article class="exrow">
+              <div class="exrow-top">
+                <p class="exrow-name">Rumuński martwy ciąg</p>
+                <svg class="spark" viewBox="0 0 72 26" aria-hidden="true" preserveAspectRatio="none">
+                  <polyline points="2,21 16,17 30,17 44,11 58,9 70,7"/>
+                  <circle cx="70" cy="7" r="2.6"/>
+                </svg>
+              </div>
+              <dl class="exrow-stats">
+                <div><dt>Rekord</dt><dd>105 kg × 8</dd></div>
+                <div><dt>1RM</dt><dd>126 kg</dd></div>
+                <div><dt>Progres</dt><dd class="up">+10 kg</dd></div>
+              </dl>
+            </article>
+
+            <article class="exrow">
+              <div class="exrow-top">
+                <p class="exrow-name">Wyciskanie sztangi na ławce</p>
+                <svg class="spark flat" viewBox="0 0 72 26" aria-hidden="true" preserveAspectRatio="none">
+                  <polyline points="2,14 16,13 30,15 44,13 58,14 70,13"/>
+                  <circle cx="70" cy="13" r="2.6"/>
+                </svg>
+              </div>
+              <dl class="exrow-stats">
+                <div><dt>Rekord</dt><dd>82,5 kg × 6</dd></div>
+                <div><dt>1RM</dt><dd>95,8 kg</dd></div>
+                <div><dt>Progres</dt><dd class="flat">bez zmian</dd></div>
+              </dl>
+            </article>
+          </section>
+
+          <!-- 7 · HINT — kontekstowy, dismissowalny -->
+          <aside class="hint" data-when="rich">
+            <span class="hint-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            </span>
+            <p>Wyciskanie stoi 4 sesje. Spróbuj dołożyć 2,5 kg albo zejść o jedno powtórzenie w zapasie.</p>
+            <button type="button" class="hint-x" aria-label="Ukryj wskazówkę">×</button>
+          </aside>
+
+          <section class="fresh-note" data-when="fresh">
+            <p>Statystyki pojawią się po pierwszym treningu. Nie pokazujemy zer.</p>
+          </section>
+
+        </main>
+      </section>
+
+      <!-- ══════════════════ TRENINGI ══════════════════ -->
+      <section class="view" data-view="treningi" hidden>
+        <header class="topbar">
+          <span class="screen-title">Treningi</span>
+          <div class="topbar-right">
+            <button type="button" class="avatar" aria-label="Profil i ustawienia"><span data-bind="monogram">D</span></button>
+          </div>
+        </header>
+
+        <nav class="subnav" aria-label="Sekcje treningów">
+          <button type="button" class="on" data-sub="plany">Plany</button>
+          <button type="button" data-sub="postepy">Postępy</button>
+          <button type="button" data-sub="cialo">Ciało</button>
+          <button type="button" data-sub="historia">Historia</button>
+        </nav>
+
+        <main class="content">
+          <!-- Plany -->
+          <div data-subview="plany">
+            <section class="card active-plan">
+              <p class="card-eyebrow">Aktywny plan</p>
+              <p class="plan-name">Średniozaawansowany · Siłownia · Całe ciało</p>
+              <p class="plan-meta">3 dni/tydz. · rotacja A → B · 50–65 min</p>
+              <p class="plan-next">Następny: <strong>Trening B</strong> · 7 ćwiczeń · ~48 min</p>
+              <button type="button" class="cta cta-compact">Zacznij trening</button>
+              <div class="plan-actions">
+                <button type="button" class="btn-ghost">Podgląd</button>
+                <button type="button" class="btn-ghost">Zmień plan</button>
+              </div>
+            </section>
+
+            <p class="section-label">Biblioteka</p>
+            <div class="plan-list">
+              <article class="plan-item">
+                <div>
+                  <p class="plan-item-name">Dom z hantlami · Całe ciało</p>
+                  <p class="plan-item-meta">3 dni/tydz. · 35–45 min · hantle</p>
+                </div>
+                <button type="button" class="btn-mini">Zacznij</button>
+              </article>
+              <article class="plan-item">
+                <div>
+                  <p class="plan-item-name">Masa ciała · Góra/dół</p>
+                  <p class="plan-item-meta">4 dni/tydz. · 30–40 min · drążek</p>
+                </div>
+                <button type="button" class="btn-mini">Zacznij</button>
+              </article>
+              <article class="plan-item">
+                <div>
+                  <p class="plan-item-name">Zaawansowany · Push/Pull/Legs</p>
+                  <p class="plan-item-meta">5 dni/tydz. · 60–75 min · siłownia</p>
+                </div>
+                <button type="button" class="btn-mini">Zacznij</button>
+              </article>
+            </div>
+            <p class="poc-note">„Zacznij" uruchamia dzień z tego planu <strong>bez</strong> zmiany aktywnego planu i bez przesuwania rotacji — to luka, którą POC proponuje domknąć.</p>
+          </div>
+
+          <!-- Postępy -->
+          <div data-subview="postepy" hidden>
+            <section class="tiles" aria-label="Statystyki">
+              <div class="tile"><p class="tile-key">Tonaż</p><p class="tile-value">13,4 <span>t</span></p><p class="tile-period">7 dni</p></div>
+              <div class="tile"><p class="tile-key">Treningi</p><p class="tile-value">7</p><p class="tile-period">30 dni</p></div>
+              <div class="tile"><p class="tile-key">Rekordy</p><p class="tile-value">3</p><p class="tile-period">30 dni</p></div>
+            </section>
+            <section class="card">
+              <p class="card-eyebrow">Bilans partii · 30 dni</p>
+              <div class="bars">
+                <div class="bar"><span>Nogi</span><i style="--w:82%"></i><b>34%</b></div>
+                <div class="bar"><span>Plecy</span><i style="--w:64%"></i><b>26%</b></div>
+                <div class="bar"><span>Klatka</span><i style="--w:48%"></i><b>20%</b></div>
+                <div class="bar"><span>Barki</span><i style="--w:30%"></i><b>12%</b></div>
+                <div class="bar"><span>Ramiona</span><i style="--w:20%"></i><b>8%</b></div>
+              </div>
+            </section>
+            <p class="poc-note">Pełna analiza zostaje tutaj. Na Home trafia tylko wyciąg.</p>
+          </div>
+
+          <!-- Ciało -->
+          <div data-subview="cialo" hidden>
+            <section class="card">
+              <div class="card-head">
+                <p class="card-eyebrow">Masa ciała</p>
+                <button type="button" class="card-more">Dodaj pomiar</button>
+              </div>
+              <p class="body-value">78,4 <span>kg</span></p>
+              <p class="body-delta up">−1,2 kg w 30 dni</p>
+              <svg class="spark wide" viewBox="0 0 260 60" aria-hidden="true" preserveAspectRatio="none">
+                <polyline points="4,14 48,18 92,16 136,26 180,30 224,36 256,40"/>
+                <circle cx="256" cy="40" r="3.5"/>
+              </svg>
+            </section>
+            <section class="card">
+              <p class="card-eyebrow">Zdjęcia</p>
+              <div class="photos"><span></span><span></span><span class="add">+</span></div>
+            </section>
+            <p class="poc-note">Ciało jest <strong>równorzędną</strong> zakładką, nie podstroną Postępów — to naprawia zarzut o chowanie pomiarów.</p>
+          </div>
+
+          <!-- Historia -->
+          <div data-subview="historia" hidden>
+            <p class="section-label">Lipiec 2026</p>
+            <div class="hist-list">
+              <article class="hist-item">
+                <div class="hist-date"><span>27</span><small>czw</small></div>
+                <div class="hist-body">
+                  <p class="hist-name">Trening A · Siłownia</p>
+                  <p class="hist-meta">18 serii · 6,2 t · 61 min</p>
+                </div>
+                <span class="hist-pr">PR</span>
+              </article>
+              <article class="hist-item">
+                <div class="hist-date"><span>25</span><small>wt</small></div>
+                <div class="hist-body">
+                  <p class="hist-name">Trening B · Siłownia</p>
+                  <p class="hist-meta">16 serii · 5,4 t · 54 min</p>
+                </div>
+              </article>
+              <article class="hist-item">
+                <div class="hist-date"><span>22</span><small>sob</small></div>
+                <div class="hist-body">
+                  <p class="hist-name">Własny trening · Dom</p>
+                  <p class="hist-meta">9 serii · 1,8 t · 28 min</p>
+                </div>
+              </article>
+            </div>
+            <button type="button" class="btn-ghost wide">Dodaj trening po fakcie</button>
+          </div>
+        </main>
+      </section>
+
+      <!-- ══════════════════ EKIPA ══════════════════ -->
+      <section class="view" data-view="ekipa" hidden>
+        <header class="topbar">
+          <span class="screen-title">Ekipa</span>
+          <div class="topbar-right">
+            <button type="button" class="avatar" aria-label="Profil i ustawienia"><span data-bind="monogram">D</span></button>
+          </div>
+        </header>
+        <main class="content">
+          <section class="card">
+            <p class="card-eyebrow">Żelazna Ekipa · 3 osoby</p>
+            <div class="team">
+              <div class="team-row"><span class="team-av">R</span><div><p>Radek</p><small>trenował dziś · 2/3</small></div><span class="team-flame">4</span></div>
+              <div class="team-row"><span class="team-av">M</span><div><p>Marta</p><small>trenowała wczoraj · 3/3</small></div><span class="team-flame">7</span></div>
+              <div class="team-row"><span class="team-av you">D</span><div><p>Ty</p><small>2/3 w tym tygodniu</small></div><span class="team-flame">4</span></div>
+            </div>
+          </section>
+          <p class="poc-note">Ekipa bez zmian — POC dotyka wyłącznie Home i zwinięcia czterech przestrzeni w jedną.</p>
+        </main>
+      </section>
+
+      <!-- ══════════════════ NAV ══════════════════ -->
+      <nav class="bottomnav" aria-label="Główna nawigacja">
+        <button type="button" class="on" data-nav="home">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/></svg>
+          Home
+        </button>
+        <button type="button" data-nav="treningi">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6M8 7v10M16 7v10M20 9v6M8 12h8"/></svg>
+          Treningi
+        </button>
+        <button type="button" data-nav="ekipa">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="10" r="2.4"/><path d="M15 19a4.6 4.6 0 0 1 5.5-4.3"/></svg>
+          Ekipa
+        </button>
+      </nav>
+
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

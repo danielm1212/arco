@@ -3,44 +3,52 @@
 **Data:** 2026-07-16
 
 **Status:** kontrakt zaakceptowany; baseline R0–R3a wdrożony, luki R3b/R4/R5b są w aktywnym planie
+**Rewizja 2026-07-27 (HOME-NAV):** Home staje się osobną przestrzenią, a Trening zwija Plany,
+Postępy, Ciało i Historię w jeden pasek zakładek. Powitanie wraca na home. Uzasadnienie i POC:
+`prototypes/home-dashboard-poc/README.md`, plan wdrożenia: `spec-home-i-nawigacja.md`.
 
 **Nadrzędna zasada:** Arco ma prowadzić do wykonania treningu, a nie prezentować katalog funkcji.
 
 ## 1. Werdykt
 
-Obecny produkt ma dobry rdzeń, ale główne miejsca aplikacji zaczęły konkurować ze sobą na home. Docelowo Arco ma cztery stabilne przestrzenie:
+Obecny produkt ma dobry rdzeń, ale główne miejsca aplikacji zaczęły konkurować ze sobą na home. Arco ma trzy stabilne przestrzenie:
 
-1. **Trening** — co mam zrobić teraz i jaki plan realizuję.
-2. **Postępy** — jak zmieniają się wyniki treningowe i ciało.
-3. **Historia** — zapis wykonanej pracy oraz trening po fakcie.
-4. **Ekipa** — prywatna pętla odpowiedzialności ze znajomymi.
+1. **Home** — co robię teraz oraz jak mi idzie: start treningu, passa i wyciąg z postępów.
+2. **Trening** — moje plany, postępy, ciało i historia; wszystko, co opisuje trening w czasie.
+3. **Ekipa** — prywatna pętla odpowiedzialności ze znajomymi.
 
-Bottom bar otrzymuje więc układ: **Trening · Postępy · Historia · Ekipa**. Ciało nie znika, tylko staje się równorzędnym widokiem wewnątrz Postępów. Ustawienia są dostępne z awatara, a biblioteka planów z jawnego widoku Plany w sekcji Trening.
+Bottom bar otrzymuje więc układ: **Home · Trening · Ekipa**. Ustawienia są dostępne z awatara.
 
-To rozstrzyga trzy dotychczasowe niejasności:
+Nazwa **Trening** jest świadomie w liczbie pojedynczej: opisuje dziedzinę, nie listę. Liczba
+mnoga („Treningi") zapowiadałaby listę odbytych treningów, czyli zawartość własnej podzakładki
+Historia. Ciało pozostaje wewnątrz tej przestrzeni jako równorzędna zakładka — przy trzech
+pozycjach w dolnym pasku koszt pomyłki jest znikomy.
+
+To rozstrzyga cztery niejasności:
 
 - aktywny trening nie jest skrótem do biblioteki planów;
 - Ekipa nie jest przypadkową kartą na dole home ani podstroną profilu;
-- Ciało nie zajmuje głównego taba obok szerszej kategorii Postępy.
+- Ciało nie jest podstroną Postępów ani osobnym tabem globalnym;
+- Home nie jest podwidokiem kategorii Trening, tylko frontem aplikacji.
 
 ## 2. Docelowa mapa aplikacji
 
+### Home
+
+- powitanie po imieniu, gdy użytkownik je podał;
+- następny trening z jednym CTA startu lub wznowienia;
+- passa tygodniowa i stan celu;
+- wyciąg z postępów: podsumowanie okresu, kafle i najważniejsze ćwiczenia;
+- kontekstowe wskazówki i pojedyncze zdarzenie Ekipy.
+
+Home nie jest katalogiem funkcji. Pełna analiza mieszka w Treningu; tutaj trafia wyciąg.
+
 ### Trening
 
-- **Dziś** — następny trening, aktywna sesja, stan celu tygodniowego i kontekstowe wskazówki.
-- **Plany** — aktywny plan, biblioteka, filtry, szczegół i własne plany.
-
-### Postępy
-
-- **Trening** — trendy ćwiczeń, rekordy, objętość i regularność.
+- **Plany** — aktywny plan ze startem, biblioteka, filtry, szczegół i własne plany.
+- **Postępy** — trendy ćwiczeń, rekordy, objętość i regularność.
 - **Ciało** — pomiary, zdjęcia i trend; dodawanie jako osobne zadanie skupione.
-
-### Historia
-
-- lista treningów;
-- szczegół treningu;
-- edycja zakończonego treningu;
-- dodanie treningu po fakcie.
+- **Historia** — lista treningów, szczegół, edycja i dodanie treningu po fakcie.
 
 ### Ekipa
 
@@ -67,7 +75,9 @@ Badge odpowiada na jedno pytanie: **ile z celu tygodniowego już zrobiłem**. Sz
 
 ### Nawigacja sekcji
 
-Bezpośrednio pod headerem: **Dziś | Plany**. To jest jawna, przewidywalna droga do biblioteki i aktywnego planu.
+Home nie ma własnego paska zakładek — jest pojedynczym ekranem. Pasek **Plany | Postępy | Ciało
+| Historia** należy do przestrzeni Trening i tam jest jawną, przewidywalną drogą do biblioteki,
+danych i zapisu pracy.
 
 ### Hero
 
@@ -84,11 +94,15 @@ Cała karta nie może być jednym nieopisanym linkiem. Kliknięcie nazwy aktywne
 ### Co znika z domyślnego home
 
 - pełna karta tygodnia z siedmioma płomieniami;
-- osobny blok powitania;
 - stała karta Przeglądaj programy;
 - puste wskazówki typu Na dziś wszystko gra;
 - stała karta Ekipy bez nowego zdarzenia;
 - zduplikowany mini-bar sesji, gdy hero już pokazuje Wznów.
+
+**Zmiana 2026-07-27:** „osobny blok powitania" zszedł z tej listy. Powitanie jest jedną linią
+nad kartą startu — nie blokiem i nie kartą. Znika całkowicie, gdy użytkownik nie podał imienia;
+nie zostawia po sobie pustego miejsca. Karta startu treningu pozostaje pierwszym modułem
+ekranu, a wyciąg z postępów wchodzi wyłącznie pod nią.
 
 ### Co może pojawić się kontekstowo
 
@@ -109,18 +123,18 @@ sztucznym kryterium akceptacji. Mierzymy przede wszystkim stabilny czas pojawien
 2. Onboarding E0–E7.
 3. Rekomendacja planu.
 4. Aktywacja planu.
-5. Przejście przez replace do Trening / Dziś.
+5. Przejście przez replace do Home.
 6. Hero pokazuje następny trening z jawnym CTA Zacznij.
 
 Gałęzie:
 
 - **Przejdź do biblioteki** prowadzi do Trening / Plany.
-- **Wybiorę później** prowadzi do pustego Dziś z jednym CTA Wybierz plan.
+- **Wybiorę później** prowadzi do pustego Home z jednym CTA Wybierz plan.
 - systemowy Back po ukończeniu onboardingu nie może ponownie go otworzyć.
 
 ### F2. Codzienne wejście i start treningu
 
-1. Użytkownik otwiera Trening / Dziś.
+1. Użytkownik otwiera Home.
 2. Widzi postęp celu i jeden następny trening.
 3. Zacznij tworzy albo otwiera jedyną aktywną sesję.
 4. Podgląd pokazuje ćwiczenia bez startu.
@@ -221,17 +235,17 @@ globalnego chrome.
 
 | Trasa / stan | Typ | Bottom bar | Aktywny tab | Nawigacja lokalna / top-left |
 |---|---|---:|---|---|
-| / | hub | tak | Trening | Dziś / Plany |
-| /programs | hub-subview | tak | Trening | Dziś / Plany |
+| / | hub | tak | Home | brak |
+| /programs | hub-subview | tak | Trening | Plany / Postępy / Ciało / Historia |
 | /programs/[id] preset | child | tak | Trening | Back do źródła, fallback Plany |
 | własny edytor planu | focus | nie | — | Back + dirty guard |
-| /progress | hub | tak | Postępy | Trening / Ciało |
-| /body | hub-subview | tak | Postępy | Trening / Ciało |
+| /progress | hub-subview | tak | Trening | Plany / Postępy / Ciało / Historia |
+| /body | hub-subview | tak | Trening | Plany / Postępy / Ciało / Historia |
 | /body/add | focus | nie | — | Back + dirty guard |
-| /exercise/[id] z Postępów | child | tak | Postępy | Back do źródła |
+| /exercise/[id] z Postępów | child | tak | Trening | Back do źródła |
 | /exercise/[id] z loggera | session-child | nie | — | Back do loggera |
-| /history | hub | tak | Historia | brak |
-| /history/[id] | child | tak | Historia | Back z zachowaniem listy |
+| /history | hub-subview | tak | Trening | Plany / Postępy / Ciało / Historia |
+| /history/[id] | child | tak | Trening | Back z zachowaniem listy |
 | /history/add | focus | nie | — | Back do Historii |
 | /ekipa | hub | tak | Ekipa | brak |
 | /settings | focus | nie | — | Back do źródła + dirty guard |
@@ -306,9 +320,10 @@ Błędy nie mogą być zamieniane w ciche puste stany.
 
 ### Zamknięte
 
-- cztery taby: Trening, Postępy, Historia, Ekipa;
-- Ciało wewnątrz Postępów;
-- Dziś i Plany wewnątrz Treningu;
+- trzy taby: Home, Trening, Ekipa (rewizja 2026-07-27; wcześniej cztery);
+- Plany, Postępy, Ciało i Historia wewnątrz Treningu jako równorzędne zakładki;
+- Home jako osobna przestrzeń, nie podwidok Treningu;
+- powitanie po imieniu jako jedna linia nad kartą startu, nigdy jako blok ani karta;
 - awatar zamiast koła zębatego;
 - tygodniowy badge w headerze;
 - jawne cele tapnięcia hero;
@@ -326,8 +341,10 @@ Błędy nie mogą być zamieniane w ciche puste stany.
 
 ## 10. Zależności wdrożenia
 
-Przed kodem weryfikujemy low-fi najdroższych decyzji: cztery taby, pozycję Ekipy, Dziś/Plany,
-Postępy/Ciało i zachowanie aktywnej sesji. Następnie powstaje kontrakt chrome, niezmiennik
+Przed kodem weryfikujemy low-fi najdroższych decyzji: układ tabów, pozycję Ekipy, zawartość
+Home, zakładki Treningu i zachowanie aktywnej sesji. Rewizja HOME-NAV przeszła tę bramkę
+klikalnym POC (`prototypes/home-dashboard-poc/`), który zmierzył m.in. mieszczenie czterech
+zakładek na 320 px. Następnie powstaje kontrakt chrome, niezmiennik
 jednej sesji, terminalne redirecty oraz mechanizm szkiców. Dopiero na tej podstawie
 przebudowujemy Home, Plany, Postępy, Ciało, Ekipę, Sesję i Historię. Wyszukiwarka,
 dostępność i regresja PWA są osobnymi, mierzalnymi paczkami domykającymi flow.

@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "arco", "runtimeExecutable": "npm", "runtimeArgs": ["run", "start"], "port": 3000 }
+    { "name": "arco", "runtimeExecutable": "npm", "runtimeArgs": ["run", "start"], "port": 3000 },
+    { "name": "poc", "runtimeExecutable": "npx", "runtimeArgs": ["--yes", "serve", "-l", "4173", "."], "port": 4173 }
   ]
 }

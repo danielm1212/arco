@@ -264,13 +264,16 @@ koordynacji (2026-07-23).
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
 4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A, SESSION-01A2 i SESSION-01A3;
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
-5. [Ty] merge SESSION-01A4 ([#29](https://github.com/danielm1212/arco/pull/29)), potem deploy
-   całej serii loggera procedurą `arco-release`. **Uwaga:** SESSION-01A3 zostało scalone (#28)
-   na commicie sprzed poprawki zamykania podpowiedzi, więc `main` ma dziś popover zamykany
-   tapem w tło — naprawia to dopiero #29. Opcjonalny follow-up domykający ryzyko 6: podpiąć
-   `lib/useFocusTrap.ts` do `components/ui/bottom-sheet.tsx`.
-6. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
-7. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
+5. **HOME-NAV — zaplanowane, gotowe do podjęcia:** kontrakt IA zrewidowany (trzy taby
+   Home · Trening · Ekipa, D-38…D-41), POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04
+   rozpisane w `spec-home-i-nawigacja.md`. HOME-NAV wchodzi **przed R2.2** — obie dotykają
+   `/programs`. PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może
+   iść równolegle.
+6. [Ty] deploy scalonej serii loggera SESSION-01A2…01A4 procedurą `arco-release`
+   (#27, #28 i #29 są w `main`). Opcjonalny follow-up domykający ryzyko 6: podpiąć
+   `lib/useFocusTrap.ts` do `components/ui/bottom-sheet.tsx` (`A11Y-SHEETS` w backlogu).
+7. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
+8. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
 
 ## 7. Reguły operacyjne
