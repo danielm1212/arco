@@ -373,6 +373,16 @@ export const PLANNED_PROGRAM_ALTERNATIVES: PlannedProgramAlternative[] = [
   },
   {
     programSlug: "intermediate-gym-fbw2",
+    dayLabel: "Trening A",
+    defaultExerciseId: "Cable_Rope_Overhead_Triceps_Extension",
+    alternativeExerciseId: "Lying_Dumbbell_Tricep_Extension",
+    missingEquipment: ["cable"],
+    alternativeEquipment: ["dumbbell", "bench"],
+    patternCoverage: "same_pattern",
+    notePl: "Prostowanie zza głowy bez wyciągu; utrzymaj łokcie blisko siebie i nie odbijaj w dole.",
+  },
+  {
+    programSlug: "intermediate-gym-fbw2",
     dayLabel: "Trening B",
     defaultExerciseId: "Romanian_Deadlift",
     alternativeExerciseId: "Hyperextensions_Back_Extensions",
@@ -430,5 +440,15 @@ export const PLANNED_PROGRAM_ALTERNATIVES: PlannedProgramAlternative[] = [
     alternativeEquipment: ["body only"],
     patternCoverage: "partial_pattern",
     notePl: "Praca core bez drążka; kontroluj lędźwie przy podłożu zamiast szukać większego zakresu.",
+  },
+  {
+    programSlug: "intermediate-gym-fbw2",
+    dayLabel: "Trening B",
+    defaultExerciseId: "Hammer_Curls",
+    alternativeExerciseId: "Cable_Hammer_Curls_-_Rope_Attachment",
+    missingEquipment: ["dumbbell"],
+    alternativeEquipment: ["cable"],
+    patternCoverage: "same_pattern",
+    notePl: "Chwyt młotkowy na lince; opór jest równiejszy, więc dobierz nieco mniejszy ciężar.",
   },
 ];

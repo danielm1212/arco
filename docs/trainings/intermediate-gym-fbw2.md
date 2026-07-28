@@ -16,8 +16,9 @@
 | 4 | Wznosy hantli bokiem | 2 × 12–20 | 1:00 | Bez zarzucania ciężaru barkiem |
 | 5 | Uginanie hantli na ławce skośnej | 3 × 10–15 | 1:00 | Kontroluj fazę opuszczania |
 | 6 | Odwrotne spięcia brzucha | 2 × 10–20 | 1:00 | Inicjuj podwinięciem miednicy, bez rozpędu |
+| 7 | Prostowanie ramion zza głowy na wyciągu | 2 × 10–15 | 1:00 | Łokcie blisko siebie, bez odbijania w dole |
 
-**19 serii roboczych.** Wersja minimum: pozycje 1–3 oraz jedna z pozycji 4–6.
+**21 serii roboczych.** Wersja minimum: pozycje 1–3 oraz jedna z pozycji 4–7.
 
 ## Trening B
 
@@ -29,8 +30,9 @@
 | 4 | Wyciskanie Arnolda | 2 × 8–12 | 1:30 | Dwie serie wystarczą przy tylu wyciskaniach |
 | 5 | Prostowanie ramion na wyciągu | 3 × 10–15 | 1:00 | Łokcie blisko tułowia |
 | 6 | Unoszenie kolan w zwisie | 2 × 8–15 | 1:00 | Bez bujania; zejdź do dead bug, gdy brak drążka |
+| 7 | Uginanie ramion chwytem młotkowym | 2 × 10–15 | 1:00 | Nadgarstek neutralny, bez kołysania tułowiem |
 
-**19 serii roboczych.** Wersja minimum: pozycje 1–3 oraz jedna z pozycji 4–6.
+**21 serii roboczych.** Wersja minimum: pozycje 1–3 oraz jedna z pozycji 4–7.
 
 ---
 
@@ -47,5 +49,7 @@ przysiad bułgarski 2 × 8–12 na nogę po treningu B. Moduł nie jest wymagany
   i wróć w okolice dolnej granicy zakresu.
 - Izolacje i core: najpierw zwiększaj powtórzenia, dopiero potem ciężar lub trudność wariantu.
 - Dwie słabsze ekspozycje z rzędu oznaczają przegląd techniki, snu i ciężaru, nie reset planu.
+- Każda sesja ma bezpośredni biceps i triceps: w A uginanie na skosie i prostowanie zza głowy,
+  w B pushdown i chwyt młotkowy. Przy dwóch dniach daje to po 5 serii na partię tygodniowo.
 - Pełny cykl daje 8 serii klatki, 8 serii pleców, 4 serie przysiadu i 4 serie zawiasu biodrowego.
   To świadomie FBW z lekkim naciskiem na górę — przy priorytecie nóg wybierz plan „Pośladki i nogi".

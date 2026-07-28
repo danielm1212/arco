@@ -33,12 +33,12 @@ function sets(label: string) {
   return day(label).slots.reduce((sum, slot) => sum + slot.sets, 0);
 }
 
-test("PLAN-C1: recepta v2.1 ma dwa dni po 6 pozycjach i 19 seriach", () => {
+test("PLAN-C1: recepta v2.1 ma dwa dni po 7 pozycjach i 21 seriach", () => {
   assert.equal(program().content_version, 4);
-  assert.equal(day("Trening A").slots.length, 6);
-  assert.equal(day("Trening B").slots.length, 6);
-  assert.equal(sets("Trening A"), 19);
-  assert.equal(sets("Trening B"), 19);
+  assert.equal(day("Trening A").slots.length, 7);
+  assert.equal(day("Trening B").slots.length, 7);
+  assert.equal(sets("Trening A"), 21);
+  assert.equal(sets("Trening B"), 21);
 });
 
 test("PLAN-C1: Trening A rozwija przysiad, Trening B zawias biodrowy", () => {
@@ -51,6 +51,7 @@ test("PLAN-C1: Trening A rozwija przysiad, Trening B zawias biodrowy", () => {
       "Side_Lateral_Raise",
       "Incline_Dumbbell_Curl",
       "Reverse_Crunch",
+      "Cable_Rope_Overhead_Triceps_Extension",
     ],
   );
   assert.deepEqual(
@@ -62,6 +63,7 @@ test("PLAN-C1: Trening A rozwija przysiad, Trening B zawias biodrowy", () => {
       "Arnold_Dumbbell_Press",
       "Triceps_Pushdown",
       "Hanging_Knee_Raise",
+      "Hammer_Curls",
     ],
   );
 });
@@ -78,6 +80,16 @@ test("PLAN-C1: każda sesja ma dokładnie jedno duże ćwiczenie na dół ciała
   for (const label of ["Trening A", "Trening B"]) {
     const found = day(label).slots.filter((slot) => lowerBody.has(slot.exercise_id));
     assert.equal(found.length, 1, `${label}: oczekiwano jednego ruchu na dół ciała`);
+  }
+});
+
+test("PLAN-C1: każda sesja ma bezpośredni biceps I triceps", () => {
+  const biceps = new Set(["Incline_Dumbbell_Curl", "Hammer_Curls"]);
+  const triceps = new Set(["Triceps_Pushdown", "Cable_Rope_Overhead_Triceps_Extension"]);
+  for (const label of ["Trening A", "Trening B"]) {
+    const ids = day(label).slots.map((slot) => slot.exercise_id);
+    assert.ok(ids.some((id) => biceps.has(id)), `${label}: brak bezpośredniego bicepsa`);
+    assert.ok(ids.some((id) => triceps.has(id)), `${label}: brak bezpośredniego tricepsa`);
   }
 });
 
@@ -113,15 +125,12 @@ test("PLAN-C1: migracja niesie te same alternatywy co repo (produkcji nie seeduj
   const expected = PLANNED_PROGRAM_ALTERNATIVES.filter((item) => item.programSlug === SLUG);
 
   assert.deepEqual(embedded, expected);
-  assert.equal(embedded.length, 12);
+  assert.equal(embedded.length, 14);
 });
 
-test("PLAN-C1: migracja nie usuwa danych poza nadmiarowymi slotami", () => {
-  const deletes = migrationSql.match(/delete\s+from\s+public\.\w+/gi) ?? [];
-  assert.deepEqual(
-    [...new Set(deletes.map((item) => item.toLowerCase().replace(/\s+/g, " ")))],
-    ["delete from public.program_day_slots"],
-  );
+test("PLAN-C1: migracja nic nie usuwa i broni się przed otwartą sesją", () => {
+  // Dzień zostaje przy 7 pozycjach, więc żaden wiersz historii nie traci powiązania ze slotem.
+  assert.equal(migrationSql.match(/delete\s+from\s+public\.\w+/gi), null);
   assert.match(migrationSql, /PLAN-C1 wymaga zakończenia lub usunięcia otwartych sesji P14/);
 });
 

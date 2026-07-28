@@ -1143,7 +1143,10 @@ export const PROGRAMS: Program[] = [
     optional_equipment: ["machine", "body only"],
     content_version: 4,
     days_per_week: 2,
-    // Recepta v2.1: A rozwija wzorzec przysiadu, B zawias biodrowy. Po 19 serii roboczych.
+    // Recepta v2.1: A rozwija wzorzec przysiadu, B zawias biodrowy. Po 21 serii roboczych.
+    // Odejście od v2.1: obie sesje mają biceps I triceps. Sam cykl A/B dawał po 3 serie
+    // bezpośrednie na tydzień przy dwóch dniach — za mało dla celu sylwetkowego (por. [S6]
+    // Mannarino 2021: wiosłowanie nie zastępuje uginania). Teraz jest po 5.
     days: [
       {
         label: "Trening A",
@@ -1154,6 +1157,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Side_Lateral_Raise", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
           { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Reverse_Crunch", sets: 2, repsMin: 10, repsMax: 20, rest: 60, notes: "Inicjuj ruch podwinięciem miednicy, bez rozpędu." },
+          { exercise_id: "Cable_Rope_Overhead_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 15, rest: 60, notes: "Praca zza głowy rozciąga długą głowę tricepsa; w B pracujesz nad nią z góry." },
         ],
       },
       {
@@ -1165,6 +1169,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Arnold_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90, notes: "Dwie serie wystarczą, bo przedni akton barku pracuje już w wyciskaniach." },
           { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Hanging_Knee_Raise", sets: 2, repsMin: 8, repsMax: 15, rest: 60 },
+          { exercise_id: "Hammer_Curls", sets: 2, repsMin: 10, repsMax: 15, rest: 60, notes: "Chwyt młotkowy dokłada ramienno-promieniowy, którego nie dostajesz z uginania na skosie w A." },
         ],
       },
     ],

@@ -31,6 +31,11 @@
   `tests/planc1-fbw-gym-recipe.test.ts`, `tests/train01-program-safety.test.ts`,
   `tests/train02a4-migration.test.ts`, `docs/trainings/intermediate-gym-fbw2.md`,
   `docs/plan-c0-mapowanie-cwiczen-v21.md`, `docs/decyzje-produktowe.md`, `HANDOFF.md`.
+- **Korekta po review [Ty]:** biblioteka v2.1 daje jedną izolację ramion na sesję, czyli po
+  3 serie bezpośrednie tygodniowo przy dwóch dniach. Za mało dla celu sylwetkowego, więc oba dni
+  dostały siódmą pozycję (triceps zza głowy w A, chwyt młotkowy w B) — 21/21 serii, po 5 serii na
+  partię. Skutek uboczny: dzień zostaje przy 7 slotach, więc migracja nic nie usuwa i D-44 nie jest
+  w tym wydaniu wykorzystane.
 - **Decyzje:** D-42 (kanon v2.1 z wyjątkami kolejności power/skill z TRAIN-01), D-43 (alternatywy
   strukturalne = wyłącznie ścieżka sprzętowa), D-44 (korekta treści może usuwać sloty).
 - **Nie adoptowane z v2.1:** trzy przesunięcia HSPU/Jump Squat w głąb sesji (P11 Upper B,
@@ -42,12 +47,13 @@
   zgodności z `program-slot-alternatives.ts`.
 - **Commit/stan:** gałąź lokalna, bez PR. **Produkcja nietknięta**; migracja zastosowana wyłącznie
   na lokalnej bazie.
-- **Testy:** lint, build, 178/178 unit, 32/32 przeglądarkowych, `validate:training` 907/15/306,
+- **Testy:** lint, build, 181/181 unit, 32/32 przeglądarkowych, `validate:training` 907/15/308,
   `validate:recommendations` 60/60, smoke Phase 1 / Phase 2 / offline, seed dwa razy idempotentny.
-  Migracja sprawdzona trzema przebiegami: rollback na realnej historii (powiązania slotów 14 → 12,
-  51/51 serii zachowanych), bramka otwartej sesji (podnosi wyjątek) i pusty katalog (pomija się).
+  Migracja sprawdzona przebiegami z rollbackiem na realnej historii (finalny kształt: zero usunięć,
+  51/51 serii i wszystkie powiązania slotów zachowane), bramką otwartej sesji (podnosi wyjątek)
+  i pustym katalogiem (pomija się).
   `supabase db reset` **nie wykonany** — zablokowany jako operacja niszcząca; pełny łańcuch
-  migracji na świeżej bazie zweryfikuje CI.
+  migracji na świeżej bazie plus `smoke:team` przeszły w CI na PR #35.
 - **Otwarte:** (1) brak weryfikacji wizualnej `/programs/[id]` — wymaga logowania; (2) dwa sloty
   flagowca mają placeholder zdjęcia (`Chest-Supported_Dumbbell_Row`, `Hanging_Knee_Raise`);
   (3) trzy plany kalisteniczne v2.1 nie mają zamienników, tylko wskazówki progresji;
