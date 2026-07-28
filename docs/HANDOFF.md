@@ -27,8 +27,8 @@ Docelowa IA na produkcji dziś: **Trening · Postępy · Historia · Ekipa**, lo
 **Dziś | Plany** oraz **Trening | Ciało**, profil przez awatar. Floating nav ma równy margines
 12 px i respektuje safe area. **Kontrakt jest już zrewidowany na trzy przestrzenie**
 (Home · Trening · Ekipa, D-38…D-41 w `decyzje-produktowe.md`) — wdrożenie w kolejce jako
-HOME-NAV, patrz §6 punkt 5. **HOME-01 (powitanie + passa) gotowe technicznie 2026-07-28**,
-lokalnie na `main` bez commita — patrz dziennik koordynacji dla szczegółów i decyzji o gałęzi.
+HOME-NAV, patrz §6 punkt 5. **HOME-01 (powitanie + passa) scalone do `main`** w PR
+[#33](https://github.com/danielm1212/arco/pull/33) — patrz dziennik koordynacji dla szczegółów.
 
 ## 2. Co jest wdrożone
 
@@ -250,17 +250,24 @@ koordynacji (2026-07-23).
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
 5. **HOME-NAV — w toku:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
    POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04 rozpisane w `spec-home-i-nawigacja.md`.
-   **HOME-01 (powitanie + karta passy) gotowe technicznie 2026-07-28** — lint/tsc/build zielone,
-   165/165 unit, zweryfikowane w apce na 320/375 px, light/dark; zmiany lokalne, nie
-   commitowane, czekają na decyzję [Ty] o gałęzi/PR. Kolejny krok: **HOME-02** (podsumowanie
-   okresu + kafle, Model: Opus 5 — budżet gorącej trasy). HOME-NAV wchodzi **przed R2.2** —
-   obie dotykają `/programs`. PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest
-   niezależny i może iść równolegle.
-6. **PLAN-05 — zaplanowane, gotowe do podjęcia:** redesign karty i listy planu (zdjęcie/
-   fallback, poziom w paskach, CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej
-   karty „Jak robić postęp"). Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`.
-   05A (migracja `cover_image_url`) i 05C (`LevelMeter`) niezależne, mogą wejść od razu;
-   05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
+   **HOME-01 (powitanie + karta passy) scalone do `main` w PR
+   [#33](https://github.com/danielm1212/arco/pull/33).** Kolejny krok: **HOME-02**
+   (podsumowanie okresu + kafle, Model: Opus 5 — budżet gorącej trasy). HOME-NAV wchodzi
+   **przed R2.2** — obie dotykają `/programs`. PLAN-04 (start dowolnego planu bez zmiany
+   aktywnego) jest niezależny i może iść równolegle.
+6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
+   CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").
+   Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`. **05C (`LevelMeter`) gotowe
+   technicznie 2026-07-28, PR [#34](https://github.com/danielm1212/arco/pull/34)** —
+   komponent + `lib/levelMeter.ts` (dane/copy jako czyste funkcje), lint/tsc/build zielone;
+   **jeszcze niewpięty** w `ProgramRow` ani `/programs/[id]` — to zakres 05D/05E, które od
+   niego zależą. Self-review a11y policzył kontrast: `bg-primary/20` na pustym segmencie
+   wychodzi 1.34:1 (poniżej progu 3:1 dla elementów graficznych), więc pusty segment jest
+   obrysem (`border-primary`), nie przezroczystym wypełnieniem — odejście od dosłownego
+   brzmienia spec-a („obniżona krycia"), uzasadnione policzonym kontrastem, do potwierdzenia
+   wizualnego przy 05D/05E. 05A (migracja `cover_image_url`) nadal niezależne, może wejść
+   od razu. 05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam
+   plik co obie.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
    Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do

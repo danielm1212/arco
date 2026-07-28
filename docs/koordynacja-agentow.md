@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-27
+**Aktualizacja:** 2026-07-28
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -21,7 +21,38 @@
 
 ## Ostatnie wpisy
 
-### 2026-07-28 · Claude · HOME-01 — powitanie i passa tygodniowa: ZAKOŃCZONE TECHNICZNIE
+### 2026-07-28 · Claude · PLAN-05C — pasek poziomu (`LevelMeter`): ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** nowy `components/LevelMeter.tsx`, nowy `lib/levelMeter.ts` (segmenty/copy jako
+  czyste funkcje, wzorzec jak `lib/streakCopy.ts` z równoległej pracy nad HOME-01), nowy
+  `tests/level-meter.test.ts`. Gałąź `agent/plan-05c` z czystego `main` (`e559f92`) — niezależna
+  od `agent/home-01`. **Świadomie NIE wpięty** w `ProgramRow` (`app/programs/page.tsx`) ani
+  `/programs/[id]/page.tsx` — spec wiąże to wpięcie z PLAN-05D/05E, które zależą od 05C i
+  same je wykonują; 05D dodatkowo czeka na NAV-01 (ten sam plik). Wpinanie teraz byłoby
+  robieniem cudzego zakresu i dotykaniem pliku zarezerwowanego pod NAV-01 przed czasem.
+- **Wynik:** `role="img"` + pełny `aria-label` („Poziom {N|od X do Y} z 3: {etykieta}") —
+  czytnik ekranu dostaje jedno zdanie, nie N osobnych `<div>`; `level_min === level_max`
+  poprawnie pokazuje pojedynczy poziom, nie zakres; brak etykiety tekstowej → komponent się
+  nie renderuje (sam pasek bez tekstu nie niesie znaczenia).
+- **Odejście od dosłownego brzmienia spec-a (policzone, nie na oko):** spec sugerował pusty
+  segment jako `bg-primary` z obniżoną krycią. Policzony kontrast WCAG: `rust-500` przy 20%
+  krycia na białej karcie = **1.34:1** (próg dla elementów graficznych to 3:1); 70% krycia
+  przechodzi próg, ale wygląda już prawie jak segment pełny — sprzeczne cele nie do pogodzenia
+  samą krycią. Zamiast tego: pełny segment = `bg-primary` (pełna krycia), pusty = obrys
+  `border-primary` na przezroczystym tle — różnica kształtu (pełny/pusty), nie tylko koloru,
+  i mierzalnie zgodna: rust-500 pełną krycią ma **5.08:1** na jasnej karcie i **3.11:1** na
+  ciemnej. Do potwierdzenia wizualnego przy wpinaniu w 05D/05E (komponent nie jest jeszcze
+  osadzony na żadnym ekranie, więc nie ma czego zrzucić w realnej apce dzisiaj).
+- **Dowód:** lint czysty; `tsc --noEmit` czysty; build produkcyjny zielony; unit **165/165**
+  (7 nowych: granice `level_min`/`level_max` null, brak etykiety, poziom pojedynczy vs zakres,
+  liczba segmentów zawsze równa `LEVEL_METER_TOTAL`).
+- **Czego nie dotknięto:** `ProgramRow`, `/programs/[id]/page.tsx`, nawigacji, migracji,
+  danych produkcyjnych, gałęzi `agent/home-01` (PR [#33](https://github.com/danielm1212/arco/pull/33)).
+- **Zaległości:** [Ty] review PR [#34](https://github.com/danielm1212/arco/pull/34). Kolejne
+  niezależne paczki gotowe od razu: PLAN-05A (migracja `cover_image_url`, Sonnet 5) lub HOME-02
+  (Opus 5, po HOME-01). PLAN-05B/05D/05E czekają odpowiednio na 05A i NAV-01.
+
+### 2026-07-28 · Claude · HOME-01 — powitanie i passa tygodniowa: ZAKOŃCZONE
 
 - **Zakres:** `app/page.tsx` (powitanie + wpięcie karty passy), nowy `app/StreakCard.tsx`,
   nowy `lib/streakCopy.ts` (copy passy jako czyste funkcje, wzorzec jak `formatGoalSentence`
@@ -54,10 +85,10 @@
   katalogu repo, warto rozłączyć (patrz pamięć `arco-node-modules-icloud-dupes`).
 - **Czego nie dotknięto:** nawigacji, migracji, treści treningowej, danych produkcyjnych,
   wymienionych wyżej duplikatów iCloud.
-- **Zaległości:** [Ty] review i decyzja o commicie/gałęzi — zmiany są tylko lokalnie, nie
-  commitowałem (czekam na wyraźną prośbę). Kolejna paczka w kolejności
-  `spec-home-i-nawigacja.md` §4 to HOME-02 (podsumowanie okresu + kafle — Model: Opus 5,
-  budżet gorącej trasy).
+- **Produkcja:** scalone do `main` w PR [#33](https://github.com/danielm1212/arco/pull/33)
+  jako `e8f60a6`; Vercel auto-deployuje z `main` (procedura `arco-release`, deploy = merge).
+- **Zaległości:** kolejna paczka w kolejności `spec-home-i-nawigacja.md` §4 to HOME-02
+  (podsumowanie okresu + kafle — Model: Opus 5, budżet gorącej trasy).
 
 ### 2026-07-27 · Claude · PLAN-05 — SPEC KARTY PLANU: ZAKOŃCZONE
 
