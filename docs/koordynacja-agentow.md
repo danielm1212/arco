@@ -21,6 +21,24 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-27 · Claude · SESSION-01A4 — ROZCIĄGANIE I KONFETTI: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `app/session/[id]/Logger.tsx`, `app/session/[id]/done/page.tsx`,
+  `app/session/[id]/done/PrConfetti.tsx`, `lib/confetti.ts`, testy, dokumentacja stanu.
+  Gałąź odbita z `agent/session-01a3` — **merge dopiero po #28**.
+- **Wynik:** rozciąganie zeszło z ekranu Done do loggera jako ostatnia pozycja treningu
+  (na podsumowaniu było już po wszystkim). Konfetti: 34 → 60 cząstek, lot 1,9–2,9 s →
+  2,8–4,3 s.
+- **Znalezisko:** `peak` konfetti był w PIKSELACH, więc im wyższy ekran, tym niżej kończył
+  się wystrzał — przy 812 px sięgał okolic liczby-bohatera zamiast topbara. Teraz w `vh`,
+  jak `floor`, który z tego samego powodu był w vh od początku.
+- **Dowód:** lint i TypeScript czyste; build zielony; unit **158/158**; przeglądarkowe
+  **32/32**. Nowy test montuje prawdziwe `PrConfetti` i próbkuje cały lot — zasięgu w górę
+  nie sprawdzi ani statyczny HTML, ani sam model cząstki.
+- **Czego nie dotknięto:** migracji, seeda, treści treningowej, danych produkcyjnych,
+  `prefs` (czas rozciągania bez zmian) oraz nieśledzonych plików właściciela.
+- **Zaległości:** [Ty] merge #28, potem tego PR-a i deploy całej serii SESSION-01A2…01A4.
+
 ### 2026-07-27 · Claude · SESSION-01A3 — PODPOWIEDŹ STARTOWA: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** nowy `app/session/[id]/LoggerHint.tsx`, `lib/useFocusTrap.ts`,
