@@ -69,8 +69,14 @@ test("TRAIN-02A4 SQL zawiera dokładną kopię pięciu zatwierdzonych recept", (
 });
 
 test("TRAIN-02A4 SQL zawiera dokładnie 29 zatwierdzonych alternatyw", () => {
-  assert.deepEqual(embeddedJson("alternatives"), PLANNED_PROGRAM_ALTERNATIVES);
-  assert.equal(PLANNED_PROGRAM_ALTERNATIVES.length, 29);
+  // Porównujemy wyłącznie zakres TRAIN-02A4. Kolejne paczki treści (PLAN-C1 i dalsze)
+  // dopisują alternatywy dla innych programów i nie mogą przepisywać tej migracji.
+  const shipped = PLANNED_PROGRAM_ALTERNATIVES.filter((item) =>
+    targetSlugs.has(item.programSlug),
+  );
+
+  assert.deepEqual(embeddedJson("alternatives"), shipped);
+  assert.equal(shipped.length, 29);
 });
 
 test("point sync nie usuwa danych i używa deterministycznych identyfikatorów", () => {

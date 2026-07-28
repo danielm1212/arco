@@ -55,30 +55,6 @@ test("TRAIN-01 / P12: ruchy techniczne i mocy poprzedzają zmęczenie", () => {
   );
 });
 
-test("TRAIN-01 / P14: oba dni mają pracę tylnej taśmy zamiast drugiego curl", () => {
-  const p14 = program("intermediate-gym-fbw2");
-  const trainingA = day(p14.slug, "Trening A");
-  const trainingB = day(p14.slug, "Trening B");
-
-  assert.equal(p14.content_version, 3);
-  assert.deepEqual(
-    trainingA.slots.map((slot) => slot.exercise_id),
-    [
-      "Barbell_Squat",
-      "Barbell_Bench_Press_-_Medium_Grip",
-      "Romanian_Deadlift",
-      "Bent_Over_Barbell_Row",
-      "Standing_Military_Press",
-      "EZ-Bar_Skullcrusher",
-      "Plank",
-    ],
-  );
-  assert.equal(trainingB.slots[4]?.exercise_id, "Lying_Leg_Curls");
-  assert.deepEqual(
-    {
-      repsMin: trainingB.slots[1]?.repsMin,
-      repsMax: trainingB.slots[1]?.repsMax,
-    },
-    { repsMin: 5, repsMax: 10 },
-  );
-});
+// P14 (`intermediate-gym-fbw2`) miało tu własny test TRAIN-01. Recepta została zastąpiona
+// przez bibliotekę v2.1; aktualne asercje żyją w `planc1-fbw-gym-recipe.test.ts`.
+// Intencja TRAIN-01 — oba dni mają bezpośrednią pracę tylnej taśmy — jest tam utrzymana.

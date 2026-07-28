@@ -21,6 +21,41 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-28 · Claude · PLAN-C0 + PLAN-C1 — adopcja biblioteki v2.1 i flagowy FBW
+
+- **Zakres:** ocena audytu v2.1, mapa `exercise_id` dla całej biblioteki (PLAN-C0) i wdrożenie
+  recepty flagowca `intermediate-gym-fbw2` (PLAN-C1). Gałąź `agent/plan-c1-fbw-gym` z `origin/main`
+  (`1d07e3c`). Pliki: `scripts/seed.ts`, `scripts/data/program-slot-alternatives.ts`,
+  `scripts/data/exercise-names-pl.json`, `scripts/data/v21-exercise-map.json`,
+  `supabase/migrations/20260728213337_planc1_intermediate_gym_fbw2_v21.sql`,
+  `tests/planc1-fbw-gym-recipe.test.ts`, `tests/train01-program-safety.test.ts`,
+  `tests/train02a4-migration.test.ts`, `docs/trainings/intermediate-gym-fbw2.md`,
+  `docs/plan-c0-mapowanie-cwiczen-v21.md`, `docs/decyzje-produktowe.md`, `HANDOFF.md`.
+- **Decyzje:** D-42 (kanon v2.1 z wyjątkami kolejności power/skill z TRAIN-01), D-43 (alternatywy
+  strukturalne = wyłącznie ścieżka sprzętowa), D-44 (korekta treści może usuwać sloty).
+- **Nie adoptowane z v2.1:** trzy przesunięcia HSPU/Jump Squat w głąb sesji (P11 Upper B,
+  P12 Upper A, P12 Lower A) — cofałyby wdrożony patch TRAIN-01 i łamały walidator TRAIN-07.
+- **Naprawione przy okazji:** (1) seed wpisywał `position: 0` każdej alternatywie przy
+  `unique(program_day_slot_id, position)` — dwie alternatywy na slot były niemożliwe;
+  (2) pierwsza wersja migracji zmieniała sloty, ale nie wnosiła alternatyw na produkcję, gdzie
+  seed nie jest uruchamiany — migracja niesie teraz payload 12 alternatyw, a test pilnuje
+  zgodności z `program-slot-alternatives.ts`.
+- **Commit/stan:** gałąź lokalna, bez PR. **Produkcja nietknięta**; migracja zastosowana wyłącznie
+  na lokalnej bazie.
+- **Testy:** lint, build, 178/178 unit, 32/32 przeglądarkowych, `validate:training` 907/15/306,
+  `validate:recommendations` 60/60, smoke Phase 1 / Phase 2 / offline, seed dwa razy idempotentny.
+  Migracja sprawdzona trzema przebiegami: rollback na realnej historii (powiązania slotów 14 → 12,
+  51/51 serii zachowanych), bramka otwartej sesji (podnosi wyjątek) i pusty katalog (pomija się).
+  `supabase db reset` **nie wykonany** — zablokowany jako operacja niszcząca; pełny łańcuch
+  migracji na świeżej bazie zweryfikuje CI.
+- **Otwarte:** (1) brak weryfikacji wizualnej `/programs/[id]` — wymaga logowania; (2) dwa sloty
+  flagowca mają placeholder zdjęcia (`Chest-Supported_Dumbbell_Row`, `Hanging_Knee_Raise`);
+  (3) trzy plany kalisteniczne v2.1 nie mają zamienników, tylko wskazówki progresji;
+  (4) `bootstrap:test-user` wymaga `TEST_USER_EMAIL`/`TEST_USER_PASSWORD`, których nie ma w
+  `.env.local`.
+- **Następny krok:** checkpoint [Ty] na lokalnym proda, potem PR i `arco-release`; dalej PLAN-C2
+  (media i `name_pl`) oraz kolejne paczki per program.
+
 ### 2026-07-28 · Claude · PLAN-05C — pasek poziomu (`LevelMeter`): ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** nowy `components/LevelMeter.tsx`, nowy `lib/levelMeter.ts` (segmenty/copy jako

@@ -1127,7 +1127,7 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-gym-fbw2",
     name: "Średniozaawansowany · Siłownia · Całe ciało",
-    description: "Dwa treningi całego ciała na pełnym sprzęcie. Dobry wybór, gdy masz mało czasu, ale chcesz rozwijać siłę i masę. Zostaw 1 lub 2 powtórzenia w zapasie.",
+    description: "Dwa treningi całego ciała na pełnym sprzęcie. Każda sesja ma jedno duże ćwiczenie na dół, pełny push i pull oraz bezpośrednią pracę ramion. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Siłownia · masa i siła",
     goal_key: "strength_hypertrophy",
     level: "średniozaawansowany",
@@ -1138,33 +1138,33 @@ export const PROGRAMS: Program[] = [
     frequency_max: 3,
     estimated_minutes_min: 50,
     estimated_minutes_max: 65,
-    required_equipment: ["barbell", "dumbbell", "cable", "machine"],
-    optional_equipment: ["body only"],
-    content_version: 3,
+    // Maszyny obsługują wyłącznie alternatywy, więc nie są wymaganiem wejścia (PLAN-C1).
+    required_equipment: ["barbell", "dumbbell", "cable"],
+    optional_equipment: ["machine", "body only"],
+    content_version: 4,
     days_per_week: 2,
+    // Recepta v2.1: A rozwija wzorzec przysiadu, B zawias biodrowy. Po 19 serii roboczych.
     days: [
       {
         label: "Trening A",
         slots: [
-          { exercise_id: "Barbell_Squat", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
-          { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 8, rest: 150 },
-          { exercise_id: "Romanian_Deadlift", sets: 3, repsMin: 6, repsMax: 10, rest: 150 },
-          { exercise_id: "Bent_Over_Barbell_Row", sets: 4, repsMin: 8, repsMax: 10, rest: 120 },
-          { exercise_id: "Standing_Military_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 120 },
-          { exercise_id: "EZ-Bar_Skullcrusher", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
-          { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "Na czas, od 30 do 60 sekund." },
+          { exercise_id: "Barbell_Squat", sets: 4, repsMin: 5, repsMax: 8, rest: 180 },
+          { exercise_id: "Barbell_Incline_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 10, rest: 150, notes: "Oparcie ustaw na około 30 stopni." },
+          { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 4, repsMin: 6, repsMax: 10, rest: 120, notes: "Podciąganie jest pełnoprawnym wariantem, jeśli utrzymasz pełny zakres." },
+          { exercise_id: "Side_Lateral_Raise", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
+          { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Reverse_Crunch", sets: 2, repsMin: 10, repsMax: 20, rest: 60, notes: "Inicjuj ruch podwinięciem miednicy, bez rozpędu." },
         ],
       },
       {
         label: "Trening B",
         slots: [
-          { exercise_id: "Barbell_Walking_Lunge", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
-          { exercise_id: "Pullups", sets: 4, repsMin: 5, repsMax: 10, rest: 120, notes: "Użyj gumy lub maszyny, jeśli pełny zakres jest za trudny. Zostaw 1 lub 2 powtórzenia w zapasie. Nachwyt." },
-          { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 10, rest: 120 },
-          { exercise_id: "Face_Pull", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
-          { exercise_id: "Lying_Leg_Curls", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
-          { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 12, rest: 60 },
-          { exercise_id: "Ab_Wheel_Rollout", sets: 3, repsMin: 8, repsMax: 12, rest: 60, notes: "Z kolan. Bez kółka wybierz spięcia na wyciągu." },
+          { exercise_id: "Romanian_Deadlift", sets: 4, repsMin: 6, repsMax: 10, rest: 180, notes: "Zakończ serię, gdy kolejne powtórzenie wymagałoby utraty neutralnej pozycji tułowia." },
+          { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 10, rest: 150 },
+          { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
+          { exercise_id: "Arnold_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90, notes: "Dwie serie wystarczą, bo przedni akton barku pracuje już w wyciskaniach." },
+          { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Hanging_Knee_Raise", sets: 2, repsMin: 8, repsMax: 15, rest: 60 },
         ],
       },
     ],
@@ -1424,6 +1424,11 @@ async function seedProgramAlternatives() {
     slotsBySource.set(key, [...(slotsBySource.get(key) ?? []), slot.id]);
   }
 
+  // `program_slot_alternatives` ma unique(program_day_slot_id, position), więc kolejne
+  // alternatywy tego samego slotu muszą dostać rosnącą pozycję. Kolejność wynika z kolejności
+  // wpisów w PLANNED_PROGRAM_ALTERNATIVES, czyli jest deterministyczna i wersjonowana w repo.
+  const positionBySlot = new Map<string, number>();
+
   const rows = PLANNED_PROGRAM_ALTERNATIVES.map((alternative) => {
     const sourceKey = [
       alternative.programSlug,
@@ -1437,13 +1442,15 @@ async function seedProgramAlternatives() {
       );
     }
     const slotId = matchingSlots[0];
+    const position = positionBySlot.get(slotId) ?? 0;
+    positionBySlot.set(slotId, position + 1);
     return {
       id: deterministicSeedUuid(
         `arco:program-slot-alternative:${slotId}:${alternative.alternativeExerciseId}`,
       ),
       program_day_slot_id: slotId,
       alternative_exercise_id: alternative.alternativeExerciseId,
-      position: 0,
+      position,
       missing_equipment: alternative.missingEquipment,
       alternative_equipment: alternative.alternativeEquipment,
       pattern_coverage: alternative.patternCoverage,
