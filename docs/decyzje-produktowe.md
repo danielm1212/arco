@@ -7,8 +7,8 @@
 
 | ID | Decyzja | Uzasadnienie |
 |---|---|---|
-| D-01 | Główne taby: Trening, Postępy, Historia, Ekipa | Stabilny model mentalny zaakceptowany w R0.5 |
-| D-02 | Plany są podwidokiem Treningu, Ciało podwidokiem Postępów, profil przez awatar | Nie dokładamy kolejnych równorzędnych przestrzeni |
+| D-01 | ~~Główne taby: Trening, Postępy, Historia, Ekipa~~ — **zastąpione przez D-38 (2026-07-27)** | Stabilny model mentalny zaakceptowany w R0.5; zrewidowany po POC Home |
+| D-02 | Profil przez awatar, nie jako tab; ~~Ciało podwidokiem Postępów~~ — **zmienione przez D-38** | Nie dokładamy kolejnych równorzędnych przestrzeni |
 | D-03 | Home ma jedno główne CTA startu/wznowienia | Arco prowadzi do treningu, nie prezentuje katalogu funkcji |
 | D-04 | Aktywną sesję poza loggerem obsługuje globalny mini-bar, także na Home | Jedno miejsce wznowienia, bez duplikatu hero |
 | D-05 | Cel tygodniowy mieści się w zakresie aktywnego planu | Cel musi być wykonalny w modelu programu; nadwyżka jest bonusem |
@@ -45,6 +45,10 @@
 | D-35 | Zgodność sprzętowa planu wymaga wykonalnej ścieżki dla każdego obowiązkowego slotu; brak lub legacy obniża pewność zamiast dawać fałszywy exact match | Zbiorcze metadane programu nie dowodzą, że użytkownik wykona całą sesję |
 | D-36 | Przed H2 poprawiamy i mierzymy obecne 15 programów; nowe programy, warianty sesji i opcjonalna rozgrzewka wymagają danych po H2 | Większy katalog nie kompensuje błędnej recepty, sprzętu ani braku wersjonowanego audytu |
 | D-37 | Przed monetyzacją recepty P01–P15 zatwierdza wersjonowany audyt Codex S&C; zewnętrzny trener nie jest bramką Q1, PLAN-Q ani H2 | Właściciel świadomie wybiera szybszą walidację produktu; konsultant może wrócić po przychodzie jako audyt jakości, nie blokada wdrożenia |
+| D-38 | Trzy taby: **Home · Trening · Ekipa**; Plany, Postępy, Ciało i Historia są równorzędnymi zakładkami wewnątrz Treningu. Nazwa „Trening" świadomie w liczbie pojedynczej | Liczba mnoga zapowiadałaby listę odbytych treningów, czyli zawartość własnej podzakładki Historia. Układ zmniejsza chrome: z 4 pozycji i dwóch pasków zakładek do 3 pozycji i jednego. Zmierzone POC-em: cztery zakładki mieszczą się na 320 px |
+| D-39 | Powitanie po imieniu wraca na Home jako **jedna linia nad kartą startu** — nigdy blok ani karta; znika całkowicie przy braku imienia | Personalizacja bez kosztu hierarchii. Karta startu pozostaje pierwszym modułem (D-03), a pusty placeholder byłby szumem |
+| D-40 | Home pokazuje **wyciąg** z postępów (passa, podsumowanie, kafle, najważniejsze ćwiczenia); pełna analiza zostaje w Treningu | Home ma motywować i prowadzić do treningu, nie zastępować Postępów. Dashboard nie może zepchnąć CTA poniżej folda |
+| D-41 | Trening z dowolnego planu można zacząć bez zmiany aktywnego planu; taka sesja **nie przesuwa rotacji**, ale liczy się do celu tygodniowego i Historii | Trening w domu zamiast na siłowni nie może rozbijać rotacji A → B ani progresji; jednocześnie wykonana praca jest wykonaną pracą (spójne z D-07 i D-10) |
 
 ## Otwarte decyzje z bramką
 

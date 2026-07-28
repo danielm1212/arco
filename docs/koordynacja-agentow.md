@@ -21,6 +21,28 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-27 · Claude · HOME-NAV — POC, REWIZJA KONTRAKTU I PLAN: ZAKOŃCZONE
+
+- **Zakres:** `prototypes/home-dashboard-poc/**` (nowy), `docs/userflows-docelowe-2026-07.md`
+  (rewizja IA), `docs/decyzje-produktowe.md` (D-38…D-41, rewizja D-01/D-02),
+  `docs/spec-home-i-nawigacja.md` (nowy), backlog, plan sprintów, HANDOFF, indeks docsów.
+  **Zero zmian w kodzie produkcyjnym.**
+- **Wynik:** klikalny POC nowego Home i nawigacji `Home · Trening · Ekipa` z zakładkami
+  `Plany | Postępy | Ciało | Historia`. Właściciel zatwierdził nazwę „Trening" w liczbie
+  pojedynczej, Gambarino na passie, maksymalny zakres Home oraz start aktywnego planu
+  z zakładki Plany.
+- **Rozstrzygnięte pomiarem:** cztery zakładki mieszczą się na 320 px (76 px każda, bez ucięć,
+  zero overflow). Chrome maleje: 4 pozycje + dwa paski zakładek → 3 pozycje + jeden pasek.
+- **Znalezisko:** karta hero renderowała się o wysokości 0 px — `overflow: hidden` wyłącza
+  automatyczne `min-height: auto` dla elementu flex, więc kolumna zgniotła kartę. Ta sama
+  pułapka czeka przy przepisaniu POC na React; udokumentowana w CSS prototypu.
+- **Plan:** HOME-01 → HOME-02 → HOME-03 → NAV-01, PLAN-04 równolegle; HOME-NAV wchodzi
+  **przed R2.2**, bo obie dotykają `/programs`.
+- **Czego nie dotknięto:** kodu aplikacji, migracji, treści treningowej, Ekipy oraz
+  nieśledzonych plików właściciela (`docs/katalog-15-programow.md`, prezentacja onboardingowa).
+- **Zaległości:** [Ty] decyzje z §6 spec-a (liczba wierszy ćwiczeń na Home, ikona taba
+  Trening); podjęcie HOME-01 jako pierwszej paczki implementacyjnej.
+
 ### 2026-07-27 · Claude · SESSION-01A4 — ROZCIĄGANIE I KONFETTI: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `app/session/[id]/Logger.tsx`, `app/session/[id]/done/page.tsx`,
