@@ -552,6 +552,15 @@ test("SESSION-01A3: overlay blokuje tło, trzyma fokus i oddaje go po zamknięci
     assert.equal(locked.bodyPosition, "fixed", "tło nie jest unieruchomione");
     assert.equal(locked.moved, false, "tło przewija się pod podpowiedzią");
 
+    // Tap w tło NIE zamyka: podpowiedź pokazuje się raz w życiu, więc przypadkowe
+    // muśnięcie ekranu nie może jej skasować w jedynym momencie, gdy jest potrzebna.
+    await page.mouse.click(VIEWPORT.width - 6, 6);
+    assert.equal(
+      await page.getByRole("dialog").count(),
+      1,
+      "kliknięcie w tło zamknęło podpowiedź",
+    );
+
     // Pułapka fokusu: Tab nie może wyprowadzić poza overlay.
     await page.keyboard.press("Tab");
     await page.keyboard.press("Tab");
