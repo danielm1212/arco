@@ -56,18 +56,38 @@ produkcie da się tylko „Ustaw jako aktywny", co rozbija rotację A → B.
 - Nie odwzorowuje przejść między ekranami, back-navigation ani zachowania PWA.
 - Nie jest finalnym designem. Pokazuje hierarchię, gęstość i język.
 
-## Otwarte pytania do decyzji
+## Decyzje właściciela (2026-07-27)
 
-1. **Nazwa zakładki zbiorczej.** „Treningi" zawiera Ciało, a pomiary ciała treningiem nie są.
-   Alternatywy: „Moje dane", „Progres", rozbicie Ciała na osobną pozycję.
-2. **Gambarino na liczbie passy.** `wytyczne-designu.md` rezerwuje ten krój wyłącznie na
-   momenty (celebracja/PR/recap), nigdy na UI narzędzia. Passa jest na granicy — tutaj
-   użyta świadomie, do rozstrzygnięcia.
-3. **Budżet wydajności.** Home to najgorętsza trasa, a `optymalizacja.md` narzuca na takie
-   trasy budżety. Podsumowanie, kafle i postęp ćwiczeń to dodatkowe agregaty przy każdym
-   otwarciu aplikacji — do policzenia przed wdrożeniem, nie po.
-4. **Ile treści na Home.** Ten POC pokazuje wariant maksymalny. Realnie warto rozważyć
-   ograniczenie do passy + trzech liczb podsumowania, a postęp ćwiczeń zostawić w Postępach.
+- **Gambarino na passie: zostaje.** Copy uproszczone — nagłówek niesie całą informację
+  („4. tydzień passy"), opis „z rzędu z celem 3×/tydz." usunięty.
+- **Budżet wydajności: przyjęty do policzenia** przed wdrożeniem.
+- **Zakres treści na Home: zostaje wariant maksymalny** z tego POC.
+- **Aktywny plan da się zacząć także z zakładki Plany** — karta aktywnego planu pokazuje
+  następny dzień i ma własne CTA, obok „Zacznij" przy planach z biblioteki.
+
+## Otwarte: nazwa zakładki zbiorczej
+
+Zakładka trzyma cztery rzeczy: **Plany** (co zrobię), **Postępy** (jak idzie), **Ciało**
+(moje ciało), **Historia** (co zrobiłem).
+
+| Nazwa | Ocena |
+|---|---|
+| **„Treningi"** (l. mnoga) | Dwa problemy. Ciało treningiem nie jest, a liczba mnoga czyta się jako *lista odbytych treningów* — czyli zapowiada zawartość własnej podzakładki Historia. |
+| **„Trening"** (l. pojedyncza) | **Rekomendacja.** Tak brzmi dziś etykieta w kodzie, a kontrakt IA nazywa tę sekcję „przestrzeń Trening". Liczba pojedyncza czyta się jako dziedzina, nie lista. Zero przyzwyczajania użytkownika od nowa. Ciało pozostaje lekkim naciągnięciem, ale przy trzech pozycjach w dolnym pasku koszt pomyłki jest znikomy — można się pomylić najwyżej dwa razy. |
+| **„Moje"** | Uczciwie obejmuje wszystkie cztery (moje plany, postępy, ciało, historia) — wzorzec „You" ze Stravy. Jako samodzielna etykieta w polskim nawigatorze brzmi jednak niejasno. |
+| **„Profil"** | Odpada. Koliduje z awatarem prowadzącym do ustawień, a kontrakt mówi wprost, że profil nie jest kolejnym tabem. |
+
+**Wariant alternatywny — jeżeli Ciało pod „Treningiem" nadal uwiera.** Zamiast nazywać problem,
+można go usunąć strukturalnie:
+
+- **Home**
+- **Trening** → Plany | Historia *(co zrobię / co zrobiłem)*
+- **Postępy** → Trening | Ciało *(pomiar wyników / pomiar ciała — dokładnie dzisiejszy kontrakt)*
+- **Ekipa**
+
+Każda etykieta jest wtedy uczciwa, a sekcja Postępy zostaje w dokumentacji nietknięta. Koszt:
+cztery pozycje w dolnym pasku i dwa paski zakładek, czyli chrome jak dziś — tracimy uproszczenie,
+które jest największą zaletą wariantu z tego POC.
 
 ## Rekomendowana kolejność wdrożenia
 

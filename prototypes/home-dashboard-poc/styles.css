@@ -266,7 +266,6 @@ button:focus-visible { outline: 2px solid var(--support); outline-offset: 2px; b
 .streak-head { display: flex; align-items: flex-start; justify-content: space-between; }
 .streak-number { margin: 0; font-family: var(--display); font-size: 40px; line-height: 1; letter-spacing: -.01em; color: var(--rust); }
 .streak-unit { font-family: var(--sans); font-size: 16px; font-weight: 700; letter-spacing: -.01em; margin-left: 2px; }
-.streak-label { margin: 5px 0 0; font-size: 12px; color: var(--text-muted); }
 .flame-big { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgb(198 63 33 / 10%); }
 .flame-big svg { width: 22px; height: 22px; fill: var(--rust); }
 
@@ -351,7 +350,10 @@ dd.flat { color: var(--text-faint); font-weight: 600; }
 .section-label { margin: 6px 2px -2px; font-size: 10px; line-height: 1.6; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-faint); }
 .plan-name { margin: 8px 0 0; font-size: 16px; font-weight: 700; letter-spacing: -.02em; line-height: 1.25; }
 .plan-meta { margin: 5px 0 0; font-size: 12px; color: var(--text-muted); }
-.plan-actions { display: flex; gap: 8px; margin-top: 13px; }
+.plan-next { margin: 9px 0 0; font-size: 12px; color: var(--text-muted); }
+.plan-next strong { color: var(--text); font-weight: 700; }
+.cta-compact { height: 46px; font-size: 14px; margin-top: 12px; }
+.plan-actions { display: flex; gap: 8px; margin-top: 9px; }
 .btn-ghost { height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--border-strong); font-size: 13px; font-weight: 700; }
 .btn-ghost.wide { width: 100%; margin-top: 4px; }
 .btn-mini { height: 34px; padding: 0 13px; border-radius: 999px; background: var(--rust-soft); color: var(--rust); font-size: 12px; font-weight: 700; flex: none; }
