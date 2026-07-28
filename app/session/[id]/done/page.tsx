@@ -11,7 +11,6 @@ import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatGoalProgress } from "@/lib/programRecommendation";
 import { weightToDisplay } from "@/lib/format";
 import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
-import { RoutineTimer } from "../RoutineTimer";
 
 export const dynamic = "force-dynamic";
 
@@ -84,13 +83,6 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
     if (n > 0) perMuscle.set(m, (perMuscle.get(m) ?? 0) + n);
   });
   const split = muscleSplit(perMuscle);
-  const stretchingFocus = split
-    .slice(0, 2)
-    .map((row) => row.label.toLocaleLowerCase("pl-PL"));
-  const stretchingDescription =
-    stretchingFocus.length > 0
-      ? `Spokojny oddech, potem łagodne pozycje na ${stretchingFocus.join(" i ")}.`
-      : "Spokojny oddech, potem 2 łagodne pozycje dla trenowanych partii.";
 
   // PR-y zdobyte w tej sesji
   const setIds = allSets.map((s) => s.id);
@@ -183,14 +175,6 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
           <MuscleSplitBars rows={split} max={4} />
         </div>
       )}
-
-      <RoutineTimer
-        kind="stretching"
-        timerId={params.id}
-        title="Rozciąganie"
-        description={stretchingDescription}
-        className="w-full"
-      />
 
       {/* CTA */}
       <div className="flex w-full flex-col gap-sm pt-lg">

@@ -5,6 +5,7 @@ import {
   CONFETTI_COUNT,
   CONFETTI_COLOR_COUNT,
   CONFETTI_LIFETIME_MS,
+  CONFETTI_MAX_DELAY_SECONDS,
 } from "../lib/confetti";
 
 /** Deterministyczny RNG — te same cząstki w każdym przebiegu testu. */
@@ -31,6 +32,9 @@ test("MOMENT-01: każda cząstka mieści się w zakresach modelu fizycznego", ()
     assert.ok(p.color >= 1 && p.color <= CONFETTI_COLOR_COUNT, `kolor ${p.color}`);
     // Szczyt paraboli jest ZAWSZE ujemny — inaczej wystrzał leci w dół
     assert.ok(p.peak < 0, `peak ${p.peak} powinien być ujemny (w górę)`);
+    // Start jest na 32vh, więc szczyt musi sięgnąć góry ekranu, ale nie wystrzelić
+    // daleko poza kadr — tam cząstki tylko znikają i wystrzał robi się rzadszy.
+    assert.ok(p.peak >= -40 && p.peak <= -12, `peak ${p.peak}vh poza użytecznym zakresem`);
     // Lot kończy się poza ekranem, żeby nic nie zawisło w kadrze
     assert.ok(p.floor >= 70, `floor ${p.floor}vh za nisko`);
     assert.ok(p.dx >= -150 && p.dx <= 150, `dx ${p.dx}`);
@@ -46,9 +50,25 @@ test("MOMENT-01: każda cząstka mieści się w zakresach modelu fizycznego", ()
       `obrót kończy się przed lotem: ${p.spinIterations}×${p.spinSeconds}s < ${p.durationSeconds}s`,
     );
     // Wystrzał to jedno zdarzenie: rozrzut startu zostaje krótki
-    assert.ok(p.delaySeconds >= 0 && p.delaySeconds <= 0.18, `delay ${p.delaySeconds}`);
+    assert.ok(
+      p.delaySeconds >= 0 && p.delaySeconds <= CONFETTI_MAX_DELAY_SECONDS,
+      `delay ${p.delaySeconds}`,
+    );
     assert.ok(p.opacity > 0 && p.opacity <= 1, `opacity ${p.opacity}`);
   }
+});
+
+test("MOMENT-01: wystrzał zostaje jednym zdarzeniem mimo dłuższego lotu", () => {
+  // Feedback 2026-07-27: więcej cząstek i dłuższy lot. Granice pilnują, żeby
+  // „więcej i dłużej" nie zsunęło się w kapiący deszcz papieru przez cały ekran.
+  assert.ok(
+    CONFETTI_MAX_DELAY_SECONDS <= 0.3,
+    `rozrzut startu ${CONFETTI_MAX_DELAY_SECONDS}s — wystrzał przestaje być jednym zdarzeniem`,
+  );
+  assert.ok(
+    CONFETTI_LIFETIME_MS <= 6000,
+    `moment trwa ${CONFETTI_LIFETIME_MS} ms — celebracja zaczyna blokować ekran`,
+  );
 });
 
 test("MOMENT-01: cząstki nie są identyczne — brak wspólnego rytmu obrotu", () => {
