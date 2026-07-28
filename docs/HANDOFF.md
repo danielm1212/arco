@@ -23,9 +23,11 @@ Arco jest działającą PWA na kontach testowych. Obsługuje:
 - polskie nazwy i aliasy wyszukiwania;
 - Ekipę v0: kod 8 znaków, jawna zgoda, członkowie, wiele ekip w UI, check-iny, reakcje i nudge.
 
-Docelowa IA działa: **Trening · Postępy · Historia · Ekipa**, lokalnie **Dziś | Plany** oraz
-**Trening | Ciało**, profil przez awatar. Floating nav ma równy margines 12 px i respektuje
-safe area.
+Docelowa IA na produkcji dziś: **Trening · Postępy · Historia · Ekipa**, lokalnie
+**Dziś | Plany** oraz **Trening | Ciało**, profil przez awatar. Floating nav ma równy margines
+12 px i respektuje safe area. **Kontrakt jest już zrewidowany na trzy przestrzenie**
+(Home · Trening · Ekipa, D-38…D-41 w `decyzje-produktowe.md`) — wdrożenie w kolejce jako
+HOME-NAV, patrz §6 punkt 5.
 
 ## 2. Co jest wdrożone
 
@@ -103,38 +105,18 @@ koordynacji (2026-07-23).
   158/158 unit, 26/26 testów przeglądarkowych i walidatory 907/15/308 oraz 60/60.
   CI PR oraz ponowne CI `main` są zielone, Vercel wdrożył `47f48ae`, a publiczny login
   po przeładowaniu nie zgłasza błędów. Pozostaje checkpoint urządzeniowy [Ty].
-- **SESSION-01A4 — gotowe technicznie, PR [#29](https://github.com/danielm1212/arco/pull/29) do `main`, czeka na merge [Ty]:**
-  niesie też poprawkę do 01A3, która nie zdążyła do #28 — podpowiedź startowa nie zamyka się
-  już tapem w tło (zostają „Rozumiem" i Escape).
-  rozciąganie zeszło z ekranu Done do loggera jako **ostatnia pozycja treningu** — na
-  podsumowaniu było już po wszystkim, a wtedy nikt do niego nie wraca. Moment rekordu jest
-  mocniejszy: 34 → 60 cząstek, lot 1,9–2,9 s → 2,8–4,3 s, a `peak` przeszedł z pikseli na
-  `vh`. To ostatnie było realnym błędem: w px im wyższy ekran, tym niżej kończył się
-  wystrzał (przy 812 px sięgał okolic liczby-bohatera zamiast topbara), podczas gdy `floor`
-  był w vh od początku dokładnie z tego powodu. Bramka: lint, TypeScript, build,
-  **158/158** unit, **32/32** przeglądarkowych. Szczegóły: `session-01a4-release-2026-07-27.md`.
-- **SESSION-01A3 — scalone w PR [#28](https://github.com/danielm1212/arco/pull/28), czeka na deploy [Ty]:**
-  jednorazowa podpowiedź startowa loggera — popover zakotwiczony pod pierwszym wierszem serii,
-  strzałka celuje w check, tło przyciemnione, przycisk „Rozumiem". Pokazywana raz na urządzenie
-  (`prefs.loggerHintSeen`) i znikająca także po pierwszej zaliczonej serii. Pełny kontrakt
-  overlayów: portal do `body`, współdzielona blokada tła (`lib/bodyScrollLock.ts` wyciągnięte
-  z `BottomSheet` bez zmiany zachowania), Escape, pułapka fokusu ze zwrotem fokusu
-  (`lib/useFocusTrap.ts`). Przy okazji osłonięto `prefs.ts` — `localStorage` rzuca w Safari
-  w trybie prywatnym i przy pełnej quocie, co wywracało cleanup overlaya. Bramka: lint,
-  TypeScript, build, **157/157** unit, **31/31** przeglądarkowych (TRUST-03 15/15).
-  Szczegóły: `session-01a3-release-2026-07-27.md`.
-- **SESSION-01A2 — wdrożone w PR [#27](https://github.com/danielm1212/arco/pull/27), czeka na deploy [Ty]:**
-  przebudowa prezentacji loggera po dogfoodzie SESSION-01A (ocena 4/10 za nadmiar instrukcji).
-  Wiersz serii zszedł ze ~120 px do **44 px** — check 44×44 jest częścią wiersza, pełnoszerokie
-  „Zalicz" zniknęło, a stały `×` zastąpiło menu pod numerem serii (robocza/rozgrzewkowa/usuń).
-  Per-ćwiczeniowe boksy rozgrzewkowe wycięte; zostały dwa moduły czasowe: rozgrzewka nad
-  pierwszym ćwiczeniem (2–15 min) i rozciąganie na Done (1–10 min), z zapamiętanym czasem
-  i licznikiem przeżywającym przeładowanie oraz tło. Świeże wejście zaczyna się na
-  `scrollY = 0`, bez fokusu i aktywnej serii; pozycja wraca tylko przy realnym wznowieniu.
-  Tap w puste pole kopiuje wynik z poprzedniej sesji. Semantyka `warmup` bez zmian, brak
-  migracji. Usunięto `lib/sessionPreparation.ts` (bez konsumenta w produkcie).
-  Bramka: lint, TypeScript, build, **155/155** unit, **29/29** przeglądarkowych,
-  katalog 907/15 i rekomendacje 60/60. Szczegóły: `session-01a2-release-2026-07-27.md`.
+- **SESSION-01A2…01A4 — na produkcji, scalone w PR [#27](https://github.com/danielm1212/arco/pull/27)/[#28](https://github.com/danielm1212/arco/pull/28)/[#29](https://github.com/danielm1212/arco/pull/29):**
+  przebudowa prezentacji loggera po dogfoodzie SESSION-01A. Wiersz serii ~120 px → **44 px**
+  (check w wierszu, menu robocza/rozgrzewkowa/usuń pod numerem); rozgrzewka i rozciąganie jako
+  regulowane timery, rozciąganie ostatnią pozycją treningu (nie na Done); świeże wejście na
+  `scrollY = 0` bez fokusu; jednorazowa podpowiedź startowa (popover + `useFocusTrap` +
+  współdzielony `lib/bodyScrollLock.ts`, zamyka wyłącznie „Rozumiem"/Escape — świadomy wyjątek
+  od reguły „overlay zamyka się kliknięciem w tło"); moment rekordu 34 → 60 cząstek, zasięg
+  w `vh` zamiast px. Bramka na finalnym commicie: lint, TypeScript, build, 158/158 unit,
+  32/32 przeglądarkowych. **Pozostaje wyłącznie krok 5/6 procedury `arco-release`** —
+  weryfikacja proda w przeglądarce i regresja urządzeniowa [Ty], **nie merge** (już wykonany).
+  Szczegóły: `session-01a2-release-2026-07-27.md`, `session-01a3-release-2026-07-27.md`,
+  `session-01a4-release-2026-07-27.md`.
 
 ### Częściowe i szczegóły wdrożeń
 
@@ -262,18 +244,26 @@ koordynacji (2026-07-23).
    sesję zamiast czasowo poprzedzającej przeglądaną (odkryte przy DATA-03, rzadki przypadek).
 3. Checkpoint iPhone [Ty] TRUST-01/03 + TRUST-02 (fresh-account smoke zweryfikowany
    lokalnie; brakuje wyłącznie fizycznego urządzenia) oraz CONTENT-01B/CONTENT-03a.
-4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A, SESSION-01A2 i SESSION-01A3;
+4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A i SESSION-01A2…01A4
+   (procedura `arco-release` krok 5/6 — merge już wykonany, patrz punkt 7 poniżej);
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
 5. **HOME-NAV — zaplanowane, gotowe do podjęcia:** kontrakt IA zrewidowany (trzy taby
    Home · Trening · Ekipa, D-38…D-41), POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04
    rozpisane w `spec-home-i-nawigacja.md`. HOME-NAV wchodzi **przed R2.2** — obie dotykają
    `/programs`. PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może
    iść równolegle.
-6. [Ty] deploy scalonej serii loggera SESSION-01A2…01A4 procedurą `arco-release`
-   (#27, #28 i #29 są w `main`). Opcjonalny follow-up domykający ryzyko 6: podpiąć
-   `lib/useFocusTrap.ts` do `components/ui/bottom-sheet.tsx` (`A11Y-SHEETS` w backlogu).
-7. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa, UI i gate publikacji.
-8. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
+6. **PLAN-05 — zaplanowane, gotowe do podjęcia:** redesign karty i listy planu (zdjęcie/
+   fallback, poziom w paskach, CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej
+   karty „Jak robić postęp"). Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`.
+   05A (migracja `cover_image_url`) i 05C (`LevelMeter`) niezależne, mogą wejść od razu;
+   05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
+7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
+   i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
+   Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do
+   `components/ui/bottom-sheet.tsx` (`A11Y-SHEETS` w backlogu).
+8. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa treści (UI karty
+   planu jest w PLAN-05, nie tutaj) i gate publikacji.
+9. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
 
 ## 7. Reguły operacyjne

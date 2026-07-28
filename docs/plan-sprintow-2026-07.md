@@ -36,9 +36,10 @@ a aktualny stan produkcji w `HANDOFF.md`. Agent realizuje zadania według
 ## 2. Sekwencja
 
 ```text
-RB0 ✓ → Q1 → CORE-0 → R4A → PLAN-Q → HOME-NAV → R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2-Lab → H2-Field → PRIV-1 → COMM/PREMIUM → PAY-01 → MOBILE-0 → STORE-BETA → STORE-1
+RB0 ✓ → Q1 → CORE-0 → R4A → PLAN-Q → HOME-NAV → PLAN-05 → R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2-Lab → H2-Field → PRIV-1 → COMM/PREMIUM → PAY-01 → MOBILE-0 → STORE-BETA → STORE-1
 
 HOME-NAV = HOME-01 → HOME-02 → HOME-03 → NAV-01; PLAN-04 równolegle.
+PLAN-05 = 05A/05C równolegle (od razu) → 05B → 05D (po NAV-01) → 05E.
 ```
 
 CORE-0 wyprzedza R4A, ponieważ interfejs aktywnej serii nie może utrwalać nieprawidłowego
@@ -50,7 +51,11 @@ zaufania do Planów po sprawdzeniu podstawowej pętli loggera. PLAN-Q wchodzi po
 blokować naprawy podstawowej pętli serii, ale przed R2.2 i R4C: filtr sprzętu potrzebuje
 wykonalności per slot, a finish musi znać semantykę ćwiczenia opcjonalnego. **HOME-NAV wchodzi
 przed R2.2**, ponieważ obie paczki dotykają `/programs`: odwrotna kolejność oznaczałaby
-przepisywanie filtrów sprzętu w nowej strukturze zakładek. Pełny rozpis: `spec-home-i-nawigacja.md`.
+przepisywanie filtrów sprzętu w nowej strukturze zakładek. Pełny rozpis: `spec-home-i-nawigacja.md`. **PLAN-05 wchodzi po HOME-NAV, przed R2.2**, z tego samego powodu: 05D
+przebudowuje `/programs/[id]`, więc musi stać na chrome, który NAV-01 już ustalił, a R2.2
+(filtr sprzętu) musi wpinać się w kartę, która nie zmieni się tydzień później. Paczki 05A
+(migracja) i 05C (`LevelMeter`) nie zależą od tej kolejności i mogą wejść wcześniej,
+niezależnie. Pełny rozpis: `spec-plan-detail-card.md`.
 
 **Wpływ na sprint:** refinement dodaje przed H2 łącznie 5,5–7,5 dnia implementacji
 (CORE-0: 2,5–3,5; CORE-1: 3–4). To świadome przesunięcie startu badania, nie ukryty bufor.
@@ -259,6 +264,9 @@ historii, wszystkie pochodne liczą te same fakty, a jedna błędna operacja nie
 **Czas:** 8–12 dni + checkpoint iPhone/Android; audyt programowy Codex jest wykonany
 **Zależność:** TRAIN-01, CORE-0 i R4A; wykonujemy przed R2.2 oraz R4B–R4D
 **Spec:** `spec-plan-q-biblioteka-treningow.md`
+**UI karty i listy planu:** zrealizowane osobną paczką PLAN-05 (`spec-plan-detail-card.md`),
+nie tutaj — PLAN-Q skupia się na treści (recepta v2, korekta 15/15, prawda sprzętowa)
+i gate publikacji, żeby nie przebudowywać tego samego ekranu dwa razy.
 
 - TRAIN-02: jeden strukturalny katalog 15 programów, z którego korzystają seed, walidatory
   i karty `docs/trainings/`;
@@ -312,8 +320,9 @@ obowiązkowej pozycji; UI przechodzi 320/375/393 px, iPhone PWA, Android i stary
 - powrót z detalu zachowuje filtr i scroll;
 - sprawdzić CTA własnego programu bez dokładania FAB.
 
-**Poza zakresem:** okładki i automatyczna zmiana programu; nowe klucze potrzebne do prawdy
-sprzętowej wchodzą w PLAN-Q, ale nowe marketingowe profile biblioteki czekają na H2.
+**Poza zakresem:** okładki (zdjęcie/fallback karty planu — to PLAN-05, wchodzi wcześniej)
+i automatyczna zmiana programu; nowe klucze potrzebne do prawdy sprzętowej wchodzą w PLAN-Q,
+ale nowe marketingowe profile biblioteki czekają na H2.
 
 **Done:** użytkownik rozumie wpływ sprzętu i potrafi ograniczyć wyniki do wykonalnych planów.
 

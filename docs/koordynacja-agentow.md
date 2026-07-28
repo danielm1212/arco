@@ -21,6 +21,31 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-27 · Claude · PLAN-05 — SPEC KARTY PLANU: ZAKOŃCZONE
+
+- **Zakres:** `docs/spec-plan-detail-card.md` (nowy), backlog, plan sprintów (dopisek do
+  PLAN-Q i R2.2), HANDOFF, indeks docsów. **Zero zmian w kodzie produkcyjnym.**
+- **Wynik:** diagnoza dzisiejszej karty `/programs/[id]` (trzy style kontenerów na przemian,
+  zahardkodowana identyczna karta „Jak robić postęp" na 15 planach, CTA pod trzema ekranami
+  tekstu) + pięć paczek 05A…05E z pełnym briefem (dane, stany UX, kryteria akceptacji, testy,
+  model) zgodnie ze `standard-zadania-agentow.md`.
+- **Decyzje właściciela:** fallback wizualny (gradient + istniejąca `MomentIcon3D name="plan"`)
+  teraz, realne zdjęcia później jako wyłącznie dane — kolumna `cover_image_url` (nullable)
+  wchodzi już w 05A, żeby zdjęcia nie wymagały kolejnego redesignu; „Jak robić postęp"
+  usunięte, nie zwinięte; poziom w paskach + tekst (nie same kropki, dostępność); funkcje
+  z referencyjnych zrzutów (kalendarz, share, ulubione) odrzucone jako poza zakresem (D-03).
+- **Kolejność:** 05A i 05C niezależne, mogą wejść od razu. 05D (przebudowa szczegółu) czeka
+  na **NAV-01** z HOME-NAV — ten sam plik — i wchodzi **przed R2.2**, z tego samego powodu co
+  HOME-NAV. Dopisek w PLAN-Q: UI karty/listy jest w PLAN-05, PLAN-Q skupia się na treści.
+- **Przy okazji:** wykryta i naprawiona rozjechana sekcja „Zamknięte” w HANDOFF —
+  SESSION-01A2/01A3/01A4 miały trzy nachodzące na siebie, częściowo sprzeczne wpisy
+  (m.in. „czeka na merge” dla PR-a już scalonego). Skonsolidowane w jeden wpis z poprawnym
+  stanem: merge i auto-deploy Vercel wykonane, otwarty jest wyłącznie krok 5/6 `arco-release`
+  (weryfikacja proda + regresja urządzeniowa [Ty]).
+- **Czego nie dotknięto:** kodu aplikacji, migracji, treści treningowej, Ekipy.
+- **Zaległości:** [Ty] podjęcie pierwszej paczki (05A/05C mogą iść równolegle z HOME-01);
+  krok 5/6 `arco-release` dla SESSION-01A2…01A4 nadal otwarty, niezależnie od tego wpisu.
+
 ### 2026-07-27 · Claude · HOME-NAV — POC, REWIZJA KONTRAKTU I PLAN: ZAKOŃCZONE
 
 - **Zakres:** `prototypes/home-dashboard-poc/**` (nowy), `docs/userflows-docelowe-2026-07.md`

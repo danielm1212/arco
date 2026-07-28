@@ -39,6 +39,7 @@ audytu jako backlogu.
 - `r0-5-wynik-prototypu.md` — decyzje potwierdzone przez prototyp przed wdrożeniem.
 - `spec-r4-logger.md` — agent-ready refinement loggera, Historii i wartości drugiego treningu.
 - `spec-home-i-nawigacja.md` — agent-ready plan Home, trzech tabów i startu dowolnego planu (HOME-NAV).
+- `spec-plan-detail-card.md` — agent-ready plan karty i listy planów: zdjęcie/fallback, poziom w paskach, akordeon (PLAN-05).
 - `audyt-core-i-plan-2026-07.md` — ocena silnika, dowody, architektura CORE-0/CORE-1 i granice pracy po H2.
 - `core-0-release-2026-07-27.md` — produkcyjne migracje, kontrola kwalifikowanych faktów i smoke CORE-0.
 - `spec-plan-q-biblioteka-treningow.md` — agent-ready kontrakt danych, treści, sprzętu, UI i walidacji 15 programów.
