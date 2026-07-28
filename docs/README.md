@@ -19,6 +19,8 @@ Jeżeli stary audyt, notatka lub komentarz przeczy tej kolejności, obowiązuje 
 ## Praca agentów
 
 - `standard-zadania-agentow.md` — Definition of Ready/Done i obowiązkowy brief zadania.
+- `workflow-zespolu.md` — gałąź → PR → zielone CI → merge; nazewnictwo gałęzi, ochrona `main`.
+- `konwencja-commitow-i-pr.md` — format commita i PR-a (Conventional Commits, po angielsku), squash-merge.
 - `koordynacja-agentow.md` — wyłącznie aktywne rezerwacje i krótki log ostatnich zmian.
 - `notion-sync-queue.md` — tylko zmiany oczekujące na ręczną synchronizację, gdy właściciel jej zażąda.
 

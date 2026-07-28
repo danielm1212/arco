@@ -21,7 +21,7 @@ i osoba ucząca się gita nigdy nie wypchnie przypadkiem czegoś zepsutego na ż
    druga osoba od razu widzi, że to robisz, zanim zacznie to samo.
 2. **Świeży start:** `git checkout main && git pull`.
 3. **Własna gałąź:** `git checkout -b daniel/krotki-opis` (Piotr: `piotr/...`, agent: `agent/...`).
-4. **Małe commity**, jedna rzecz naraz.
+4. **Małe commity**, jedna rzecz naraz, format i język w `konwencja-commitow-i-pr.md`.
 5. **Push + PR:** `git push -u origin daniel/krotki-opis`, otwórz Pull Request.
 6. **CI „Jakość" zielone → Merge** do `main`. Vercel zdeployuje sam.
 7. **Linear → Done.**

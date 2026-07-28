@@ -37,6 +37,7 @@ Stare audyty, briefy i archiwum nie są backlogiem ani źródłem bieżącego st
 - Przed większą zmianą sprawdź `docs/HANDOFF.md` i aktywny sprint.
 - Każde zadanie przygotuj i domknij według `docs/standard-zadania-agentow.md`.
 - Deploy na produkcję wykonuj wyłącznie procedurą z `.claude/skills/arco-release/SKILL.md` — w tym obowiązkowe smoke'i przy zmianie kontraktu danych.
+- Commity i PR-y (tytuł, opis, nazwa gałęzi) pisz po angielsku, format Conventional Commits — reguły i przykłady w `docs/konwencja-commitow-i-pr.md`. Dokumenty w `docs/` i komentarze w kodzie zostają po polsku.
 - Każdą sesję zamykaj procedurą z `.claude/skills/arco-session-close/SKILL.md` — wpis w dzienniku koordynacji, HANDOFF i aktualizacja zadań w Linear.
 - Migracje bazy wykonuj wyłącznie przez `supabase/migrations`, według reguł z `.claude/skills/arco-migration/SKILL.md`.
 - Każda tabela z danymi użytkownika dostaje RLS i test wielokontowy w tej samej zmianie.
