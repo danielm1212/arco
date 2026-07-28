@@ -25,7 +25,8 @@
 
 - **Zakres:** `app/session/[id]/Logger.tsx`, `app/session/[id]/done/page.tsx`,
   `app/session/[id]/done/PrConfetti.tsx`, `lib/confetti.ts`, testy, dokumentacja stanu.
-  Gałąź odbita z `agent/session-01a3` — **merge dopiero po #28**.
+  Gałąź przebazowana na `main` po scaleniu #28; PR #29 niesie także poprawkę 01A3,
+  która nie zdążyła do #28 (podpowiedź nie zamyka się już tapem w tło).
 - **Wynik:** rozciąganie zeszło z ekranu Done do loggera jako ostatnia pozycja treningu
   (na podsumowaniu było już po wszystkim). Konfetti: 34 → 60 cząstek, lot 1,9–2,9 s →
   2,8–4,3 s.
@@ -37,7 +38,8 @@
   nie sprawdzi ani statyczny HTML, ani sam model cząstki.
 - **Czego nie dotknięto:** migracji, seeda, treści treningowej, danych produkcyjnych,
   `prefs` (czas rozciągania bez zmian) oraz nieśledzonych plików właściciela.
-- **Zaległości:** [Ty] merge #28, potem tego PR-a i deploy całej serii SESSION-01A2…01A4.
+- **Zaległości:** [Ty] merge #29 i deploy całej serii SESSION-01A2…01A4. `main` do czasu
+  merge'u ma podpowiedź zamykaną tapem w tło (#28 scalił się commit przed poprawką).
 
 ### 2026-07-27 · Claude · SESSION-01A3 — PODPOWIEDŹ STARTOWA: ZAKOŃCZONE TECHNICZNIE
 

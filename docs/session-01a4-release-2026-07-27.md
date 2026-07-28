@@ -1,13 +1,18 @@
 # SESSION-01A4 — rozciąganie w treningu i mocniejszy wystrzał konfetti
 
 **Data:** 2026-07-27
-**Gałąź:** `agent/session-01a4` (na `agent/session-01a3`)
+**Gałąź:** `agent/session-01a4` → `main` ([#29](https://github.com/danielm1212/arco/pull/29))
 **Poprzednik:** SESSION-01A3 ([#28](https://github.com/danielm1212/arco/pull/28))
 
 ## Dlaczego
 
-Feedback z dogfoodu 2026-07-27, trzy punkty. Pierwszy — zamykanie podpowiedzi tapem
-w tło — był poprawką do SESSION-01A3 i wszedł do PR #28. Dwa pozostałe są tutaj.
+Feedback z dogfoodu 2026-07-27, trzy punkty. Wszystkie trzy są w tym PR-ze.
+
+Pierwszy — zamykanie podpowiedzi tapem w tło — jest poprawką do SESSION-01A3, ale **nie
+zdążył do #28**: PR scalił się na commicie `c1f7864`, a poprawka powstała commit później.
+Do `main` weszła więc wersja podpowiedzi zamykana tapem w tło; naprawia to dopiero ten PR.
+Wniosek na przyszłość: przed zgłoszeniem PR-a jako gotowego sprawdzać, czy `head` PR-a
+faktycznie wskazuje ostatni commit gałęzi — zielone CI dotyczy commita, nie gałęzi.
 
 ## Rozciąganie zeszło z Done do treningu
 
@@ -68,6 +73,5 @@ gęstość. Podpowiedź startowa nie zamyka się już tapem w tło (poprawka w P
 
 ## Otwarte
 
-- kolejność merge'u: **#28 przed tym PR-em** — gałąź jest odbita z `agent/session-01a3`;
 - ryzyko 6 z HANDOFF (focus trap w sheetach) bez zmian, `A11Y-SHEETS` w backlogu;
 - [Ty] checkpoint fizycznego iPhone PWA/Safari dla całej serii SESSION-01A2…01A4.
