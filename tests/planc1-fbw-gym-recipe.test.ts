@@ -11,7 +11,7 @@ const SLUG = "intermediate-gym-fbw2";
 const migrationSql = readFileSync(
   fileURLToPath(
     new URL(
-      "../supabase/migrations/20260728213337_planc1_intermediate_gym_fbw2_v21.sql",
+      "../supabase/migrations/20260729094010_planc1b_fbw_gym_legs_calves.sql",
       import.meta.url,
     ),
   ),
@@ -34,12 +34,12 @@ function sets(label: string) {
   return day(label).slots.reduce((sum, slot) => sum + slot.sets, 0);
 }
 
-test("PLAN-C1: recepta v2.1 ma dwa dni po 7 pozycjach i 21 seriach", () => {
-  assert.equal(program().content_version, 4);
+test("PLAN-C1B: Trening A ma 7 pozycji i 22 serie, Trening B 8 pozycji i 25 serii", () => {
+  assert.equal(program().content_version, 5);
   assert.equal(day("Trening A").slots.length, 7);
-  assert.equal(day("Trening B").slots.length, 7);
-  assert.equal(sets("Trening A"), 21);
-  assert.equal(sets("Trening B"), 21);
+  assert.equal(day("Trening B").slots.length, 8);
+  assert.equal(sets("Trening A"), 22);
+  assert.equal(sets("Trening B"), 25);
 });
 
 test("PLAN-C1: Trening A rozwija przysiad, Trening B zawias biodrowy", () => {
@@ -51,8 +51,8 @@ test("PLAN-C1: Trening A rozwija przysiad, Trening B zawias biodrowy", () => {
       "Wide-Grip_Lat_Pulldown",
       "Side_Lateral_Raise",
       "Incline_Dumbbell_Curl",
-      "Reverse_Crunch",
       "Cable_Rope_Overhead_Triceps_Extension",
+      "Reverse_Crunch",
     ],
   );
   assert.deepEqual(
@@ -63,8 +63,9 @@ test("PLAN-C1: Trening A rozwija przysiad, Trening B zawias biodrowy", () => {
       "Chest-Supported_Dumbbell_Row",
       "Arnold_Dumbbell_Press",
       "Triceps_Pushdown",
-      "Hanging_Knee_Raise",
       "Hammer_Curls",
+      "Standing_Calf_Raises",
+      "Hanging_Knee_Raise",
     ],
   );
 });
@@ -78,6 +79,7 @@ test("PLAN-C1: każda sesja ma dokładnie jedno duże ćwiczenie na dół ciała
     "Lying_Leg_Curls",
     "Seated_Leg_Curl",
   ]);
+  // Łydki nie liczą się jako „duże ćwiczenie na dół" — to jedna dodatkowa pozycja w B.
   for (const label of ["Trening A", "Trening B"]) {
     const found = day(label).slots.filter((slot) => lowerBody.has(slot.exercise_id));
     assert.equal(found.length, 1, `${label}: oczekiwano jednego ruchu na dół ciała`);
@@ -111,12 +113,11 @@ test("PLAN-C1: ciężkie compoundy dostają realną przerwę, izolacje krótką"
   }
 });
 
-test("PLAN-C1: maszyny nie są wymaganiem wejścia, tylko alternatywą", () => {
-  assert.deepEqual(program().required_equipment, ["barbell", "dumbbell", "cable"]);
-  assert.ok(program().optional_equipment.includes("machine"));
+test("PLAN-C1B: maszyna do łydek jest slotem, więc wchodzi do wymagań", () => {
+  assert.deepEqual(program().required_equipment, ["barbell", "dumbbell", "cable", "machine"]);
 });
 
-test("D-45: świadomy profil planu — nacisk na górę, umiarkowane nogi, zero łydek", () => {
+test("D-45: profil planu — lekki nacisk na górę, jedno ćwiczenie nóg na sesję, łydki obecne", () => {
   // Ten test NIE pilnuje „poprawnej" objętości. Pilnuje, że kompromis z D-45 pozostaje
   // świadomy: gdy ktoś zmieni receptę, ma zmienić też decyzję, a nie odkryć zmianę po fakcie.
   const direct = new Map<string, number>();
@@ -141,7 +142,7 @@ test("D-45: świadomy profil planu — nacisk na górę, umiarkowane nogi, zero 
       triceps: direct.get("triceps") ?? 0,
       calves: direct.get("calves") ?? 0,
     },
-    { quadriceps: 4, hamstrings: 4, chest: 8, biceps: 5, triceps: 5, calves: 0 },
+    { quadriceps: 5, hamstrings: 5, chest: 8, biceps: 5, triceps: 5, calves: 3 },
     "Zmiana profilu objętości wymaga aktualizacji D-45 i karty planu.",
   );
 });
@@ -164,13 +165,22 @@ test("PLAN-C1: migracja niesie te same alternatywy co repo (produkcji nie seeduj
   const expected = PLANNED_PROGRAM_ALTERNATIVES.filter((item) => item.programSlug === SLUG);
 
   assert.deepEqual(embedded, expected);
-  assert.equal(embedded.length, 14);
+  assert.equal(embedded.length, 15);
 });
 
-test("PLAN-C1: migracja nic nie usuwa i broni się przed otwartą sesją", () => {
-  // Dzień zostaje przy 7 pozycjach, więc żaden wiersz historii nie traci powiązania ze slotem.
-  assert.equal(migrationSql.match(/delete\s+from\s+public\.\w+/gi), null);
-  assert.match(migrationSql, /PLAN-C1 wymaga zakończenia lub usunięcia otwartych sesji P14/);
+test("PLAN-C1B: migracja kasuje wyłącznie osierocone alternatywy i broni się przed otwartą sesją", () => {
+  // Sloty i sesje są nietykalne — żaden wiersz historii nie może stracić powiązania.
+  // Jedyne dozwolone usuwanie to alternatywy wiszące przy slocie po zmianie ćwiczenia.
+  const deletes = [
+    ...new Set(
+      (migrationSql.match(/delete\s+from\s+public\.\w+/gi) ?? []).map((item) =>
+        item.toLowerCase().replace(/\s+/g, " "),
+      ),
+    ),
+  ];
+  assert.deepEqual(deletes, ["delete from public.program_slot_alternatives"]);
+  assert.match(migrationSql, /program\.slug = 'intermediate-gym-fbw2'/);
+  assert.match(migrationSql, /PLAN-C1B wymaga zakończenia lub usunięcia otwartych sesji P14/);
 });
 
 test("PLAN-C1: każdy slot poza ćwiczeniem bez sprzętu ma alternatywę sprzętową", () => {

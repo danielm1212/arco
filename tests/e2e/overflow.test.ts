@@ -18,6 +18,26 @@ import { build } from "esbuild";
 import { chromium, type Browser, type Page } from "@playwright/test";
 import { STICKY_HEADER_SAFE_AREA } from "../../components/navigation/stickyHeader";
 
+/**
+ * Odczyt stanu przeglądarki zaraz po akcji potrafi wyprzedzić efekt, który ten stan ustawia
+ * (zaznaczenie pola, pomiar pozycji popovera). Na wolniejszym runnerze CI dawało to losowe
+ * czerwone przebiegi przy zielonym lokalnie. Pollujemy do skutku albo do limitu — po limicie
+ * zwracamy ostatnią wartość, więc realna regresja nadal wywala asercję z prawdziwą różnicą.
+ */
+async function pollUntil<T>(
+  read: () => Promise<T>,
+  ready: (value: T) => boolean,
+  timeoutMs = 3000,
+): Promise<T> {
+  const deadline = Date.now() + timeoutMs;
+  let value = await read();
+  while (!ready(value) && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    value = await read();
+  }
+  return value;
+}
+
 const ROOT = process.cwd();
 const CSS_DIR = join(ROOT, ".next/static/css");
 const VIEWPORT = { width: 360, height: 780 }; // wąski Android/iPhone
@@ -369,8 +389,12 @@ test("SESSION-01A2: tap w puste pole kopiuje poprzedni wynik i zaznacza go", asy
     await weight.click();
 
     assert.equal(await weight.inputValue(), "60", "pole nie przejęło wagi z poprzedniej sesji");
-    const selected = await weight.evaluate(
-      (el: HTMLInputElement) => el.value.slice(el.selectionStart ?? 0, el.selectionEnd ?? 0),
+    const selected = await pollUntil(
+      () =>
+        weight.evaluate(
+          (el: HTMLInputElement) => el.value.slice(el.selectionStart ?? 0, el.selectionEnd ?? 0),
+        ),
+      (value) => value !== "",
     );
     assert.equal(selected, "60", "skopiowana wartość nie jest zaznaczona");
 
@@ -511,7 +535,7 @@ async function loggerHintPage() {
 test("SESSION-01A3: podpowiedź kotwiczy się pod wierszem serii i pokrywa cały ekran", async () => {
   const { context, page } = await loggerHintPage();
   try {
-    const geometry = await page.evaluate(() => {
+    const readGeometry = () => page.evaluate(() => {
       const dialog = document.querySelector<HTMLElement>('[role="dialog"]')!;
       const scrim = dialog.parentElement!;
       const row = document.querySelector<HTMLElement>("li[data-set-state]")!;
@@ -525,6 +549,10 @@ test("SESSION-01A3: podpowiedź kotwiczy się pod wierszem serii i pokrywa cały
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       };
     });
+
+    // Pozycję popovera liczy efekt po montażu, więc czekamy na zakotwiczenie zamiast
+    // czytać geometrię w tej samej klatce, w której dialog się pojawił.
+    const geometry = await pollUntil(readGeometry, (value) => value.dialogBelowRow);
 
     // Portal do body: wewnątrz drzewa loggera przodek z `transform` zabrałby
     // `position: fixed` cały ekran i przyciemnienie przestałoby pokrywać widok.
