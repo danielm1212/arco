@@ -4,6 +4,9 @@
 >
 > Workhorse intermediate. Dwa dni z akcentem siłowym (A, niższe zakresy), dwa z hipertroficznym (B, wyższe). Objętość ląduje w 10–15 hard sets / partia / tydz.
 
+> **Aktualizacja PLAN-C4:** Lower B dostał glute bridge — plan nie miał ani jednego ruchu
+> z pośladkiem jako mięśniem głównym, a w sesji był na to czas.
+
 ---
 
 ## Upper A · siła
@@ -52,6 +55,7 @@
 | 4 | Leg Extension | `isolation:quad` | 3 × 12–15 | 1:30 | Sissy Squat |
 | 5 | Seated Leg Curl | `isolation:hamstring` | 3 × 10–15 | 1:30 | Lying Leg Curl |
 | 6 | Calf Press | `calf` | 4 × 12–15 | 1:00 | Standing Calf Raise |
+| 7 | Barbell Glute Bridge | `hinge` | 3 × 8–12 | 2:00 | DB Hip Thrust |
 
 ---
 
