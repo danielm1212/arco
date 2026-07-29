@@ -346,11 +346,11 @@ export const PROGRAMS: Program[] = [
     level_max: 1,
     frequency_min: 2,
     frequency_max: 2,
-    estimated_minutes_min: 45,
+    estimated_minutes_min: 40,
     estimated_minutes_max: 55,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 2,
+    content_version: 3,
     days_per_week: 2,
     days: [
       {
@@ -362,6 +362,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Romanian_Deadlift", sets: 3, repsMin: 8, repsMax: 10, rest: 150 },
           { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper)" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -375,6 +376,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Pullups", sets: 2, repsMin: 5, repsMax: 10, rest: 120, notes: "z asystą, jeśli trzeba" },
           { exercise_id: "Standing_Calf_Raises", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
+          { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
     ],
@@ -391,11 +393,11 @@ export const PROGRAMS: Program[] = [
     level_max: 1,
     frequency_min: 2,
     frequency_max: 3,
-    estimated_minutes_min: 45,
-    estimated_minutes_max: 60,
+    estimated_minutes_min: 40,
+    estimated_minutes_max: 50,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 2,
+    content_version: 3,
     days_per_week: 3,
     days: [
       {
@@ -406,6 +408,8 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper)" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Triceps_Pushdown", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -416,6 +420,8 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Dumbbell_Rear_Lunge", sets: 2, repsMin: 10, repsMax: 12, rest: 90, notes: "na nogę" },
           { exercise_id: "Hanging_Knee_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Triceps_Pushdown", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -427,6 +433,8 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Seated_Cable_Rows", sets: 2, repsMin: 10, repsMax: 12, rest: 90 },
           { exercise_id: "Standing_Calf_Raises", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Pallof_Press", sets: 2, repsMin: 10, repsMax: 12, rest: 45, notes: "na stronę" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Triceps_Pushdown", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
     ],
@@ -447,7 +455,7 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 55,
     required_equipment: ["dumbbell"],
     optional_equipment: ["bands", "body only", "other"],
-    content_version: 1,
+    content_version: 2,
     days_per_week: 2,
     days: [
       {
@@ -459,6 +467,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper)" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -471,6 +480,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Bent_Over_Two-Dumbbell_Row", sets: 2, repsMin: 10, repsMax: 12, rest: 90 },
           { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
           { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
+          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 3, repsMin: 10, repsMax: 15, rest: 60, notes: "Łokcie blisko głowy, ruch tylko w łokciu." },
         ],
       },
     ],
@@ -493,7 +503,7 @@ export const PROGRAMS: Program[] = [
     optional_equipment: ["bands", "body only", "pull-up bar", "other"],
     // F3.3 (audyt biblioteki 2026-07-18, §5.2): Dzień C oznaczony jako opcjonalny
     // finisher przy ostatnich trzech ćwiczeniach — patrz notatki w Dniu C.
-    content_version: 3,
+    content_version: 4,
     days_per_week: 3,
     days: [
       {
@@ -505,6 +515,8 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper)" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 15, rest: 60, notes: "Łokcie blisko głowy, ruch tylko w łokciu." },
         ],
       },
       {
@@ -516,6 +528,8 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Stiff-Legged_Dumbbell_Deadlift", sets: 3, repsMin: 10, repsMax: 12, rest: 90 },
           { exercise_id: "Side_Lateral_Raise", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
           { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 3, repsMin: 12, repsMax: 15, rest: 60 },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 15, rest: 60, notes: "Łokcie blisko głowy, ruch tylko w łokciu." },
         ],
       },
       {
@@ -654,11 +668,11 @@ export const PROGRAMS: Program[] = [
     level_max: 1,
     frequency_min: 2,
     frequency_max: 3,
-    estimated_minutes_min: 35,
-    estimated_minutes_max: 50,
+    estimated_minutes_min: 30,
+    estimated_minutes_max: 45,
     required_equipment: ["body only", "pull-up bar"],
     optional_equipment: ["other"],
-    content_version: 2,
+    content_version: 3,
     days_per_week: 3,
     days: [
       {
@@ -669,6 +683,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Pullups", sets: 3, repsMin: 5, repsMax: 10, rest: 120 },
           { exercise_id: "Pike_Push-Up", sets: 2, repsMin: 6, repsMax: 12, rest: 90 },
           { exercise_id: "Plank", sets: 3, repsMin: null, repsMax: null, rest: 60, notes: "na czas (stoper)" },
+          { exercise_id: "Bench_Dips", sets: 2, repsMin: 8, repsMax: 15, rest: 60, notes: "Oprzyj dłonie na stabilnym podwyższeniu. Bez podwyższenia zrób pompki wąskie." },
         ],
       },
       {
@@ -679,6 +694,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Decline_Push-Up", sets: 3, repsMin: 8, repsMax: 15, rest: 90 },
           { exercise_id: "Single_Leg_Glute_Bridge", sets: 3, repsMin: 8, repsMax: 12, rest: 90, notes: "na nogę" },
           { exercise_id: "Hanging_Knee_Raise", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Bench_Dips", sets: 2, repsMin: 8, repsMax: 15, rest: 60, notes: "Oprzyj dłonie na stabilnym podwyższeniu. Bez podwyższenia zrób pompki wąskie." },
         ],
       },
       {
@@ -690,6 +706,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Single_Leg_Calf_Raise", sets: 3, repsMin: 12, repsMax: 20, rest: 60, notes: "na nogę" },
           { exercise_id: "Hollow_Body_Hold", sets: 3, repsMin: null, repsMax: null, rest: 45, notes: "na czas (stoper)" },
           { exercise_id: "Superman", sets: 2, repsMin: 12, repsMax: 15, rest: 45 },
+          { exercise_id: "Bench_Dips", sets: 2, repsMin: 8, repsMax: 15, rest: 60, notes: "Oprzyj dłonie na stabilnym podwyższeniu. Bez podwyższenia zrób pompki wąskie." },
         ],
       },
     ],

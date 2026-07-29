@@ -38,7 +38,7 @@ test("P01 Trening B ma domkniętą tylną taśmę i pozostaje w zakresie czasu",
   const p01 = program("beginner-gym-fbw2");
   const trainingB = day(p01, "Trening B");
 
-  assert.equal(p01.content_version, 2);
+  assert.equal(p01.content_version, 3);
   assert.deepEqual(
     trainingB.slots.map((slot) => [slot.exercise_id, slot.sets]),
     [
@@ -50,10 +50,12 @@ test("P01 Trening B ma domkniętą tylną taśmę i pozostaje w zakresie czasu",
       ["Pullups", 2],
       ["Standing_Calf_Raises", 2],
       ["Dead_Bug", 2],
+      // PLAN-C2: dzień ciągnący domyka ramiona tricepsem, bo biceps pracuje w wiosłowaniu.
+      ["Triceps_Pushdown", 3],
     ],
   );
-  assert.equal(trainingB.slots.reduce((sum, slot) => sum + slot.sets, 0), 19);
-  assert.ok(estimatedMinutes(trainingB) >= 45 && estimatedMinutes(trainingB) <= 55);
+  assert.equal(trainingB.slots.reduce((sum, slot) => sum + slot.sets, 0), 22);
+  assert.ok(estimatedMinutes(trainingB) >= 40 && estimatedMinutes(trainingB) <= 55);
 });
 
 test("P08 Trening C ma zatwierdzone 18 serii i estymację 40–50 minut", () => {
