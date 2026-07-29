@@ -21,6 +21,36 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-29 · Claude · PLAN-05A — migracja slotu medialnego (`cover_image_url`): ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** nowa migracja `supabase/migrations/20260729212437_plan05a_program_cover_image.sql`
+  (`ALTER TABLE programs ADD COLUMN cover_image_url text`, nullable, bez zmian RLS —
+  `programs` ma już politykę na całą tabelę, zweryfikowane w kodzie przed pisaniem migracji,
+  nie zgadywaniem); `lib/database.types.ts` zaktualizowany ręcznie tylko w bloku `programs`
+  (Row/Insert/Update), nie pełnym regenem — pełny `supabase gen types` zmieniłby kolejność
+  wszystkich tabel (kosmetyczne) i dociągnąłby niepowiązany dryf (4 funkcje RPC z cudzej
+  pracy nad Ekipą/pods, nigdy nie zregenerowane) do tego PR-a. Gałąź `agent/plan-05a-cover-image`
+  stackowana na `agent/handoff-sync-2026-07-29` (docs), niezależna od PLAN-05C.
+- **Wynik:** karta planu ma skąd czytać zdjęcie, gdy powstanie — bez kolejnej migracji.
+  Kolumna zostaje `null` dla wszystkich 15 programów systemowych i własnych; realne zdjęcie
+  wejdzie później jako `UPDATE`, nie zmiana kodu.
+- **Dowód (`arco-migration`, zmiana kształtu tabeli → pełne smoke'i):** `supabase db reset`
+  czysty na świeżej bazie (61 migracji, moja ostatnia); `npm run seed` → 907 ćwiczeń/15
+  programów/336 slotów; `validate:training` OK (17 placeholderów w 56 slotach, bez zmian);
+  `validate:recommendations` 60/60; lint i `tsc --noEmit` czyste; build produkcyjny zielony;
+  unit **187/187**; **smoke Phase 1/Phase 2/offline zielone** (login, PR/e1RM, DATA-03,
+  podmiana/fallback, idempotentny zapis offline — wszystkie bez regresji od nowej kolumny).
+  `smoke:team` nie uruchomiony — brak lokalnego `TEAM_TEST_PASSWORD`, ten sam znany wyjątek
+  co w poprzednich sesjach, niezwiązane z `programs`.
+- **Przy okazji:** lokalny stack Supabase wymagał ponownego `bootstrap:user` po
+  `db reset` (konto administracyjne smoke'ów zniknęło razem z resetem `auth.users`) —
+  nic niezwykłego, odnotowane dla następnej sesji, która też zresetuje lokalną bazę.
+- **Czego nie dotknięto:** RLS, seeda (kolumna nie jest wypełniana), UI (`ProgramCover`
+  to PLAN-05B, zależny od tej migracji, ale nie zrealizowany tutaj), pełnego regenu
+  `database.types.ts`, produkcji.
+- **Zaległości:** [Ty] review PR. Kolejny krok w kolejności `spec-plan-detail-card.md` §4:
+  PLAN-05B (`ProgramCover`, zależny od 05A) może wejść; PLAN-05D nadal czeka na NAV-01.
+
 ### 2026-07-29 · Claude · Synchronizacja HANDOFF/plan sprintów z rzeczywistym stanem: ZAKOŃCZONE
 
 - **Zakres:** wyłącznie `docs/HANDOFF.md` i `docs/plan-sprintow-2026-07.md`. Zero kodu,
