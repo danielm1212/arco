@@ -1,10 +1,11 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-28
+**Aktualizacja:** 2026-07-29
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** PLAN-Q → R2.2 → R4B–R4D → CORE-1 → R4E → R3b
+**Najbliższy etap:** PLAN-Q (treść 15/15 zamknięta przez PLAN-C, reszta = `droga-do-gotowosci-bety-2026-07.md`)
+→ R2.2 → R4B–R4D → CORE-1 → R4E → R3b. Równolegle: HOME-NAV/PLAN-05 (§6 punkty 5–6).
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
@@ -119,31 +120,38 @@ koordynacji (2026-07-23).
   Szczegóły: `session-01a2-release-2026-07-27.md`, `session-01a3-release-2026-07-27.md`,
   `session-01a4-release-2026-07-27.md`.
 
-- **PLAN-C0 / PLAN-C1 — gotowe lokalnie, gałąź `agent/plan-c1-fbw-gym`, NIE na produkcji:**
-  biblioteka v2.1 (`training_programs_v2`) została przyjęta jako kanon recept (**D-42**), a
-  `audyt-biblioteki-programow-2026-07.md` ma status superseded z trzema wyjątkami — kolejność
-  power/skill z TRAIN-01 zostaje. PLAN-C0 dał mapę 215 nazw → `exercise_id`
-  (`scripts/data/v21-exercise-map.json`, 30 zweryfikowanych ręcznie) i dokument metody
-  `plan-c0-mapowanie-cwiczen-v21.md`. PLAN-C1 wdrożył receptę v2.1 dla `intermediate-gym-fbw2`:
-  oba dni zostają przy 7 pozycjach i idą z 23/22 na 21/21 serii, 14 alternatyw sprzętowych, nowa karta
-  `docs/trainings/intermediate-gym-fbw2.md`, `content_version` 3 → 4, migracja
-  `20260728213337` z bramką „zero otwartych sesji" i payloadem alternatyw dla produkcji; migracja
-  **nie usuwa żadnego slotu**, więc historia nie traci powiązań. Po pytaniu [Ty] o ramiona każda
-  sesja dostała bezpośredni biceps i triceps (v2.1 dawała po 3 serie tygodniowo, teraz po 5). Przy okazji naprawiony uśpiony bug seeda:
-  wszystkie alternatywy dostawały `position: 0` przy `unique(program_day_slot_id, position)`,
-  więc dwie alternatywy na slot były niemożliwe. Po dwóch rundach review [Ty] plan dostał
-  bezpośredni biceps i triceps w obu sesjach, przysiad i RDL po 5 serii oraz łydki w B
-  (**PLAN-C1B**, migracja `20260729094010`, `content_version` 5; A 22 serie / 52 min,
-  B 25 serii / 58 min), a jego profil objętości
-  (przy 3 dniach: czworogłowe 7,5 · dwugłowe 11,3 · pośladki 7,5 · łydki 12,0) jest zapisany
-  jako **D-45** i zamrożony testem.
-  Nowy `npm run audit:muscle-coverage` liczy pokrycie mięśni per program — **D-46** wymaga go
-  przy każdej zmianie recepty. Bramka: lint, build, 183/183 unit, 32/32 przeglądarkowych,
-  32/32 przeglądarkowych, walidatory 907/15/309 oraz 60/60, smoke Phase 1/Phase 2/offline,
-  seed dwukrotnie idempotentny. **Kod jest na `main` (PR #35), ale migracja
-  `20260728213337` NIE jest na produkcji** — `migration list` pokazuje pusty `remote`, więc prod
-  serwuje nadal receptę TRAIN-01. Do wykonania: `db push` po jawnej zgodzie [Ty] plus checkpoint
-  wizualny; `/programs/[id]` wymaga zalogowania, a agent nie wprowadza haseł.
+- **PLAN-C0–C4 — WDROŻONE NA PRODUKCJĘ 2026-07-29 (PR #35–#44):** biblioteka v2.1
+  (`training_programs_v2`) przyjęta jako kanon recept (**D-42**, `audyt-biblioteki-programow-2026-07.md`
+  superseded z trzema wyjątkami — kolejność power/skill z TRAIN-01 zostaje). Osiem migracji
+  (`20260728213337`…`20260729143423`) na produkcji, `migration list` potwierdza `local == remote`
+  (60 migracji, zero oczekujących). Efekt zweryfikowany bezpośrednio w bazie produkcyjnej:
+  **15 programów systemowych, 334 sloty, zero otwartych sesji**; zero twardych zer pokrycia
+  mięśni (było 1 — `lower-body-gym3` brzuch); zero planów z nieprawdziwym deklarowanym czasem
+  (było 7, do 26 min rozjazdu); bezpośrednia praca ramion w 13/15 planów (kalistenika świadomie
+  bez izolacji — brak sprzętu); 15/15 kart w `docs/trainings/`. Kluczowe decyzje po drodze:
+  **D-43** (zamiennik dziś = wyłącznie ścieżka sprzętowa), **D-44** (korekta treści może usuwać
+  sloty — historia zachowuje `exercise_id`, traci powiązanie ze slotem), **D-45** (profil
+  objętości `intermediate-gym-fbw2` zamrożony testem), **D-46** (`npm run audit:muscle-coverage`
+  obowiązkowy przy każdej zmianie recepty — PLAN-C1 omal nie zabrał serii nóg niezauważenie),
+  **D-47** (operacja usuwająca dane ma mieć warunek bezpieczeństwa w SQL, nie w analizie
+  poprzedzającej — patrz niżej). Bramka: lint, build, 187/187 unit, walidatory 907/15/336
+  oraz 60/60, smoke Phase 1/2/offline. Pełny ślad: `plan-c-release-2026-07-29.md`.
+  **Pomyłka odnotowana (D-47):** sesja blokująca usunięcie zaraportowana jako pusta na
+  podstawie błędnego zapytania (szukało `session_id` w `session_sets`, która wiąże się przez
+  `session_exercise_id`) — miała w rzeczywistości 26 serii, 10 zaliczonych. Warunek
+  bezpieczeństwa `WHERE` w migracji odmówił usunięcia i to jedyny powód, dla którego dane
+  przetrwały; po przedstawieniu prawdziwych liczb właściciel ponowił decyzję świadomie.
+  **Otwarte poza zakresem PLAN-C:** dryf `advanced-gym-ppl6` — 36 slotów na produkcji vs 38
+  w seedzie, brak `Ab_Wheel_Rollout`/`Hanging_Leg_Raise` w obu dniach nóg (sprzed PLAN-C, P13
+  nigdy nie był point-syncowany); mała migracja synchronizująca czeka na decyzję [Ty].
+  **Otwarte ogólnie:** checkpoint wizualny [Ty] (ekrany planów są za loginem, niesprawdzone),
+  56 slotów z zaślepką zdjęcia (17 unikalnych ćwiczeń), brak niezależnego coach sign-off,
+  14% slotów ma alternatywę. **Nowy dokument `droga-do-gotowosci-bety-2026-07.md`** (2026-07-29)
+  ocenia dystans do zamkniętej bety na **4/10** — nie mierzy jakości treści (już poprawionej),
+  tylko bramkę dostarczenia: media ćwiczeń, safety feedback po sesji, zatwierdzenie trenerskie,
+  snapshot recepty (CORE-1), analitykę rdzenia, prowadzenie pierwszej sesji, zamienniki. Ten
+  dokument jest teraz źródłem prawdy o kolejności pozostałej części PLAN-Q — jawnie **nie**
+  obejmuje redesignu kart (PLAN-05/TRAIN-06), który zostaje osobnym torem.
 
 ### Częściowe i szczegóły wdrożeń
 
@@ -219,16 +227,15 @@ koordynacji (2026-07-23).
    osobnym pilnym ryzykiem do zamknięcia przed publicznym rozszerzaniem dostępu.
 2. **Treści i programy:** ryzykowne zdjęcia Barbell Hip Thrust są punktowo wstrzymane na
    produkcji; nowe media Dumbbell/Single-Leg oraz zatwierdzona para Chin-Up nadal wymagają
-   przygotowania,
-   a audyt 15 planów wykazał błędy kolejności/objętości, brakujące
-   regresje i nieprawdziwe metadane sprzętu. Q1 zawiera pilny patch, a PLAN-Q jest pełną
-   bramką treści, danych i wersjonowanego audytu Codex przed H2. Docelowe recepty 15/15 są
-   zatwierdzone w `audyt-biblioteki-programow-2026-07.md`. Produkcja ma 15/15 programów
-   systemowych. TRAIN-02A4 opublikował pięć brakujących planów po dodaniu minimalnego zapisu
-   alternatyw; bez pełnego reseedu i bez naruszania planów własnych, aktywnych sesji lub historii.
-   Pełne TRAIN-03/05 (kanoniczny sprzęt, wykonalność per slot i rozszerzona recepta) pozostaje
-   częścią PLAN-Q.
-   Walidator pokazuje 17 unikalnych placeholderów mediów użytych w 54 slotach.
+   przygotowania. **PLAN-C0–C4 (2026-07-29) zamknęło korektę treści 15/15 programów na
+   produkcji** — zero twardych zer pokrycia, zero nieprawdziwych czasów sesji, patrz §2 wyżej.
+   Pozostaje: **56 slotów z zaślepką zdjęcia** (17 unikalnych ćwiczeń, lista i kolejność wg
+   zasięgu w `droga-do-gotowosci-bety-2026-07.md` §2), **brak niezależnego zatwierdzenia
+   trenerskiego** (P0 z audytu v2.1, zewnętrzne, 1–2 tyg. kalendarzowo), **14% slotów ma
+   alternatywę** (dziesięć planów bez ani jednej), oraz dryf `advanced-gym-ppl6` (patrz §2,
+   PLAN-C) czekający na decyzję [Ty]. Pełne TRAIN-03/05 (kanoniczny sprzęt, wykonalność per
+   slot i rozszerzona recepta) pozostaje otwarte — `droga-do-gotowosci-bety-2026-07.md` jest
+   teraz źródłem prawdy o kolejności tego, co zostało do zamkniętej bety (ocena dziś: 4/10).
 3. **PWA:** ostatni fix sticky i techniczna poprawka pozycji bottom sheeta (`TRUST-03`)
    wymagają potwierdzenia na iPhone PWA/Safari i przy starym cache.
 4. **Fresh account:** F0.7 zweryfikowane lokalnie 2026-07-24 (skip/finish, `0/N`,
@@ -254,10 +261,12 @@ koordynacji (2026-07-23).
 
 - Next.js 16.2, React 19.2, TypeScript, Tailwind CSS 3;
 - Supabase Auth/Postgres/Storage/RLS, Serwist i Vercel;
-- 907 rekordów ćwiczeń lokalnie; bieżące liczby potwierdza `npm run validate:training`;
+- 907 rekordów ćwiczeń, 15 programów, 334 sloty na produkcji; bieżące liczby potwierdza
+  `npm run validate:training` (lokalnie seed daje 336 slotów — rozjazd to znany dryf
+  `advanced-gym-ppl6`, patrz §4 punkt 2);
 - publiczna rejestracja wyłączona;
-- migracje produkcyjne do `20260727134500_train02a4_missing_programs.sql` zostały zastosowane;
-  obejmuje to migracje CORE-0 od `20260724133849` do `20260727110435`.
+- migracje produkcyjne do `20260729143423` (PLAN-C4) zostały zastosowane; `migration list`
+  potwierdza `local == remote`, 60 migracji, zero oczekujących.
 
 ## 6. Najbliższa praca
 
@@ -298,8 +307,12 @@ koordynacji (2026-07-23).
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
    Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do
    `components/ui/bottom-sheet.tsx` (`A11Y-SHEETS` w backlogu).
-8. PLAN-Q: jeden katalog, recepta v2, korekta 15/15 planów, prawda sprzętowa treści (UI karty
-   planu jest w PLAN-05, nie tutaj) i gate publikacji.
+8. **PLAN-Q — treść 15/15 zamknięta przez PLAN-C (§2), reszta w toku:** [Ty] decyzja o
+   punktowym syncu dryfu `advanced-gym-ppl6`; kolejność pozostałych kroków (media zdjęć →
+   safety feedback → zatwierdzenie trenerskie → CORE-1 snapshot → analityka → prowadzenie
+   pierwszej sesji → zamienniki) jest w `droga-do-gotowosci-bety-2026-07.md` (dziś 4/10).
+   Prawda sprzętowa (TRAIN-05) i recepta v2 (TRAIN-03) nadal otwarte. UI karty planu jest
+   w PLAN-05, nie tutaj.
 9. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
 
