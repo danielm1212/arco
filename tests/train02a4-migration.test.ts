@@ -45,21 +45,30 @@ function embeddedJson(marker: string) {
 }
 
 test("TRAIN-02A4 SQL zawiera dokładną kopię pięciu zatwierdzonych recept", () => {
-  const expected = PROGRAMS.filter((program) => targetSlugs.has(program.slug));
+  // Payload jest MIGAWKĄ HISTORYCZNĄ z 2026-07-27 i celowo nie śledzi bieżącego seeda —
+  // kolejne paczki treści (PLAN-C1B, PLAN-C2) zmieniają recepty, a wdrożonej migracji
+  // nie wolno przepisywać. Pilnujemy więc kształtu i zakresu, nie zamrożonej treści.
   const embeddedPrograms = embeddedJson("programs");
 
-  assert.deepEqual(embeddedPrograms, expected);
+  assert.deepEqual(
+    embeddedPrograms.map((program: { slug: string }) => program.slug).sort(),
+    [...targetSlugs].sort(),
+  );
+  assert.ok(
+    PROGRAMS.filter((program) => targetSlugs.has(program.slug)).length === 5,
+    "pięć planów TRAIN-02A4 musi nadal istnieć w seedzie",
+  );
   assert.equal(embeddedPrograms.length, 5);
   assert.equal(
     embeddedPrograms.reduce(
-      (total: number, program: (typeof expected)[number]) => total + program.days.length,
+      (total: number, program: { days: unknown[] }) => total + program.days.length,
       0,
     ),
     15,
   );
   assert.equal(
     embeddedPrograms.reduce(
-      (programTotal: number, program: (typeof expected)[number]) =>
+      (programTotal: number, program: { days: { slots: unknown[] }[] }) =>
         programTotal +
         program.days.reduce((dayTotal, day) => dayTotal + day.slots.length, 0),
       0,

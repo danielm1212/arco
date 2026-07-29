@@ -21,6 +21,28 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-29 · Claude · PLAN-C2 — ramiona i prawda o czasie w planach dla początkujących
+
+- **Zakres:** cztery z pięciu planów beginner nie miały ani jednej serii bezpośrednio na biceps
+  lub triceps. Audyt zakładał „opcjonalne ramiona", ale kontrakt danych nie ma `is_optional`,
+  więc opcjonalne znaczyło „nieobecne". Każda sesja kończy się teraz pracą ramion.
+- **Drugie znalezisko:** każda sesja beginner kończyła się 8–26 minut przed zadeklarowanym czasem
+  (`beginner-gym-fbw3`: deklaracja 45–60, realnie 31–34). Ramiona zmieściły się w tym zapasie,
+  a trzy deklaracje zeszły do prawdziwych wartości.
+- **Układ:** dzień krótki dostaje parę biceps + triceps po 2 serie, dzień gęsty jedno ćwiczenie
+  po 3 serie — sesja początkującego nie może być listą dziesięciu ćwiczeń (maks. 9 pozycji).
+  W kalistenice tylko triceps: bez sprzętu nie ma sensownej izolacji bicepsa.
+- **Pliki:** `scripts/seed.ts`, `scripts/data/program-slot-alternatives.ts`,
+  `supabase/migrations/20260729102750_planc2_beginner_arms.sql`,
+  `tests/planc2-beginner-arms.test.ts`, pięć kart w `docs/trainings/`, dwa testy migawkowe.
+- **Poprawione testy migawkowe:** `train02a4-migration` porównywał wdrożoną migrację z bieżącym
+  seedem, więc każda zmiana treści go wywracała. Teraz pilnuje kształtu i zakresu migawki
+  historycznej, nie zamrożonej treści.
+- **Commit/stan:** PR [#37](https://github.com/danielm1212/arco/pull/37). **Produkcja nietknięta.**
+- **Testy:** lint, build, 186/186 unit, 32/32 przeglądarkowych, walidatory 907/15/326 oraz 60/60,
+  smoke Phase 1, migracja w rollbacku i idempotentna w drugim przebiegu.
+- **Następny krok:** lower-body (brak brzucha w `lower-body-gym3`), potem intermediate FBW.
+
 ### 2026-07-28 · Claude · PLAN-C0 + PLAN-C1 — adopcja biblioteki v2.1 i flagowy FBW
 
 - **Zakres:** ocena audytu v2.1, mapa `exercise_id` dla całej biblioteki (PLAN-C0) i wdrożenie
