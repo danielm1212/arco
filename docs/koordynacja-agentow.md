@@ -21,6 +21,29 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-29 · Claude · PLAN-C3 — brzuch i ramiona w planach lower-body
+
+- **Zakres:** `lower-body-gym3` nie miał **żadnej** pracy brzucha (ani bezpośredniej, ani
+  pośredniej), mimo że audyt 2026-07-21 §P05 zatwierdził dla niego Pallof Press — korekta
+  nigdy nie weszła. Oba plany lower-body nie miały też ani jednej serii na biceps i triceps,
+  choć oba deklarują, że „góra ciała nadal dostaje regularny bodziec".
+- **Trzecie znalezisko o czasie:** `lower-body-gym3` deklarował 45–60 min przy realnych 32–38,
+  `lower-body-home3` 40–55 przy 28–36. Nowa praca zmieściła się w tym zapasie, deklaracje
+  zeszły do prawdy (40–55 i 35–50).
+- **Przy okazji `advanced-gym-ppl6`:** ostatni plan, który kłamał o czasie (55–75 przy realnych
+  46–59). Audyt §P13 zatwierdził tę korektę w lipcu i też nigdy nie weszła. Teraz 45–65.
+- **Nowa reguła zamknięta testem:** `tests/czas-sesji.test.ts` sprawdza deklarowany czas dla
+  **wszystkich 15 planów**. Cała biblioteka przechodzi.
+- **Odejście od brzmienia audytu:** Pallof Press w „Dół A · siła", nie w dniu górnym — dzień górny
+  dostał ramiona i przy Pallofie miałby dziesięć pozycji. Intencja korekty spełniona.
+- **Odmrożony trzeci test migawkowy:** `content01-hip-thrust` przypinał dokładne `content_version`
+  dwóch planów, blokując każdą przyszłą korektę treści. Pilnuje teraz „nie mniej niż", zgodnie
+  ze swoją prawdziwą intencją (blokada ryzykownego wariantu).
+- **Commit/stan:** PR na `main`, stackowany na #38. **Produkcja nietknięta.**
+- **Testy:** lint, build, 187/187 unit, walidatory 907/15/333 oraz 60/60, smoke Phase 1,
+  migracja w rollbacku i idempotentna.
+- **Następny krok:** intermediate FBW (`intermediate-home-fbw2` bez pionowego przyciągania).
+
 ### 2026-07-29 · Claude · PLAN-C2 — ramiona i prawda o czasie w planach dla początkujących
 
 - **Zakres:** cztery z pięciu planów beginner nie miały ani jednej serii bezpośrednio na biceps

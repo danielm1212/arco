@@ -4,6 +4,12 @@
 >
 > Domowy plan z większym naciskiem na pośladki i nogi. Ćwiczenia jednostronne pozwalają progresować także przy ograniczonym ciężarze hantli.
 
+
+> **Aktualizacja PLAN-C3:** plan dostał bezpośrednią pracę brzucha i ramion.
+> `lower-body-gym3` nie miał wcześniej **żadnej** pracy core — zatwierdzony w lipcu
+> Pallof Press nigdy nie wszedł do danych. Oba plany deklarowały też dłuższą sesję,
+> niż realnie trwały; deklaracje zeszły do prawdy, a nowa praca zmieściła się w zapasie.
+
 ## Dół A · siła
 
 | Ćwiczenie | Serie × powt. | Przerwa |
@@ -14,6 +20,7 @@
 | One-Arm Dumbbell Row | 3 × 8–12 / ręka | 2:00 |
 | Dumbbell Bench Press | 3 × 8–12 | 2:00 |
 | Dumbbell Calf Raise | 2 × 12–20 | 1:00 |
+| DB Bicep Curl | 3 × 10–15 | 1:00 |
 
 ## Góra + pośladki
 
@@ -25,6 +32,7 @@
 | Incline Dumbbell Press | 2 × 8–12 | 1:30 |
 | Seated Dumbbell Press | 2 × 8–12 | 1:30 |
 | Dead Bug | 2 × 8–12 / strona | 0:45 |
+| Standing DB Triceps Extension | 3 × 10–15 | 1:00 |
 
 ## Dół B · objętość
 
@@ -36,6 +44,7 @@
 | One-Arm Dumbbell Row | 3 × 10–15 / ręka | 1:30 |
 | Dumbbell Bench Press | 2 × 10–15 | 1:30 |
 | Dumbbell Calf Raise | 2 × 15–20 | 1:00 |
+| Dead Bug | 2 × 8–12 / strona | 1:00 |
 
 ## Zasady
 
