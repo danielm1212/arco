@@ -63,9 +63,12 @@ test("CONTENT-01A: żaden program systemowy nie publikuje zablokowanego wariantu
     slots.filter(({ slot }) => slot.exercise_id === "Barbell_Hip_Thrust").length,
     0,
   );
-  assert.equal(
-    slots.filter(({ slot }) => slot.exercise_id === "Barbell_Glute_Bridge").length,
-    3,
+  // Zablokowany wariant to twarde zero (wyżej). Zatwierdzonego zamiennika może z czasem
+  // przybywać — kolejne paczki treści mają prawo go użyć, byle nie zeszło poniżej trzech
+  // slotów, które CONTENT-01A faktycznie podmieniło.
+  assert.ok(
+    slots.filter(({ slot }) => slot.exercise_id === "Barbell_Glute_Bridge").length >= 3,
+    "zatwierdzony wariant glute bridge zniknął z planów systemowych",
   );
   // Wersje sprawdzamy „nie mniej niż", nie „dokładnie". Intencją CONTENT-01A było to, że
   // podmiana wariantu została zwersjonowana — a nie zamrożenie treści tych planów na zawsze.

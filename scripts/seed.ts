@@ -792,7 +792,7 @@ export const PROGRAMS: Program[] = [
     // F3.3 (audyt biblioteki 2026-07-18, §6.1): Upper B miała 26 serii roboczych —
     // realnie dłużej niż deklarowane 50–70 min. Ścięte do ok. 20 serii bez usuwania
     // ćwiczeń (bezpieczne pod istniejący sync — patrz seedPrograms/SAFE SEED STOP).
-    content_version: 3,
+    content_version: 4,
     days_per_week: 4,
     days: [
       {
@@ -840,6 +840,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Leg_Extensions", sets: 3, repsMin: 12, repsMax: 15, rest: 90 },
           { exercise_id: "Seated_Leg_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Calf_Press", sets: 4, repsMin: 12, repsMax: 15, rest: 60 },
+          { exercise_id: "Barbell_Glute_Bridge", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "Broda przy klatce, żebra w dół. Wyprost bioder, nie odchylenie lędźwi." },
         ],
       },
     ],
@@ -1217,7 +1218,7 @@ export const PROGRAMS: Program[] = [
     estimated_minutes_max: 60,
     required_equipment: ["dumbbell"],
     optional_equipment: ["kettlebells", "body only", "pull-up bar"],
-    content_version: 2,
+    content_version: 3,
     days_per_week: 2,
     days: [
       {
@@ -1231,6 +1232,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Dumbbell_Bicep_Curl", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Lying_Dumbbell_Tricep_Extension", sets: 2, repsMin: 10, repsMax: 15, rest: 60, notes: "Francuskie wyciskanie hantli leżąc." },
           { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
+          { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 2, repsMin: 12, repsMax: 20, rest: 60, notes: "Pełny zakres, krótka pauza u góry." },
         ],
       },
       {
@@ -1244,6 +1246,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Hammer_Curls", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 15, rest: 60 },
           { exercise_id: "Hollow_Body_Hold", sets: 2, repsMin: null, repsMax: null, rest: 45, notes: "na czas (stoper), ~30 s; regres: kolana ugięte" },
+          { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 2, repsMin: 12, repsMax: 20, rest: 60, notes: "Pełny zakres, krótka pauza u góry." },
         ],
       },
     ],

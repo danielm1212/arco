@@ -21,6 +21,26 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-29 · Claude · PLAN-C4 — domknięcie biblioteki (15/15)
+
+- **Zmienione recepty (2):** `intermediate-home-fbw2` dostał łydki w obu dniach (wcześniej zero),
+  `intermediate-gym-upper-lower4` glute bridge w Lower B — plan nie miał ani jednego ruchu
+  z pośladkiem jako mięśniem głównym, a w sesji był czas (49 → 56 min przy deklaracji 50–70).
+- **Świadomie NIE zmienione, mimo „zera" w audycie:** biceps w dwóch planach kalistenicznych
+  (bez sprzętu nie ma sensownej izolacji, niosą go podciąganie i wiosłowanie, a sesje są już na
+  górnej granicy czasu); pośladki jako „zero bezpośrednio" w planach z przysiadem i martwym
+  ciągiem (artefakt tagowania katalogu, nie luka); pionowe przyciąganie w domowym FBW (wymagałoby
+  drążka lub gumy, czyli zmiany kontraktu sprzętowego). Wszystko trzy opisane na kartach.
+- **Parytet dokumentacji domknięty:** powstała brakująca karta `intermediate-home-fbw2.md` —
+  ostatni z piętnastu planów bez własnej dokumentacji. `docs/trainings/` ma teraz 15 kart planów.
+- **Czwarty odmrożony test:** `content01-hip-thrust` przypinał dokładną liczbę slotów
+  z zatwierdzonym glute bridge. Zablokowany wariant zostaje twardym zerem, zamiennika może
+  przybywać.
+- **Commit/stan:** PR na `main`, stackowany na #38 i #39. **Produkcja nietknięta.**
+- **Testy:** lint, build, 187/187 unit, walidatory 907/15/336 oraz 60/60, smoke Phase 1,
+  migracja w rollbacku i idempotentna.
+- **Następny krok:** wspólny deploy pięciu migracji procedurą `arco-release` po zgodzie [Ty].
+
 ### 2026-07-29 · Claude · PLAN-C3 — brzuch i ramiona w planach lower-body
 
 - **Zakres:** `lower-body-gym3` nie miał **żadnej** pracy brzucha (ani bezpośredniej, ani
