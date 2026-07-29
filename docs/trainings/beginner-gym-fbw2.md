@@ -4,6 +4,8 @@
 >
 > Plan dla osoby, która realnie ma dwa dni treningowe. Obie sesje obejmują całe ciało, dzięki czemu opuszczenie jednego tygodnia lub przesunięcie dnia nie rozbija splitu.
 
+> **Aktualizacja PLAN-C2:** każda sesja kończy się teraz bezpośrednią pracą ramion. Wcześniej ten plan nie miał ani jednej takiej serii — „opcjonalne ramiona” z audytu nie istniały w danych, więc po prostu ich nie było. Dodana praca mieści się w czasie, który plan i tak deklarował.
+
 ---
 
 ## Trening A
@@ -16,6 +18,7 @@
 | 4 | Romanian Deadlift | 3 × 8–10 | 2:30 | Biodra w tył, neutralne plecy |
 | 5 | Seated DB Shoulder Press | 2 × 8–12 | 1:30 | Zostaw 2–3 powtórzenia w zapasie |
 | 6 | Plank | 3 × na czas | 1:00 | Zakończ serię przed utratą pozycji |
+| 7 | DB Bicep Curl | 3 × 10–15 | 1:00 | Łokcie przy tułowiu, bez bujania |
 
 ## Trening B
 
@@ -29,6 +32,7 @@
 | 6 | Pull-up | 2 × 5–10 | 2:00 | Użyj maszyny lub gumy do asysty |
 | 7 | Standing Calf Raise | 2 × 10–15 | 1:00 | Pełny zakres i pauza u góry |
 | 8 | Dead Bug | 2 × 8–12 / strona | 0:45 | Lędźwie utrzymuj przy podłożu |
+| 9 | Triceps Pushdown | 3 × 10–15 | 1:00 | Łokcie blisko tułowia |
 
 ---
 

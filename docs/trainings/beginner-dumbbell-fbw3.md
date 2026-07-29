@@ -4,6 +4,8 @@
 >
 > Wersja domowa flagowca beginnerowego. Domyka to, co kulało w klasycznym FBW-hantle: brak pionowego pull, brak łydek/pośladków, stałe reps. Tu są zakresy, jest vertical pull (guma/drążek), są łydki i pośladki.
 
+> **Aktualizacja PLAN-C2:** każda sesja kończy się teraz bezpośrednią pracą ramion. Wcześniej ten plan nie miał ani jednej takiej serii — „opcjonalne ramiona” z audytu nie istniały w danych, więc po prostu ich nie było. Dodana praca mieści się w czasie, który plan i tak deklarował.
+
 ---
 
 ## Dzień A
@@ -16,6 +18,8 @@
 | 4 | DB Romanian Deadlift | `hinge` | 3 × 8–12 | 2:00 | KB RDL |
 | 5 | Seated DB Shoulder Press | `vertical_push` | 2 × 8–12 | 1:30 | Standing DB Press |
 | 6 | Plank | `core:anti_extension` | 3 × na czas | 1:00 | Dead Bug |
+| 7 | DB Bicep Curl | 2 × 10–15 | 1:00 | Łokcie przy tułowiu |
+| 8 | Standing DB Triceps Extension | 2 × 10–15 | 1:00 | Łokcie blisko głowy |
 
 ## Dzień B
 
@@ -27,6 +31,8 @@
 | 4 | DB Stiff-Leg Deadlift | `hinge` | 3 × 10–12 | 1:30 | KB Single-Leg RDL |
 | 5 | DB Lateral Raise | `isolation:side_delt` | 3 × 12–15 | 1:00 | Cable/Band Lateral Raise |
 | 6 | DB Standing Calf Raise | `calf` | 3 × 12–15 | 1:00 | Single-Leg Calf Raise |
+| 7 | DB Bicep Curl | 2 × 10–15 | 1:00 | Łokcie przy tułowiu |
+| 8 | Standing DB Triceps Extension | 2 × 10–15 | 1:00 | Łokcie blisko głowy |
 
 ## Dzień C
 

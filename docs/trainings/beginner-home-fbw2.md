@@ -4,6 +4,8 @@
 >
 > Plan dla osoby trenującej dwa razy w tygodniu w domu. Wymagane są hantle; ławka i guma są pomocne, ale przy każdym ruchu zależnym od nich podany jest prosty zamiennik.
 
+> **Aktualizacja PLAN-C2:** każda sesja kończy się teraz bezpośrednią pracą ramion. Wcześniej ten plan nie miał ani jednej takiej serii — „opcjonalne ramiona” z audytu nie istniały w danych, więc po prostu ich nie było. Dodana praca mieści się w czasie, który plan i tak deklarował.
+
 ---
 
 ## Trening A
@@ -16,6 +18,7 @@
 | 4 | DB Stiff-Leg Deadlift | 3 × 8–12 | 2:00 | Biodra w tył, hantle blisko nóg |
 | 5 | Seated DB Shoulder Press | 2 × 8–12 | 1:30 | Może być stojąc bez ławki |
 | 6 | Plank | 3 × na czas | 1:00 | Zakończ przed utratą pozycji |
+| 7 | DB Bicep Curl | 3 × 10–15 | 1:00 | Łokcie przy tułowiu |
 
 ## Trening B
 
@@ -28,6 +31,7 @@
 | 5 | 2-DB Bent-Over Row | 2 × 10–12 | 1:30 | Utrzymuj neutralne plecy |
 | 6 | DB Calf Raise | 3 × 12–15 | 1:00 | Pełny zakres i pauza u góry |
 | 7 | Dead Bug | 2 × 8–12 / strona | 0:45 | Lędźwie utrzymuj przy podłożu |
+| 8 | Standing DB Triceps Extension | 3 × 10–15 | 1:00 | Łokcie blisko głowy |
 
 ---
 

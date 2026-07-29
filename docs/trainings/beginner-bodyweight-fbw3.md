@@ -4,6 +4,8 @@
 >
 > Jeden program, dwa poziomy dostępu. Kolumna **Swap (0 sprzętu)** obsługuje usera bez drążka. Progresja: dobij górę zakresu powtórzeń na wszystkich seriach → przejdź do trudniejszej wariacji z drabinki leverage (patrz sekcja Progresja).
 
+> **Aktualizacja PLAN-C2:** każda sesja kończy się pompkami tricepsowymi. Bicepsa bez sprzętu nie da się sensownie izolować — tę pracę niosą tu podciąganie, wiosłowanie i podciąganie podchwytem, i tak to zostaje.
+
 ---
 
 ## Dzień A
@@ -15,6 +17,7 @@
 | 3 | Pull-up (drążek) | `vertical_pull` | 3 × 5–10 | 2:00 | **Towel Row (drzwi)** · Backpack Row · Prone Y-T-W |
 | 4 | Pike Push-up | `vertical_push` | 2 × 6–12 | 1:30 | — |
 | 5 | Plank | `core:anti_extension` | 3 × na czas | 1:00 | — |
+| 6 | Bench Dips | 2 × 8–15 | 1:00 | Dłonie na stabilnym podwyższeniu |
 
 ## Dzień B
 
@@ -25,6 +28,7 @@
 | 3 | Feet-Elevated Push-up | `horizontal_push` | 3 × 8–15 | 1:30 | — |
 | 4 | Single-Leg Glute Bridge | `hinge` | 3 × 8–12 / noga | 1:30 | — |
 | 5 | Hanging Knee Raise (drążek) | `core:flexion` | 3 × 10–15 | 1:00 | **Lying Leg Raise** · Reverse Crunch |
+| 6 | Bench Dips | 2 × 8–15 | 1:00 | Bez podwyższenia zrób pompki wąskie |
 
 ## Dzień C
 
@@ -36,6 +40,7 @@
 | 4 | Single-Leg Calf Raise | `calf` | 3 × 12–20 / noga | 1:00 | — |
 | 5 | Hollow Body Hold | `core:anti_extension` | 3 × na czas | 0:45 | — |
 | 6 | Superman | `hinge` | 2 × 12–15 | 0:45 | — |
+| 7 | Bench Dips | 2 × 8–15 | 1:00 | Dłonie na stabilnym podwyższeniu |
 
 ---
 

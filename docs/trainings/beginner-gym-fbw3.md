@@ -4,6 +4,8 @@
 >
 > Cel: nauczyć wzorców ruchowych na barbell, zbudować bazę siły i masy, wyrobić nawyk. Compoundy w niższych zakresach (technika + siła), pomocnicze wyżej. Serie robocze bez rozgrzewkowych.
 
+> **Aktualizacja PLAN-C2:** każda sesja kończy się teraz bezpośrednią pracą ramion. Wcześniej ten plan nie miał ani jednej takiej serii — „opcjonalne ramiona” z audytu nie istniały w danych, więc po prostu ich nie było. Dodana praca mieści się w czasie, który plan i tak deklarował.
+
 ---
 
 ## Dzień A
@@ -15,6 +17,8 @@
 | 3 | Lat Pulldown | `vertical_pull` | 3 × 8–12 | 2:00 | Assisted Pull-up · Band Pulldown |
 | 4 | Seated DB Shoulder Press | `vertical_push` | 2 × 8–12 | 1:30 | Machine Shoulder Press |
 | 5 | Plank | `core:anti_extension` | 3 × na czas | 1:00 | Dead Bug |
+| 6 | DB Bicep Curl | 2 × 10–15 | 1:00 | Łokcie przy tułowiu |
+| 7 | Triceps Pushdown | 2 × 10–15 | 1:00 | Łokcie blisko tułowia |
 
 ## Dzień B
 
@@ -25,6 +29,8 @@
 | 3 | Incline DB Press | `horizontal_push` | 3 × 8–12 | 2:00 | Incline Machine Press |
 | 4 | DB Walking Lunge | `lunge` | 2 × 10–12 / noga | 1:30 | Split Squat · Reverse Lunge |
 | 5 | Hanging Knee Raise | `core:flexion` | 3 × 10–15 | 1:00 | Lying Leg Raise · Cable Crunch |
+| 6 | DB Bicep Curl | 2 × 10–15 | 1:00 | Łokcie przy tułowiu |
+| 7 | Triceps Pushdown | 2 × 10–15 | 1:00 | Łokcie blisko tułowia |
 
 ## Dzień C
 
@@ -36,6 +42,8 @@
 | 4 | Seated Cable Row | `horizontal_pull` | 2 × 10–12 | 1:30 | Chest-Supported Row |
 | 5 | Standing Calf Raise | `calf` | 3 × 10–15 | 1:00 | Leg Press Calf Raise |
 | 6 | Pallof Press | `core:anti_rotation` | 2 × 10–12 / strona | 0:45 | Cable Woodchop |
+| 7 | DB Bicep Curl | 2 × 10–15 | 1:00 | Łokcie przy tułowiu |
+| 8 | Triceps Pushdown | 2 × 10–15 | 1:00 | Łokcie blisko tułowia |
 
 ---
 
