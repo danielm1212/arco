@@ -251,7 +251,7 @@ begin
   update public.programs
   set required_equipment = array['barbell', 'dumbbell', 'cable'],
       optional_equipment = array['machine', 'body only'],
-      description = 'Dwa treningi całego ciała na pełnym sprzęcie. Każda sesja ma jedno duże ćwiczenie na dół, pełny push i pull oraz bezpośrednią pracę ramion. Zostaw 1 lub 2 powtórzenia w zapasie.',
+      description = 'Dwa krótkie treningi całego ciała na pełnym sprzęcie, z naciskiem na górę. Każda sesja ma jedno duże ćwiczenie na dół, pełny push i pull oraz bezpośredni biceps i triceps. Objętość nóg jest świadomie umiarkowana — przy priorytecie nóg włącz moduł opcjonalny albo wybierz plan „Pośladki i nogi”. Zostaw 1 lub 2 powtórzenia w zapasie.',
       content_version = greatest(content_version, 4)
   where id = v_program_id;
 end

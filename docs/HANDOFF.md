@@ -131,10 +131,16 @@ koordynacji (2026-07-23).
   **nie usuwa żadnego slotu**, więc historia nie traci powiązań. Po pytaniu [Ty] o ramiona każda
   sesja dostała bezpośredni biceps i triceps (v2.1 dawała po 3 serie tygodniowo, teraz po 5). Przy okazji naprawiony uśpiony bug seeda:
   wszystkie alternatywy dostawały `position: 0` przy `unique(program_day_slot_id, position)`,
-  więc dwie alternatywy na slot były niemożliwe. Bramka: lint, build, 181/181 unit,
+  więc dwie alternatywy na slot były niemożliwe. Po review [Ty] plan dostał
+  bezpośredni biceps i triceps w obu sesjach, a jego świadomie górno-centryczny profil
+  (czworogłowe 4, dwugłowe 4, łydki 0 na cykl) jest zapisany jako **D-45** i zamrożony testem.
+  Nowy `npm run audit:muscle-coverage` liczy pokrycie mięśni per program — **D-46** wymaga go
+  przy każdej zmianie recepty. Bramka: lint, build, 183/183 unit,
   32/32 przeglądarkowych, walidatory 907/15/308 oraz 60/60, smoke Phase 1/Phase 2/offline,
-  seed dwukrotnie idempotentny. **Nie zweryfikowano wizualnie** — `/programs/[id]` wymaga
-  zalogowania, a agent nie wprowadza haseł. Pozostaje checkpoint [Ty] i deploy.
+  seed dwukrotnie idempotentny. **Kod jest na `main` (PR #35), ale migracja
+  `20260728213337` NIE jest na produkcji** — `migration list` pokazuje pusty `remote`, więc prod
+  serwuje nadal receptę TRAIN-01. Do wykonania: `db push` po jawnej zgodzie [Ty] plus checkpoint
+  wizualny; `/programs/[id]` wymaga zalogowania, a agent nie wprowadza haseł.
 
 ### Częściowe i szczegóły wdrożeń
 

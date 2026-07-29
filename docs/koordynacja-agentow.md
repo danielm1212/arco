@@ -36,6 +36,14 @@
   dostały siódmą pozycję (triceps zza głowy w A, chwyt młotkowy w B) — 21/21 serii, po 5 serii na
   partię. Skutek uboczny: dzień zostaje przy 7 slotach, więc migracja nic nie usuwa i D-44 nie jest
   w tym wydaniu wykorzystane.
+- **Druga korekta po review [Ty] („bez gafy w ćwiczeniach"):** policzone pokrycie mięśni pokazało,
+  że literalna adopcja v2.1 zabrała flagowcowi 3 serie czworogłowych i 2 dwugłowych względem
+  produkcji — wypadły wykroki i uginanie nóg, które TRAIN-01 dodał celowo. [Ty] wybrał wariant
+  „zostawić krótko, opisać uczciwie": recepta bez zmian, ale opis programu, karta planu i **D-45**
+  nazywają kompromis wprost, a test zamraża profil objętości. Powstał
+  `npm run audit:muscle-coverage` (**D-46**) — przemiał całej biblioteki jest w §9
+  `plan-c0-mapowanie-cwiczen-v21.md`; najmocniejszy sygnał to `lower-body-gym3` bez żadnej pracy
+  brzucha, mimo zatwierdzonej w 2026-07-21 korekty §P05 (Pallof Press), która nigdy nie weszła.
 - **Decyzje:** D-42 (kanon v2.1 z wyjątkami kolejności power/skill z TRAIN-01), D-43 (alternatywy
   strukturalne = wyłącznie ścieżka sprzętowa), D-44 (korekta treści może usuwać sloty).
 - **Nie adoptowane z v2.1:** trzy przesunięcia HSPU/Jump Squat w głąb sesji (P11 Upper B,
@@ -45,9 +53,10 @@
   (2) pierwsza wersja migracji zmieniała sloty, ale nie wnosiła alternatyw na produkcję, gdzie
   seed nie jest uruchamiany — migracja niesie teraz payload 12 alternatyw, a test pilnuje
   zgodności z `program-slot-alternatives.ts`.
-- **Commit/stan:** gałąź lokalna, bez PR. **Produkcja nietknięta**; migracja zastosowana wyłącznie
-  na lokalnej bazie.
-- **Testy:** lint, build, 181/181 unit, 32/32 przeglądarkowych, `validate:training` 907/15/308,
+- **Commit/stan:** PR [#35](https://github.com/danielm1212/arco/pull/35) **zmergowany do `main`**
+  2026-07-28. **Migracja `20260728213337` NIE jest na produkcji** (`migration list` → pusty
+  `remote`), więc prod serwuje nadal receptę TRAIN-01. Backup proda: `backups/20260728T204449Z`.
+- **Testy:** lint, build, 183/183 unit, 32/32 przeglądarkowych, `validate:training` 907/15/308,
   `validate:recommendations` 60/60, smoke Phase 1 / Phase 2 / offline, seed dwa razy idempotentny.
   Migracja sprawdzona przebiegami z rollbackiem na realnej historii (finalny kształt: zero usunięć,
   51/51 serii i wszystkie powiązania slotów zachowane), bramką otwartej sesji (podnosi wyjątek)

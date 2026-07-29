@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { PROGRAMS } from "@/scripts/seed";
 import { PLANNED_PROGRAM_ALTERNATIVES } from "@/scripts/data/program-slot-alternatives";
+import rawExercises from "@/scripts/data/exercises.json";
 
 const SLUG = "intermediate-gym-fbw2";
 
@@ -113,6 +114,44 @@ test("PLAN-C1: ciężkie compoundy dostają realną przerwę, izolacje krótką"
 test("PLAN-C1: maszyny nie są wymaganiem wejścia, tylko alternatywą", () => {
   assert.deepEqual(program().required_equipment, ["barbell", "dumbbell", "cable"]);
   assert.ok(program().optional_equipment.includes("machine"));
+});
+
+test("D-45: świadomy profil planu — nacisk na górę, umiarkowane nogi, zero łydek", () => {
+  // Ten test NIE pilnuje „poprawnej" objętości. Pilnuje, że kompromis z D-45 pozostaje
+  // świadomy: gdy ktoś zmieni receptę, ma zmienić też decyzję, a nie odkryć zmianę po fakcie.
+  const direct = new Map<string, number>();
+  for (const day of program().days) {
+    for (const slot of day.slots) {
+      const exercise = (rawExercises as { id: string; primaryMuscles?: string[] }[]).find(
+        (item) => item.id === slot.exercise_id,
+      );
+      assert.ok(exercise, `brak ${slot.exercise_id} w katalogu`);
+      for (const muscle of exercise.primaryMuscles ?? []) {
+        direct.set(muscle, (direct.get(muscle) ?? 0) + slot.sets);
+      }
+    }
+  }
+
+  assert.deepEqual(
+    {
+      quadriceps: direct.get("quadriceps") ?? 0,
+      hamstrings: direct.get("hamstrings") ?? 0,
+      chest: direct.get("chest") ?? 0,
+      biceps: direct.get("biceps") ?? 0,
+      triceps: direct.get("triceps") ?? 0,
+      calves: direct.get("calves") ?? 0,
+    },
+    { quadriceps: 4, hamstrings: 4, chest: 8, biceps: 5, triceps: 5, calves: 0 },
+    "Zmiana profilu objętości wymaga aktualizacji D-45 i karty planu.",
+  );
+});
+
+test("PLAN-C1: opis programu w migracji jest identyczny jak w seedzie", () => {
+  // Reguła arco-migration §2: seed i migracja to dwie drogi do tego samego stanu.
+  assert.ok(
+    migrationSql.includes(program().description),
+    "Opis w migracji rozjechał się z seedem.",
+  );
 });
 
 test("PLAN-C1: migracja niesie te same alternatywy co repo (produkcji nie seedujemy)", () => {
