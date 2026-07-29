@@ -486,6 +486,7 @@ export type Database = {
       programs: {
         Row: {
           content_version: number
+          cover_image_url: string | null
           cycle_days: number
           days_per_week: number
           description: string | null
@@ -510,6 +511,7 @@ export type Database = {
         }
         Insert: {
           content_version?: number
+          cover_image_url?: string | null
           cycle_days?: number
           days_per_week: number
           description?: string | null
@@ -534,6 +536,7 @@ export type Database = {
         }
         Update: {
           content_version?: number
+          cover_image_url?: string | null
           cycle_days?: number
           days_per_week?: number
           description?: string | null
