@@ -268,18 +268,42 @@ historii, wszystkie pochodne liczą te same fakty, a jedna błędna operacja nie
 nie tutaj — PLAN-Q skupia się na treści (recepta v2, korekta 15/15, prawda sprzętowa)
 i gate publikacji, żeby nie przebudowywać tego samego ekranu dwa razy.
 
+**Aktualizacja 2026-07-29:** treść PLAN-Q (TRAIN-02/04) została w praktyce zrealizowana
+paczkami **PLAN-C0–C4** (2026-07-28…29, PR #35–#44), innym mechanizmem niż tu opisany —
+adopcją biblioteki v2.1 (`training_programs_v2`) jako kanonu recepty (**D-42**), nie
+audytem Codex punkt po punkcie. Efekt: 15/15 programów systemowych na produkcji, zero
+twardych zer pokrycia mięśni, zero planów z nieprawdziwym deklarowanym czasem, ramiona
+bezpośrednio w 13/15 planów. Pełny ślad: `plan-c-release-2026-07-29.md`. Pozostała część
+bramki (media zdjęć, feedback bezpieczeństwa, **zewnętrzne zatwierdzenie trenerskie** —
+oryginalne kryterium Done tej sekcji — snapshot CORE-1, analityka, prowadzenie pierwszej
+sesji, zamienniki) ma teraz osobny, zmierzony i posekwencjonowany opis w
+`droga-do-gotowosci-bety-2026-07.md` (ocena 4/10 → 10/10 dla zamkniętej bety) —
+**ten dokument jest teraz źródłem prawdy o kolejności tego, co zostało**, poniższa lista
+TRAIN-0x zostaje jako mapowanie na ID backlogu.
+**Otwarte, poza zakresem PLAN-C:** dryf `advanced-gym-ppl6` (36 slotów na produkcji vs 38
+w seedzie, brak pracy core w obu dniach nóg) — mały, gotowy do wykonania punktowy sync,
+czeka na decyzję [Ty] (nie jest to regresja PLAN-C, drift jest sprzed niego).
+
 - TRAIN-02: jeden strukturalny katalog 15 programów, z którego korzystają seed, walidatory
-  i karty `docs/trainings/`;
+  i karty `docs/trainings/`. **W praktyce zrealizowane** adopcją v2.1 (D-42) — jeden kanon,
+  15/15 kart w `docs/trainings/` bez rozjazdu;
 - TRAIN-03: addytywna recepta v2 — czas dnia/slotu, RIR, tempo, typ progresji, rola,
-  opcjonalność i wersjonowane alternatywy; legacy działa bez zgadywanego backfillu;
+  opcjonalność i wersjonowane alternatywy; legacy działa bez zgadywanego backfillu.
+  **Nadal otwarte** — PLAN-C poprawił treść recept, nie dodał ten ustrukturyzowany schemat;
 - TRAIN-04: korekta wszystkich 15 programów, w tym P02/P07/P08/P13 oraz pełne review
-  kolejności, wzorców, objętości, czasu, przerw i instrukcji;
-- TRAIN-05: kanoniczny sprzęt, wymagania per ćwiczenie i deterministyczna wykonalność per slot;
+  kolejności, wzorców, objętości, czasu, przerw i instrukcji. **Zamknięte przez PLAN-C1–C4**,
+  na produkcji 2026-07-29. **Wyjątek: niezależne zatwierdzenie trenerskie nie odbyło się**
+  (oryginalne kryterium Done „zatwierdzony audyt Codex") — to `droga-do-gotowosci-bety-2026-07.md`
+  §4.3, wciąż otwarte i zewnętrzne;
+- TRAIN-05: kanoniczny sprzęt, wymagania per ćwiczenie i deterministyczna wykonalność per slot.
+  **Nadal otwarte** — dziś tylko ścieżka sprzętowa zamienników (D-43), 14% slotów ma
+  alternatywę, `relation_type` nie istnieje;
 - TRAIN-02A4: publikacja P01/P03/P08/P11/P12 zakończona 2026-07-27 na minimalnym,
   addytywnym kontrakcie alternatyw; pełna prawda sprzętowa nadal należy do TRAIN-05;
 - TRAIN-06: karta i detal planu pokazują realny czas, sprzęt, przerwy, opcjonalność i dostępne
-  warianty bez przeciążania głównego widoku;
+  warianty bez przeciążania głównego widoku. Realizowane osobno jako PLAN-05 (patrz niżej);
 - TRAIN-07: walidator CI, bezpieczny seed, RLS, regresja aktywnych planów/sesji i urządzeń.
+  Walidatory już działają w CI (907/15/336); pełny formalny gate (macierz urządzeń) otwarty.
 - SESSION-01A po R4A: mała, opcjonalna rekomendacja rozgrzewki specyficznej i zakończenia;
   serie `warmup` nie liczą się do objętości/ukończenia, a rozciąganie nie obiecuje regeneracji.
 
@@ -291,8 +315,8 @@ serii roboczej wyklucza `warmup` z ukończenia, objętości, Historii, progresji
 Dogfood reloadu z oczekującym outboxem wykrył i domknął dodatkową regresję hydracji.
 CI i Vercel dla `main` są zielone; pozostaje checkpoint fizycznego urządzenia [Ty].
 
-**Stan SESSION-01A2:** gotowe technicznie 2026-07-27 na `agent/session-01a2`, czeka na merge
-i deploy [Ty]. Dogfood SESSION-01A dał loggerowi 4/10 za nadmiar instrukcji, więc przebudowana
+**Stan SESSION-01A2…01A4:** na produkcji, scalone PR #27/#28/#29 (patrz HANDOFF). Dogfood
+SESSION-01A dał loggerowi 4/10 za nadmiar instrukcji, więc przebudowana
 została warstwa prezentacji: wiersz serii ~120 px → 44 px z checkiem w wierszu, menu pod
 numerem serii zamiast stałego `×`, per-ćwiczeniowe boksy rozgrzewkowe wycięte na rzecz dwóch
 regulowanych timerów (rozgrzewka 2–15 min nad pierwszym ćwiczeniem, rozciąganie 1–10 min na
@@ -306,9 +330,12 @@ jednorazowa podpowiedź startowa w loggerze.
 automatyczny deload, pełny model objętości oraz warianty Minimum/Standard/Plus. PROGRAM-01A
 20–30 minut pozostaje eksperymentem po sygnale H2, nie dodatkowym treningiem do aktywnego planu.
 
-**Done:** 15/15 programów przechodzi walidator i zatwierdzony audyt Codex; seed zachowuje ID,
-aktywne plany, własne programy, otwarte sesje i historię; filtr może policzyć wykonalność każdej
-obowiązkowej pozycji; UI przechodzi 320/375/393 px, iPhone PWA, Android i stary cache.
+**Done:** 15/15 programów przechodzi walidator (**osiągnięte** — patrz „Aktualizacja
+2026-07-29" wyżej) i zatwierdzony audyt Codex (**otwarte** — zewnętrzne, `droga-do-gotowosci-bety-2026-07.md`
+§4.3); seed zachowuje ID, aktywne plany, własne programy, otwarte sesje i historię
+(**potwierdzone** przy wdrożeniu PLAN-C); filtr może policzyć wykonalność każdej obowiązkowej
+pozycji (**otwarte**, TRAIN-05); UI przechodzi 320/375/393 px, iPhone PWA, Android i stary
+cache (**otwarte**, TRAIN-07).
 
 ## R2.2 — zaufanie do Planów
 

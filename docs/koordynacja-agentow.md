@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-28
+**Aktualizacja:** 2026-07-29
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -20,6 +20,39 @@
 |---|---|---|---|---|
 
 ## Ostatnie wpisy
+
+### 2026-07-29 · Claude · Synchronizacja HANDOFF/plan sprintów z rzeczywistym stanem: ZAKOŃCZONE
+
+- **Zakres:** wyłącznie `docs/HANDOFF.md` i `docs/plan-sprintow-2026-07.md`. Zero kodu,
+  zero migracji, zero danych.
+- **Kontekst:** sesja wróciła po dłuższej przerwie na `agent/beta-readiness-roadmap`
+  (gałąź nie moja, już scalona jako PR #45) zamiast `main`; `origin/main` przesunął się
+  o PR #35–#45 (PLAN-C0–C4 + release + roadmap bety) od ostatniego odczytu. Zgodnie z
+  `arco-session-start` — sprawdzone w Git, nie założone.
+- **Znalezisko:** oba dokumenty były stale. HANDOFF nadal opisywał PLAN-C1 jako „gotowe
+  lokalnie, NIE na produkcji", mimo że PLAN-C1–C4 były już na produkcji od 2026-07-29.
+  `plan-sprintow-2026-07.md` wciąż ramował „PLAN-Q" starą, ogólną listą TRAIN-0x bez
+  adnotacji, mimo że nowy `droga-do-gotowosci-bety-2026-07.md` (ta sama data) jest teraz
+  faktycznym źródłem prawdy o kolejności tego, co zostało do zamkniętej bety (4/10).
+  Żaden z trzech dokumentów kanonu (`HANDOFF`, `plan-sprintow`, `backlog-produktu`) nigdy
+  nie wspomniał nazwy „PLAN-C" — zweryfikowane grepem przed pisaniem, nie zgadywaniem.
+- **Wynik:** HANDOFF §1/§2/§4/§5/§6 zaktualizowane: PLAN-C0–C4 opisane jako wdrożone
+  (8 migracji, 15/15 programów, D-42…D-47), dryf `advanced-gym-ppl6` dodany jako otwarty
+  punkt czekający na decyzję [Ty], pointer do `droga-do-gotowosci-bety-2026-07.md` jako
+  źródła kolejności reszty PLAN-Q. `plan-sprintow-2026-07.md` §PLAN-Q dostał adnotację
+  „Aktualizacja 2026-07-29" oraz status przy każdym TRAIN-0x (zrealizowane/nadal otwarte/
+  osobny tor), plus poprawiona stara literówka stanu SESSION-01A2 („czeka na merge" →
+  scalone). HOME-NAV/PLAN-05 (HOME-01, PLAN-05C) potwierdzone jako niedotknięte przez
+  PLAN-C i nadal aktualne — `droga-do-gotowosci-bety-2026-07.md` §6 wprost wyklucza
+  redesign kart ze swojego zakresu.
+- **Czego nie dotknięto:** `backlog-produktu.md` (tabela TRAIN-0x tam pozostaje bez
+  adnotacji — świadomie poza zakresem tej sesji, żeby nie rozjechać się z docelowym
+  zakresem „sprawdź HANDOFF"; do zrobienia przy następnej okazji, jeśli ktoś czyta backlog
+  jako pierwsze źródło), kodu, migracji, danych.
+- **Zaległości:** [Ty] decyzja o dryfie `advanced-gym-ppl6` (mała migracja synchronizująca
+  2 sloty); dalej wybór między PLAN-05A/HOME-02 (nasz tor UI, niezależny) albo pierwszym
+  krokiem `droga-do-gotowosci-bety-2026-07.md` (§4.1 media zdjęć jest pierwsze w kolejności,
+  ale wymaga generowania/zatwierdzania zdjęć, nie tylko kodu).
 
 ### 2026-07-29 · Claude · PLAN-C — WDROŻONE NA PRODUKCJĘ (15/15 planów)
 
