@@ -44,6 +44,17 @@
   `npm run audit:muscle-coverage` (**D-46**) — przemiał całej biblioteki jest w §9
   `plan-c0-mapowanie-cwiczen-v21.md`; najmocniejszy sygnał to `lower-body-gym3` bez żadnej pracy
   brzucha, mimo zatwierdzonej w 2026-07-21 korekty §P05 (Pallof Press), która nigdy nie weszła.
+- **Trzecia runda ([Ty]: „bez gafy, ma być solidnie"):** policzony sufit budżetu pokazał, że
+  flagowiec przy 3 dniach ma zasoby na 10/11 grup, a dowoził 4/11 — problem rozkładu, nie
+  kalendarza. W ramach warunków [Ty] (jedno ćwiczenie nóg na sesję, ramiona w obu dniach, łydki
+  jako jedna dodatkowa pozycja, podciąganie nietknięte) wdrożony wariant D2: przysiad i RDL po
+  5 serii, łydki w B. Czworogłowe 6,0 → 7,5, pośladki 6,0 → 7,5, łydki 0 → 12,0. PR #37.
+- **Druga uśpiona wada seeda:** alternatywy są upsertowane, ale nigdy nie sprzątane — przepięcie
+  slotu na inne ćwiczenie zostawia starą alternatywę przy nowym ruchu (18 wierszy zamiast 15).
+  Seed i migracja kasują teraz osierocone wiersze, wyłącznie dla programów systemowych.
+- **Flake w CI:** `tests/e2e/overflow.test.ts:365` („tap w puste pole… zaznacza go") czyta
+  `selectionStart/End` zaraz po kliknięciu i bywa czerwony na CI przy zielonym lokalnie.
+  Ponowienie joba przeszło. Do naprawy wyścigu osobno — nie dotykałem cudzego zakresu.
 - **Decyzje:** D-42 (kanon v2.1 z wyjątkami kolejności power/skill z TRAIN-01), D-43 (alternatywy
   strukturalne = wyłącznie ścieżka sprzętowa), D-44 (korekta treści może usuwać sloty).
 - **Nie adoptowane z v2.1:** trzy przesunięcia HSPU/Jump Squat w głąb sesji (P11 Upper B,
