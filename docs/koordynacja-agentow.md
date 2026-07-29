@@ -21,6 +21,28 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-29 · Claude · PLAN-C — WDROŻONE NA PRODUKCJĘ (15/15 planów)
+
+- **Zakres:** osiem migracji na produkcji, `migration list` potwierdza local == remote (60, zero
+  oczekujących). Pełny ślad: `plan-c-release-2026-07-29.md`.
+- **Efekt:** zero twardych zer pokrycia (było 1), zero planów kłamiących o czasie sesji (było 7,
+  do 26 min rozjazdu), ramiona w 13 z 15 planów, 15/15 kart w `docs/trainings/`.
+- **Weryfikacja po wdrożeniu:** zrzut produkcji — 15 programów systemowych, 334 sloty, zero
+  otwartych sesji, deklarowane czasy zgodne z receptą. Strona logowania renderuje się, konsola
+  czysta. **Ekrany planów niesprawdzone wizualnie — są za loginem.**
+- **POMYŁKA DO ODNOTOWANIA:** zaraportowałem blokującą sesję jako pustą (błąd w skrypcie —
+  szukał w `session_sets` kolumny `session_id`). Miała 26 serii, 10 zaliczonych. Warunek
+  bezpieczeństwa w migracji odmówił usunięcia i tylko dlatego dane przetrwały. Po podaniu
+  prawdziwych liczb właściciel ponowił decyzję. Reguła zapisana jako **D-47**.
+- **Awaria pierwszego pushu:** blok PL/pgSQL z `RAISE` padł na produkcji na błędzie, którego CLI
+  nie pokazuje; lokalnie przechodził (pooler kontra połączenie bezpośrednie). Przepisane na jedno
+  zdanie `DELETE` z warunkami w `WHERE`. Produkcja nie została w stanie połowicznym.
+- **Znalezisko poza zakresem:** `advanced-gym-ppl6` ma na produkcji 36 slotów wobec 38 w seedzie —
+  brak `Ab_Wheel_Rollout` w Legs A i `Hanging_Leg_Raise` w Legs B, czyli zero pracy core w dniach
+  nóg. Dryf sprzed PLAN-C (P13 nigdy nie był point-syncowany). Do decyzji: mała migracja syncująca.
+- **Otwarte:** checkpoint wizualny [Ty]; 56 slotów z zaślepką zdjęcia; brak coach sign-off;
+  14% slotów ma alternatywę.
+
 ### 2026-07-29 · Claude · PLAN-C4 — domknięcie biblioteki (15/15)
 
 - **Zmienione recepty (2):** `intermediate-home-fbw2` dostał łydki w obu dniach (wcześniej zero),
