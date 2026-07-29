@@ -444,6 +444,16 @@ export const PLANNED_PROGRAM_ALTERNATIVES: PlannedProgramAlternative[] = [
   {
     programSlug: "intermediate-gym-fbw2",
     dayLabel: "Trening B",
+    defaultExerciseId: "Standing_Calf_Raises",
+    alternativeExerciseId: "Calf_Raise_On_A_Dumbbell",
+    missingEquipment: ["machine"],
+    alternativeEquipment: ["dumbbell"],
+    patternCoverage: "same_pattern",
+    notePl: "Wspięcia bez maszyny; stań przodem stopy na podwyższeniu, żeby zachować pełny zakres.",
+  },
+  {
+    programSlug: "intermediate-gym-fbw2",
+    dayLabel: "Trening B",
     defaultExerciseId: "Hammer_Curls",
     alternativeExerciseId: "Cable_Hammer_Curls_-_Rope_Attachment",
     missingEquipment: ["dumbbell"],

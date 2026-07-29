@@ -1127,7 +1127,7 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-gym-fbw2",
     name: "Średniozaawansowany · Siłownia · Całe ciało",
-    description: "Dwa krótkie treningi całego ciała na pełnym sprzęcie, z naciskiem na górę. Każda sesja ma jedno duże ćwiczenie na dół, pełny push i pull oraz bezpośredni biceps i triceps. Objętość nóg jest świadomie umiarkowana — przy priorytecie nóg włącz moduł opcjonalny albo wybierz plan „Pośladki i nogi”. Zostaw 1 lub 2 powtórzenia w zapasie.",
+    description: "Dwa treningi całego ciała na pełnym sprzęcie, z lekkim naciskiem na górę. Jedno duże ćwiczenie na dół w sesji, pełny push i pull, bezpośredni biceps i triceps. Plan projektowany na 3 dni w tygodniu — przy dwóch działa, ale rozwija wolniej. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Siłownia · masa i siła",
     goal_key: "strength_hypertrophy",
     level: "średniozaawansowany",
@@ -1136,40 +1136,43 @@ export const PROGRAMS: Program[] = [
     level_max: 2,
     frequency_min: 2,
     frequency_max: 3,
-    estimated_minutes_min: 50,
-    estimated_minutes_max: 65,
-    // Maszyny obsługują wyłącznie alternatywy, więc nie są wymaganiem wejścia (PLAN-C1).
-    required_equipment: ["barbell", "dumbbell", "cable"],
-    optional_equipment: ["machine", "body only"],
-    content_version: 4,
+    estimated_minutes_min: 55,
+    estimated_minutes_max: 70,
+    // Maszyna do łydek jest slotem, więc wchodzi do wymagań; reszta maszyn to alternatywy.
+    required_equipment: ["barbell", "dumbbell", "cable", "machine"],
+    optional_equipment: ["body only"],
+    content_version: 5,
     days_per_week: 2,
-    // Recepta v2.1: A rozwija wzorzec przysiadu, B zawias biodrowy. Po 21 serii roboczych.
-    // Odejście od v2.1: obie sesje mają biceps I triceps. Sam cykl A/B dawał po 3 serie
-    // bezpośrednie na tydzień przy dwóch dniach — za mało dla celu sylwetkowego (por. [S6]
-    // Mannarino 2021: wiosłowanie nie zastępuje uginania). Teraz jest po 5.
+    // Recepta v2.1 z dwoma policzonymi odejściami (D-46):
+    // 1. obie sesje mają biceps I triceps — v2.1 dawała po 3 serie bezpośrednie tygodniowo,
+    //    za mało dla celu sylwetkowego (Mannarino 2021: wiosłowanie nie zastępuje uginania);
+    // 2. przysiad i RDL po 5 serii oraz łydki w B — v2.1 zostawiała czworogłowe, pośladki
+    //    i łydki na 6,0 / 6,0 / 0 serii tygodniowo. Dół nadal ma jedno duże ćwiczenie na sesję.
+    // A: 22 serie roboczych, B: 24.
     days: [
       {
         label: "Trening A",
         slots: [
-          { exercise_id: "Barbell_Squat", sets: 4, repsMin: 5, repsMax: 8, rest: 180 },
+          { exercise_id: "Barbell_Squat", sets: 5, repsMin: 5, repsMax: 8, rest: 180 },
           { exercise_id: "Barbell_Incline_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 10, rest: 150, notes: "Oparcie ustaw na około 30 stopni." },
           { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 4, repsMin: 6, repsMax: 10, rest: 120, notes: "Podciąganie jest pełnoprawnym wariantem, jeśli utrzymasz pełny zakres." },
           { exercise_id: "Side_Lateral_Raise", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
           { exercise_id: "Incline_Dumbbell_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
-          { exercise_id: "Reverse_Crunch", sets: 2, repsMin: 10, repsMax: 20, rest: 60, notes: "Inicjuj ruch podwinięciem miednicy, bez rozpędu." },
           { exercise_id: "Cable_Rope_Overhead_Triceps_Extension", sets: 2, repsMin: 10, repsMax: 15, rest: 60, notes: "Praca zza głowy rozciąga długą głowę tricepsa; w B pracujesz nad nią z góry." },
+          { exercise_id: "Reverse_Crunch", sets: 2, repsMin: 10, repsMax: 20, rest: 60, notes: "Inicjuj ruch podwinięciem miednicy, bez rozpędu." },
         ],
       },
       {
         label: "Trening B",
         slots: [
-          { exercise_id: "Romanian_Deadlift", sets: 4, repsMin: 6, repsMax: 10, rest: 180, notes: "Zakończ serię, gdy kolejne powtórzenie wymagałoby utraty neutralnej pozycji tułowia." },
+          { exercise_id: "Romanian_Deadlift", sets: 5, repsMin: 6, repsMax: 10, rest: 180, notes: "Zakończ serię, gdy kolejne powtórzenie wymagałoby utraty neutralnej pozycji tułowia." },
           { exercise_id: "Barbell_Bench_Press_-_Medium_Grip", sets: 4, repsMin: 6, repsMax: 10, rest: 150 },
           { exercise_id: "Chest-Supported_Dumbbell_Row", sets: 4, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Arnold_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90, notes: "Dwie serie wystarczą, bo przedni akton barku pracuje już w wyciskaniach." },
           { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
-          { exercise_id: "Hanging_Knee_Raise", sets: 2, repsMin: 8, repsMax: 15, rest: 60 },
           { exercise_id: "Hammer_Curls", sets: 2, repsMin: 10, repsMax: 15, rest: 60, notes: "Chwyt młotkowy dokłada ramienno-promieniowy, którego nie dostajesz z uginania na skosie w A." },
+          { exercise_id: "Standing_Calf_Raises", sets: 3, repsMin: 10, repsMax: 15, rest: 60, notes: "Pełny zakres i krótka pauza u góry. Jedyna praca łydek w całym cyklu." },
+          { exercise_id: "Hanging_Knee_Raise", sets: 2, repsMin: 8, repsMax: 15, rest: 60 },
         ],
       },
     ],
@@ -1470,6 +1473,29 @@ async function seedProgramAlternatives() {
     .upsert(rows, { onConflict: "program_day_slot_id,alternative_exercise_id" });
   if (upsertError) {
     throw new Error(`program alternatives upsert: ${upsertError.message}`);
+  }
+
+  // Upsert nie usuwa niczego, a sloty bywają przepinane na inne ćwiczenia przy korekcie
+  // recepty — wtedy stara alternatywa zostaje przy slocie, który trzyma już inny ruch.
+  // Kasujemy wyłącznie osierocone wiersze programów systemowych; dane użytkownika zostają.
+  const oczekiwaneId = new Set(rows.map((row) => row.id));
+  const { data: istniejace, error: istniejaceError } = await db
+    .from("program_slot_alternatives")
+    .select("id, program_day_slot_id")
+    .in("program_day_slot_id", [...slotsBySource.values()].flat());
+  if (istniejaceError) {
+    throw new Error(`program alternatives select: ${istniejaceError.message}`);
+  }
+  const osierocone = (istniejace ?? []).filter((row) => !oczekiwaneId.has(row.id));
+  if (osierocone.length > 0) {
+    const { error: deleteError } = await db
+      .from("program_slot_alternatives")
+      .delete()
+      .in("id", osierocone.map((row) => row.id));
+    if (deleteError) {
+      throw new Error(`program alternatives cleanup: ${deleteError.message}`);
+    }
+    console.log(`✓ usunięto ${osierocone.length} osieroconych alternatyw po zmianie recepty`);
   }
 
   const { count, error: countError } = await db
