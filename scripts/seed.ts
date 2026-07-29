@@ -559,11 +559,11 @@ export const PROGRAMS: Program[] = [
     level_max: 2,
     frequency_min: 2,
     frequency_max: 3,
-    estimated_minutes_min: 45,
-    estimated_minutes_max: 60,
+    estimated_minutes_min: 40,
+    estimated_minutes_max: 55,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
-    content_version: 2,
+    content_version: 3,
     days_per_week: 3,
     days: [
       {
@@ -575,6 +575,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Standing_Calf_Raises", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
+          { exercise_id: "Pallof_Press", sets: 2, repsMin: 10, repsMax: 12, rest: 60, notes: "Na stronę. Opieraj się rotacji, nie ciągnij ramionami." },
         ],
       },
       {
@@ -586,6 +587,8 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Incline_Dumbbell_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120 },
           { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
           { exercise_id: "One-Legged_Cable_Kickback", sets: 2, repsMin: 12, repsMax: 20, rest: 75, notes: "na nogę; zatrzymaj ruch na górze" },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
+          { exercise_id: "Triceps_Pushdown", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -597,6 +600,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Bulgarian_Split_Squat", sets: 2, repsMin: 8, repsMax: 12, rest: 120, notes: "na nogę" },
           { exercise_id: "Wide-Grip_Lat_Pulldown", sets: 2, repsMin: 10, repsMax: 15, rest: 90 },
           { exercise_id: "Dumbbell_Bench_Press", sets: 2, repsMin: 10, repsMax: 15, rest: 90 },
+          { exercise_id: "Hanging_Knee_Raise", sets: 2, repsMin: 8, repsMax: 15, rest: 60, notes: "Bez bujania; bez drążka zrób dead bug." },
         ],
       },
     ],
@@ -614,11 +618,11 @@ export const PROGRAMS: Program[] = [
     level_max: 2,
     frequency_min: 2,
     frequency_max: 3,
-    estimated_minutes_min: 40,
-    estimated_minutes_max: 55,
+    estimated_minutes_min: 35,
+    estimated_minutes_max: 50,
     required_equipment: ["dumbbell"],
     optional_equipment: ["kettlebells", "body only", "other"],
-    content_version: 1,
+    content_version: 2,
     days_per_week: 3,
     days: [
       {
@@ -630,6 +634,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "One-Arm_Dumbbell_Row", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "na rękę" },
           { exercise_id: "Dumbbell_Bench_Press", sets: 3, repsMin: 8, repsMax: 12, rest: 120, notes: "bez ławki: wyciskanie hantli na podłodze" },
           { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 2, repsMin: 12, repsMax: 20, rest: 60 },
+          { exercise_id: "Dumbbell_Bicep_Curl", sets: 3, repsMin: 10, repsMax: 15, rest: 60 },
         ],
       },
       {
@@ -641,6 +646,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "Incline_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90, notes: "bez ławki: wyciskanie hantli na podłodze" },
           { exercise_id: "Seated_Dumbbell_Press", sets: 2, repsMin: 8, repsMax: 12, rest: 90 },
           { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 45, notes: "na stronę" },
+          { exercise_id: "Standing_Dumbbell_Triceps_Extension", sets: 3, repsMin: 10, repsMax: 15, rest: 60, notes: "Łokcie blisko głowy, ruch tylko w łokciu." },
         ],
       },
       {
@@ -652,6 +658,7 @@ export const PROGRAMS: Program[] = [
           { exercise_id: "One-Arm_Dumbbell_Row", sets: 3, repsMin: 10, repsMax: 15, rest: 90, notes: "na rękę" },
           { exercise_id: "Dumbbell_Bench_Press", sets: 2, repsMin: 10, repsMax: 15, rest: 90, notes: "bez ławki: wyciskanie hantli na podłodze" },
           { exercise_id: "Calf_Raise_On_A_Dumbbell", sets: 2, repsMin: 15, repsMax: 20, rest: 60 },
+          { exercise_id: "Dead_Bug", sets: 2, repsMin: 8, repsMax: 12, rest: 60, notes: "Na stronę. Lędźwie przy podłożu przez cały ruch." },
         ],
       },
     ],
@@ -1054,8 +1061,8 @@ export const PROGRAMS: Program[] = [
     level_max: 3,
     frequency_min: 6,
     frequency_max: 6,
-    estimated_minutes_min: 55,
-    estimated_minutes_max: 75,
+    estimated_minutes_min: 45,
+    estimated_minutes_max: 65,
     required_equipment: ["barbell", "dumbbell", "cable", "machine"],
     optional_equipment: ["body only"],
     // F3.3 (audyt biblioteki 2026-07-18, §7.1): Pull A (deadlift) i Legs A (squat+RDL)
@@ -1064,7 +1071,7 @@ export const PROGRAMS: Program[] = [
     // squat+RDL tego samego dnia), a systemowe zmęczenie zredukowane po obu stronach:
     // mniej serii wioseł w Pull A i mniej serii RDL/leg curl w Legs A. Do potwierdzenia
     // przez trenera-konsultanta (decyzja D2) — na testy ze znajomymi wystarczające.
-    content_version: 4,
+    content_version: 5,
     days_per_week: 6,
     days: [
       {

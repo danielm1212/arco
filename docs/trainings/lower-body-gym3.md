@@ -4,6 +4,12 @@
 >
 > Plan z większym naciskiem na pośladki, uda i tył nóg. Góra ciała pozostaje regularnie trenowana, ale ma mniejszą objętość.
 
+
+> **Aktualizacja PLAN-C3:** plan dostał bezpośrednią pracę brzucha i ramion.
+> `lower-body-gym3` nie miał wcześniej **żadnej** pracy core — zatwierdzony w lipcu
+> Pallof Press nigdy nie wszedł do danych. Oba plany deklarowały też dłuższą sesję,
+> niż realnie trwały; deklaracje zeszły do prawdy, a nowa praca zmieściła się w zapasie.
+
 ## Dół A · siła
 
 | Ćwiczenie | Serie × powt. | Przerwa |
@@ -14,6 +20,7 @@
 | Wide-Grip Lat Pulldown | 3 × 8–12 | 2:00 |
 | Dumbbell Bench Press | 3 × 8–12 | 2:00 |
 | Standing Calf Raise | 2 × 12–20 | 1:00 |
+| Pallof Press | 2 × 10–12 / strona | 1:00 |
 
 ## Góra + pośladki
 
@@ -25,6 +32,8 @@
 | Incline Dumbbell Press | 3 × 8–12 | 2:00 |
 | Seated Dumbbell Press | 2 × 8–12 | 1:30 |
 | One-Legged Cable Kickback | 2 × 12–20 / noga | 1:15 |
+| DB Bicep Curl | 3 × 10–15 | 1:00 |
+| Triceps Pushdown | 3 × 10–15 | 1:00 |
 
 ## Dół B · objętość
 
@@ -36,6 +45,7 @@
 | Bulgarian Split Squat | 2 × 8–12 / noga | 2:00 |
 | Wide-Grip Lat Pulldown | 2 × 10–15 | 1:30 |
 | Dumbbell Bench Press | 2 × 10–15 | 1:30 |
+| Hanging Knee Raise | 2 × 8–15 | 1:00 |
 
 ## Zasady
 
