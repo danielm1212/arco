@@ -1,6 +1,6 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-29
+**Aktualizacja:** 2026-07-30
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
@@ -286,10 +286,20 @@ koordynacji (2026-07-23).
 5. **HOME-NAV — w toku:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
    POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04 rozpisane w `spec-home-i-nawigacja.md`.
    **HOME-01 (powitanie + karta passy) scalone do `main` w PR
-   [#33](https://github.com/danielm1212/arco/pull/33).** Kolejny krok: **HOME-02**
-   (podsumowanie okresu + kafle, Model: Opus 5 — budżet gorącej trasy). HOME-NAV wchodzi
-   **przed R2.2** — obie dotykają `/programs`. PLAN-04 (start dowolnego planu bez zmiany
-   aktywnego) jest niezależny i może iść równolegle.
+   [#33](https://github.com/danielm1212/arco/pull/33). HOME-02 (podsumowanie okresu + trzy
+   kafle) gotowe technicznie 2026-07-30** — `lib/homePeriods.ts` + `app/HomeStats.tsx`,
+   202/202 unit, 32/32 przeglądarkowych. Budżet gorącej trasy **zmierzony przez
+   `pg_stat_statements` przed implementacją**: naiwny reuse `periodStats`/`getStrengthTrends`
+   dawał **+13 zapytań** (8 → 21), więc agregaty liczą się z wierszy, które `getHomeGuidance`
+   i tak już pobiera — koszt realny **+1** (licznik rekordów, `head: true`, równolegle,
+   bez pogłębiania waterfalla: 8 → 9). CTA startu nie czeka na statystyki (wspólny `Suspense`
+   po hero). „Największy progres" liczony w oknie 90 dni, tym samym co `getStrengthTrends`,
+   żeby Home i Postępy nie rozjechały się na tym samym ruchu. **Do [Ty]: checkpoint wizualny
+   Home za loginem** — komponent zweryfikowany na 320/375 px light+dark na fixture'ach,
+   ale pełnego ekranu z prawdziwymi danymi nie sprawdziłem (agent nie wpisuje haseł).
+   Kolejny krok: **HOME-03** (postęp ćwiczeń ze sparkline; reużyje `getHomeInsights`, więc
+   nie dołoży zapytań). HOME-NAV wchodzi **przed R2.2** — obie dotykają `/programs`.
+   PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może iść równolegle.
 6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
    CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").
    Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`. **05C (`LevelMeter`) gotowe

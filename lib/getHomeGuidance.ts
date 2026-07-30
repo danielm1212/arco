@@ -4,7 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { setMetric } from "@/lib/exerciseMetrics";
 import { weekStart } from "@/lib/week";
-import type { ExerciseType } from "@/lib/types";
+import type { ExerciseType, UnitSystem } from "@/lib/types";
+import {
+  aggregateHomePeriods,
+  type HomeFactRow,
+  type HomePeriodFacts,
+} from "@/lib/homePeriods";
 import {
   balanceFlags,
   categoriesForExercise,
@@ -20,21 +25,50 @@ const DAY = 86_400_000;
 // F0.5: weekStart dzielony z lib/week (Europe/Warsaw) — była to trzecia niezależna
 // kopia tej samej logiki z tym samym bugiem strefy czasowej po deployu na Vercel/UTC.
 
-/**
- * Buduje podpowiedzi guidance na home (Faza A: balans push/pull + staleness partii).
- * Okno: 90 dni (staleness), bieżący tydzień (balans). Liczone z serii roboczych zaliczonych.
- */
-export async function getHomeGuidance(): Promise<GuidanceItem[]> {
-  const supabase = await createClient();
+export interface HomeInsights {
+  guidance: GuidanceItem[];
+  /** `null` = brak historii; Home nie renderuje wtedy statystyk (HOME-02). */
+  periods: HomePeriodFacts | null;
+}
 
-  const { data: sessions } = await supabase
-    .from("sessions")
-    .select("id, started_at")
-    .not("finished_at", "is", null)
-    .gte("started_at", new Date(Date.now() - 90 * DAY).toISOString());
+/**
+ * Jeden przebieg danych Home: podpowiedzi guidance (Faza A: balans push/pull +
+ * staleness partii) ORAZ agregaty okresu HOME-02 z tych samych wierszy.
+ * Okno: 90 dni (staleness/trendy), bieżący tydzień (balans), 7/30 dni (kafle).
+ * Liczone wyłącznie z zaliczonych serii roboczych zakończonych sesji.
+ *
+ * HOME-02 świadomie NIE woła `getPeriodOverview`/`periodStats` z
+ * `app/progress/stats.ts`: każde okno to tam osobny 3-poziomowy waterfall, więc
+ * trzy okna plus trendy to zmierzone **+13 zapytań** na najgorętszej trasie
+ * (budżet `optymalizacja.md` §1 to „≤ 4, równolegle"). Te wiersze i tak już tu
+ * lecą dla guidance — dołożenie agregatów kosztuje **+1** (licznik rekordów).
+ * Definicje trzymamy zgodne z `periodStats`/`getStrengthTrends` (patrz
+ * `lib/homePeriods.ts`), żeby Home i `/progress` nie mogły się rozjechać.
+ */
+export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
+  const supabase = await createClient();
+  const since90 = new Date(Date.now() - 90 * DAY).toISOString();
+  const since30 = new Date(Date.now() - 30 * DAY).toISOString();
+
+  // Licznik rekordów jest niezależny od reszty — leci równolegle z pierwszym
+  // poziomem waterfalla, więc nie pogłębia łańcucha. `head: true` = zero wierszy
+  // w transferze, sam count.
+  const [{ data: sessions }, { count: prCountRaw }] = await Promise.all([
+    supabase
+      .from("sessions")
+      .select("id, started_at")
+      .not("finished_at", "is", null)
+      .gte("started_at", since90),
+    supabase
+      .from("personal_records")
+      .select("id", { count: "exact", head: true })
+      .gte("achieved_at", since30),
+  ]);
+  const prCount30 = prCountRaw ?? 0;
   const sessionDate = new Map((sessions ?? []).map((s) => [s.id, new Date(s.started_at)]));
   const sessionIds = [...sessionDate.keys()];
-  if (sessionIds.length === 0) return [];
+  const sessionDates = [...sessionDate.values()];
+  if (sessionIds.length === 0) return { guidance: [], periods: null };
 
   const { data: ses } = await supabase
     .from("session_exercises")
@@ -67,7 +101,13 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
   });
 
   const seIds = [...seInfo.keys()];
-  if (seIds.length === 0) return [];
+  // Sesje bez ćwiczeń wciąż są faktem — kafle „treningi" mają je liczyć.
+  if (seIds.length === 0) {
+    return {
+      guidance: [],
+      periods: aggregateHomePeriods({ rows: [], sessionDates, prCount30, unit }),
+    };
+  }
   const { data: sets } = await supabase
     .from("session_sets")
     .select("session_exercise_id, weight, reps, duration_seconds")
@@ -83,9 +123,22 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
     string,
     { name: string; type: ExerciseType; perSession: Map<string, number> }
   >();
+  // HOME-02: ten sam przebieg buduje wiersze dla agregatów okresu — zero
+  // dodatkowych zapytań, jedna definicja „zaliczonej serii roboczej".
+  const factRows: HomeFactRow[] = [];
   (sets ?? []).forEach((s) => {
     const info = seInfo.get(s.session_exercise_id);
     if (!info) return;
+    factRows.push({
+      sessionDate: info.date,
+      sessionId: info.sessionId,
+      exerciseId: info.exerciseId,
+      exerciseName: info.name,
+      type: info.type,
+      weight: s.weight,
+      reps: s.reps,
+      duration_seconds: s.duration_seconds,
+    });
     const inThisWeek = weekStart(info.date) === thisWeek;
     for (const cat of info.categories) {
       if (inThisWeek) weekByCat[cat] = (weekByCat[cat] ?? 0) + 1;
@@ -117,9 +170,12 @@ export async function getHomeGuidance(): Promise<GuidanceItem[]> {
       .map(([, v]) => v),
   }));
 
-  return homeGuidance([
-    ...stalenessFlags(daysSinceByCat),
-    ...deloadFlags(deloadInput),
-    ...balanceFlags(weekByCat),
-  ]);
+  return {
+    guidance: homeGuidance([
+      ...stalenessFlags(daysSinceByCat),
+      ...deloadFlags(deloadInput),
+      ...balanceFlags(weekByCat),
+    ]),
+    periods: aggregateHomePeriods({ rows: factRows, sessionDates, prCount30, unit }),
+  };
 }
