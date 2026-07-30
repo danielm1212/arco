@@ -33,12 +33,14 @@
 
 ## 2a. Kontrakt nawigacji Arco
 
-Bottom bar jest przełącznikiem czterech głównych przestrzeni: **Trening, Postępy, Historia i Ekipa**. Ciało jest podwidokiem Postępów, a Plany podwidokiem Treningu. Widok dostaje jawny tryb chrome:
+Bottom bar jest przełącznikiem trzech głównych przestrzeni: **Home, Trening i Ekipa**.
+**Plany, Postępy, Ciało i Historia** są równorzędnymi podwidokami Treningu i korzystają
+z jednego wspólnego paska zakładek. Home nie ma lokalnego paska. Widok dostaje jawny tryb chrome:
 
 | Tryb | Przeznaczenie | Bottom bar | Powrót |
 |---|---|---|---|
-| `hub` | główne przestrzenie: Trening, Postępy, Historia, Ekipa | tak | brak strzałki |
-| `hub-subview` | Plany w Treningu oraz Ciało w Postępach | tak, z aktywnym tabem | lokalny segment zamiast strzałki |
+| `hub` | główne przestrzenie: Home i Ekipa | tak | brak strzałki |
+| `hub-subview` | Plany, Postępy, Ciało i Historia w Treningu | tak, z aktywnym tabem Trening | wspólny pasek zakładek zamiast strzałki |
 | `child` | szczegół, biblioteka lub ekran podrzędny należący do taba | tak, z aktywnym tabem | ikona Back do źródła, fallback do rodzica |
 | `focus` | formularz albo zadanie wymagające zakończenia/anulowania | nie | ikona powrotu lub `X`, zależnie od semantyki |
 | `session` | logger i moment zakończenia treningu | nie | zachowanie specyficzne dla sesji |

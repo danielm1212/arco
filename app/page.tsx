@@ -19,7 +19,6 @@ import { HomeExerciseProgress } from "./HomeExerciseProgress";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { WeeklyGoalBadge } from "@/components/WeeklyGoalBadge";
-import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 import {
   formatCycleStructure,
   type ProgramCandidate,
@@ -236,8 +235,6 @@ export default async function HomePage() {
         }
         displayName={settings?.display_name ?? null}
       />
-      <TrainingSubnav active="today" />
-
       <main className="flex-1 space-y-lg p-md">
         {/* HOME-01: powitanie jest linią treści nad hero, nie modułem — karta
             startu zostaje pierwszym modułem (D-03, audyt R2.1). Brak imienia =
@@ -248,7 +245,7 @@ export default async function HomePage() {
 
         {/* R2.1 (audyt P0): pełna karta tygodnia zniknęła z domyślnego Home —
             szczegół tygodnia żyje w sheecie badge'a w headerze. Hero jest
-            pierwszym merytorycznym modułem po subnavie. */}
+            pierwszym merytorycznym modułem pod nagłówkiem. */}
         {openSession ? null : suggested ? (
           // F1 (redesign-home.md V4): hero = BIAŁY kafel (nie sand) — hierarchię
           // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.

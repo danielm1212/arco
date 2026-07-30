@@ -5,7 +5,7 @@ import { BodyPhotoButton } from "./BodyPhotoButton";
 import { Button } from "@/components/ui/button";
 import { Sparkline } from "@/components/Sparkline";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
-import { ProgressSubnav } from "@/components/navigation/ProgressSubnav";
+import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 
 export const dynamic = "force-dynamic";
 
@@ -60,12 +60,12 @@ export default async function BodyPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      {/* Tytuł huba nie zmienia się przy przełączaniu podwidoku — kontekst
-          nawigacyjny to wciąż Postępy, aktywny segment komunikuje subnav. */}
+      {/* Tytuł ekranu pozostaje stabilny; wspólny pasek niżej komunikuje,
+          że Ciało jest równorzędnym podwidokiem przestrzeni Trening. */}
       <header className="border-b px-md py-md text-center">
         <h1 className="font-semibold">Postępy</h1>
       </header>
-      <ProgressSubnav active="body" />
+      <TrainingSubnav active="body" />
 
       <main className="flex-1 space-y-lg p-md">
         {/* R3a: dodanie pomiaru to osobny ekran focus — Ciało zostaje przeglądem trendu */}

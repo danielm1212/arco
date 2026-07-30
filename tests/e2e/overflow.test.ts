@@ -189,6 +189,49 @@ async function pageOverflow(body: string): Promise<number> {
   }
 }
 
+test("NAV-01: cztery zakładki Treningu mieszczą się na 320/375/393 px", async () => {
+  const body = `<main class="mx-auto max-w-md">
+    <div class="px-md pt-md">
+      <nav aria-label="Sekcje treningu" class="grid grid-cols-4 rounded-full bg-muted p-1">
+        ${["Plany", "Postępy", "Ciało", "Historia"]
+          .map(
+            (label, index) => `<a
+              href="#"
+              ${index === 0 ? 'aria-current="page"' : ""}
+              class="flex min-h-11 min-w-0 items-center justify-center rounded-full px-1 text-xs font-medium ${index === 0 ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}"
+            >${label}</a>`,
+          )
+          .join("")}
+      </nav>
+    </div>
+  </main>`;
+
+  for (const width of [320, 375, 393]) {
+    const context = await browser.newContext({ viewport: { width, height: 780 } });
+    try {
+      const page = await context.newPage();
+      await page.setContent(pageHtml(body), { waitUntil: "load" });
+      const metrics = await page.evaluate(() => ({
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        links: [...document.querySelectorAll<HTMLElement>('nav[aria-label="Sekcje treningu"] a')]
+          .map((link) => ({
+            height: link.getBoundingClientRect().height,
+            clipped: link.scrollWidth > link.clientWidth,
+          })),
+      }));
+
+      assert.ok(metrics.overflow <= 1, `poziomy overflow ${metrics.overflow}px przy ${width}px`);
+      assert.equal(metrics.links.length, 4);
+      for (const link of metrics.links) {
+        assert.ok(link.height >= 44, `target ma ${link.height}px przy ${width}px`);
+        assert.equal(link.clipped, false, `ucięta etykieta przy ${width}px`);
+      }
+    } finally {
+      await context.close();
+    }
+  }
+});
+
 test("SESSION-01A2: zwarty wiersz serii mieści pola i check na 320/375/393 px", async () => {
   const body = `<main class="mx-auto max-w-md p-md"><section class="rounded-xl bg-card p-md">
     <ul class="space-y-xs">

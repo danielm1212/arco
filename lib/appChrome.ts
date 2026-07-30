@@ -1,4 +1,4 @@
-export type AppTab = "training" | "progress" | "history" | "team";
+export type AppTab = "home" | "training" | "team";
 
 export type ScreenType =
   | "hub"
@@ -66,16 +66,16 @@ const focused = (screenType: ScreenType = "focus"): Omit<RouteRule, "id" | "matc
  * To jest jedyne miejsce z domyślnym kontraktem chrome dla produkcyjnych stron.
  */
 export const APP_ROUTE_RULES: readonly RouteRule[] = [
-  { id: "training-home", matches: exact("/"), ...hub("training") },
+  { id: "home", matches: exact("/"), ...hub("home") },
   { id: "program-library", matches: exact("/programs"), ...subview("training") },
   { id: "program-detail", matches: segment("/programs"), ...child("training") },
-  { id: "progress-home", matches: exact("/progress"), ...hub("progress") },
-  { id: "body", matches: exact("/body"), ...subview("progress") },
+  { id: "progress", matches: exact("/progress"), ...subview("training") },
+  { id: "body", matches: exact("/body"), ...subview("training") },
   { id: "body-add", matches: exact("/body/add"), ...focused() },
-  { id: "exercise-detail", matches: segment("/exercise"), ...child("progress") },
+  { id: "exercise-detail", matches: segment("/exercise"), ...child("training") },
   { id: "history-add", matches: exact("/history/add"), ...focused("session-edit") },
-  { id: "history-home", matches: exact("/history"), ...hub("history") },
-  { id: "history-detail", matches: segment("/history"), ...child("history") },
+  { id: "history", matches: exact("/history"), ...subview("training") },
+  { id: "history-detail", matches: segment("/history"), ...child("training") },
   { id: "team-home", matches: exact("/ekipa"), ...hub("team") },
   { id: "settings", matches: exact("/settings"), ...focused() },
   { id: "session-done", matches: (pathname) => /^\/session\/[^/]+\/done$/.test(pathname), ...focused("moment") },
@@ -111,15 +111,15 @@ export function resolveAppChromeRouteId(pathname: string): string | null {
 }
 
 export const APP_ROUTE_CASES = [
-  ["/", "hub", "training"],
+  ["/", "hub", "home"],
   ["/programs", "hub-subview", "training"],
   ["/programs/example", "child", "training"],
-  ["/progress", "hub", "progress"],
-  ["/body", "hub-subview", "progress"],
+  ["/progress", "hub-subview", "training"],
+  ["/body", "hub-subview", "training"],
   ["/body/add", "focus", null],
-  ["/exercise/example", "child", "progress"],
-  ["/history", "hub", "history"],
-  ["/history/example", "child", "history"],
+  ["/exercise/example", "child", "training"],
+  ["/history", "hub-subview", "training"],
+  ["/history/example", "child", "training"],
   ["/history/add", "session-edit", null],
   ["/ekipa", "hub", "team"],
   ["/settings", "focus", null],

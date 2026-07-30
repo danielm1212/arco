@@ -1,4 +1,4 @@
-# Macierz regresji urządzeniowej — checkpoint po R1b/R2/R2.1/Done/R5a
+# Macierz regresji urządzeniowej — checkpoint po R1b/R2/R2.1/Done/R5a/NAV-01
 
 > **Data:** 2026-07-18 · **Cel:** jedno przejście (~30 min na urządzeniu głównym) zamiast
 > pięciu rozproszonych checklist z dziennika. Zamyka ryzyko nr 2 z HANDOFF (brak jednej
@@ -21,12 +21,17 @@ sprawdź brak błędów przy starcie (scenariusz „stary cache po deployu" z au
 
 ## Scenariusze
 
-### 1. Chrome i nawigacja (R1a/R2) ●
+### 1. Chrome i nawigacja (R1a/R2/NAV-01) ●
 
-- [ ] Bottom bar: Trening / Postępy / Historia / Ekipa — przełączanie bez utraty stanu.
-- [ ] Subnav Dziś | Plany przełącza przez replace (Back nie cofa po podwidokach).
-- [ ] Przejście Dziś → Plany: header i subnav NIE znikają podczas ładowania (R2.1).
-- [ ] Postępy: Trening | Ciało — tytuł huba zostaje „Postępy" przy zmianie segmentu.
+- [ ] Bottom bar: Home / Trening / Ekipa — przełączanie bez utraty stanu.
+- [ ] W Treningu pasek Plany | Postępy | Ciało | Historia przełącza przez `replace`
+      (Back nie cofa po podwidokach).
+- [ ] Przejście między podwidokami Treningu: header i wspólny pasek NIE znikają podczas
+      ładowania.
+- [ ] Deep link do /progress, /body i /history ustawia globalny tab Trening oraz właściwą
+      lokalną zakładkę; Home nie pokazuje lokalnego paska.
+- [ ] Android: Trening → Postępy → Plany → szczegół planu → systemowy Back wraca do Planów,
+      nie do poprzedniej zakładki ani poza aplikację.
 - [ ] Deep link do /settings → Back = bezpieczny fallback, nie wyjście z aplikacji.
 
 ### 2. Home: badge celu i sheet tygodnia (R2.1 — NOWE) ●
@@ -35,7 +40,7 @@ sprawdź brak błędów przy starcie (scenariusz „stary cache po deployu" z au
 - [ ] Tap otwiera sheet: X z Y treningów, 7 płomieni dni, passa, link do Historii.
 - [ ] Zamknięcie: Escape (C), tap w overlay, swipe w dół — wszystkie trzy drogi.
 - [ ] Po zamknięciu fokus wraca na badge (C: Tab/Enter/Space otwierają ponownie).
-- [ ] Home bez aktywnej sesji: hero jest PIERWSZYM modułem po subnavie; CTA „Zacznij
+- [ ] Home bez aktywnej sesji: hero jest PIERWSZYM modułem pod nagłówkiem; CTA „Zacznij
       trening" w całości nad floating navem (test małej wysokości: iPhone mini/SE
       albo Safari z paskiem narzędzi).
 
