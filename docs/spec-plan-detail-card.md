@@ -73,7 +73,9 @@ bazie zgodnie z `arco-migration`.
   `MomentIcon3D name="plan"`. **Zero nowych assetów** — reużycie ikony już zatwierdzonej do
   produkcji;
 - komponent jest **tym samym** w obu miejscach użycia (lista i szczegół), różni się tylko
-  rozmiarem przez prop `size: "row" | "hero"`.
+  rozmiarem przez prop `size: "row" | "hero"`. `hero` jest szeroką okładką 4:3 na ekranie
+  `/programs/[id]`, a `row` miniaturą 64×64 po lewej stronie wiersza biblioteki. Sam
+  `ProgramCover` nie renderuje tytułu, faktów ani CTA — składają je dopiero PLAN-05D/05E.
 
 **Zależności:** PLAN-05A (typ `coverImageUrl` musi istnieć w danych, choćby jako `null`
 przekazywane z zapytania).
@@ -83,11 +85,11 @@ błąd ładowania (fallback zamiast złamanej ikony `<img>`), `prefers-reduced-m
 (statyczny element, bez animacji wejścia).
 
 **Kryteria akceptacji:**
-- [ ] przy `coverImageUrl = null` renderuje się fallback, nie pusty kontener i nie błąd;
-- [ ] fallback nie robi sieciowego zapytania o obraz, który nie istnieje;
-- [ ] `focus_key = "lower_body"` i `"balanced"` dają wizualnie różne fallbacki (dowód, że
+- [x] przy `coverImageUrl = null` renderuje się fallback, nie pusty kontener i nie błąd;
+- [x] fallback nie robi sieciowego zapytania o obraz, który nie istnieje;
+- [x] `focus_key = "lower_body"` i `"balanced"` dają wizualnie różne fallbacki (dowód, że
       klucz jest realnie użyty, nie zaszyty na sztywno);
-- [ ] `alt=""` z `aria-hidden` na fallbacku (czysto dekoracyjny), realne zdjęcie dostaje
+- [x] `alt=""` z `aria-hidden` na fallbacku (czysto dekoracyjny), realne zdjęcie dostaje
       opisowy `alt` z nazwy planu.
 
 **Testy:** unit na wyborze wariantu gradientu per `focus_key`; test przeglądarkowy — brak
@@ -140,7 +142,12 @@ przewijania przez ściany tekstu.
 ```
 1. ProgramCover (size="hero") + PageHeader nad nim (Back)
 2. Tytuł planu
-3. Jeden wiersz faktów: czas · LevelMeter · liczba treningów (program_days.length) · dni/tydz.
+3. Zwarty wiersz faktów: ikona hantla + liczba treningów (`program_days.length`) · ikona
+   kalendarza + dni/tydz. · ikona zegara + czas. Bez nagłówków „Treningi”, „Częstotliwość”
+   i „Czas”, ale z widocznymi wartościami, np. „3 treningi · 2–3 dni/tydz. · 45–60 min”.
+   Ikony są dekoracyjne (`aria-hidden`), więc zrozumiałość nie zależy od ich odgadnięcia.
+   `LevelMeter` z tekstową etykietą poziomu jest częścią tego bloku; na 320 px może zejść
+   do drugiego wiersza zamiast ściskać trzy fakty.
 4. CTA "Ustaw jako aktywny" / stan "Aktywny" — NAD zgięciem, zaraz po faktach
 5. Akordeon "Opis" — domyślnie OTWARTY (opis jest jedyną treścią specyficzną dla planu)
 6. Zwarta sekcja faktów: sprzęt wymagany/opcjonalny + rotacja
@@ -172,6 +179,8 @@ zakładek).
 **Kryteria akceptacji:**
 - [ ] CTA startu/aktywacji widoczne bez scrollowania na 375 px przy planie z opisem
       długości mediany (zmierzone, nie „wygląda dobrze");
+- [ ] na 320 px trzy fakty z ikonami nie mają poziomego overflow, zachowują pełne wartości
+      tekstowe, a `LevelMeter` układa się w drugim wierszu;
 - [ ] usunięcie karty „Jak robić postęp" nie zostawia osieroconego importu/martwego kodu
       formatującego ten tekst;
 - [ ] `formatRotationGuidance`/`formatWeeklyRotationExample` nadal używane — logika rotacji
