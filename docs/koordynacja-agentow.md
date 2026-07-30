@@ -21,6 +21,24 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-30 · Codex · PLAN-05B ProgramCover: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** nowy wspólny `ProgramCover` dla przyszłego szczegółu i listy, czyste mapowanie
+  gradientu/rozmiaru, ograniczona konfiguracja `next/image` dla publicznego Storage Supabase,
+  skanowanie `lib/` przez Tailwind oraz testy unit/overflow.
+- **Wynik:** obraz dostaje opisowy alt z nazwy planu; bez URL fallback jest dekoracyjny i nie
+  inicjuje zapytania; fallback pozostaje pod obrazem podczas ładowania i odsłania się po błędzie.
+  `balanced` ma rust, `lower_body` violet, `row` ma 64×64 px, `hero` 4:3. Pierwszy podgląd
+  wychwycił brak klas gradientów w buildzie (Tailwind nie skanował `lib/`); poprawka jest
+  zweryfikowana w realnym buildzie, light/dark i przy 404.
+- **Dowód:** commit `c8ffd09`; lint ✓, unit **213/213**, build produkcyjny ✓, overflow
+  **34/34** na 320/375/393 px, `arco-a11y-review` bez nowych findingów AA.
+- **Czego nie dotknięto:** migracji, seeda, RLS, danych programów, `/programs`,
+  `/programs/[id]`, PLAN-05D/E, R2.2 i obcych nieśledzonych duplikatów `SKILL 2.md` /
+  `workflow-zespolu 2.md`.
+- **Zaległości:** [Ty] review/merge PR-a. Po merge następny krok to PLAN-05D (musi zachować
+  nowy chrome NAV-01); następnie PLAN-05E wpina miniaturę na liście.
+
 ### 2026-07-30 · Codex · release PLAN-05A i rebaseline po NAV-01: ZAKOŃCZONE
 
 - **Zakres:** kontrolowany deploy istniejącej migracji

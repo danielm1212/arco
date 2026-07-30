@@ -342,7 +342,13 @@ koordynacji (2026-07-23).
    Phase 1/2/offline/Ekipa zielone. Przed wdrożeniem wykonano backup
    `backups/20260730T111541Z`; dry-run zawierał wyłącznie PLAN-05A, a `migration list`
    potwierdziło 61/61. Odczyt produkcyjny potwierdził 16 programów i zero niepustych
-   okładek. **05B (`ProgramCover`) jest odblokowane.**
+   okładek. **05B (`ProgramCover`) jest gotowe technicznie na
+   `agent/plan-05b-program-cover`:** jeden komponent `row`/`hero`, fallback pod obrazem
+   (bez migotania), obsługa błędu ładowania, opisowy `alt` realnego zdjęcia i dekoracyjny
+   fallback. Do `next/image` dopuszczono wyłącznie publiczny Storage Supabase; Tailwind skanuje
+   `lib/`, aby klasy gradientów nie znikały z buildu. Nie jest jeszcze wpięty w `/programs`
+   ani `/programs/[id]` — to nadal PLAN-05D/05E. Lint, unit **213/213**, build i overflow
+   **34/34** są zielone; ręcznie potwierdzono 320 px, light/dark oraz fallback po 404.
    05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).

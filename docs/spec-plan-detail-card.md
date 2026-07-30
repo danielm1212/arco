@@ -83,11 +83,11 @@ błąd ładowania (fallback zamiast złamanej ikony `<img>`), `prefers-reduced-m
 (statyczny element, bez animacji wejścia).
 
 **Kryteria akceptacji:**
-- [ ] przy `coverImageUrl = null` renderuje się fallback, nie pusty kontener i nie błąd;
-- [ ] fallback nie robi sieciowego zapytania o obraz, który nie istnieje;
-- [ ] `focus_key = "lower_body"` i `"balanced"` dają wizualnie różne fallbacki (dowód, że
+- [x] przy `coverImageUrl = null` renderuje się fallback, nie pusty kontener i nie błąd;
+- [x] fallback nie robi sieciowego zapytania o obraz, który nie istnieje;
+- [x] `focus_key = "lower_body"` i `"balanced"` dają wizualnie różne fallbacki (dowód, że
       klucz jest realnie użyty, nie zaszyty na sztywno);
-- [ ] `alt=""` z `aria-hidden` na fallbacku (czysto dekoracyjny), realne zdjęcie dostaje
+- [x] `alt=""` z `aria-hidden` na fallbacku (czysto dekoracyjny), realne zdjęcie dostaje
       opisowy `alt` z nazwy planu.
 
 **Testy:** unit na wyborze wariantu gradientu per `focus_key`; test przeglądarkowy — brak
