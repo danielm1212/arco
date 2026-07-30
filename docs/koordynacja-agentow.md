@@ -21,6 +21,67 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-30 · Claude Code · PLAN-05E lista planów: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** redesign `ProgramRow` na `/programs` po odrzuceniu kierunku wizualnego z
+  poprzedniego checkpointu. Gałąź `agent/plan-05e-program-list`, zmiany zostawione bez
+  commita. Nowe: `lib/programListCard.ts` + `tests/program-list-card.test.ts`; zmienione:
+  `app/programs/page.tsx`, `app/programs/loading.tsx`, `components/LevelMeter.tsx`,
+  `tests/e2e/overflow.test.ts`.
+- **Feedback właściciela — wszystkie punkty zamknięte:** tytuł prezentacyjny bez powtarzania
+  poziomu/środowiska/częstotliwości („Całe ciało", „Push / Pull / Legs"), środowisko jako
+  mały tag („Siłownia"/„Dom"/„Masa ciała"), poziom jako trzy małe pionowe słupki
+  (`LevelMeter variant="list"`), „Ustaw" przeniesione spod miniatury do stopki karty,
+  aktywny plan jako stan całej karty zamiast osobnego znacznika. Miniatura 64×64 i zwarta
+  lista zostają — bez zamiany na hero.
+- **Bez migracji i bez nowego zapytania.** Krótki tytuł wyprowadzony z istniejącego pola
+  `name` (człony „Poziom · Środowisko · Fokus · Częstotliwość"); pełna nazwa zostaje prawdą
+  w bazie i na `/programs/[id]`. Degradacja do pełnej nazwy, gdy reguła nie rozpozna nazwy.
+- **Dwa błędy złapane dopiero na realnym buildzie, nie przez testy:** (1) `border` na
+  słupku 8 px daje pierścień czytany jak znak „0" — pusty segment wariantu listowego jest
+  teraz wypełniony; (2) przy `flex-wrap` długa etykieta „Początkujący–średniozaawansowany"
+  spychała „Ustaw" do własnej linii po lewej na 320 px (karta rosła do 208 px) — stopka
+  jest gridem. Na oba doszły asercje w teście PLAN-05E.
+- **Bramka:** lint ✓, build ✓, unit **226/226** (217 + 9 nowych), overflow **36/36**;
+  PLAN-05D zielone, czyli szczegół planu bez regresji. Podgląd na skompilowanym CSS-ie
+  buildu: 320 i 393 px, light i dark, zero overflow; reflow trzyma do 200% powiększenia
+  tekstu. CTA 60×44 px.
+- **`arco-a11y-review`:** kontrasty policzone z tokenów, nie „na oko". Obrys aktywnej karty
+  podbity z `primary/40` (1,71:1 — praktycznie niewidoczny) na `primary/80` (3,42:1 light,
+  3,92:1 dark). Jedno świadome odstępstwo: pełny vs pusty słupek w dark ma **2,44:1** —
+  słupki są warstwą pomocniczą (poziom słownie obok + `aria-label` + kodowanie rangi
+  wysokością), a podbicie krycia gubi czytelność „ile z trzech". Zapisane w kodzie.
+- **Higiena:** usunięto 2814 duplikatów `* 2` z `node_modules` (artefakty iCloud łamiące
+  `tsc`). Obce nieśledzone duplikaty `* 2.*` w `docs/`, `.claude/` i `public/` nietknięte.
+  Bez migracji, deployu i zmian w Linearze. Nie tworzono konta testowego.
+- **Następny krok:** [Ty] przejście po zalogowanej trasie `/programs` i checkpoint iPhone
+  PWA (agent nie loguje się na konto), potem R2.2.
+
+### 2026-07-30 · Codex · PLAN-05E lista planów: W TOKU — HANDOFF DO CLAUDE CODE
+
+- **Stan:** gałąź `agent/plan-05e-program-list`, zmiany pozostawione celowo bez commita.
+  WIP obejmuje `app/programs/page.tsx`, `app/programs/loading.tsx`,
+  `components/LevelMeter.tsx` i `tests/e2e/overflow.test.ts`. Lista pobiera
+  `cover_image_url` w istniejącym zapytaniu, używa `ProgramCover` 64×64 i nie dodaje
+  zapytania.
+- **Co działa:** obecna wersja mieści 15 presetów i własny plan na 320 px, ma targety CTA
+  min. 44 px i poprawny fallback okładki. Na dokładnym stanie kodu: lint ✓, build ✓,
+  unit **217/217**, overflow **36/36**. Sprawdzono też uwierzytelnione stany aktywnego
+  planu, własnego planu, filtrów i braku okładek.
+- **Dlaczego nie zamknięto:** właściciel nie zaakceptował kierunku wizualnego. Nazwy są za
+  długie i powtarzają poziom/środowisko; poziom na liście ma przypominać trzy małe pionowe
+  słupki z referencji, a nie trzy rozciągnięte pastylki; „Siłownia”/„Dom” powinny być
+  osobnym tagiem. Przycisk „Ustaw” pod miniaturą wygląda źle. Aktywny plan powinien być
+  rozważony jako stan całej karty zamiast osobnego przycisku/znacznika. Szczegółowy handoff:
+  `docs/handoff-plan-05e-claude-code-2026-07-30.md`.
+- **Dane i zakres:** lokalne konto `0655b7f4-1ba8-499f-961e-2664b187c790` usunięto
+  punktowo po sprawdzeniu e-maila; jego własny plan i stan aktywny usunęły się kaskadowo.
+  Brak migracji, deployu i zmian w Linearze. Obce nieśledzone duplikaty `* 2.*` pozostały
+  nietknięte.
+- **Następny krok:** [Claude] zacząć od podglądu na 320/393 px, przeprojektować hierarchię
+  tytuł–tag–fakty–poziom–akcja zgodnie z feedbackiem właściciela, zaktualizować loading i
+  statyczny test PLAN-05E, potem powtórzyć build, a11y i realny checkpoint wizualny.
+
 ### 2026-07-30 · Codex · PLAN-05D szczegół planu: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** docelowy detal presetu `/programs/[id]`, zwarte formaty faktów, testy unit/

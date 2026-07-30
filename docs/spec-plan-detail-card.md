@@ -221,14 +221,41 @@ chipów na liście — to wciąż żyje wyłącznie w szczególe.
 **Zależności:** PLAN-05B, PLAN-05C.
 
 **Kryteria akceptacji:**
-- [ ] lista 15 programów systemowych + rząd własnych planów mieści się bez poziomego
+- [x] lista 15 programów systemowych + rząd własnych planów mieści się bez poziomego
       overflow na 320 px z dołożoną miniaturą;
-- [ ] miniatura nie spowalnia pierwszego renderu listy (leniwe ładowanie realnych zdjęć,
+- [x] miniatura nie spowalnia pierwszego renderu listy (leniwe ładowanie realnych zdjęć,
       gdy się pojawią — fallback nie potrzebuje `loading="lazy"`, bo nie jest siecią).
 
 **Testy:** test przeglądarkowy listy na 320 px z pełną liczbą programów.
 
 **Model:** Sonnet 5.
+
+**Iteracja wizualna 2026-07-30 (feedback właściciela).** Pierwszy checkpoint był technicznie
+zielony, ale odrzucony wizualnie: nazwy kart powtarzały poziom, środowisko i częstotliwość,
+poziom renderował się jako trzy poziome pastylki, a „Ustaw” stało pod miniaturą. Kierunek
+docelowy — zaakceptowany:
+
+- **Tytuł prezentacyjny.** `lib/programListCard.ts` zdejmuje z nazwy człony, które karta
+  pokazuje osobno („Początkujący · Siłownia · Całe ciało · 2× w tygodniu” → „Całe ciało”).
+  Bez migracji: pełna nazwa zostaje prawdą w bazie i na `/programs/[id]`, a reguła
+  degraduje się do pełnej nazwy dla nazw nietypowych (własne plany użytkownika).
+- **Środowisko jako tag** pod tytułem („Siłownia”/„Dom”/„Masa ciała”) — krótszy niż etykieta
+  filtra, bo tag ma być znacznikiem, nie zdaniem.
+- **`LevelMeter variant="list"`** — trzy małe pionowe słupki o rosnącej wysokości (28 px
+  zamiast 76 px). Wariant `bars` z 05C/05D zostaje domyślny i **nietknięty**, więc szczegół
+  planu nie regresuje.
+- **„Ustaw” w stopce karty** (60×44 px), poza kolumną zdjęcia. Kolumna miniatury jest
+  wyłącznie zdjęciem, a wejście w szczegół pozostaje wizualnie oddzielone od aktywacji.
+- **Aktywny plan = stan całej karty** (obrys `primary/80`, tło `primary/5`, „✓ Aktywny”),
+  bez osobnego przycisku. Znaczenie niesie nagłówek sekcji i tekst, nie kolor (WCAG 1.4.1).
+
+**Wynik techniczny 2026-07-30:** lint, build, **226/226** unit i **36/36** overflow zielone;
+PLAN-05D bez regresji. Realny CSS buildu sprawdzony na 320 i 393 px, w light i dark, bez
+poziomego overflow; reflow trzyma do 200% powiększenia tekstu. `arco-a11y-review` podbił
+obrys aktywnej karty z `primary/40` (1,71:1) na `primary/80` (3,42:1 light / 3,92:1 dark).
+Jedno udokumentowane odstępstwo: pełny vs pusty słupek w dark ma 2,44:1 — słupki są warstwą
+pomocniczą wobec etykiety tekstowej i `aria-label` (uzasadnienie w `components/LevelMeter.tsx`).
+Przejście po zalogowanej trasie `/programs` zostaje po stronie właściciela.
 
 ## 4. Kolejność i uzasadnienie
 

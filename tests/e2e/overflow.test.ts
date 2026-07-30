@@ -17,6 +17,10 @@ import { join } from "node:path";
 import { build } from "esbuild";
 import { chromium, type Browser, type Page } from "@playwright/test";
 import { programCoverGradient, programCoverSizeClass } from "../../lib/programCover";
+import {
+  formatProgramEnvironmentTag,
+  formatProgramShortName,
+} from "../../lib/programListCard";
 import { STICKY_HEADER_SAFE_AREA } from "../../components/navigation/stickyHeader";
 
 /**
@@ -260,6 +264,178 @@ test("PLAN-05B: miniatura ProgramCover size=row nie rozpycha wąskiej listy", as
 
       assert.ok(metrics.overflow <= 1, `poziomy overflow ${metrics.overflow}px przy ${width}px`);
       assert.deepEqual(metrics.coverWidths, [64, 64, 64]);
+    } finally {
+      await context.close();
+    }
+  }
+});
+
+test("PLAN-05E: pełna lista 15 presetów i własnego planu mieści krótki tytuł, tag, poziom i CTA na 320/393 px", async () => {
+  // Realne nazwy z migracji `20260716160000_program_names_and_rotation_copy.sql`
+  // wraz ze środowiskiem — test przepuszcza je przez te same funkcje co ekran,
+  // więc zmiana konwencji nazw wywala ten test, a nie dopiero podgląd na telefonie.
+  const catalog = [
+    ["Początkujący · Siłownia · Całe ciało · 2× w tygodniu", "gym"],
+    ["Początkujący · Siłownia · Całe ciało · 2–3× w tygodniu", "gym"],
+    ["Początkujący–średniozaawansowany · Siłownia · Pośladki i nogi", "gym"],
+    ["Początkujący · Dom z hantlami · Całe ciało · 2× w tygodniu", "home"],
+    ["Początkujący · Dom z hantlami · Całe ciało · 2–3× w tygodniu", "home"],
+    ["Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi", "home"],
+    ["Początkujący · Masa ciała · Całe ciało", "bodyweight"],
+    ["Średniozaawansowany · Siłownia · Całe ciało", "gym"],
+    ["Średniozaawansowany · Siłownia · Góra / dół ciała", "gym"],
+    ["Średniozaawansowany · Dom z hantlami · Całe ciało", "home"],
+    ["Średniozaawansowany · Dom z hantlami · Góra / dół ciała", "home"],
+    ["Średniozaawansowany · Masa ciała · Całe ciało", "bodyweight"],
+    ["Zaawansowany · Siłownia · Push / Pull / Legs", "gym"],
+    ["Zaawansowany · Dom z hantlami · Góra / dół ciała", "home"],
+    ["Zaawansowany · Masa ciała · Góra / dół ciała", "bodyweight"],
+  ] as const;
+
+  /** PLAN-05E: wariant listowy miernika — trzy małe pionowe słupki o rosnącej
+   *  wysokości, etykieta `text-xs`. Odwzorowanie `LevelMeter variant="list"`. */
+  const meter = (label: string) => `<span
+    role="img"
+    aria-label="Poziom 2 z 3: ${label}"
+    class="inline-flex max-w-full flex-wrap items-center gap-x-xs gap-y-2xs"
+  >
+    <span aria-hidden="true" class="flex items-end gap-2xs">
+      <span class="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
+      <span class="h-3 w-2 rounded-full bg-primary"></span>
+      <span class="h-4 w-2 rounded-full bg-muted-foreground/30"></span>
+    </span>
+    <span aria-hidden="true" class="min-w-0 max-w-full break-words text-xs text-muted-foreground">${label}</span>
+  </span>`;
+  const row = (name: string, environment: string | null, index: number, own = false) => {
+    const coverClass = `${programCoverSizeClass("row")} ${programCoverGradient(
+      index % 3 === 2 ? "lower_body" : "balanced",
+    )}`;
+    const label =
+      index === 2 || index === 5
+        ? "Początkujący–średniozaawansowany"
+        : index >= 12
+          ? "Zaawansowany"
+          : index >= 7
+            ? "Średniozaawansowany"
+            : "Początkujący";
+    const isActive = index === 0;
+    const environmentTag = formatProgramEnvironmentTag(environment);
+
+    return `<article data-program-row class="grid min-w-0 grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-xl border p-sm text-card-foreground shadow-sm ${
+      isActive ? "border-primary/80 bg-primary/5" : "border-transparent bg-card"
+    }">
+      <div data-program-cover aria-hidden="true" class="${coverClass}"></div>
+      <a href="#" class="col-start-2 row-start-1 block min-w-0 rounded-md">
+          <p data-program-title class="break-words font-medium leading-snug">${formatProgramShortName(name)}</p>
+          ${
+            environmentTag
+              ? `<div class="mt-2xs flex flex-wrap items-center gap-2xs"><span class="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">${environmentTag}</span></div>`
+              : ""
+          }
+          <p class="mt-2xs break-words text-xs text-muted-foreground">${
+            own ? "3 dni w cyklu · edytuj →" : "2–3 dni/tydz. · 45–65 min"
+          }</p>
+          ${
+            index === 6
+              ? '<p class="mt-2xs break-words text-xs text-amber-800">Potrzebujesz: drążek</p>'
+              : ""
+          }
+      </a>
+      <div class="col-start-2 row-start-2 mt-xs grid min-h-11 min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-sm">
+        ${own ? "<span></span>" : meter(label)}
+        <div>${
+          isActive
+            ? '<span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span>'
+            : '<button data-program-action class="inline-flex h-11 items-center justify-center rounded-md px-3 text-sm font-medium text-primary">Ustaw</button>'
+        }</div>
+      </div>
+    </article>`;
+  };
+  const rows = [
+    ...catalog.map(([name, environment], index) => row(name, environment, index)),
+    row("Mój własny plan z bardzo długą nazwą", null, catalog.length, true),
+  ];
+  const body = `<main class="mx-auto max-w-md space-y-sm p-md">${rows.join("")}</main>`;
+
+  // 393 px to Pixel/iPhone-owa szerokość z macierzy regresji; 320 px pozostaje
+  // najwęższym obsługiwanym urządzeniem. Redesign musi trzymać oba, nie jedno.
+  for (const width of [320, 393]) {
+    const context = await browser.newContext({ viewport: { width, height: 780 } });
+
+    try {
+      const page = await context.newPage();
+      await page.setContent(pageHtml(body), { waitUntil: "load" });
+      const metrics = await page.evaluate(() => ({
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        rows: [...document.querySelectorAll<HTMLElement>("[data-program-row]")].map(
+          (programRow) => programRow.scrollWidth - programRow.clientWidth,
+        ),
+        coverWidths: [...document.querySelectorAll<HTMLElement>("[data-program-cover]")].map(
+          (cover) => cover.getBoundingClientRect().width,
+        ),
+        titles: [...document.querySelectorAll<HTMLElement>("[data-program-title]")].map(
+          (title) => title.textContent ?? "",
+        ),
+        meterCount: document.querySelectorAll('[role="img"][aria-label^="Poziom"]').length,
+        activeCount: document.querySelectorAll("[data-program-active]").length,
+        actionBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-action]")].map(
+          (action) => {
+            const box = action.getBoundingClientRect();
+            const card = action.closest("[data-program-row]") as HTMLElement;
+            const cardBox = card.getBoundingClientRect();
+            const padding = parseFloat(getComputedStyle(card).paddingRight);
+            return {
+              width: box.width,
+              height: box.height,
+              // Odległość prawej krawędzi CTA od wewnętrznej krawędzi karty.
+              rightGap: cardBox.right - padding - box.right,
+            };
+          },
+        ),
+      }));
+
+      assert.ok(
+        metrics.overflow <= 1,
+        `lista ma poziomy overflow ${metrics.overflow}px przy ${width}px`,
+      );
+      assert.equal(metrics.rows.length, 16);
+      assert.ok(
+        metrics.rows.every((overflow) => overflow <= 1),
+        `wiersze mają overflow przy ${width}px: ${metrics.rows.join(", ")}`,
+      );
+      assert.deepEqual(metrics.coverWidths, Array(16).fill(64));
+      assert.equal(metrics.meterCount, 15);
+
+      // Feedback właściciela 2026-07-30: tytuł nie powtarza poziomu, środowiska
+      // ani częstotliwości — te trzy mają na karcie własne miejsca.
+      for (const title of metrics.titles) {
+        assert.ok(
+          !/w tygodniu|Siłownia|Dom z hantlami|Początkujący|Średniozaawansowany|Zaawansowany/.test(
+            title,
+          ),
+          `tytuł powtarza dane pokazane osobno: „${title}”`,
+        );
+      }
+
+      // Aktywny plan sygnalizuje stan całej karty + tekst, nie przycisk „Aktywny”.
+      assert.equal(metrics.activeCount, 1);
+      assert.equal(metrics.actionBoxes.length, 15);
+      assert.ok(
+        metrics.actionBoxes.every((box) => box.height >= 44 && box.width >= 44),
+        `CTA poniżej 44×44 px przy ${width}px: ${metrics.actionBoxes
+          .map((box) => `${Math.round(box.width)}×${Math.round(box.height)}`)
+          .join(", ")}`,
+      );
+
+      // Regresja z podglądu 2026-07-30: przy `flex-wrap` długa etykieta poziomu
+      // spychała „Ustaw” do własnej linii i CTA lądowało po lewej. Stopka jest
+      // gridem, więc akcja ma trzymać się prawej krawędzi niezależnie od etykiety.
+      assert.ok(
+        metrics.actionBoxes.every((box) => Math.abs(box.rightGap) <= 1),
+        `CTA nie trzyma prawej krawędzi przy ${width}px: ${metrics.actionBoxes
+          .map((box) => Math.round(box.rightGap))
+          .join(", ")}`,
+      );
     } finally {
       await context.close();
     }

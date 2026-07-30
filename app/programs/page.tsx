@@ -1,14 +1,26 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
+import { LevelMeter } from "@/components/LevelMeter";
+import { ProgramCover } from "@/components/ProgramCover";
 import {
   formatEquipment,
-  formatFrequency,
   missingProgramEquipment,
   type ProgramFocus,
 } from "@/lib/programRecommendation";
+import {
+  formatProgramDuration,
+  formatProgramFrequency,
+  formatProgramLevelLabel,
+} from "@/lib/programDetail";
+import {
+  formatProgramEnvironmentTag,
+  formatProgramShortName,
+} from "@/lib/programListCard";
+import { cn } from "@/lib/utils";
 import { ProgramFilters } from "./ProgramFilters";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
@@ -30,6 +42,7 @@ type Prog = {
   frequency_max: number | null;
   estimated_minutes_min: number | null;
   estimated_minutes_max: number | null;
+  cover_image_url: string | null;
   required_equipment: string[];
   program_days: { id: string }[];
 };
@@ -55,7 +68,7 @@ export default async function ProgramsPage({
   const [{ data: programs }, { data: active }, { data: settings }] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, name, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, program_days(id)")
+      .select("id, name, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, cover_image_url, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
     supabase.from("user_settings").select("training_focus, display_name, available_equipment").maybeSingle(),
@@ -192,52 +205,112 @@ function ProgramRow({
   preferredFocus: string;
   missingEquipment?: string[];
 }) {
+  const environmentTag = formatProgramEnvironmentTag(p.environment);
+  const matchesPreferredFocus =
+    kind === "preset" && preferredFocus === "lower_body" && p.focus_key === preferredFocus;
+
   return (
-      <div className="flex items-stretch rounded-xl bg-card text-card-foreground shadow-sm">
-        <Link href={`/programs/${p.id}`} className="block min-w-0 flex-1 p-md">
-          {/* Pełna nazwa (N2#1) — zawijanie zamiast ucinania */}
-          <p className="break-words font-medium">{p.name}</p>
-          {kind === "preset" && preferredFocus === "lower_body" && p.focus_key === preferredFocus && (
-            <span className="mt-2xs inline-flex rounded-full bg-support/15 px-2 py-0.5 text-xs font-medium text-support">
-              Pasuje do Twojego kierunku
-            </span>
-          )}
-          {/* R2.1 (audyt P1): karta = nazwa + dwa fakty, nie tabela filtrów.
-              Pełna specyfikacja (rotacja, sprzęt, minuty) żyje w szczególe planu. */}
-          <p className="mt-2xs text-xs text-muted-foreground">
-            {kind === "preset"
-              ? [
-                  p.frequency_min !== null && p.frequency_max !== null
-                    ? formatFrequency(p.frequency_min, p.frequency_max)
-                    : null,
-                  p.estimated_minutes_min !== null && p.estimated_minutes_max !== null
-                    ? `${p.estimated_minutes_min}–${p.estimated_minutes_max} min`
-                    : null,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")
-              : `${p.cycle_days} dni w cyklu · edytuj →`}
+    <article
+      data-program-row
+      className={cn(
+        "grid min-w-0 grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-xl border p-sm text-card-foreground shadow-sm",
+        // PLAN-05E: aktywny plan to stan całej karty, nie osobna pigułka obok CTA.
+        // Znaczenie niesie nagłówek sekcji „Aktywny plan” i tekst „Aktywny” w stopce,
+        // więc stan nie zależy od koloru (WCAG 1.4.1); obrys i tło tylko go wzmacniają.
+        // Krycie 80%, nie 40%: policzone 3.42:1 (light) i 3.92:1 (dark) wobec canvasu —
+        // przy 40% obrys miał 1.71:1 i praktycznie nie było go widać (pomiar 2026-07-30).
+        // `border-transparent` na nieaktywnych: karty nie zmieniają rozmiaru przy zmianie stanu.
+        isActive ? "border-primary/80 bg-primary/5" : "border-transparent bg-card",
+      )}
+    >
+      <ProgramCover
+        coverImageUrl={p.cover_image_url}
+        focusKey={p.focus_key}
+        programName={p.name}
+        size="row"
+      />
+      <Link
+        href={`/programs/${p.id}`}
+        className="col-start-2 row-start-1 block min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
+        {/* PLAN-05E: tytuł prezentacyjny. Poziom, środowisko i częstotliwość mają
+            na karcie własne miejsca, więc nie powtarzamy ich w nazwie — pełna nazwa
+            zostaje w bazie i na `/programs/[id]`. Karta wciąż wypowiada komplet
+            informacji dla czytnika (tag, fakty, `aria-label` miernika), dlatego nie
+            doklejamy tu ukrytej kopii pełnej nazwy. */}
+        <p className="break-words font-medium leading-snug">{formatProgramShortName(p.name)}</p>
+        {(environmentTag || matchesPreferredFocus) && (
+          <div className="mt-2xs flex flex-wrap items-center gap-2xs">
+            {environmentTag && (
+              <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                {environmentTag}
+              </span>
+            )}
+            {matchesPreferredFocus && (
+              <span className="inline-flex rounded-full bg-support/15 px-2 py-0.5 text-xs font-medium text-support">
+                Pasuje do Twojego kierunku
+              </span>
+            )}
+          </div>
+        )}
+        {/* R2.1 (audyt P1): karta = nazwa + dwa fakty, nie tabela filtrów.
+            Pełna specyfikacja (rotacja, sprzęt, minuty) żyje w szczególe planu. */}
+        <p className="mt-2xs break-words text-xs text-muted-foreground">
+          {kind === "preset"
+            ? [
+                p.frequency_min !== null && p.frequency_max !== null
+                  ? formatProgramFrequency(p.frequency_min, p.frequency_max)
+                  : null,
+                p.estimated_minutes_min !== null && p.estimated_minutes_max !== null
+                  ? formatProgramDuration(
+                      p.estimated_minutes_min,
+                      p.estimated_minutes_max,
+                    )
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")
+            : `${p.cycle_days} dni w cyklu · edytuj →`}
+        </p>
+        {kind === "preset" && missingEquipment.length > 0 && (
+          <p className="mt-2xs break-words text-xs text-amber-800 dark:text-amber-300">
+            Potrzebujesz: {formatEquipment(missingEquipment, 2)}
           </p>
-          {kind === "preset" && missingEquipment.length > 0 && (
-            <p className="mt-2xs text-xs text-amber-800 dark:text-amber-300">
-              Potrzebujesz: {formatEquipment(missingEquipment, 2)}
-            </p>
-          )}
-        </Link>
-        <div className="flex items-center px-sm">
+        )}
+      </Link>
+      {/* PLAN-05E: stopka karty w kolumnie treści — poziom po lewej, aktywacja po prawej.
+          „Ustaw” wychodzi spod miniatury, więc kolumna zdjęcia zostaje wyłącznie obrazem,
+          a wejście w szczegół (cała treść) jest wizualnie oddzielone od aktywacji planu.
+          Grid, nie `flex-wrap`: długa etykieta poziomu („Początkujący–średniozaawansowany”)
+          ma zawijać się we własnej kolumnie, a nie spychać akcji do osobnej linii —
+          na realnym buildzie 320 px robiło to poszarpaną kartę wyższą o 60 px. */}
+      <div className="col-start-2 row-start-2 mt-xs grid min-h-11 min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-sm">
+        {kind === "preset" ? (
+          <LevelMeter
+            levelMin={p.level_min}
+            levelMax={p.level_max}
+            label={formatProgramLevelLabel(p.level)}
+            variant="list"
+          />
+        ) : (
+          <span />
+        )}
+        <div>
           {isActive ? (
-            <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+            <span className="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground">
+              <Check aria-hidden className="size-4 text-primary" />
               Aktywny
             </span>
           ) : (
             <form action={setActiveProgram.bind(null, p.id)}>
               {/* R2.1: aktywacja podporządkowana wyborowi karty — ghost zamiast outline */}
-              <Button variant="ghost" type="submit" className="text-primary">
+              <Button variant="ghost" type="submit" className="px-3 text-primary">
                 Ustaw
               </Button>
             </form>
           )}
         </div>
       </div>
-    );
+    </article>
+  );
 }
