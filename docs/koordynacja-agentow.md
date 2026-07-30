@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-29
+**Aktualizacja:** 2026-07-30
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -20,6 +20,73 @@
 |---|---|---|---|---|
 
 ## Ostatnie wpisy
+
+### 2026-07-30 · Claude · HOME-02 — podsumowanie okresu i kafle na Home: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** nowy `lib/homePeriods.ts` (czysta agregacja + formatery, zero zapytań),
+  nowy `app/HomeStats.tsx` (karta „Podsumowanie" + trzy kafle), nowy
+  `tests/home-periods.test.ts` (15 testów), rozszerzony `lib/getHomeGuidance.ts`
+  (`getHomeGuidance` → `getHomeInsights(unit)`), wpięcie w `app/page.tsx`.
+- **Najważniejsze rozstrzygnięcie — budżet gorącej trasy, ZMIERZONY przed implementacją:**
+  spec kazał reużyć `app/progress/stats.ts`, ale każde okno to tam osobny 3-poziomowy
+  waterfall. Zmierzone przez `pg_stat_statements` na realnej historii (10 sesji/35 dni):
+
+  | wariant | zapytania Home | delta |
+  |---|---:|---:|
+  | baseline (dziś) | **8** (5 hero równolegle + 3 guidance) | — |
+  | naiwny reuse `getPeriodOverview`/`periodStats`/`getStrengthTrends` | **21** | **+13** |
+  | wybrany: agregaty z wierszy guidance + `count` rekordów | **9** | **+1** |
+
+  Kluczowe odkrycie z czytania kodu, nie ze spec-a: `getHomeGuidance` **już** pobiera
+  90 dni zakończonych sesji, nieopuszczonych ćwiczeń i zaliczonych serii roboczych,
+  i **już** liczy `bestByExSession` — czyli dokładnie wejście dla „największego progresu".
+  Wszystkie liczby HOME-02 są policzalne z tych samych wierszy; dochodzi wyłącznie
+  licznik rekordów (`head: true`, zero wierszy w transferze), puszczony **równolegle**
+  z pierwszym poziomem waterfalla, więc głębokość łańcucha się nie zmienia (3 → 3).
+  Budżet `optymalizacja.md` §1 to „≤ 4 równolegle" — hero batch (5) był nad nim już
+  przed tą zmianą i tego nie ruszałem; guidance od audytu P1.4 świadomie żyje poza
+  blokującym batchem, za `Suspense`.
+- **CTA niezależne od statystyk (kryterium akceptacji):** statystyki renderują się w tym
+  samym `<Suspense>` co guidance, PO hero. Hero czyta wyłącznie z batcha głównego, więc
+  opóźnienie agregatów nie opóźnia „Zacznij trening" ani o jedną rundę DB.
+- **Spójność z `/progress` (spec: „nie duplikujemy obliczeń"):** definicje trzymane 1:1 —
+  sesje liczone z listy sesji (sesja bez serii nadal jest sesją, jak `periodStats.sessionCount`),
+  objętość tylko z pełnych serii, „największy progres" to `setMetric` per ćwiczenie per sesja
+  w oknie **90 dni**, czyli tym samym co `getStrengthTrends`. Dzięki temu Home i Postępy nie
+  mogą pokazać dwóch różnych liczb dla tego samego ruchu. Okno progresu nie mieści się
+  w kafelku, więc jest podane w `sr-only`.
+- **Znalezione i naprawione przy weryfikacji wizualnej (320 px):** pierwsza wersja ucinała
+  etykiety do bezsensu („Największ…", „Serie rob…", „7 dni / 30…"). Naprawione: etykiety
+  zawijają się zamiast `truncate`, komórki mają równe trzy części (`flex-1 basis-0` — długa
+  nazwa ćwiczenia rozpychała pierwszą kolumnę), nazwa ćwiczenia ma `line-clamp-3`,
+  a „7 dni / 30 dni" skrócone do „7/30 dni" (wartość i tak jest ułamkiem).
+- **A11y (self-review `arco-a11y-review`) — jeden finding, naprawiony:** kafel „Treningi"
+  pokazuje `2/7`, co czytnik ogłasza jako „2 ukośnik 7", czyli brzmi jak „2 z 7" — a to dwa
+  osobne okresy. Dodany `sr-only` z rozpisaną wersją i polską odmianą liczebnika
+  („2 treningi w 7 dniach, 7 treningów w 30 dniach"). Kontrast **policzony**, nie na oko:
+  violet na karcie 5,08:1 (light) i 4,68:1 (dark), muted 5,69/8,03, wartość ujemna 14,28 —
+  wszystko ≥ 4,5:1. Spadek objętości nie jest komunikowany samym kolorem: `formatPct`
+  zawsze drukuje znak. Zero elementów interaktywnych, więc touch targety i fokus nie dotyczą.
+- **Dowód:** lint i `tsc --noEmit` czyste; build produkcyjny zielony; unit **202/202**
+  (15 nowych: granice okien, spadek objętości jako informacja, brak bazy → brak procentu,
+  regres siły nie jest „progresem", konwersja lbs, formatowanie ton/tysięcy);
+  **32/32 testy przeglądarkowe** (overflow/BottomSheet); walidatory 907/15/336 oraz 60/60.
+  Weryfikacja wizualna komponentu na 320 i 375 px, light i dark, na pięciu wariantach danych
+  (pełne dane, najdłuższa polska nazwa + spadek, tylko kafle, konto lbs, brak historii);
+  `documentElement.scrollWidth === clientWidth` na 320 px, konsola bez błędów.
+- **Czego NIE udało się zweryfikować — do [Ty]:** pełny ekran Home z prawdziwymi danymi za
+  loginem. Nie wpisuję haseł, a próba wygenerowania linku logowania przez Admin API została
+  (słusznie) zablokowana jako materializacja żywego credentiala do transkryptu. Komponent
+  zweryfikowałem na tymczasowej trasie pod `/login/*` (jedyna publiczna) z fixture'ami —
+  trasa **usunięta**, nie ma jej w commicie. Zostaje checkpoint: Home na koncie z historią,
+  kolejność modułów (hero → passa → podsumowanie → kafle → wskazówka) i realne liczby.
+- **Dane testowe:** 10 sesji fixture (35 dni historii) utworzonych lokalnie i usuniętych
+  **wyłącznie po zapisanych ID**, potem `recompute_personal_records` — konto wróciło do
+  0 sesji i 0 rekordów. Skrypty pomiarowe leżały w gitignorowanym `coverage/`, usunięte.
+  Produkcja i baza zdalna nietknięte.
+- **Zaległości:** [Ty] review PR + checkpoint wizualny Home za loginem. Kolejny krok
+  w kolejności `spec-home-i-nawigacja.md` §4: **HOME-03** (postęp ćwiczeń ze sparkline) —
+  reużyje `getHomeInsights`, więc nie dołoży zapytań; potem NAV-01 (przed PLAN-05D i R2.2).
 
 ### 2026-07-29 · Claude · PLAN-05A — migracja slotu medialnego (`cover_image_url`): ZAKOŃCZONE TECHNICZNIE
 

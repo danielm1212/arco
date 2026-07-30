@@ -6,13 +6,15 @@ import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { startSession } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
-import { getHomeGuidance } from "@/lib/getHomeGuidance";
+import { getHomeInsights } from "@/lib/getHomeGuidance";
+import type { UnitSystem } from "@/lib/types";
 import { localDayKey, weekStart, computeStreak, addWarsawDays, weeksMeetingGoal } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
 import { FreestyleStartButton } from "./FreestyleStartButton";
 import { GuidanceChip } from "./GuidanceChip";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
 import { StreakCard } from "./StreakCard";
+import { HomeStats } from "./HomeStats";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { WeeklyGoalBadge } from "@/components/WeeklyGoalBadge";
@@ -27,12 +29,23 @@ import {
 export const dynamic = "force-dynamic";
 
 /**
- * Guidance poza blokującym batchem home (audyt P1.4): 3 rundy DB tej funkcji
- * streamują się przez Suspense PO hero — chip i tak żyje na dole strony,
- * a główne CTA nie czeka na nie ani jednej rundy.
+ * Guidance i statystyki okresu poza blokującym batchem home (audyt P1.4):
+ * 3 rundy DB tej funkcji streamują się przez Suspense PO hero — żyją na dole
+ * strony, a główne CTA nie czeka na nie ani jednej rundy.
+ *
+ * HOME-02 dołożyło agregaty okresu do TEGO SAMEGO przebiegu (`getHomeInsights`),
+ * bo guidance i tak pobiera 90 dni zakończonych sesji, ćwiczeń i zaliczonych
+ * serii roboczych. Koszt: +1 zapytanie (licznik rekordów), nie +13, jakie dałoby
+ * wołanie `getPeriodOverview`/`periodStats` per okno — patrz `lib/homePeriods.ts`.
  */
-async function HomeGuidance() {
-  return <GuidanceChip items={await getHomeGuidance()} />;
+async function HomeInsights({ unit }: { unit: UnitSystem }) {
+  const { guidance, periods } = await getHomeInsights(unit);
+  return (
+    <>
+      <HomeStats periods={periods} />
+      <GuidanceChip items={guidance} />
+    </>
+  );
 }
 
 type ActiveDay = {
@@ -311,7 +324,7 @@ export default async function HomePage() {
         )}
 
         <Suspense fallback={null}>
-          <HomeGuidance />
+          <HomeInsights unit={settings?.unit_system ?? "kg"} />
         </Suspense>
       </main>
     </div>
