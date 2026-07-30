@@ -1,7 +1,8 @@
 # Arco — spec: karta planu (PLAN-05)
 
 **Data:** 2026-07-27
-**Status:** PLAN-05A i PLAN-05C zamknięte; NAV-01 na produkcji; następna paczka PLAN-05B
+**Status:** PLAN-05A…05C na `main`; PLAN-05D gotowe technicznie na
+`agent/plan-05d-program-detail`; następna paczka po merge to PLAN-05E
 **Kontrakt:** rozszerza `R2.1` (karta = nazwa + dwa fakty) i przygotowuje grunt pod `R2.2`
 **Powiązane:** `docs/spec-home-i-nawigacja.md` (HOME-NAV), `docs/plan-sprintow-2026-07.md`
 
@@ -177,18 +178,26 @@ zakładek).
   do tego, co jest (`cycle_days`, sprzęt), zgodnie z dzisiejszą logiką `ProgramRow`.
 
 **Kryteria akceptacji:**
-- [ ] CTA startu/aktywacji widoczne bez scrollowania na 375 px przy planie z opisem
+- [x] CTA startu/aktywacji widoczne bez scrollowania na 375 px przy planie z opisem
       długości mediany (zmierzone, nie „wygląda dobrze");
-- [ ] na 320 px trzy fakty z ikonami nie mają poziomego overflow, zachowują pełne wartości
+- [x] na 320 px trzy fakty z ikonami nie mają poziomego overflow, zachowują pełne wartości
       tekstowe, a `LevelMeter` układa się w drugim wierszu;
-- [ ] usunięcie karty „Jak robić postęp" nie zostawia osieroconego importu/martwego kodu
+- [x] usunięcie karty „Jak robić postęp" nie zostawia osieroconego importu/martwego kodu
       formatującego ten tekst;
-- [ ] `formatRotationGuidance`/`formatWeeklyRotationExample` nadal używane — logika rotacji
+- [x] `formatRotationGuidance`/`formatWeeklyRotationExample` nadal używane — logika rotacji
       NIE ginie, tylko zmienia opakowanie z karty na zdanie w sekcji faktów;
-- [ ] długi opis (worst-case z bazy) nie łamie layoutu akordeonu na 320 px.
+- [x] długi opis (worst-case z bazy) nie łamie layoutu akordeonu na 320 px.
 
 **Testy:** rozszerzenie `tests/e2e/overflow.test.ts` o hierarchię nowej karty na 320/375/393;
 regresja wizualna przed/po na planie z najdłuższym opisem i najkrótszym (empty-state opisu).
+
+**Wynik techniczny 2026-07-30:** detal presetu używa `ProgramCover size="hero"` i
+`LevelMeter`, rozpoznaje aktywny plan, zachowuje chrome `child` z NAV-01 i nie zmienia
+pełnoekranowego edytora własnych planów. Brak opisu nie renderuje akordeonu; brak wiersza
+ustawień nie renderuje przykładu rotacji. Realny build sprawdzono na 320/375/393 px,
+w tym konto testowe i oba stany CTA; konto testowe usunięto po znanym ID. Przegląd
+`arco-a11y-review` wymusił zmianę napisu „Aktywny" z zielonego (4,00:1 na zielonym tle 10%)
+na `text-foreground`; zielona ikona i tło pozostają sygnałem pomocniczym.
 
 **Model:** Opus 5 — dotyka realnego ekranu produkcyjnego z rozgałęzieniami `kind="own"` vs
 `"preset"` i logiką rotacji, którą łatwo złamać przy przenoszeniu.

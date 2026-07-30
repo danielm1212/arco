@@ -331,8 +331,8 @@ koordynacji (2026-07-23).
    Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`. **05C (`LevelMeter`) gotowe
    technicznie 2026-07-28, PR [#34](https://github.com/danielm1212/arco/pull/34)** —
    komponent + `lib/levelMeter.ts` (dane/copy jako czyste funkcje), lint/tsc/build zielone;
-   **jeszcze niewpięty** w `ProgramRow` ani `/programs/[id]` — to zakres 05D/05E, które od
-   niego zależą. Self-review a11y policzył kontrast: `bg-primary/20` na pustym segmencie
+   jest już wpięty w `/programs/[id]` przez 05D, a `ProgramRow` czeka na 05E. Self-review
+   a11y policzył kontrast: `bg-primary/20` na pustym segmencie
    wychodzi 1.34:1 (poniżej progu 3:1 dla elementów graficznych), więc pusty segment jest
    obrysem (`border-primary`), nie przezroczystym wypełnieniem — odejście od dosłownego
    brzmienia spec-a („obniżona krycia"), uzasadnione policzonym kontrastem, do potwierdzenia
@@ -342,14 +342,24 @@ koordynacji (2026-07-23).
    Phase 1/2/offline/Ekipa zielone. Przed wdrożeniem wykonano backup
    `backups/20260730T111541Z`; dry-run zawierał wyłącznie PLAN-05A, a `migration list`
    potwierdziło 61/61. Odczyt produkcyjny potwierdził 16 programów i zero niepustych
-   okładek. **05B (`ProgramCover`) jest gotowe technicznie na
-   `agent/plan-05b-program-cover`:** jeden komponent `row`/`hero`, fallback pod obrazem
+   okładek. **05B (`ProgramCover`) jest na `main` po PR
+   [#52](https://github.com/danielm1212/arco/pull/52):** jeden komponent `row`/`hero`,
+   fallback pod obrazem
    (bez migotania), obsługa błędu ładowania, opisowy `alt` realnego zdjęcia i dekoracyjny
    fallback. Do `next/image` dopuszczono wyłącznie publiczny Storage Supabase; Tailwind skanuje
-   `lib/`, aby klasy gradientów nie znikały z buildu. Nie jest jeszcze wpięty w `/programs`
-   ani `/programs/[id]` — to nadal PLAN-05D/05E. Lint, unit **213/213**, build i overflow
+   `lib/`, aby klasy gradientów nie znikały z buildu. Jest wpięty w `/programs/[id]`
+   przez 05D, a lista `/programs` czeka na 05E. Lint, unit **213/213**, build i overflow
    **34/34** są zielone; ręcznie potwierdzono 320 px, light/dark oraz fallback po 404.
-   05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
+   **05D jest gotowe technicznie 2026-07-30 na `agent/plan-05d-program-detail`:**
+   docelowy ekran presetu ma hero 4:3, pełne fakty z ikonami, `LevelMeter`, CTA/stan
+   „Aktywny" nad zgięciem, domyślnie otwarty opis, sprzęt i zachowaną rotację; usunięto
+   powtarzalną kartę „Jak robić postęp". Własny plan nadal otwiera dotychczasowy edytor
+   focus. Realny build na koncie lokalnym potwierdził stany CTA i akordeonu; na 320 px trzy
+   fakty są w jednym rzędzie, poziom w drugim, zero overflow. Bramka: lint, build,
+   **217/217** unit i **35/35** przeglądarkowych. `arco-a11y-review` poprawił kontrast
+   napisu stanu aktywnego (4,00:1 → `text-foreground`); brak nowych findingów AA.
+   Konto testowe usunięto punktowo po znanym ID. **Do [Ty]:** review/merge i checkpoint
+   iPhone PWA; potem 05E, a dopiero następnie R2.2.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
    Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do
