@@ -21,6 +21,27 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-30 · Codex · NAV-01 trzy przestrzenie i zakładki: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `BottomNav`, kontrakt `AppTab`, wspólny pasek Plany | Postępy | Ciało |
+  Historia, Home bez lokalnych zakładek, skeletony `/programs`, `/progress`, `/body`,
+  `/history`, semantyka `replace`, testy i dokumentacja.
+- **Wynik:** globalne Home | Trening | Ekipa działa bez zmiany URL-i. Wszystkie cztery
+  podwidoki mają aktywny Trening i własną aktywną zakładkę; ekrany dzieci zachowują Trening.
+  Kliknięcie globalnego Treningu z jego podwidoku poprawnie zastępuje bieżący wpis historii.
+- **Dowód:** lint ✓, build produkcyjny ✓, unit **210/210**, przeglądarkowe **33/33**.
+  Realny build na 320 i 393 px: zero overflow, targety lokalne 44 px, globalne 56 px.
+  Zachowany profil starego service workera zaktualizował chrome; deep linki `/progress`,
+  `/body`, `/history`, widoczny fokus i przepływ tab → zakładka → child → systemowy Back ✓.
+- **A11y:** `arco-a11y-review` bez findingów — semantyczne `nav`, `aria-current`, logiczna
+  kolejność, widoczny focus ring, tokenowe kolory, brak nowego ruchu i brak ucięcia na 320 px.
+- **Dane i produkcja:** nie utworzono danych testowych; migracje, zdalna baza, deploy,
+  PLAN-05D i R2.2 nietknięte.
+- **Czego nie dotknięto:** obce nieśledzone duplikaty `SKILL 2.md` i
+  `workflow-zespolu 2.md` pozostawione bez zmian.
+- **Zaległości:** [Ty] review/merge oraz checkpoint fizycznego iPhone PWA i Androida.
+  Dopiero potem PLAN-05D, a następnie R2.2.
+
 ### 2026-07-30 · Codex · HOME-03 DoD i pomiar wydajności: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** re-audyt HOME-03 na PR #49, prawdziwy pomiar początkowego JS i Lighthouse,

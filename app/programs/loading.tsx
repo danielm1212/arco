@@ -2,9 +2,9 @@ import { TrainingHeader } from "@/components/TrainingHeader";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 
 /**
- * R2.1 (audyt P1): loading Planów zachowuje wspólny chrome przestrzeni
- * Trening — header i subnav nie mogą znikać przy przejściu Dziś → Plany,
- * bo łamie to wrażenie jednej przestrzeni. Pulsuje wyłącznie treść.
+ * NAV-01: loading Planów zachowuje wspólny chrome przestrzeni Trening —
+ * header i pasek czterech zakładek nie mogą znikać przy przejściu między
+ * podwidokami. Pulsuje wyłącznie treść.
  */
 export default function Loading() {
   return (

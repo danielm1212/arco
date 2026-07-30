@@ -175,10 +175,10 @@ się chrome, nie URL-e. To świadomie ogranicza ryzyko deep-linków, cache'u PWA
   przy przejściu widać przeskok.
 
 **Kryteria akceptacji:**
-- [ ] cztery zakładki mieszczą się na 320 px bez ucięcia i bez poziomego overflow;
-- [ ] systemowy Back na Androidzie nie wypada z aplikacji ani nie cofa do usuniętego stanu;
-- [ ] deep link do `/progress`, `/body`, `/history` ustawia właściwy tab i zakładkę;
-- [ ] `/` nie renderuje paska zakładek.
+- [x] cztery zakładki mieszczą się na 320 px bez ucięcia i bez poziomego overflow;
+- [x] systemowy Back na Androidzie nie wypada z aplikacji ani nie cofa do usuniętego stanu;
+- [x] deep link do `/progress`, `/body`, `/history` ustawia właściwy tab i zakładkę;
+- [x] `/` nie renderuje paska zakładek.
 
 **Testy:** rozszerzenie `tests/e2e/overflow.test.ts` o pasek czterech zakładek na 320/375/393;
 przejścia tab → zakładka → child → Back; smoke na starym cache.

@@ -24,12 +24,12 @@ Arco jest działającą PWA na kontach testowych. Obsługuje:
 - polskie nazwy i aliasy wyszukiwania;
 - Ekipę v0: kod 8 znaków, jawna zgoda, członkowie, wiele ekip w UI, check-iny, reakcje i nudge.
 
-Docelowa IA na produkcji dziś: **Trening · Postępy · Historia · Ekipa**, lokalnie
-**Dziś | Plany** oraz **Trening | Ciało**, profil przez awatar. Floating nav ma równy margines
-12 px i respektuje safe area. **Kontrakt jest już zrewidowany na trzy przestrzenie**
-(Home · Trening · Ekipa, D-38…D-41 w `decyzje-produktowe.md`) — wdrożenie w kolejce jako
-HOME-NAV, patrz §6 punkt 5. **HOME-01 (powitanie + passa) scalone do `main`** w PR
-[#33](https://github.com/danielm1212/arco/pull/33) — patrz dziennik koordynacji dla szczegółów.
+IA przed scaleniem NAV-01 ma jeszcze **Trening · Postępy · Historia · Ekipa** oraz dwa
+lokalne paski. Docelowy kontrakt trzech przestrzeni **Home · Trening · Ekipa** (D-38…D-41)
+jest gotowy technicznie na `agent/nav-01-primary-navigation`: Plany, Postępy, Ciało i Historia
+dzielą jeden pasek wewnątrz Treningu, a Home nie ma lokalnych zakładek. Floating nav ma równy
+margines 12 px i respektuje safe area. HOME-01…03 są już na `main` (PR #33/#48/#49);
+szczegóły i bramka NAV-01 są w §6 punkt 5.
 
 ## 2. Co jest wdrożone
 
@@ -285,11 +285,11 @@ koordynacji (2026-07-23).
 4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A i SESSION-01A2…01A4
    (procedura `arco-release` krok 5/6 — merge już wykonany, patrz punkt 7 poniżej);
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
-5. **HOME-NAV — w toku:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
+5. **HOME-NAV — gotowe technicznie:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
    POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04 rozpisane w `spec-home-i-nawigacja.md`.
    **HOME-01 (PR [#33](https://github.com/danielm1212/arco/pull/33)) i HOME-02
-   (PR #48) są na `main`. HOME-03 jest gotowe technicznie 2026-07-30 na
-   `agent/home-03-audit`:** trzy ostatnio trenowane ćwiczenia (min. dwie kwalifikowane sesje
+   (PR #48), HOME-03 (PR #49) są na `main`. HOME-03 pokazuje** trzy ostatnio trenowane ćwiczenia
+   (min. dwie kwalifikowane sesje
    w 90 dni), rekord, 1RM, progres, neutralny brak zmian, sparkline i link „Wykresy".
    Reużywa `getHomeInsights` i dodaje **zero zapytań**. Audyt pakietów #33/#34/#46/#47/#48
    jest w `ocena-home-nav-plan05-2026-07-30.md`; wykryty P1 blokującego batcha naprawiono
@@ -312,9 +312,17 @@ koordynacji (2026-07-23).
    **100/100**, medianę **LCP 751 ms, TBT 19 ms, CLS 0**. Usunięto klienta Supabase
    z początkowego bundle'a globalnego mini-baru, poprawiono kontrast aktywnej nawigacji,
    label-in-name celu tygodniowego, rozmiar logo i target „Zmień" do 44×44 px.
-   Stan bez historii oraz offline smoke są zielone. **Do [Ty]: checkpoint fizycznego iPhone PWA
-   i starego cache dla HOME-01…03.** Kolejny krok: **NAV-01 — bezwzględnie przed PLAN-05D
-   i R2.2**, bo paczki kolidują w `/programs` i `/programs/[id]`.
+   Stan bez historii oraz offline smoke są zielone.
+   **NAV-01 jest gotowe technicznie 2026-07-30 na `agent/nav-01-primary-navigation`:**
+   BottomNav ma Home | Trening | Ekipa, wspólny pasek ma Plany | Postępy | Ciało | Historia,
+   Home nie renderuje lokalnego paska, a loadingi zachowują chrome. Naprawiono też semantykę
+   `replace`, gdy z podwidoku Treningu wracamy globalnym tabem do Planów. Bramka: lint, build,
+   210/210 unit, 33/33 testów przeglądarkowych; realny build 320/393 px bez overflow.
+   Zachowany profil starego service workera, deep linki i przepływ tab → zakładka → child →
+   systemowy Back są zielone; `arco-a11y-review` bez findingów.
+   **Do [Ty]: review/merge NAV-01 oraz checkpoint fizycznego iPhone PWA/Androida dla
+   HOME-01…03 i nowego chrome. NAV-01 musi wejść bezwzględnie przed PLAN-05D i R2.2**,
+   bo paczki kolidują w `/programs` i `/programs/[id]`.
    PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może iść równolegle.
 6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
    CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").

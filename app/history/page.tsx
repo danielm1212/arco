@@ -6,6 +6,7 @@ import { weekStart, computeStreak, localDayKey } from "@/lib/week";
 import { DeleteSessionButton } from "./DeleteSessionButton";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { PageHeader } from "@/components/navigation/PageHeader";
+import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 import { joinMany, joinMaybe, type DayJoin } from "@/lib/dbJoins";
 import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
 
@@ -58,6 +59,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
           </Button>
         }
       />
+      <TrainingSubnav active="history" />
 
       <main className="flex-1 space-y-md p-md">
         <MonthCalendar trainingDays={trainingDays} streak={streak} />

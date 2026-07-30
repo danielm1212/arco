@@ -1,5 +1,5 @@
-import { RouteSkeleton } from "@/components/RouteSkeleton";
+import { TrainingRouteSkeleton } from "@/components/navigation/TrainingRouteSkeleton";
 
 export default function Loading() {
-  return <RouteSkeleton />;
+  return <TrainingRouteSkeleton active="history" title="Historia" />;
 }
