@@ -266,6 +266,126 @@ test("PLAN-05B: miniatura ProgramCover size=row nie rozpycha wąskiej listy", as
   }
 });
 
+test("PLAN-05D: hero, pełne fakty, poziom i opis mieszczą się na 320/375/393 px", async () => {
+  // Najdłuższy opis obecny w katalogu produkcyjnym (277 znaków). Trzymamy tu
+  // realny worst-case zamiast sztucznego lorem ipsum, żeby regresja odpowiadała
+  // temu, co użytkownik faktycznie może otworzyć.
+  const longestDescription =
+    "Dwa treningi całego ciała na pełnym sprzęcie, z lekkim naciskiem na górę. Jedno duże ćwiczenie na dół w sesji, pełny push i pull, bezpośredni biceps i triceps. Plan projektowany na 3 dni w tygodniu — przy dwóch działa, ale rozwija wolniej. Zostaw 1 lub 2 powtórzenia w zapasie.";
+  const heroClass = `${programCoverSizeClass("hero")} ${programCoverGradient("lower_body")}`;
+  const icon = '<span aria-hidden="true" class="block size-3.5 shrink-0 rounded-sm border min-[360px]:size-4"></span>';
+  const description = `<details data-program-description open class="group rounded-xl bg-card text-card-foreground shadow-sm">
+    <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-sm rounded-xl px-md py-sm font-semibold">
+      Opis <span aria-hidden="true">⌄</span>
+    </summary>
+    <p class="break-words border-t px-md pb-md pt-sm text-sm leading-relaxed text-muted-foreground">${longestDescription}</p>
+  </details>`;
+  const body = (withDescription: boolean) => `<div class="mx-auto flex min-h-dvh max-w-md flex-col">
+    <header class="grid min-h-[60px] grid-cols-[minmax(2.75rem,1fr)_minmax(0,auto)_minmax(2.75rem,1fr)] items-center border-b bg-background px-sm">
+      <button class="size-11">←</button><h1 class="truncate px-xs text-center font-semibold">Plan treningowy</h1><div></div>
+    </header>
+    <main class="flex-1 space-y-lg p-md">
+      <section data-program-detail class="overflow-hidden rounded-xl bg-card text-card-foreground shadow-sm">
+        <div data-program-cover aria-hidden="true" class="${heroClass}"></div>
+        <div class="space-y-md p-md">
+          <div class="space-y-xs">
+            <h2 class="break-words text-xl font-semibold leading-tight">Pośladki i nogi — średniozaawansowany</h2>
+            <div data-program-facts class="space-y-xs">
+              <div data-primary-facts class="flex flex-wrap items-center gap-x-2xs gap-y-xs text-xs text-muted-foreground min-[360px]:gap-x-sm min-[360px]:text-sm">
+                <span data-fact class="inline-flex items-center gap-2xs whitespace-nowrap">${icon}3 treningi</span>
+                <span data-fact class="inline-flex items-center gap-2xs whitespace-nowrap">${icon}2–3 dni/tydz.</span>
+                <span data-fact class="inline-flex items-center gap-2xs whitespace-nowrap">${icon}45–60 min</span>
+              </div>
+              <div data-program-level class="flex flex-wrap items-center gap-x-sm gap-y-xs">
+                <span role="img" aria-label="Poziom 2 z 3: Średniozaawansowany" class="inline-flex items-center gap-xs">
+                  <span aria-hidden="true" class="flex gap-2xs">
+                    <span class="h-2 w-5 rounded-full border border-primary"></span>
+                    <span class="h-2 w-5 rounded-full bg-primary"></span>
+                    <span class="h-2 w-5 rounded-full border border-primary"></span>
+                  </span>
+                  <span aria-hidden="true" class="text-sm text-muted-foreground">Średniozaawansowany</span>
+                </span>
+                <span class="text-sm text-muted-foreground">Siłownia · pośladki i nogi</span>
+                <span class="text-sm font-medium text-support">Pasuje do Twojego kierunku</span>
+              </div>
+            </div>
+          </div>
+          <form data-program-cta><button class="h-11 w-full rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground">Ustaw jako aktywny</button></form>
+        </div>
+      </section>
+      ${withDescription ? description : ""}
+    </main>
+    <nav data-bottom-nav class="rounded-full bg-card shadow-e2" style="position:fixed;left:16px;right:16px;bottom:12px;height:68px"></nav>
+  </div>`;
+
+  for (const width of [320, 375, 393]) {
+    const viewport = { width, height: width === 375 ? 667 : 780 };
+    const context = await browser.newContext({ viewport });
+    try {
+      const page = await context.newPage();
+      await page.setContent(pageHtml(body(true)), { waitUntil: "load" });
+      const metrics = await page.evaluate(() => {
+        const facts = [...document.querySelectorAll<HTMLElement>("[data-fact]")];
+        const primaryFacts = document.querySelector<HTMLElement>("[data-primary-facts]")!;
+        const level = document.querySelector<HTMLElement>("[data-program-level]")!;
+        const cta = document.querySelector<HTMLElement>("[data-program-cta]")!;
+        const bottomNav = document.querySelector<HTMLElement>("[data-bottom-nav]")!;
+        const description = document.querySelector<HTMLElement>("[data-program-description]")!;
+        return {
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          factTexts: facts.map((fact) => fact.textContent?.trim()),
+          factOverflow: facts.map((fact) => fact.scrollWidth - fact.clientWidth),
+          levelBelowFacts:
+            level.getBoundingClientRect().top >= primaryFacts.getBoundingClientRect().bottom,
+          factsShareRow:
+            new Set(facts.map((fact) => Math.round(fact.getBoundingClientRect().top))).size === 1,
+          ctaBottom: cta.getBoundingClientRect().bottom,
+          navTop: bottomNav.getBoundingClientRect().top,
+          descriptionOverflow: description.scrollWidth - description.clientWidth,
+          descriptionOpen: (description as HTMLDetailsElement).open,
+        };
+      });
+
+      assert.ok(metrics.overflow <= 1, `poziomy overflow ${metrics.overflow}px przy ${width}px`);
+      assert.deepEqual(metrics.factTexts, ["3 treningi", "2–3 dni/tydz.", "45–60 min"]);
+      assert.ok(
+        metrics.factOverflow.every((overflow) => overflow <= 1),
+        `ucięty fakt przy ${width}px: ${metrics.factOverflow.join(", ")}`,
+      );
+      assert.equal(metrics.descriptionOpen, true, "opis nie jest domyślnie otwarty");
+      assert.ok(
+        metrics.descriptionOverflow <= 1,
+        `opis ma overflow ${metrics.descriptionOverflow}px przy ${width}px`,
+      );
+      if (width === 320) {
+        assert.equal(metrics.factsShareRow, true, "trzy fakty nie mieszczą się w jednym rzędzie");
+        assert.equal(metrics.levelBelowFacts, true, "LevelMeter nie zszedł pod trzy fakty");
+      }
+      if (width === 375) {
+        assert.ok(
+          metrics.ctaBottom < metrics.navTop,
+          `CTA kończy się na ${metrics.ctaBottom}px i wpada pod nav od ${metrics.navTop}px`,
+        );
+      }
+    } finally {
+      await context.close();
+    }
+  }
+
+  const noDescriptionContext = await browser.newContext({ viewport: { width: 320, height: 780 } });
+  try {
+    const page = await noDescriptionContext.newPage();
+    await page.setContent(pageHtml(body(false)), { waitUntil: "load" });
+    assert.equal(
+      await page.locator("[data-program-description]").count(),
+      0,
+      "plan bez opisu renderuje pusty akordeon",
+    );
+  } finally {
+    await noDescriptionContext.close();
+  }
+});
+
 test("SESSION-01A2: zwarty wiersz serii mieści pola i check na 320/375/393 px", async () => {
   const body = `<main class="mx-auto max-w-md p-md"><section class="rounded-xl bg-card p-md">
     <ul class="space-y-xs">

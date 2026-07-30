@@ -21,6 +21,26 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-30 · Codex · PLAN-05D szczegół planu: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** docelowy detal presetu `/programs/[id]`, zwarte formaty faktów, testy unit/
+  overflow oraz aktualizacja speca, backlogu i HANDOFF; własny plan zachowuje istniejący
+  edytor focus.
+- **Wynik:** hero 4:3 składa `ProgramCover`, nazwę, trzy fakty z ikonami, `LevelMeter` i CTA/
+  stan „Aktywny" nad zgięciem. Opis jest natywnym, domyślnie otwartym akordeonem i znika
+  bez treści; sprzęt i oba zdania rotacji zostały zachowane, a powtarzalna karta „Jak robić
+  postęp" usunięta. Na 320 px kontrola realnego ekranu wykryła trzeci rząd metadanych;
+  poprawka utrzymuje trzy fakty w pierwszym, poziom w drugim.
+- **Dowód:** lint ✓, build produkcyjny ✓, unit **217/217**, overflow **35/35** na
+  320/375/393 px. Uwierzytelniony build sprawdzony dla CTA przed i po aktywacji oraz
+  zwijania opisu. `arco-a11y-review` znalazł 4,00:1 dla zielonego napisu na zielonym tle;
+  po zmianie napis używa `text-foreground`, ikona pozostaje zielona. Konto testowe
+  `24bb3b55-acde-4d6d-9db8-043f6ea9bdcd` usunięto punktowo po kontroli dokładnego e-maila.
+- **Czego nie dotknięto:** `/programs` i PLAN-05E, R2.2, migracji, seeda, produkcji,
+  Lineara ani obcych nieśledzonych duplikatów `* 2.*`.
+- **Zaległości:** [Ty] review/merge i checkpoint iPhone PWA. Następna paczka to PLAN-05E,
+  następnie R2.2.
+
 ### 2026-07-30 · Codex · PLAN-05B ProgramCover: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** nowy wspólny `ProgramCover` dla przyszłego szczegółu i listy, czyste mapowanie
