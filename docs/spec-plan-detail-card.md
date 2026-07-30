@@ -1,7 +1,7 @@
 # Arco — spec: karta planu (PLAN-05)
 
 **Data:** 2026-07-27
-**Status:** agent-ready; zaakceptowane przez właściciela, w kolejce po NAV-01
+**Status:** PLAN-05A i PLAN-05C zamknięte; NAV-01 na produkcji; następna paczka PLAN-05B
 **Kontrakt:** rozszerza `R2.1` (karta = nazwa + dwa fakty) i przygotowuje grunt pod `R2.2`
 **Powiązane:** `docs/spec-home-i-nawigacja.md` (HOME-NAV), `docs/plan-sprintow-2026-07.md`
 
@@ -39,6 +39,9 @@ Diagnoza w kodzie (`app/programs/[id]/page.tsx`) jest ostrzejsza niż samo „mn
 ### PLAN-05A — Migracja: slot medialny (mała, samodzielna)
 
 **Wynik:** karta planu ma skąd czytać zdjęcie, gdy ono powstanie — bez kolejnej migracji.
+
+**Status 2026-07-30:** wdrożone na produkcję; `migration list` local == remote (61/61),
+16 programów ma `cover_image_url = null`, PLAN-05B odblokowane.
 
 - `supabase/migrations/<timestamp>_plan05_program_cover_image.sql`:
   `ALTER TABLE programs ADD COLUMN cover_image_url text NULL;`

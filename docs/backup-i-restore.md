@@ -58,6 +58,20 @@ Skrypt obsługuje katalog z `schema.sql` i `data.sql`, pojedynczy plik SQL oraz 
 
 ## Zweryfikowane wykonania
 
+### 2026-07-30
+
+- Przed produkcyjnym release'em PLAN-05A wykonano backup bazy
+  `backups/20260730T111541Z`: `roles.sql`, `schema.sql`, `data.sql` i `manifest.sha256`.
+  Wszystkie trzy sumy plików dumpa przeszły kontrolę SHA-256.
+- Dry-run zawierał wyłącznie
+  `20260729212437_plan05a_program_cover_image.sql`; po wdrożeniu `migration list`
+  potwierdziło zgodność 61/61.
+- Odczyt produkcyjny potwierdził 16 programów (15 systemowych + 1 własny) i zero
+  niepustych `cover_image_url`. Migracja nie zmieniała danych ani polityk RLS.
+- Test restore nie był powtarzany: skrypty backupu nie zmieniły się od ostatniego
+  zweryfikowanego restore. Kopię nadal trzeba przenieść do zaszyfrowanej lokalizacji
+  poza laptopem.
+
 ### 2026-07-27
 
 - Przed release'em TRAIN-02A4 wykonano backup bazy

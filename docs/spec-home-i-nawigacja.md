@@ -1,7 +1,8 @@
 # Arco — spec: Home i nowa nawigacja (HOME-NAV)
 
 **Data:** 2026-07-27
-**Status:** agent-ready; kontrakt IA zaktualizowany, POC zatwierdzony przez właściciela
+**Status:** HOME-01…03 i NAV-01 na `main` oraz produkcji; PLAN-04 pozostaje otwarte;
+checkpoint fizycznego iPhone PWA/Androida czeka na właściciela
 **Kontrakt:** `userflows-docelowe-2026-07.md` (rewizja HOME-NAV)
 **Decyzje:** D-38 (trzy taby), D-39 (powitanie), D-40 (wyciąg z postępów), D-41 (start dowolnego planu)
 **POC:** `prototypes/home-dashboard-poc/` — klikalny, z panelem motyw/szerokość/stan
@@ -65,10 +66,10 @@ brak historii → karta passy się nie renderuje (nie pokazujemy zer); tydzień 
 kafelki puste, zdanie stanu bez straszenia.
 
 **Kryteria akceptacji:**
-- [ ] przy `display_name = null` w DOM nie ma węzła powitania, a karta startu jest pierwsza;
-- [ ] „4. tydzień passy" nie zawija się na 320 px;
-- [ ] copy passy nigdy nie odwołuje się do straty (zakaz z `tone-of-voice.md`);
-- [ ] karta startu pozostaje pierwszym modułem `main` (D-03, audyt R2.1).
+- [x] przy `display_name = null` w DOM nie ma węzła powitania, a karta startu jest pierwsza;
+- [x] „4. tydzień passy" nie zawija się na 320 px;
+- [x] copy passy nigdy nie odwołuje się do straty (zakaz z `tone-of-voice.md`);
+- [x] karta startu pozostaje pierwszym modułem `main` (D-03, audyt R2.1).
 
 **Testy:** unit na wyborze copy passy dla 0/1/N tygodni; test przeglądarkowy 320/375/393 px
 z pomiarem kolejności modułów i braku overflow; przypadek „bez imienia".
@@ -106,10 +107,10 @@ z 30 dni) i trzy kafle okresu (tonaż 7 dni, treningi 7/30 dni, serie robocze 30
   równolegle, nie kaskadowo.
 
 **Kryteria akceptacji:**
-- [ ] CTA startu treningu renderuje się niezależnie od statystyk (mierzalne: opóźnienie
+- [x] CTA startu treningu renderuje się niezależnie od statystyk (mierzalne: opóźnienie
       statystyk nie opóźnia CTA);
-- [ ] liczba zapytań i czas do CTA udokumentowane przed/po w opisie PR-a;
-- [ ] brak historii → sekcje w ogóle się nie renderują.
+- [x] liczba zapytań i czas do CTA udokumentowane przed/po w opisie PR-a;
+- [x] brak historii → sekcje w ogóle się nie renderują.
 
 **Testy:** unit na formatowaniu liczb i przypadkach zerowych/ujemnych (spadek tonażu też jest
 informacją); test przeglądarkowy na 320 px.
@@ -176,7 +177,8 @@ się chrome, nie URL-e. To świadomie ogranicza ryzyko deep-linków, cache'u PWA
 
 **Kryteria akceptacji:**
 - [x] cztery zakładki mieszczą się na 320 px bez ucięcia i bez poziomego overflow;
-- [x] systemowy Back na Androidzie nie wypada z aplikacji ani nie cofa do usuniętego stanu;
+- [ ] systemowy Back na fizycznym Androidzie nie wypada z aplikacji ani nie cofa do usuniętego
+      stanu; automatyczny przepływ `popstate` jest zielony, checkpoint urządzenia pozostaje;
 - [x] deep link do `/progress`, `/body`, `/history` ustawia właściwy tab i zakładkę;
 - [x] `/` nie renderuje paska zakładek.
 

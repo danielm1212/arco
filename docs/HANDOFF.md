@@ -24,12 +24,11 @@ Arco jest działającą PWA na kontach testowych. Obsługuje:
 - polskie nazwy i aliasy wyszukiwania;
 - Ekipę v0: kod 8 znaków, jawna zgoda, członkowie, wiele ekip w UI, check-iny, reakcje i nudge.
 
-IA przed scaleniem NAV-01 ma jeszcze **Trening · Postępy · Historia · Ekipa** oraz dwa
-lokalne paski. Docelowy kontrakt trzech przestrzeni **Home · Trening · Ekipa** (D-38…D-41)
-jest gotowy technicznie na `agent/nav-01-primary-navigation`: Plany, Postępy, Ciało i Historia
-dzielą jeden pasek wewnątrz Treningu, a Home nie ma lokalnych zakładek. Floating nav ma równy
-margines 12 px i respektuje safe area. HOME-01…03 są już na `main` (PR #33/#48/#49);
-szczegóły i bramka NAV-01 są w §6 punkt 5.
+IA ma już docelowy kontrakt trzech przestrzeni **Home · Trening · Ekipa** (D-38…D-41).
+Plany, Postępy, Ciało i Historia dzielą jeden pasek wewnątrz Treningu, a Home nie ma
+lokalnych zakładek. Floating nav ma równy margines 12 px i respektuje safe area.
+HOME-01…03 oraz NAV-01 są na `main` i produkcji (PR #33/#48/#49/#50); szczegóły i zaległy
+checkpoint urządzeniowy są w §6 punkt 5.
 
 ## 2. Co jest wdrożone
 
@@ -265,10 +264,11 @@ koordynacji (2026-07-23).
   `npm run validate:training` (lokalnie seed daje 336 slotów — rozjazd to znany dryf
   `advanced-gym-ppl6`, patrz §4 punkt 2);
 - publiczna rejestracja wyłączona;
-- migracje produkcyjne są zastosowane do `20260729143423` (PLAN-C4), czyli 60 migracji;
-  repo zawiera dodatkową, **niewdrożoną** migrację
-  `20260729212437_plan05a_program_cover_image.sql` (PLAN-05A). PLAN-05B nie może wejść na
-  produkcję przed `db push` wykonanym procedurą `arco-release` po zgodzie [Ty].
+- migracje produkcyjne są zastosowane do
+  `20260729212437_plan05a_program_cover_image.sql` (PLAN-05A), czyli 61 migracji;
+  `migration list` potwierdza zgodność local == remote. Kolumna
+  `programs.cover_image_url` jest nullable i ma dziś `null` dla wszystkich 16 programów
+  (15 systemowych + 1 własny).
 
 ## 6. Najbliższa praca
 
@@ -285,7 +285,7 @@ koordynacji (2026-07-23).
 4. [Ty] checkpoint starego cache/iPhone PWA dla R4A, SESSION-01A i SESSION-01A2…01A4
    (procedura `arco-release` krok 5/6 — merge już wykonany, patrz punkt 7 poniżej);
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
-5. **HOME-NAV — gotowe technicznie:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
+5. **HOME-NAV — na `main` i produkcji:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
    POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04 rozpisane w `spec-home-i-nawigacja.md`.
    **HOME-01 (PR [#33](https://github.com/danielm1212/arco/pull/33)) i HOME-02
    (PR #48), HOME-03 (PR #49) są na `main`. HOME-03 pokazuje** trzy ostatnio trenowane ćwiczenia
@@ -313,16 +313,18 @@ koordynacji (2026-07-23).
    z początkowego bundle'a globalnego mini-baru, poprawiono kontrast aktywnej nawigacji,
    label-in-name celu tygodniowego, rozmiar logo i target „Zmień" do 44×44 px.
    Stan bez historii oraz offline smoke są zielone.
-   **NAV-01 jest gotowe technicznie 2026-07-30 na `agent/nav-01-primary-navigation`:**
+   **NAV-01 scalone w PR [#50](https://github.com/danielm1212/arco/pull/50) i wdrożone
+   2026-07-30:**
    BottomNav ma Home | Trening | Ekipa, wspólny pasek ma Plany | Postępy | Ciało | Historia,
    Home nie renderuje lokalnego paska, a loadingi zachowują chrome. Naprawiono też semantykę
    `replace`, gdy z podwidoku Treningu wracamy globalnym tabem do Planów. Bramka: lint, build,
    210/210 unit, 33/33 testów przeglądarkowych; realny build 320/393 px bez overflow.
    Zachowany profil starego service workera, deep linki i przepływ tab → zakładka → child →
-   systemowy Back są zielone; `arco-a11y-review` bez findingów.
-   **Do [Ty]: review/merge NAV-01 oraz checkpoint fizycznego iPhone PWA/Androida dla
-   HOME-01…03 i nowego chrome. NAV-01 musi wejść bezwzględnie przed PLAN-05D i R2.2**,
-   bo paczki kolidują w `/programs` i `/programs/[id]`.
+   Back są zielone w automatycznym smoke; `arco-a11y-review` bez findingów. CI PR-a i `main`
+   oraz deployment Vercel dla scalonego SHA są zielone. Uwierzytelnionego flow produkcyjnego
+   nie zweryfikowano z tej sesji, bo lokalne konto nie odpowiada produkcyjnemu.
+   **Do [Ty]: checkpoint fizycznego iPhone PWA/Androida dla HOME-01…03 i nowego chrome.**
+   Bramka kolejności została spełniona: NAV-01 weszło przed PLAN-05D i R2.2.
    PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może iść równolegle.
 6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
    CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").
@@ -334,11 +336,13 @@ koordynacji (2026-07-23).
    wychodzi 1.34:1 (poniżej progu 3:1 dla elementów graficznych), więc pusty segment jest
    obrysem (`border-primary`), nie przezroczystym wypełnieniem — odejście od dosłownego
    brzmienia spec-a („obniżona krycia"), uzasadnione policzonym kontrastem, do potwierdzenia
-   wizualnego przy 05D/05E. **05A (migracja `cover_image_url`) gotowe technicznie 2026-07-29** —
+   wizualnego przy 05D/05E. **05A (migracja `cover_image_url`) wdrożone na produkcję
+   2026-07-30** —
    `programs.cover_image_url` (nullable, bez zmian RLS), `db reset`/seed/walidatory/smoke
-   Phase 1/2/offline zielone; kolumna dziś `null` wszędzie, czeka na 05B (`ProgramCover`).
-   Migracja 05A jest na `main`, ale nadal nie została zastosowana na produkcji; 05B wymaga
-   najpierw `db push` procedurą `arco-release` po zgodzie [Ty].
+   Phase 1/2/offline/Ekipa zielone. Przed wdrożeniem wykonano backup
+   `backups/20260730T111541Z`; dry-run zawierał wyłącznie PLAN-05A, a `migration list`
+   potwierdziło 61/61. Odczyt produkcyjny potwierdził 16 programów i zero niepustych
+   okładek. **05B (`ProgramCover`) jest odblokowane.**
    05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
