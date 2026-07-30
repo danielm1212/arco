@@ -178,7 +178,7 @@ export function formatVolumeCompact(
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
       }),
-      suffix: unit === "kg" ? "t" : "k lb",
+      suffix: unit === "kg" ? "t" : "tys. lb",
     };
   }
   return { value: Math.round(value).toLocaleString("pl-PL"), suffix: unit };

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect, RedirectType } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { joinMaybe } from "@/lib/dbJoins";
 import { localDayKey } from "@/lib/week";
 import { clampWeeklyGoal } from "@/lib/programRecommendation";
 
@@ -13,6 +14,34 @@ async function requireUser() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   return { supabase, user };
+}
+
+export interface OpenSessionMini {
+  id: string;
+  started_at: string;
+  label: string | null;
+}
+
+/**
+ * Lekki odczyt globalnego mini-baru jako Server Action. Komponent kliencki nie
+ * importuje dzięki temu całego SDK Supabase do początkowego bundle'a każdej trasy.
+ */
+export async function getOpenSessionMini(): Promise<OpenSessionMini | null> {
+  const { supabase } = await requireUser();
+  const { data, error } = await supabase
+    .from("sessions")
+    .select("id, started_at, program_days(label)")
+    .is("finished_at", null)
+    .order("started_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  return {
+    id: data.id,
+    started_at: data.started_at,
+    label: joinMaybe<{ label: string }>(data.program_days)?.label ?? null,
+  };
 }
 
 /** Zapisz aktywny program bez wymuszania nawigacji (np. onboarding).

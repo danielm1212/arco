@@ -131,13 +131,15 @@ do Postępów.
 
 **Dane:** `StrengthRow` z `app/progress/stats.ts`, komponent `Sparkline`.
 
-**Otwarte do rozstrzygnięcia w trakcie:** ile wierszy (POC pokazuje 3) i po czym wybieramy
-ćwiczenia — największy progres, najczęstsze, czy ostatnio trenowane. **Domyślnie: ostatnio
-trenowane**, bo Home odpowiada na „co teraz", nie „co kiedyś".
+**Rozstrzygnięcie 2026-07-30:** pokazujemy maksymalnie **3 ostatnio trenowane ćwiczenia**,
+które mają co najmniej dwie kwalifikowane sesje w oknie 90 dni. Home odpowiada dzięki temu
+na „co teraz", a nie premiuje historycznie największego wyniku. Przy braku takich ruchów
+sekcja znika bez pustego stanu. Agregacja reużywa wiersze `getHomeInsights` i nie wykonuje
+żadnego dodatkowego zapytania.
 
 **Kryteria akceptacji:**
-- [ ] ćwiczenie bez progresu ma neutralny, nie negatywny sygnał („bez zmian", szary sparkline);
-- [ ] długie polskie nazwy ćwiczeń nie rozpychają wiersza na 320 px.
+- [x] ćwiczenie bez progresu ma neutralny, nie negatywny sygnał („bez zmian", szary sparkline);
+- [x] długie polskie nazwy ćwiczeń nie rozpychają wiersza na 320 px.
 
 **Model:** Sonnet 5 — dane z HOME-02, praca głównie prezentacyjna.
 
@@ -265,8 +267,8 @@ PLAN-04 ─────────────── równolegle ┘
 
 ## 6. Do rozstrzygnięcia przez [Ty] w trakcie
 
-1. **Ile wierszy ćwiczeń na Home** i po czym je wybieramy (HOME-03; domyślnie 3 ostatnio
-   trenowane).
+1. ~~**Ile wierszy ćwiczeń na Home** i po czym je wybieramy.~~ Rozstrzygnięte 2026-07-30:
+   maks. 3 ostatnio trenowane ruchy z co najmniej dwiema kwalifikowanymi sesjami w 90 dni.
 2. **Czy Gambarino zostaje na passie** po zobaczeniu na urządzeniu — `wytyczne-designu.md`
    rezerwuje ten krój na momenty, nie na UI narzędzia. Decyzja z POC: zostaje.
 3. **Ikona i etykieta taba Trening** w dolnym pasku — POC używa hantli; do sprawdzenia,

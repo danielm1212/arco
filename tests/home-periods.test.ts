@@ -175,7 +175,7 @@ test("formatVolumeCompact: kg powyżej tysiąca skraca się do ton", () => {
 });
 
 test("formatVolumeCompact: lbs powyżej tysiąca skraca się do tysięcy, nie do ton metrycznych", () => {
-  assert.deepEqual(formatVolumeCompact(29_500, "lbs"), { value: "29,5", suffix: "k lb" });
+  assert.deepEqual(formatVolumeCompact(29_500, "lbs"), { value: "29,5", suffix: "tys. lb" });
 });
 
 test("formatVolumeCompact: poniżej tysiąca pełna liczba w jednostce profilu", () => {

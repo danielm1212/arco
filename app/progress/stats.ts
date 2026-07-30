@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
-import { setMetric } from "@/lib/exerciseMetrics";
+import { setMetric, strengthTrendCutoff } from "@/lib/exerciseMetrics";
 import { localDayKey, computeStreak, dayOfWeek, weeksMeetingGoal } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 import { joinMany, joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
@@ -207,7 +207,7 @@ export async function getStrengthTrends(
   supabase: Supabase,
   unit: UnitSystem,
 ): Promise<StrengthRow[]> {
-  const strengthCutoff = new Date(Date.now() - 90 * 86_400_000).toISOString();
+  const strengthCutoff = strengthTrendCutoff();
   // DATA-03 (CORE-0): trend siły liczy się tylko z zakończonych sesji.
   const sSessions = await finishedSessions(supabase, { gte: strengthCutoff });
   const sStart = new Map(sSessions.map((s) => [s.id, s.started_at]));

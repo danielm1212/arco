@@ -64,7 +64,7 @@ export function WeeklyGoalBadge({
           ref={badgeRef}
           type="button"
           aria-haspopup="dialog"
-          aria-label={`Cel tygodniowy: ${formatGoalSentence(done, goal)}. Pokaż szczegóły tygodnia`}
+          aria-label={`Cel tygodniowy ${formatGoalRatio(done, goal)}: ${formatGoalSentence(done, goal)}. Pokaż szczegóły tygodnia`}
           className={`flex min-h-11 min-w-11 items-center gap-1 rounded-full px-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
             goalMet
               ? "bg-primary/15 text-primary hover:bg-primary/25"

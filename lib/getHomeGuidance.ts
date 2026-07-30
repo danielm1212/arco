@@ -2,7 +2,11 @@
 import { joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
-import { setMetric } from "@/lib/exerciseMetrics";
+import { setMetric, strengthTrendCutoff } from "@/lib/exerciseMetrics";
+import {
+  aggregateHomeExerciseProgress,
+  type HomeExerciseProgressRow,
+} from "@/lib/homeExerciseProgress";
 import { weekStart } from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 import {
@@ -29,6 +33,8 @@ export interface HomeInsights {
   guidance: GuidanceItem[];
   /** `null` = brak historii; Home nie renderuje wtedy statystyk (HOME-02). */
   periods: HomePeriodFacts | null;
+  /** HOME-03: maks. trzy ostatnio trenowane ruchy, liczone z tych samych wierszy. */
+  exerciseProgress: HomeExerciseProgressRow[];
 }
 
 /**
@@ -47,7 +53,7 @@ export interface HomeInsights {
  */
 export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
   const supabase = await createClient();
-  const since90 = new Date(Date.now() - 90 * DAY).toISOString();
+  const since90 = strengthTrendCutoff();
   const since30 = new Date(Date.now() - 30 * DAY).toISOString();
 
   // Licznik rekordów jest niezależny od reszty — leci równolegle z pierwszym
@@ -68,7 +74,9 @@ export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
   const sessionDate = new Map((sessions ?? []).map((s) => [s.id, new Date(s.started_at)]));
   const sessionIds = [...sessionDate.keys()];
   const sessionDates = [...sessionDate.values()];
-  if (sessionIds.length === 0) return { guidance: [], periods: null };
+  if (sessionIds.length === 0) {
+    return { guidance: [], periods: null, exerciseProgress: [] };
+  }
 
   const { data: ses } = await supabase
     .from("session_exercises")
@@ -106,6 +114,7 @@ export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
     return {
       guidance: [],
       periods: aggregateHomePeriods({ rows: [], sessionDates, prCount30, unit }),
+      exerciseProgress: [],
     };
   }
   const { data: sets } = await supabase
@@ -177,5 +186,6 @@ export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
       ...balanceFlags(weekByCat),
     ]),
     periods: aggregateHomePeriods({ rows: factRows, sessionDates, prCount30, unit }),
+    exerciseProgress: aggregateHomeExerciseProgress(factRows, unit),
   };
 }

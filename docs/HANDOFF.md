@@ -265,8 +265,10 @@ koordynacji (2026-07-23).
   `npm run validate:training` (lokalnie seed daje 336 slotów — rozjazd to znany dryf
   `advanced-gym-ppl6`, patrz §4 punkt 2);
 - publiczna rejestracja wyłączona;
-- migracje produkcyjne do `20260729143423` (PLAN-C4) zostały zastosowane; `migration list`
-  potwierdza `local == remote`, 60 migracji, zero oczekujących.
+- migracje produkcyjne są zastosowane do `20260729143423` (PLAN-C4), czyli 60 migracji;
+  repo zawiera dodatkową, **niewdrożoną** migrację
+  `20260729212437_plan05a_program_cover_image.sql` (PLAN-05A). PLAN-05B nie może wejść na
+  produkcję przed `db push` wykonanym procedurą `arco-release` po zgodzie [Ty].
 
 ## 6. Najbliższa praca
 
@@ -285,20 +287,34 @@ koordynacji (2026-07-23).
    fizyczna regresja nie blokuje rozpoczęcia PLAN-Q.
 5. **HOME-NAV — w toku:** kontrakt IA zrewidowany (trzy taby Home · Trening · Ekipa, D-38…D-41),
    POC zatwierdzony, paczki HOME-01…03, NAV-01 i PLAN-04 rozpisane w `spec-home-i-nawigacja.md`.
-   **HOME-01 (powitanie + karta passy) scalone do `main` w PR
-   [#33](https://github.com/danielm1212/arco/pull/33). HOME-02 (podsumowanie okresu + trzy
-   kafle) gotowe technicznie 2026-07-30** — `lib/homePeriods.ts` + `app/HomeStats.tsx`,
-   202/202 unit, 32/32 przeglądarkowych. Budżet gorącej trasy **zmierzony przez
+   **HOME-01 (PR [#33](https://github.com/danielm1212/arco/pull/33)) i HOME-02
+   (PR #48) są na `main`. HOME-03 jest gotowe technicznie 2026-07-30 na
+   `agent/home-03-audit`:** trzy ostatnio trenowane ćwiczenia (min. dwie kwalifikowane sesje
+   w 90 dni), rekord, 1RM, progres, neutralny brak zmian, sparkline i link „Wykresy".
+   Reużywa `getHomeInsights` i dodaje **zero zapytań**. Audyt pakietów #33/#34/#46/#47/#48
+   jest w `ocena-home-nav-plan05-2026-07-30.md`; wykryty P1 blokującego batcha naprawiono
+   przed HOME-03 przez połączenie dwóch odczytów sesji (5 → 4 równolegle).
+   Budżet HOME-02 był wcześniej **zmierzony przez
    `pg_stat_statements` przed implementacją**: naiwny reuse `periodStats`/`getStrengthTrends`
    dawał **+13 zapytań** (8 → 21), więc agregaty liczą się z wierszy, które `getHomeGuidance`
    i tak już pobiera — koszt realny **+1** (licznik rekordów, `head: true`, równolegle,
-   bez pogłębiania waterfalla: 8 → 9). CTA startu nie czeka na statystyki (wspólny `Suspense`
+   bez pogłębiania waterfalla). Po poprawce P1 serwerowy RSC Home wykonuje 8 wywołań
+   zamiast 9. Audyt przeglądarkowy doprecyzował wcześniejsze liczenie: globalny mini-bar
+   aktywnej sesji dodaje po hydratacji jeden odroczony odczyt, więc pełne wejście to
+   **8 RSC + 1 mini-bar = 9**, przy delcie HOME-03 nadal równej **0**.
+   CTA startu nie czeka na statystyki (wspólny `Suspense`
    po hero). „Największy progres" liczony w oknie 90 dni, tym samym co `getStrengthTrends`,
-   żeby Home i Postępy nie rozjechały się na tym samym ruchu. **Do [Ty]: checkpoint wizualny
-   Home za loginem** — komponent zweryfikowany na 320/375 px light+dark na fixture'ach,
-   ale pełnego ekranu z prawdziwymi danymi nie sprawdziłem (agent nie wpisuje haseł).
-   Kolejny krok: **HOME-03** (postęp ćwiczeń ze sparkline; reużyje `getHomeInsights`, więc
-   nie dołoży zapytań). HOME-NAV wchodzi **przed R2.2** — obie dotykają `/programs`.
+   żeby Home i Postępy nie rozjechały się na tym samym ruchu. Pełny Home za lokalnym
+   loginem sprawdzony po buildzie na 320/375/393 px light i 393 px dark, bez overflow;
+   209/209 unit i 32/32 przeglądarkowych. Re-audyt PR #49 podniósł ocenę techniczną
+   **6 → 8,6/10**: początkowy JS Home ma **171,2 KiB gzip** (budżet < 200 KiB), trzy
+   przebiegi Lighthouse na uwierzytelnionym buildzie dały performance/accessibility
+   **100/100**, medianę **LCP 751 ms, TBT 19 ms, CLS 0**. Usunięto klienta Supabase
+   z początkowego bundle'a globalnego mini-baru, poprawiono kontrast aktywnej nawigacji,
+   label-in-name celu tygodniowego, rozmiar logo i target „Zmień" do 44×44 px.
+   Stan bez historii oraz offline smoke są zielone. **Do [Ty]: checkpoint fizycznego iPhone PWA
+   i starego cache dla HOME-01…03.** Kolejny krok: **NAV-01 — bezwzględnie przed PLAN-05D
+   i R2.2**, bo paczki kolidują w `/programs` i `/programs/[id]`.
    PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może iść równolegle.
 6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
    CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").
@@ -313,6 +329,8 @@ koordynacji (2026-07-23).
    wizualnego przy 05D/05E. **05A (migracja `cover_image_url`) gotowe technicznie 2026-07-29** —
    `programs.cover_image_url` (nullable, bez zmian RLS), `db reset`/seed/walidatory/smoke
    Phase 1/2/offline zielone; kolumna dziś `null` wszędzie, czeka na 05B (`ProgramCover`).
+   Migracja 05A jest na `main`, ale nadal nie została zastosowana na produkcji; 05B wymaga
+   najpierw `db push` procedurą `arco-release` po zgodzie [Ty].
    05D (przebudowa `/programs/[id]`) wchodzi **po NAV-01, przed R2.2** — ten sam plik co obie.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).

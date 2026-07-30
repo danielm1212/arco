@@ -15,6 +15,7 @@ import { GuidanceChip } from "./GuidanceChip";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
 import { StreakCard } from "./StreakCard";
 import { HomeStats } from "./HomeStats";
+import { HomeExerciseProgress } from "./HomeExerciseProgress";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { WeeklyGoalBadge } from "@/components/WeeklyGoalBadge";
@@ -38,11 +39,29 @@ export const dynamic = "force-dynamic";
  * serii roboczych. Koszt: +1 zapytanie (licznik rekordów), nie +13, jakie dałoby
  * wołanie `getPeriodOverview`/`periodStats` per okno — patrz `lib/homePeriods.ts`.
  */
-async function HomeInsights({ unit }: { unit: UnitSystem }) {
-  const { guidance, periods } = await getHomeInsights(unit);
+async function HomeInsights({
+  unit,
+  review,
+}: {
+  unit: UnitSystem;
+  review: {
+    userId: string;
+    programId: string;
+    completedSessions: number;
+  } | null;
+}) {
+  const { guidance, periods, exerciseProgress } = await getHomeInsights(unit);
   return (
     <>
       <HomeStats periods={periods} />
+      <HomeExerciseProgress rows={exerciseProgress} />
+      {review && (
+        <ProgramReviewInsight
+          userId={review.userId}
+          programId={review.programId}
+          completedSessions={review.completedSessions}
+        />
+      )}
       <GuidanceChip items={guidance} />
     </>
   );
@@ -67,15 +86,17 @@ export default async function HomePage() {
   const userId = authData.session?.user.id ?? "anon";
   const historySince = new Date();
   historySince.setDate(historySince.getDate() - 120);
+  const historySinceIso = historySince.toISOString();
 
-  // R2: jeden równoległy batch — hero nie może czekać na sekwencyjny waterfall.
+  // R2/HOME-03: jeden równoległy batch, maks. 4 zapytania wg budżetu gorącej
+  // trasy. Otwarta sesja i 120-dniowa historia pochodzą z jednego odczytu,
+  // rozdzielanego niżej w pamięci (wcześniej były dwoma zapytaniami: batch 5).
   // Dni i sloty aktywnego planu wchodzą zagnieżdżonym joinem zamiast dwóch
   // dodatkowych rund (sugerowany dzień + jego metadane).
   const [
     { data: programs },
     { data: active },
-    { data: openSession },
-    { data: finished },
+    { data: sessionRows },
     { data: settings },
   ] = await Promise.all([
     supabase
@@ -88,21 +109,19 @@ export default async function HomePage() {
       .maybeSingle(),
     supabase
       .from("sessions")
-      .select("id, started_at")
-      .is("finished_at", null)
-      .order("started_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from("sessions")
-      .select("started_at, program_day_id")
-      .not("finished_at", "is", null)
-      .gte("started_at", historySince.toISOString()),
+      .select("id, started_at, program_day_id, finished_at")
+      .or(`finished_at.is.null,started_at.gte.${historySinceIso}`)
+      .order("started_at", { ascending: false }),
     supabase
       .from("user_settings")
       .select("unit_system, weekly_goal, display_name, onboarding_completed_at")
       .maybeSingle(),
   ]);
+  const openSession =
+    (sessionRows ?? []).find((session) => session.finished_at === null) ?? null;
+  const finished = (sessionRows ?? []).filter(
+    (session) => session.finished_at !== null,
+  );
 
   const activeId = active?.program_id ?? null;
   const activeProgram = (programs ?? []).find((p) => p.id === activeId) ?? null;
@@ -313,18 +332,19 @@ export default async function HomePage() {
           <StreakCard streak={streak} week={week} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />
         )}
 
-        {/* R2: przegląd planu jako kontekstowy, dismissowalny insight —
-            komponent sam pilnuje progu 12 sesji i pamięta zamknięcie */}
-        {activeProgram && (
-          <ProgramReviewInsight
-            userId={userId}
-            programId={activeProgram.id}
-            completedSessions={completedSessionsInActiveProgram}
-          />
-        )}
-
         <Suspense fallback={null}>
-          <HomeInsights unit={settings?.unit_system ?? "kg"} />
+          <HomeInsights
+            unit={settings?.unit_system ?? "kg"}
+            review={
+              activeProgram
+                ? {
+                    userId,
+                    programId: activeProgram.id,
+                    completedSessions: completedSessionsInActiveProgram,
+                  }
+                : null
+            }
+          />
         </Suspense>
       </main>
     </div>
