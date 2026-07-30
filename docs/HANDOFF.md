@@ -350,7 +350,8 @@ koordynacji (2026-07-23).
    `lib/`, aby klasy gradientów nie znikały z buildu. Jest wpięty w `/programs/[id]`
    przez 05D, a lista `/programs` czeka na 05E. Lint, unit **213/213**, build i overflow
    **34/34** są zielone; ręcznie potwierdzono 320 px, light/dark oraz fallback po 404.
-   **05D jest gotowe technicznie 2026-07-30 na `agent/plan-05d-program-detail`:**
+   **05D jest na `main` po PR
+   [#53](https://github.com/danielm1212/arco/pull/53):**
    docelowy ekran presetu ma hero 4:3, pełne fakty z ikonami, `LevelMeter`, CTA/stan
    „Aktywny" nad zgięciem, domyślnie otwarty opis, sprzęt i zachowaną rotację; usunięto
    powtarzalną kartę „Jak robić postęp". Własny plan nadal otwiera dotychczasowy edytor
@@ -358,8 +359,23 @@ koordynacji (2026-07-23).
    fakty są w jednym rzędzie, poziom w drugim, zero overflow. Bramka: lint, build,
    **217/217** unit i **35/35** przeglądarkowych. `arco-a11y-review` poprawił kontrast
    napisu stanu aktywnego (4,00:1 → `text-foreground`); brak nowych findingów AA.
-   Konto testowe usunięto punktowo po znanym ID. **Do [Ty]:** review/merge i checkpoint
-   iPhone PWA; potem 05E, a dopiero następnie R2.2.
+   Konto testowe usunięto punktowo po znanym ID.
+   **05E jest gotowe technicznie 2026-07-30 na `agent/plan-05e-program-list`, bez commita:**
+   redesign karty zaakceptowany wizualnie przez właściciela. Tytuł jest prezentacyjny
+   (`lib/programListCard.ts` zdejmuje z nazwy poziom, środowisko i częstotliwość — bez
+   migracji, pełna nazwa zostaje w bazie i w szczególe), środowisko jest małym tagiem,
+   fakty zwarte, a poziom to nowy `LevelMeter variant="list"` — trzy małe pionowe słupki
+   o rosnącej wysokości. „Ustaw" wyszło spod miniatury do stopki karty (60×44 px), więc
+   kolumna zdjęcia jest wyłącznie zdjęciem. Aktywny plan to stan całej karty
+   (obrys `primary/80` + tło + „✓ Aktywny"), nie osobny przycisk. Wariant `bars` i ekran
+   `/programs/[id]` z 05D pozostały nietknięte. Bramka: lint, build, **226/226** unit
+   i **36/36** overflow; 320/393 px, light i dark, bez overflow; reflow trzyma do 200%
+   powiększenia tekstu. Kontrasty policzone z tokenów — jedyne świadome odstępstwo to
+   pełny vs pusty słupek w dark (**2,44:1**), udokumentowane w `components/LevelMeter.tsx`:
+   słupki są warstwą pomocniczą, bo poziom stoi słownie obok i w `aria-label`.
+   Bez migracji, deployu i zmian w Linearze.
+   **Do [Ty]:** przejście po zalogowanej trasie `/programs` (agent nie loguje się na konto)
+   i checkpoint iPhone PWA dla 05D oraz 05E; potem R2.2.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
    Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do
