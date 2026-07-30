@@ -21,6 +21,26 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-30 · Codex · HOME-03 DoD i pomiar wydajności: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** re-audyt HOME-03 na PR #49, prawdziwy pomiar początkowego JS i Lighthouse,
+  przegląd a11y Home, stan z historią i bez niej, offline smoke oraz korekta dokumentacji.
+- **Wynik:** ocena techniczna paczki wzrosła z **6 do 8,6/10**. Początkowy JS Home spadł
+  z ok. 228,1 do **171,2 KiB gzip** dzięki przeniesieniu odczytu mini-baru z klienta
+  Supabase do Server Action. Trzy porównywalne przebiegi Lighthouse: performance i
+  accessibility **100/100**, mediana **LCP 751 ms, TBT 19 ms, CLS 0**.
+- **A11y:** poprawione kontrast aktywnego taba, label-in-name celu tygodniowego, wymiary
+  logo i target „Zmień" 35×44 → 44×44 px. Wszystkie widoczne kontrolki Home mają min.
+  44×44 px; 320/393 px bez overflow. Stan bez historii świadomie ukrywa insighty.
+- **Zapytania:** HOME-03 nadal dodaje **0**. Doprecyzowano pomiar pełnego wejścia:
+  8 wywołań RSC + 1 odroczony odczyt globalnego mini-baru po hydratacji.
+- **Dowód:** lint, TypeScript i build zielone; unit **209/209**; overflow **32/32**;
+  offline smoke zielony; walidatory 907/15/336 oraz 60/60; audyt pokrycia wykonany.
+- **Dane testowe:** 4 sesje i 3 rekordy usunięte wyłącznie po znanych ID, ustawienia i
+  aktywny plan przywrócone. Produkcja i migracje nietknięte.
+- **Zaległość:** [Ty] checkpoint fizycznego iPhone PWA/starego cache. Następnie
+  **NAV-01 przed PLAN-05D i R2.2**.
+
 ### 2026-07-30 · Codex · audyt HOME/PLAN-05 i HOME-03: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** brutalny audyt PR #33/#34/#46/#47/#48 zapisany w

@@ -4,20 +4,16 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
-import { deleteSession } from "@/app/actions/session";
+import {
+  deleteSession,
+  getOpenSessionMini,
+  type OpenSessionMini,
+} from "@/app/actions/session";
 import { Play, X } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { MiniBarPosition } from "@/lib/appChrome";
-import { joinMaybe } from "@/lib/dbJoins";
-
-interface OpenSession {
-  id: string;
-  started_at: string;
-  label: string | null;
-}
 
 const mmss = (s: number) =>
   `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -35,7 +31,7 @@ export function SessionMiniBar({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [open, setOpen] = useState<OpenSession | null>(null);
+  const [open, setOpen] = useState<OpenSessionMini | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [busy, setBusy] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -43,26 +39,13 @@ export function SessionMiniBar({
   // Odpytanie przy każdej zmianie trasy — sesja mogła zostać zakończona/porzucona
   useEffect(() => {
     let cancelled = false;
-    const supabase = createClient();
-    supabase
-      .from("sessions")
-      .select("id, started_at, program_days(label)")
-      .is("finished_at", null)
-      .order("started_at", { ascending: false })
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }) => {
+    getOpenSessionMini()
+      .then((data) => {
         if (cancelled) return;
-        setOpen(
-          data
-            ? {
-                id: data.id,
-                started_at: data.started_at,
-                label:
-                  joinMaybe<{ label: string }>(data.program_days)?.label ?? null,
-              }
-            : null,
-        );
+        setOpen(data);
+      })
+      .catch(() => {
+        if (!cancelled) setOpen(null);
       });
     return () => {
       cancelled = true;

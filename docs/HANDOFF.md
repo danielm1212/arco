@@ -298,12 +298,21 @@ koordynacji (2026-07-23).
    `pg_stat_statements` przed implementacją**: naiwny reuse `periodStats`/`getStrengthTrends`
    dawał **+13 zapytań** (8 → 21), więc agregaty liczą się z wierszy, które `getHomeGuidance`
    i tak już pobiera — koszt realny **+1** (licznik rekordów, `head: true`, równolegle,
-   bez pogłębiania waterfalla). Po poprawce P1 pełny Home wykonuje 8 wywołań zamiast 9.
+   bez pogłębiania waterfalla). Po poprawce P1 serwerowy RSC Home wykonuje 8 wywołań
+   zamiast 9. Audyt przeglądarkowy doprecyzował wcześniejsze liczenie: globalny mini-bar
+   aktywnej sesji dodaje po hydratacji jeden odroczony odczyt, więc pełne wejście to
+   **8 RSC + 1 mini-bar = 9**, przy delcie HOME-03 nadal równej **0**.
    CTA startu nie czeka na statystyki (wspólny `Suspense`
    po hero). „Największy progres" liczony w oknie 90 dni, tym samym co `getStrengthTrends`,
    żeby Home i Postępy nie rozjechały się na tym samym ruchu. Pełny Home za lokalnym
    loginem sprawdzony po buildzie na 320/375/393 px light i 393 px dark, bez overflow;
-   209/209 unit i 32/32 przeglądarkowych. **Do [Ty]: checkpoint fizycznego iPhone PWA
+   209/209 unit i 32/32 przeglądarkowych. Re-audyt PR #49 podniósł ocenę techniczną
+   **6 → 8,6/10**: początkowy JS Home ma **171,2 KiB gzip** (budżet < 200 KiB), trzy
+   przebiegi Lighthouse na uwierzytelnionym buildzie dały performance/accessibility
+   **100/100**, medianę **LCP 751 ms, TBT 19 ms, CLS 0**. Usunięto klienta Supabase
+   z początkowego bundle'a globalnego mini-baru, poprawiono kontrast aktywnej nawigacji,
+   label-in-name celu tygodniowego, rozmiar logo i target „Zmień" do 44×44 px.
+   Stan bez historii oraz offline smoke są zielone. **Do [Ty]: checkpoint fizycznego iPhone PWA
    i starego cache dla HOME-01…03.** Kolejny krok: **NAV-01 — bezwzględnie przed PLAN-05D
    i R2.2**, bo paczki kolidują w `/programs` i `/programs/[id]`.
    PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może iść równolegle.

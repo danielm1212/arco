@@ -23,9 +23,22 @@ export function TrainingHeader({
     <header className="flex items-center justify-between border-b px-sm py-sm">
       <span className="pl-2xs">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.svg" alt="Arco" className="h-8 w-auto dark:hidden" />
+        <img
+          src="/logo.svg"
+          alt="Arco"
+          width={690}
+          height={317}
+          className="h-8 w-auto dark:hidden"
+        />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-dark.svg" alt="" aria-hidden className="hidden h-8 w-auto dark:block" />
+        <img
+          src="/logo-dark.svg"
+          alt=""
+          aria-hidden
+          width={690}
+          height={317}
+          className="hidden h-8 w-auto dark:block"
+        />
       </span>
       <div className="flex items-center gap-xs">
         {goalSlot}

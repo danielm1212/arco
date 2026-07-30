@@ -3,7 +3,8 @@
 **Data audytu:** 2026-07-30
 **Stan bazowy:** `main` / `7e8e77e`
 **Pakiety:** PR #33, #34, #46, #47, #48
-**Ocena łączna:** **6/10**
+**Ocena bazowa:** **6/10**
+**Ocena po domknięciu PR #49:** **8,6/10**
 
 ## 1. Werdykt
 
@@ -24,6 +25,14 @@ audytowej połączono odczyt sesji otwartej i historii: obecny `app/page.tsx` li
 wykonuje cztery zapytania w batchu. HOME-03 nadal używa istniejącego `getHomeInsights` i
 nie dodaje zapytania.
 
+Po wdrożeniu poprawek i HOME-03 paczka osiąga **8,6/10** w technicznym re-audycie.
+Najważniejsze braki z oceny bazowej zostały zamknięte: blokujący batch ma cztery równoległe
+wywołania, początkowy JS Home ma **171,2 KiB gzip** przy budżecie 200 KiB, Lighthouse na
+finalnym buildzie daje **100/100** dla performance i accessibility, a mediana trzech
+porównywalnych przebiegów to **LCP 751 ms, TBT 19 ms, CLS 0**. Pozostaje fizyczny checkpoint
+iPhone PWA/starego cache po stronie właściciela; bez niego paczka jest gotowa technicznie,
+ale nie jest zamknięta urządzeniowo.
+
 ## 2. Oceny
 
 | Obszar | Ocena | Uzasadnienie |
@@ -33,6 +42,16 @@ nie dodaje zapytania.
 | Dostępność | **8/10** | Kontrasty przechodzą AA, karta passy ma sensowną semantykę listy, `LevelMeter` nie komunikuje stanu samym kolorem. Brakowało pełnego review ekranu/zoomu za loginem. |
 | Spójność produktu i dokumentacji | **6/10** | Kierunek Home i violet dla danych są zgodne z kanonem. Okres 90 dni był niewidoczny dla osoby widzącej, `k lb` nie jest dobrym polskim skrótem, a backlog i HANDOFF rozjechały się ze stanem Git. |
 | Jakość weryfikacji | **5/10** | 202 testy, lint, TypeScript i build są realne. Fixture pojedynczego komponentu nie dowodzi złożonego Home; replay kształtu SQL nie mierzy requestu RSC, LCP ani CLS. |
+
+### 2.1 Re-audyt po poprawkach PR #49
+
+| Obszar | Ocena | Dowód na finalnym kodzie |
+|---|---:|---|
+| Poprawność | **9/10** | HOME-03 reużywa kwalifikowane fakty `getHomeInsights`, wybiera maks. trzy ostatnio trenowane ruchy z min. dwiema sesjami i ma testy weighted/bodyweight/timed. |
+| Budżet / wydajność gorącej trasy | **9/10** | Batch hero 5 → 4; CTA nie czeka na insighty; 171,2 KiB gzip początkowego JS; Lighthouse performance 100, mediana LCP 751 ms i CLS 0. |
+| Dostępność | **9/10** | Lighthouse accessibility 100; kontrast aktywnej nawigacji i label-in-name celu poprawione; wszystkie widoczne targety Home ≥ 44×44 px; 320 px bez overflow. |
+| Spójność produktu i dokumentacji | **8/10** | Okna czasu są widoczne, copy i jednostki spójne, a HOME-03 prowadzi do pełnych wykresów. Fizyczny iPhone/stary cache nadal czekają. |
+| Jakość weryfikacji | **8/10** | Pełny uwierzytelniony Home, stan z historią i bez niej, trzy przebiegi Lighthouse, build, 209/209 unit, 32/32 browser, offline smoke i walidatory. Brak wyłącznie urządzenia fizycznego. |
 
 ## 3. Ocena pakietów
 
@@ -106,6 +125,17 @@ log wywołań PostgREST dla jednego requestu oraz Lighthouse/Web Vitals dla LCP 
 Naprawiono P1 blokującego batcha: odczyt otwartej i zakończonej sesji jest jednym
 zapytaniem, więc batch ma teraz 4 wywołania. Insighty nadal streamują się później.
 
+Audyt przeglądarkowy ujawnił jeszcze globalny odczyt mini-baru aktywnej sesji po hydratacji,
+którego wcześniejsze liczenie samego RSC nie obejmowało. Pełne wejście ma zatem:
+
+- **8 wywołań serwerowego RSC Home** (4 hero + 4 streamowanych insightów);
+- **1 odroczone wywołanie mini-baru** po hydratacji;
+- razem **9**, ale HOME-03 nadal ma deltę **0**.
+
+Mini-bar został przeniesiony z bezpośredniego klienta Supabase do lekkiej Server Action.
+Nie zmienia to liczby odczytów, lecz usuwa SDK Supabase z początkowego bundle'a każdej trasy
+i obniża JS Home z około 228,1 do **171,2 KiB gzip**.
+
 ### 4.6 Martwy `LevelMeter`
 
 Osobny komponent był rozsądną paczką zależności: kontrakt ma dwa przyszłe miejsca użycia,
@@ -173,6 +203,15 @@ jedynie niezgodne z kanonem `font-bold` na dopisku.
 - pełny Home za loginem na lokalnym buildzie i czterech znanych sesjach;
 - viewporty 320/375/393 px w light oraz 393 px w dark:
   `scrollWidth === clientWidth`, link „Wykresy" ma 44 px wysokości.
+- trzy porównywalne przebiegi Lighthouse na uwierzytelnionym finalnym buildzie:
+  performance **100/100**, accessibility **100/100**, best practices **100/100**;
+  mediana **LCP 751 ms**, **TBT 19 ms**, **CLS 0**;
+- początkowy JS Home: **171,2 KiB gzip** (11 plików, bez legacy polyfillu), budżet
+  `< 200 KiB`;
+- ręczny audyt pól dotykowych znalazł `Zmień` 35×44 px; po poprawce wszystkie widoczne
+  kontrolki Home mają co najmniej 44×44 px;
+- stan bez historii: statystyki i HOME-03 są świadomie ukryte, główne CTA pozostaje;
+- `npm run smoke:offline` — zapis idempotentny i pełne sprzątnięcie danych testowych.
 
 Nie wykonano checkpointu fizycznego iPhone PWA ani starego cache. To nadal bramka
 właściciela i nie może zostać zastąpione desktopowym Chromium.
