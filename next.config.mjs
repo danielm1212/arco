@@ -15,11 +15,30 @@ const supabaseOrigin = (() => {
   }
 })();
 
+const supabaseImagePattern = (() => {
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL);
+    return {
+      protocol: url.protocol.replace(":", ""),
+      hostname: url.hostname,
+      pathname: "/storage/v1/object/public/**",
+    };
+  } catch {
+    return {
+      protocol: "https",
+      hostname: "**.supabase.co",
+      pathname: "/storage/v1/object/public/**",
+    };
+  }
+})();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Obrazy ćwiczeń idą wyłącznie z własnego Supabase Storage/CDN (zwykłe <img>);
-  // next/image używają tylko lokalne ikony 3D. Zaszłość hotlinku
-  // raw.githubusercontent.com wycięta (audyt 2026-07).
+  // Obrazy ćwiczeń i okładki programów idą wyłącznie z własnego Supabase
+  // Storage/CDN. Zaszłość hotlinku raw.githubusercontent.com wycięta (audyt 2026-07).
+  images: {
+    remotePatterns: [supabaseImagePattern],
+  },
   // Security headers — zestaw bazowy (docs/bezpieczenstwo.md P1, 2026-07-08).
   // HSTS dokłada Vercel.
   async headers() {

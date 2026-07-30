@@ -16,6 +16,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { build } from "esbuild";
 import { chromium, type Browser, type Page } from "@playwright/test";
+import { programCoverGradient, programCoverSizeClass } from "../../lib/programCover";
 import { STICKY_HEADER_SAFE_AREA } from "../../components/navigation/stickyHeader";
 
 /**
@@ -226,6 +227,39 @@ test("NAV-01: cztery zakładki Treningu mieszczą się na 320/375/393 px", async
         assert.ok(link.height >= 44, `target ma ${link.height}px przy ${width}px`);
         assert.equal(link.clipped, false, `ucięta etykieta przy ${width}px`);
       }
+    } finally {
+      await context.close();
+    }
+  }
+});
+
+test("PLAN-05B: miniatura ProgramCover size=row nie rozpycha wąskiej listy", async () => {
+  const coverClass = `${programCoverSizeClass("row")} ${programCoverGradient("lower_body")}`;
+  const row = (name: string) => `<li class="flex min-w-0 items-center gap-sm rounded-xl bg-card p-sm">
+    <div data-program-cover aria-hidden="true" class="${coverClass}"></div>
+    <div class="min-w-0 flex-1"><p class="break-words text-sm font-semibold">${name}</p>
+      <p class="text-xs text-muted-foreground">3 treningi · 45–60 min</p></div>
+  </li>`;
+  const body = `<main class="mx-auto max-w-md p-md"><ul class="space-y-xs">${[
+    "Pośladki i nogi — poziom średniozaawansowany",
+    "Całe ciało z hantlami",
+    "Siła od podstaw",
+  ].map(row).join("")}</ul></main>`;
+
+  for (const width of [320, 375, 393]) {
+    const context = await browser.newContext({ viewport: { width, height: 780 } });
+    try {
+      const page = await context.newPage();
+      await page.setContent(pageHtml(body), { waitUntil: "load" });
+      const metrics = await page.evaluate(() => ({
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        coverWidths: [...document.querySelectorAll<HTMLElement>("[data-program-cover]")].map(
+          (cover) => cover.getBoundingClientRect().width,
+        ),
+      }));
+
+      assert.ok(metrics.overflow <= 1, `poziomy overflow ${metrics.overflow}px przy ${width}px`);
+      assert.deepEqual(metrics.coverWidths, [64, 64, 64]);
     } finally {
       await context.close();
     }
