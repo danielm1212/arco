@@ -3,6 +3,7 @@ import {
   formatVolumeCompact,
   type HomePeriodFacts,
 } from "@/lib/homePeriods";
+import { trainingWord } from "@/lib/streakCopy";
 
 /**
  * HOME-02: „Podsumowanie" (trzy liczby, które mówią, czy idzie do przodu) plus
@@ -86,15 +87,6 @@ function Tile({
   );
 }
 
-/** „1 trening" / „2 treningi" / „7 treningów" — polska odmiana bez zgadywania. */
-function sessionsWord(n: number): string {
-  if (n === 1) return "trening";
-  const last2 = n % 100;
-  const last = n % 10;
-  if (last2 >= 12 && last2 <= 14) return "treningów";
-  return last >= 2 && last <= 4 ? "treningi" : "treningów";
-}
-
 export function HomeStats({ periods }: { periods: HomePeriodFacts | null }) {
   if (!periods) return null;
 
@@ -119,7 +111,7 @@ export function HomeStats({ periods }: { periods: HomePeriodFacts | null }) {
               <Cell
                 value={`+${topProgress.delta.toLocaleString("pl-PL")}${topProgress.suffix ? ` ${topProgress.suffix}` : ""}`}
                 valueTone="support"
-                label="Największy progres"
+                label="Progres · 90 dni"
                 detail={topProgress.name}
               />
             )}
@@ -156,7 +148,7 @@ export function HomeStats({ periods }: { periods: HomePeriodFacts | null }) {
         <Tile
           label="Treningi"
           value={`${sessions7}/${sessions30}`}
-          srValue={`${sessions7} ${sessionsWord(sessions7)} w 7 dniach, ${sessions30} ${sessionsWord(sessions30)} w 30 dniach`}
+          srValue={`${sessions7} ${trainingWord(sessions7)} w 7 dniach, ${sessions30} ${trainingWord(sessions30)} w 30 dniach`}
           period="7/30 dni"
         />
         <Tile label="Serie robocze" value={String(workingSets30)} period="30 dni" />

@@ -1,5 +1,12 @@
 import type { ExerciseType } from "@/lib/types";
 
+export const STRENGTH_TREND_WINDOW_DAYS = 90;
+
+/** Wspólna granica okna trendu dla Home i `/progress`. */
+export function strengthTrendCutoff(now = Date.now()): string {
+  return new Date(now - STRENGTH_TREND_WINDOW_DAYS * 86_400_000).toISOString();
+}
+
 /** Epley jest wiarygodnym wskaźnikiem dla krótkich serii, nie dla AMRAP-ów. */
 export function isE1rmRepRange(reps: number): boolean {
   return Number.isInteger(reps) && reps >= 1 && reps <= 10;

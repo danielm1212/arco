@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { streakHeadline, streakStatusText } from "../lib/streakCopy";
+import { streakHeadline, streakStatusText, trainingWord } from "../lib/streakCopy";
 
 /** HOME-01: wybór copy karty passy dla 0/1/N tygodni (spec-home-i-nawigacja.md §HOME-01). */
 
@@ -30,4 +30,17 @@ test("streakStatusText: brakuje jednego treningu (liczba pojedyncza)", () => {
 
 test("streakStatusText: brakuje N treningów (liczba mnoga)", () => {
   assert.equal(streakStatusText(0, 3), "Jeszcze 3 treningi domykają ten tydzień.");
+});
+
+test("trainingWord: poprawnie odmienia 22, 102 i 112", () => {
+  assert.equal(trainingWord(22), "treningi");
+  assert.equal(trainingWord(102), "treningi");
+  assert.equal(trainingWord(112), "treningów");
+});
+
+test("streakStatusText: pięć brakujących treningów nie daje błędnego „5 treningi”", () => {
+  assert.equal(
+    streakStatusText(0, 5),
+    "Jeszcze 5 treningów domykają ten tydzień.",
+  );
 });

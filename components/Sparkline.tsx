@@ -2,9 +2,11 @@
 export function Sparkline({
   values,
   className = "h-16 w-full",
+  tone = "primary",
 }: {
   values: number[];
   className?: string;
+  tone?: "primary" | "neutral";
 }) {
   if (values.length < 2) return null;
   const w = 320;
@@ -20,11 +22,16 @@ export function Sparkline({
     })
     .join(" ");
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className={className} preserveAspectRatio="none">
+    <svg
+      aria-hidden="true"
+      viewBox={`0 0 ${w} ${h}`}
+      className={className}
+      preserveAspectRatio="none"
+    >
       <polyline
         points={pts}
         fill="none"
-        stroke="hsl(var(--color-chart-primary))"
+        stroke={`hsl(var(--color-chart-${tone}))`}
         strokeWidth="2"
         strokeLinejoin="round"
         strokeLinecap="round"

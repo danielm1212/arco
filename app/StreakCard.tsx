@@ -33,7 +33,7 @@ export function StreakCard({
         {headline ? (
           <p className="leading-none">
             <span className="font-display text-4xl text-primary">{streak}</span>
-            <span className="ml-2xs text-base font-bold tracking-tight text-foreground">
+            <span className="ml-2xs text-base font-semibold tracking-tight text-foreground">
               . tydzień passy
             </span>
           </p>

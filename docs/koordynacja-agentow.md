@@ -21,6 +21,27 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-30 · Codex · audyt HOME/PLAN-05 i HOME-03: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** brutalny audyt PR #33/#34/#46/#47/#48 zapisany w
+  `docs/ocena-home-nav-plan05-2026-07-30.md`; HOME-03 w `getHomeInsights`, nowym
+  agregatorze i komponencie postępu; wspólne okno trendu 90 dni; poprawki copy,
+  lokalizacji, semantyki okresu i stylu HOME-01/02; synchronizacja spec/HANDOFF/backlogu.
+- **Wynik:** trzy ostatnio trenowane ruchy (min. 2 sesje) pokazują sparkline, rekord,
+  właściwą metrykę/1RM i progres; „Wykresy" prowadzą do `/progress`; brak danych ukrywa
+  moduł. HOME-03 dodaje zero zapytań. Znaleziony P1 budżetu gorącej trasy naprawiony przed
+  HOME-03: blokujący batch hero 5 → 4 zapytania, cała strona 9 → 8.
+- **Dowód:** lint i TypeScript czyste; unit **209/209**; overflow **32/32**; build
+  produkcyjny zielony; walidatory 907 ćwiczeń/15 programów/336 slotów i 60/60;
+  audyt pokrycia wykonany. Pełny Home za lokalnym loginem sprawdzony po buildzie na
+  320/375/393 px light oraz 393 px dark: bez overflow, link 44 px, długie nazwy poprawne.
+- **Dane testowe:** cztery lokalne sesje i trzy rekordy usunięte wyłącznie po znanych ID;
+  ustawienia i aktywny program fixture przywrócone. Produkcja i zdalna baza nietknięte.
+- **Czego nie dotknięto:** NAV-01, PLAN-05D, R2.2, migracji i deployu; niepowiązane,
+  nieśledzone duplikaty `SKILL 2.md`/`workflow-zespolu 2.md` pozostawione bez zmian.
+- **Zaległości:** [Ty] review/merge i checkpoint fizycznego iPhone PWA/starego cache.
+  Następnie **NAV-01 przed PLAN-05D i R2.2**. PLAN-05A pozostaje niewdrożone na produkcji.
+
 ### 2026-07-30 · Claude · HOME-02 — podsumowanie okresu i kafle na Home: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** nowy `lib/homePeriods.ts` (czysta agregacja + formatery, zero zapytań),

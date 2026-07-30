@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { estimate1RM, isE1rmRepRange, setMetric } from "../lib/exerciseMetrics";
+import {
+  estimate1RM,
+  isE1rmRepRange,
+  setMetric,
+  STRENGTH_TREND_WINDOW_DAYS,
+  strengthTrendCutoff,
+} from "../lib/exerciseMetrics";
 
 test("estimate1RM liczy wzór Epleya z zaokrągleniem do 0,1", () => {
   assert.equal(estimate1RM(100, 1), 103.3);
@@ -30,4 +36,13 @@ test("e1RM nie interpretuje serii poza zakresem 1–10 powtórzeń", () => {
   assert.equal(isE1rmRepRange(11), false);
   assert.equal(isE1rmRepRange(8.5), false);
   assert.equal(setMetric("weighted", { weight: 100, reps: 11, duration_seconds: null }), null);
+});
+
+test("okno trendu siły jest jednym, przypiętym kontraktem 90 dni dla Home i Postępów", () => {
+  const now = Date.UTC(2026, 6, 30, 12);
+  assert.equal(STRENGTH_TREND_WINDOW_DAYS, 90);
+  assert.equal(
+    strengthTrendCutoff(now),
+    new Date(now - 90 * 86_400_000).toISOString(),
+  );
 });
