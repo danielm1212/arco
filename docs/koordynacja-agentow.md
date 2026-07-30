@@ -21,6 +21,27 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-30 · Codex · release PLAN-05A i rebaseline po NAV-01: ZAKOŃCZONE
+
+- **Zakres:** kontrolowany deploy istniejącej migracji
+  `20260729212437_plan05a_program_cover_image.sql` bez edycji SQL; synchronizacja
+  HANDOFF, backlogu, speców HOME-NAV/PLAN-05 i dokumentacji backupu po merge NAV-01.
+- **Wynik:** produkcja ma nullable `programs.cover_image_url`; PLAN-05B jest odblokowane.
+  Historia migracji local == remote **61/61**. Odczyt produkcyjny: 16 programów
+  (15 systemowych + 1 własny), `non_null_covers = 0`.
+- **Bramka:** świeży backup `backups/20260730T111541Z` z trzema poprawnymi sumami;
+  dry-run zawierał wyłącznie PLAN-05A; lokalnie `db reset` 61 migracji, seed 907/15/336,
+  lint, build, unit **210/210**, rekomendacje **60/60**, smoke Phase 1/2/offline/Ekipa.
+- **Produkcja:** publiczny `/login` renderuje się po przeładowaniu, konsola bez błędów.
+  Środowisko przeglądarki nie udostępniło API Service Workera, więc checkpoint PWA nie
+  został zawyżony. Ostrzeżenie po `db push` dotyczyło wyłącznie pomocniczego cache'u
+  `pg-delta`; niezależne `migration list` i odczyt REST potwierdziły poprawny schemat.
+- **Czego nie dotknięto:** zero zmian danych programów, seeda, RLS, kodu UI, PLAN-05B/D/E,
+  PLAN-04 i R2.2. Obce nieśledzone duplikaty `SKILL 2.md` i `workflow-zespolu 2.md`
+  pozostały bez zmian.
+- **Zaległości:** [Ty] przenieść backup poza laptop; fizyczny checkpoint iPhone
+  PWA/Android dla HOME-01…03/NAV-01 pozostaje. Następna paczka: PLAN-05B.
+
 ### 2026-07-30 · Codex · NAV-01 trzy przestrzenie i zakładki: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `BottomNav`, kontrakt `AppTab`, wspólny pasek Plany | Postępy | Ciało |
@@ -35,12 +56,14 @@
   `/body`, `/history`, widoczny fokus i przepływ tab → zakładka → child → systemowy Back ✓.
 - **A11y:** `arco-a11y-review` bez findingów — semantyczne `nav`, `aria-current`, logiczna
   kolejność, widoczny focus ring, tokenowe kolory, brak nowego ruchu i brak ucięcia na 320 px.
-- **Dane i produkcja:** nie utworzono danych testowych; migracje, zdalna baza, deploy,
-  PLAN-05D i R2.2 nietknięte.
+- **Dane i produkcja:** PR #50 scalony do `main`; CI PR-a i `main` oraz deployment Vercel
+  dla scalonego SHA są zielone. Nie utworzono danych testowych; migracje, zdalna baza,
+  PLAN-05D i R2.2 nietknięte. Uwierzytelnionego flow produkcyjnego nie zweryfikowano,
+  bo lokalne konto nie odpowiada produkcyjnemu.
 - **Czego nie dotknięto:** obce nieśledzone duplikaty `SKILL 2.md` i
   `workflow-zespolu 2.md` pozostawione bez zmian.
-- **Zaległości:** [Ty] review/merge oraz checkpoint fizycznego iPhone PWA i Androida.
-  Dopiero potem PLAN-05D, a następnie R2.2.
+- **Zaległości:** [Ty] checkpoint fizycznego iPhone PWA i Androida. Bramka kolejności jest
+  spełniona: NAV-01 weszło przed PLAN-05D i R2.2.
 
 ### 2026-07-30 · Codex · HOME-03 DoD i pomiar wydajności: ZAKOŃCZONE TECHNICZNIE
 
