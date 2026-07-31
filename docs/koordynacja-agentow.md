@@ -21,6 +21,62 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-31 · Claude Code · HOME-04+05 kontenery danych i semantyka symboli: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/home-04-05-stats-and-streak`. Zmienione `app/HomeStats.tsx`,
+  `app/HomeExerciseProgress.tsx`, `components/WeeklyGoalBadge.tsx`, `components/BottomNav.tsx`,
+  `app/globals.css`. Bez migracji, **bez ani jednego nowego zapytania** — budżet Home
+  (8 RSC + 1 mini-bar) nietknięty, bo zmiana jest czysto prezentacyjna.
+- **Kontekst:** wynik oceny `docs/arco-home-agent-handoff/` (zewnętrzny plan redesignu Home).
+  Dokument odrzucony w całości — proponował przebudowę rzeczy już wdrożonych (HOME-01…03,
+  NAV-01 są na produkcji), własny zestaw surowych heksów rozjeżdżający się z
+  `paleta-arco-warm.md` v1.4 (7 z 8 neutrali **cieplejszych**, wbrew datowanej decyzji
+  „neutrale chłodniejsze") oraz ujednolicenie okresów metryk, co cofa zatwierdzony POC
+  HOME-02. Z dokumentu wzięto cztery punkty realnie poprawiające UX; dwa z nich to ta paczka.
+- **HOME-04 — kontenery danych** (zgłoszenie: „te kontenery są okropnie brzydkie"):
+  cztery osobne pudełka scalone w jedną kartę. Diagnoza z realnego renderu, nie z kodu:
+  pięć powierzchni z identycznym `rounded-xl border bg-card` (zero hierarchii), liczby
+  `text-lg`/`text-xl` tej samej wagi co etykiety obok, siatka kresek (obrys + `divide-x`
+  + `border-t`), a na 320 px „Serie robocze" zawijało i **spychało swoją liczbę poniżej
+  linii sąsiadów**. Hierarchię niesie teraz typografia i odstęp: liczby `text-2xl`
+  z `leading-none` na wspólnej linii bazowej, dwa tiery (wnioski / surowe liczby),
+  jedna włosowa kreska. `HomeExerciseProgress` stracił `border-t` między wierszami
+  (odstęp zamiast kreski w kresce) i dostał metryki w jednej linii z zachowaną
+  semantyką `dl`/`dt`/`dd`.
+- **Znaleziona duplikacja treści:** tonaż występował DWA RAZY w sąsiednich pudełkach —
+  jako `+12% vs poprzedni tydzień` i jako `12,4 t / 7 dni`. Scalony w jedną metrykę
+  z deltą obok wartości; podstawa porównania idzie do czytnika przez `sr-only`.
+- **HOME-05 — jeden symbol, jedno znaczenie.** Płomień oznaczał trzy różne rzeczy naraz:
+  cel tygodnia (badge w headerze), pojedynczy zaliczony dzień (siatka w sheecie) i passę
+  w tygodniach (`StreakCard`). Teraz: **tarcza = cel**, **odhaczone kółko = zaliczony dzień**,
+  **płomień = wyłącznie passa**. Copy w sheecie („Płomienie to dni…") poszło za ikoną.
+  Klasy animacji przemianowane `animate-flame-*` → `animate-goal-ignite`/`animate-today-pulse`,
+  bo siedziały już na elementach, które płomieniem nie są; keyframes bez zmian, nadal
+  respektują `prefers-reduced-motion`. Nawigacja: `Home` → `Dziś` (jedyne angielskie słowo
+  w polskim pasku).
+- **Usunięta cicha ocena.** Dzień przyszły i pominięty różniły się kryciem (/30 vs /50),
+  czyli UI odróżniał „jeszcze nie" od „nie zrobiłeś" — wbrew tone-of-voice („dni odpoczynku
+  są częścią planu"). `sr-only` i tak od zawsze mówił o obu „brak treningu", więc wizualna
+  różnica była też **niespójna z tym, co słyszy czytnik ekranu**. Oba stany wyglądają teraz
+  tak samo.
+- **Dwa błędne założenia złapane pomiarem, nie okiem:** (1) chciałem zmienić ton sparkline'u
+  na `support`, ale `--color-chart-primary` **już jest violetem** (nie rustem) — istniejący
+  kod był zgodny z v1.4, a moja zmiana wskazywałaby na nieistniejący token; cofnięte.
+  (2) policzyłem check na kółku jako biel na rust = 3,34:1 w dark (poniżej progu) — w dark
+  `--primary-foreground` to `ink-900`, nie biel, więc realnie **5,65:1**. Fałszywy alarm
+  z własnego założenia.
+- **Kontrasty policzone z tokenów.** Wszystkie pary przechodzą poza pustym kółkiem dnia
+  (~1,5:1 light / ~1,9:1 dark) — świadomie: to marker rytmu, pod każdym slotem stoi litera
+  dnia, a `sr-only` wypisuje stan wszystkich siedmiu. Panel `bg-muted/50` jest tak blisko
+  koloru kółek, że 3:1 wymagałoby wypełnienia konkurującego z checkiem. Poprzednia wersja
+  (obrysowane płomienie) miała ten sam rząd wielkości.
+- **Bramka:** lint ✓, tsc ✓, unit **239/239**, overflow **37/37**, build ✓. Podgląd na
+  skompilowanym CSS-ie: 320 i 393 px, light i dark, zero overflow, targety 44 px.
+- **Następny krok:** [Ty] przejście po zalogowanej trasie `/` i checkpoint iPhone PWA.
+  Zostają HOME-06 (jeden dominujący CTA — „Zacznij trening" konkuruje dziś z `DayPickerSheet`
+  i `FreestyleStartButton`) oraz CONTENT-03 (semantyczne nazwy dni: 20 z 48 to „Trening A"/
+  „Dzień A"; migracja + sesja treściowa).
+
 ### 2026-07-31 · Claude Code · Fix: chip poziomu przewijał widok do góry: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** gałąź `agent/plan-05h1-scroll-fix`, po scaleniu i wdrożeniu PLAN-05H (#56).

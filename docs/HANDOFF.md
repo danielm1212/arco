@@ -30,6 +30,21 @@ lokalnych zakładek. Floating nav ma równy margines 12 px i respektuje safe are
 HOME-01…03 oraz NAV-01 są na `main` i produkcji (PR #33/#48/#49/#50); szczegóły i zaległy
 checkpoint urządzeniowy są w §6 punkt 5.
 
+**HOME-04+05 gotowe technicznie 2026-07-31 na `agent/home-04-05-stats-and-streak`:**
+kontenery danych na Home scalone z czterech pudełek w jedną kartę (hierarchia typografią,
+nie obrysem; liczby `text-2xl` na wspólnej linii bazowej; zdjęta siatka kresek; scalony
+zdublowany tonaż), a semantyka symboli rozdzielona — **tarcza = cel tygodnia, odhaczone
+kółko = zaliczony dzień, płomień = wyłącznie passa** (wcześniej płomień oznaczał wszystkie
+trzy rzeczy naraz). Nawigacja: `Home` → `Dziś`. Bez migracji i **bez nowego zapytania** —
+budżet Home nietknięty. Wynik oceny zewnętrznego planu `docs/arco-home-agent-handoff/`,
+który jako całość odrzucono: proponował przebudowę już wdrożonych HOME-01…03, własne
+surowe heksy rozjeżdżające się z `paleta-arco-warm.md` v1.4 (neutrale **cieplejsze**, wbrew
+datowanej decyzji) i ujednolicenie okresów metryk cofające zatwierdzony POC HOME-02.
+Bramka: lint, tsc, **239/239** unit, **37/37** overflow, build; 320/393 px light i dark.
+**Do [Ty]:** przejście po zalogowanej trasie `/` i checkpoint iPhone PWA. Otwarte z tej
+oceny: **HOME-06** (jeden dominujący CTA) i **CONTENT-03** (semantyczne nazwy dni — 20 z 48
+to „Trening A"/„Dzień A"; migracja + sesja treściowa).
+
 ## 2. Co jest wdrożone
 
 Na `main` i w migracjach są:
