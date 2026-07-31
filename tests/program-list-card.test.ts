@@ -162,7 +162,15 @@ test("katalog: każdy preset ma uzupełnione short_name i split_key", () => {
   }
 });
 
-test("formatProgramShortName: pełne 15 nazw katalogu daje krótkie, niepuste tytuły", () => {
+/**
+ * PLAN-05H: żaden aktualny preset nie ma już zakresu poziomu w `level_min`/`level_max`
+ * (ostatnie dwa, `lower-body-*`, zwężone do samego średniozaawansowanego — patrz test
+ * „katalog: realne plany używają tylko trzech nazw poziomu” w tym pliku). Ten test
+ * sprawdza więc TRWAŁĄ ZDOLNOŚĆ parsera do obsługi zakresu w nazwie (`isLevelSegment`
+ * rozbija ją po myślniku), a nie literalną zawartość dzisiejszego katalogu — inaczej
+ * usunięcie tego przypadku po cichu zdjęłoby pokrycie z realnej gałęzi kodu.
+ */
+test("formatProgramShortName: konwencja nazewnicza katalogu (w tym zakres poziomu) daje krótkie, niepuste tytuły", () => {
   const catalog = [
     "Początkujący · Siłownia · Całe ciało · 2× w tygodniu",
     "Początkujący · Siłownia · Całe ciało · 2–3× w tygodniu",

@@ -14,39 +14,35 @@ import { buildLevelMeter } from "@/lib/levelMeter";
  */
 
 /**
- * PLAN-05G: wariant listowy to trzy kropki bez etykiety tekstowej.
+ * PLAN-05H: wariant listowy to trzy PIONOWE SŁUPKI ROSNĄCEJ WYSOKOŚCI (nie kropki
+ * równej wielkości) — wzorzec z benchmarku (Tempo, Gymshark `▂▃`): kształt sam niesie
+ * rangę, nie tylko liczba wypełnień. `items-end`, żeby słupki równały się do dołu,
+ * jak słupki wykresu.
  *
- * Tekst zniknął świadomie (decyzja właściciela 2026-07-31): lista grupuje plany pod
- * nagłówkami „Początkujący” / „Średniozaawansowani” / „Zaawansowani”, więc etykieta przy
- * każdej karcie powtarzała nagłówek własnej grupy — ten sam błąd, który wcześniej
- * wytknięto nazwom planów. Znaczenie niesie nagłówek sekcji i `aria-label`, więc reguła
- * z PLAN-05C („nie pokazujemy miernika bez etykiety”) jest spełniona treścią, nie
- * powtórzeniem: `buildLevelMeter` nadal zwraca `null`, gdy etykiety brakuje w danych.
+ * Etykieta tekstowa jest teraz zawsze widoczna. PLAN-05G chował ją poza kartą aktywnego
+ * planu, bo nagłówek grupy poziomu na liście niósł to samo słowo. PLAN-05H usuwa
+ * nagłówki grup na rzecz chipów filtra u góry listy — bez nagłówka obok KAŻDEJ karty
+ * nie ma już nic, co powtarzałoby etykietę, więc wraca ona jako stały element wariantu.
  *
- * Pusty segment jest tu wypełniony na szaro, nie obrysowany jak w `bars` — przy 8 px
- * obrys zamienia kropkę w pierścień czytany jak znak „0” (sprawdzone na realnym
- * buildzie 2026-07-30). Pełny vs pusty w dark to 2.44:1, poniżej 3:1, ale kropki są
- * warstwą pomocniczą: poziom stoi w nagłówku grupy i w `aria-label`, a nie wyłącznie
- * w kolorze kropek.
+ * Pusty segment jest wypełniony na szaro, nie obrysowany jak w `bars` — przy wąskim
+ * słupku obrys czyta się jak osobny kształt, nie pusty stan tego samego elementu
+ * (sprawdzone na realnym buildzie 2026-07-30 dla kropek; słupki mają ten sam problem
+ * geometrii). Pełny vs pusty w dark to 2.44:1, poniżej progu 3:1 dla samodzielnej
+ * grafiki (WCAG 1.4.11) — świadome odstępstwo: etykieta tekstowa stoi tuż obok i
+ * `aria-label` niesie pełne zdanie, więc słupki są warstwą pomocniczą, nie jedynym
+ * nośnikiem znaczenia.
  */
+const LIST_BAR_HEIGHTS = ["h-2", "h-3", "h-4"];
 export function LevelMeter({
   levelMin,
   levelMax,
   label,
   variant = "bars",
-  showLabel = false,
 }: {
   levelMin: number | null;
   levelMax: number | null;
   label: string | null;
   variant?: "bars" | "list";
-  /**
-   * Wariant listowy domyślnie nie pokazuje etykiety, bo niesie ją nagłówek grupy
-   * poziomu. Sekcja „Aktywny plan” takiego nagłówka NIE ma — tam same kropki
-   * zostawiłyby osobę widzącą bez legendy (czytnik ekranu ma `aria-label`, więc
-   * luka dotyczyła wyłącznie wzroku). Włącz tam `showLabel`.
-   */
-  showLabel?: boolean;
 }) {
   const meter = buildLevelMeter(levelMin, levelMax, label);
   if (!meter) return null;
@@ -58,21 +54,19 @@ export function LevelMeter({
         aria-label={meter.ariaLabel}
         className="inline-flex min-w-0 flex-wrap items-center gap-x-xs gap-y-2xs"
       >
-        <span aria-hidden className="flex shrink-0 items-center gap-1">
+        <span aria-hidden className="flex shrink-0 items-end gap-1">
           {meter.segments.map((filled, i) => (
             <span
               key={i}
-              className={`size-2 rounded-full ${
+              className={`w-2 rounded-full ${LIST_BAR_HEIGHTS[i]} ${
                 filled ? "bg-primary" : "bg-muted-foreground/30"
               }`}
             />
           ))}
         </span>
-        {showLabel && (
-          <span aria-hidden className="min-w-0 break-words text-xs text-muted-foreground">
-            {meter.label}
-          </span>
-        )}
+        <span aria-hidden className="min-w-0 break-words text-xs text-muted-foreground">
+          {meter.label}
+        </span>
       </span>
     );
   }

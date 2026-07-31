@@ -291,17 +291,22 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
     focusKey: program.focus_key ?? "balanced",
   }));
 
-  /** Odwzorowanie `LevelMeter variant="list"` — trzy kropki, bez etykiety tekstowej. */
+  /** PLAN-05H: odwzorowanie `LevelMeter variant="list"` — trzy pionowe słupki rosnącej
+   *  wysokości (nie kropki równej wielkości), etykieta zawsze widoczna. */
+  const LIST_BAR_HEIGHTS = ["h-2", "h-3", "h-4"];
   const meterHtml = (meter: NonNullable<ReturnType<typeof buildLevelMeter>>) => `<span
-    role="img" aria-label="${meter.ariaLabel}" class="inline-flex shrink-0 items-center gap-1">
-    ${meter.segments
-      .map(
-        (filled) =>
-          `<span aria-hidden="true" class="size-2 rounded-full ${
-            filled ? "bg-primary" : "bg-muted-foreground/30"
-          }"></span>`,
-      )
-      .join("")}
+    role="img" aria-label="${meter.ariaLabel}" class="inline-flex min-w-0 flex-wrap items-center gap-x-xs gap-y-2xs">
+    <span aria-hidden="true" class="flex shrink-0 items-end gap-1">
+      ${meter.segments
+        .map(
+          (filled, i) =>
+            `<span class="w-2 rounded-full ${LIST_BAR_HEIGHTS[i]} ${
+              filled ? "bg-primary" : "bg-muted-foreground/30"
+            }"></span>`,
+        )
+        .join("")}
+    </span>
+    <span aria-hidden="true" class="min-w-0 break-words text-xs text-muted-foreground">${meter.label}</span>
   </span>`;
 
   // Ikony jak w karcie: `size-3.5`, dekoracyjne. Kształt bez znaczenia dla pomiaru,
@@ -329,18 +334,22 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
           ${own ? "3 dni w cyklu · edytuj →" : `<span class="inline-flex items-center gap-1">${icon}${card.frequency}</span><span class="inline-flex items-center gap-1">${icon}${card.duration}</span>`}
         </p>
         ${
+          !own && card.meter
+            ? `<div class="mt-2xs">${meterHtml(card.meter)}</div>`
+            : ""
+        }
+        ${
           index === 6
             ? '<p class="mt-2xs break-words text-xs text-amber-800">Potrzebujesz: drążek</p>'
             : ""
         }
       </a>
-      <div class="col-start-2 row-start-2 mt-xs grid min-h-11 min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-sm">
-        ${own || !card.meter ? "<span></span>" : meterHtml(card.meter)}
-        <div>${
+      <div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end">
+        ${
           isActive
             ? '<span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span>'
             : '<button data-program-action class="inline-flex h-11 items-center justify-center rounded-md px-3 text-sm font-medium text-primary">Ustaw</button>'
-        }</div>
+        }
       </div>
     </article>`;
   };
@@ -463,6 +472,65 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
     } finally {
       await context.close();
     }
+  }
+});
+
+test("PLAN-05H: chipy poziomu przewijają się w poziomie i nie łamią do drugiej linii na 320 px", async () => {
+  // Odwzorowanie `ProgramLevelChips` — cztery etykiety, `overflow-x-auto` + `shrink-0`
+  // na chipie, wzorzec z `TeamPanel.tsx`. Właściciel wprost zastrzegł: "nie przeskakujące
+  // do następnej linijki" — to jest dokładnie klasa regresji, którą ten plik ma łapać,
+  // bo `flex-wrap` zamiast `overflow-x-auto` przechodzi lint/build/unit bez ostrzeżenia.
+  const chips = ["Wszystkie", "Początkujący", "Średniozaawansowany", "Zaawansowany"];
+  const body = `<main class="mx-auto max-w-md p-md">
+    <div data-chip-row role="tablist" class="flex gap-xs overflow-x-auto pb-1">
+      ${chips
+        .map(
+          (label, i) =>
+            `<button type="button" data-chip role="tab" aria-selected="${i === 0}" class="h-11 shrink-0 rounded-full px-4 text-sm font-medium ${
+              i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+            }">${label}</button>`,
+        )
+        .join("")}
+    </div>
+  </main>`;
+  const context = await browser.newContext({ viewport: { width: 320, height: 400 } });
+
+  try {
+    const page = await context.newPage();
+    await page.setContent(pageHtml(body), { waitUntil: "load" });
+    const metrics = await page.evaluate(() => {
+      const row = document.querySelector<HTMLElement>("[data-chip-row]")!;
+      const chipEls = [...document.querySelectorAll<HTMLElement>("[data-chip]")];
+      return {
+        pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        rowHeight: Math.round(row.getBoundingClientRect().height),
+        chipHeights: chipEls.map((chip) => Math.round(chip.getBoundingClientRect().height)),
+        // Dowód, że jest CO przewijać — inaczej test nic by nie pilnował.
+        hasOverflowToScroll: row.scrollWidth > row.clientWidth,
+      };
+    });
+
+    assert.ok(
+      metrics.pageOverflow <= 1,
+      `strona ma poziomy overflow ${metrics.pageOverflow}px — kontener chipów rozepchnął layout zamiast przewijać się sam`,
+    );
+    // 44 px (target dotykowy) + `pb-1` (4 px) = 48 px w jednej linii. Złamanie do drugiej
+    // linii dawałoby ~2×44 + odstęp ≈ 90+ px — próg 60 px wyraźnie odróżnia oba stany,
+    // nie łapiąc przy tym własnego paddingu jako fałszywej regresji.
+    assert.ok(
+      metrics.rowHeight <= 60,
+      `rząd chipów ma ${metrics.rowHeight}px — łamie się do drugiej linii zamiast przewijać w poziomie`,
+    );
+    assert.ok(
+      metrics.chipHeights.every((height) => height === 44),
+      `chipy poniżej targetu 44 px: ${metrics.chipHeights.join(", ")}`,
+    );
+    assert.ok(
+      metrics.hasOverflowToScroll,
+      "test nic nie pilnuje — cztery chipy zmieściły się bez potrzeby przewijania na 320 px",
+    );
+  } finally {
+    await context.close();
   }
 });
 
@@ -1094,7 +1162,9 @@ test("MOMENT-01: wystrzał dolatuje do góry ekranu i ma pełną liczbę cząste
 });
 
 // Worst-case treść z realnej bazy (najdłuższe nazwy/notatki).
-const LONG_SUBTITLE = "Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi";
+// PLAN-05H: poprzedni rekord długości (`lower-body-*`) zwężony do jednego poziomu
+// (level_min=2), więc nazwa się skróciła — podmienione na aktualnie najdłuższą.
+const LONG_SUBTITLE = "Początkujący · Dom z hantlami · Całe ciało · 2–3× w tygodniu";
 const LONG_NOTES =
   "Zrób prawie maksymalną liczbę poprawnych powtórzeń. Zostaw 1 lub 2 w zapasie. Nachwyt.";
 

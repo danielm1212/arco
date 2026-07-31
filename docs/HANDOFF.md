@@ -394,10 +394,45 @@ koordynacji (2026-07-23).
    `validate:recommendations` **60/60**, build. Karty mają równe 144 px na 320 i 393 px,
    light i dark, bez overflow. `supabase db reset` świadomie pominięty (skasowałby lokalny
    dziennik treningowy) — świeżą bazę pokrywa CI. Bez deployu i zmian w Linearze.
-   **Do [Ty]:** przejście po zalogowanej trasie `/programs` (agent nie loguje się na konto)
-   i checkpoint iPhone PWA dla 05D, 05E oraz 05F/05G. Potem PLAN-05H (bug: miniatura poza
-   `<Link>`, licznik wyników, spójność grup z filtrem, martwy chip „Pasuje do Twojego
-   kierunku", cache katalogu), PLAN-05I (test na realnym `ProgramRow`), następnie R2.2.
+   **PLAN-05H jest gotowe technicznie 2026-07-31 na `agent/plan-05h-level-nav`:** druga
+   iteracja po przeglądzie właściciela na produkcji. Cztery poprawki:
+   1) **Chipy poziomu zamiast nagłówków grup** — „Wszystkie/Początkujący/Średniozaawansowany/
+      Zaawansowany", przewijalne w poziomie (`overflow-x-auto`, nie zawijają się),
+      „Wszystkie" domyślnie aktywne. Filtrują ten sam `?level=`, którego już używał sheet
+      filtrów — usunięto z niego zdublowaną sekcję „Poziom", zostawiając środowisko/kierunek/
+      cel. Lista jest teraz płaska (sortowanie zamiast koszy po `level_min`), więc plan
+      o zakresie poziomów nie może już stanąć pod niepasującym nagłówkiem.
+   2) **Migracja `20260731115619_plan05h_lower_body_intermediate_only.sql`**: dwa plany
+      `lower-body-*` miały `level_min=1, level_max=2` — świadomy plan-pomost (jedyne dwa
+      slugi bez prefiksu poziomu w całym katalogu), ale renderowały się ze sprzeczną
+      etykietą wobec nowych chipów. Zwężone do `2-2` (decyzja właściciela, po pokazaniu
+      diffu macierzy rekomendacji: rekomendowany program się nie zmienia, zmienia się
+      tylko framing 4/60 profili onboardingu z „Dopasowany" na „Najbliższy w bibliotece").
+      `name`/`level`/`level_min` zaktualizowane razem — `buildLevelMeter` czyta `level`
+      wprost, gdy `level_min === level_max`, więc rozjazd dałby dwie kropki obok starej
+      etykiety zakresu.
+   3) **Miernik: rosnące słupki zamiast równych kropek** (wzorzec Tempo/Gymshark), etykieta
+      tekstowa teraz na KAŻDEJ karcie presetu (nie tylko aktywnej — nagłówki grup, które
+      wcześniej niosły to słowo, zniknęły).
+   4) **Bug: klikalna miniatura** — `ProgramCover` leżał poza `<Link>`; przeniesiony do
+      środka, `<Link>` rozciąga się na obie kolumny w rzędzie 1.
+   Znalezisko z weryfikacji wizualnej: słupki+etykieta+„Ustaw" w jednym wierszu **nie
+   mieściły się na 320 px dla 10 z 15 presetów** (poziom 2–3, brakowało ~30–40 px — więcej
+   niż da się odzyskać ścieśnieniem odstępów). Naprawione przeniesieniem miernika na własną
+   linię nad stopką; stopka jest teraz wyłącznie akcją. Wszystkie karty **równe 172 px**
+   na 320/393 px, light/dark, zero overflow (wcześniej 144/164 px na przemian).
+   Korekta oceny: „martwy chip «Pasuje do Twojego kierunku»" z poprzedniego audytu to
+   NIE bug — `training_focus` jest realnym ustawieniem w `SettingsForm.tsx`, chip po
+   prostu nie renderuje się dla domyślnej wartości `balanced`. `force-dynamic`/cache
+   katalogu odłożone — większa zmiana architektoniczna poza zakresem tej paczki.
+   Bramka: lint, tsc, **239/239** unit, **37/37** overflow, `validate:training`,
+   `validate:recommendations` **60/60**, build. Migracja zastosowana lokalnie
+   (`migration up`, nie `db reset` — ochrona lokalnego dziennika treningowego).
+   **Do [Ty]:** `db push` na produkcję przed merge (ten PR ma migrację — patrz
+   `arco-migration` §6), przejście po zalogowanej trasie `/programs` i checkpoint
+   iPhone PWA dla 05D/05E/05F/05G/05H. Potem PLAN-05I (test na realnym `ProgramRow`
+   zamiast trzech ręcznie synchronizowanych kopii markupu), następnie R2.2 (może wejść
+   dopiero po 05H — dotyka tej samej powierzchni `/programs`).
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
    Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do
