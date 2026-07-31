@@ -21,6 +21,58 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-31 · Claude Code · PLAN-05F+05G nazwy i metoda planów: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/plan-05fg-program-naming`. Migracja
+  `20260731103500_plan05f_program_split_and_short_name.sql` (kolumny `split_key` + `short_name`,
+  backfill 15 presetów z guardem na pusty stan), `scripts/seed.ts`, `lib/programListCard.ts`,
+  `lib/levelMeter.ts`, `components/LevelMeter.tsx`, `app/programs/page.tsx`,
+  `app/programs/loading.tsx`, `lib/database.types.ts`, testy jednostkowe i overflow.
+- **Problem zmierzony, nie oszacowany.** Zgłoszenie „te nazwy są praktycznie takie same":
+  pomiar na realnym katalogu wykazał **14/15 kart dzielących tytuł** („Całe ciało" ×8,
+  „Góra / dół ciała" ×4). Po zmianie: 0 kolizji wewnątrz każdej grupy poziomu, zabezpieczone
+  testem `tests/program-list-card.test.ts`.
+- **Nazwy pożenione z metodą** (decyzja właściciela: apkę pobiorą też początkujący).
+  Tytuł = `short_name`, lifestyle'owy hak („Spokojny start", „Siła bez ciężarów", „Pełen gaz").
+  Metoda = drugi tag obok środowiska, w języku siłowni: `FBW A/B`, `FBW A/B/C`, `Upper/Lower`,
+  `Push/Pull/Legs`, `Pośladki i nogi`. Wzorzec z Equinox+ i Gymshark: nazwa łapie
+  początkującego, notacja obsługuje kogoś, kto wie, czego szuka.
+- **Korekta kursu wobec `r5a-slownik-pl-propozycja.md` §1.** Pierwsza propozycja nazw była
+  benchmarkowana na apkach lifestyle'owych (Centr, Gymshark) i produkowała terminologię
+  słownikową, przed którą ten dokument ostrzega. Właściciel to wyłapał. Notacja metodyczna
+  jest zgodna z regułą „utrwalone anglicyzmy zostają" i z nazwami dni w bazie (`Upper A · siła`).
+- **`split_key` to dane strukturalne, nie etykieta** — kasuje dług z poprzedniej sesji
+  (parser stringa jako jedyne źródło prawdy o metodzie) i **odblokowuje filtr metody w R2.2**,
+  bo dziś nie ma po czym filtrować.
+- **Miernik poziomu: skala narastająca zamiast zakresu.** Poziom 1/2/3 zapala 1/2/3 kropki.
+  Poprzedni model zapalał wyłącznie segment poziomu, więc poziom 2 wyglądał jak `○●○`.
+  **To zmienia też wariant `bars` na `/programs/[id]`** — zamierzone, nie regresja. Plany
+  o zakresie 1–2 zapalają 2 kropki i są równane do nazwy `level_max`, bo miernik ma
+  używać wyłącznie trzech nazw: „Początkujący", „Średniozaawansowany", „Zaawansowany"
+  (decyzja właściciela 2026-07-31; wcześniejszy wariant „Do średniozaawansowanego"
+  odrzucony). Świadomy koszt: taki plan grupuje się wg `level_min`, więc pod nagłówkiem
+  „Początkujący" stoi karta opisana „Średniozaawansowany". Alternatywa — zmiana
+  `level_min` w danych — rusza grupowanie i macierz rekomendacji, więc została odłożona.
+- **Dwa znaleziska z przeglądu a11y, oba naprawione w tej paczce:** (1) sekcja „Aktywny plan"
+  nie ma nagłówka poziomu, więc po usunięciu tekstowej etykiety jej kropki zostawały bez
+  legendy dla osoby widzącej — `showLabel` włączony wyłącznie tam; (2) etykieta łamała się
+  w środku wyrazu („średniozaawansowa/nego") w wąskiej kolumnie stopki — stopka aktywnej karty
+  jest teraz flexem, więc tekst dostaje pełną szerokość. Po poprawce **wszystkie karty mają
+  równe 144 px** na 320 i 393 px, także w najgorszym przypadku.
+- **Kontrasty policzone z tokenów.** Wszystkie pary przechodzą; jedyne udokumentowane
+  odstępstwo to pełna vs pusta kropka w dark (2,44:1) — warstwa pomocnicza wobec nagłówka
+  grupy i `aria-label`, uzasadnienie w `components/LevelMeter.tsx`.
+- **Bramka:** lint ✓, tsc ✓, unit **237/237**, overflow **36/36** (05B i 05D bez regresji),
+  `validate:training` ✓, `validate:recommendations` **60/60**, build ✓. Migracja zastosowana
+  lokalnie przez `migration up` i zweryfikowana zapytaniem: 15/15 presetów ma obie kolumny.
+- **Czego NIE zrobiono:** `supabase db reset` (§4 skilla `arco-migration`) — zostałby skasowany
+  lokalny dziennik treningowy właściciela. Świeżą bazę pokrywa CI, które uruchamia migracje od
+  zera. Bez deployu i bez zmian w Linearze. Nie tworzono konta testowego.
+- **Następny krok:** [Ty] przejście po zalogowanej trasie `/programs` i checkpoint iPhone PWA.
+  Potem PLAN-05H (bug: miniatura poza `<Link>`, licznik wyników, spójność grup z filtrem,
+  martwy chip „Pasuje do Twojego kierunku", cache katalogu) i PLAN-05I (wyciągnięcie
+  `ProgramRow` do osobnego pliku i test na realnym komponencie).
+
 ### 2026-07-30 · Claude Code · PLAN-05E lista planów: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** redesign `ProgramRow` na `/programs` po odrzuceniu kierunku wizualnego z

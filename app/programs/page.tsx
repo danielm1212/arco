@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { CalendarDays, Check, Clock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { setActiveProgram } from "@/app/actions/session";
@@ -17,8 +17,9 @@ import {
   formatProgramLevelLabel,
 } from "@/lib/programDetail";
 import {
+  formatProgramCardTitle,
   formatProgramEnvironmentTag,
-  formatProgramShortName,
+  formatProgramSplitTag,
 } from "@/lib/programListCard";
 import { cn } from "@/lib/utils";
 import { ProgramFilters } from "./ProgramFilters";
@@ -30,6 +31,8 @@ export const dynamic = "force-dynamic";
 type Prog = {
   id: string;
   name: string;
+  short_name: string | null;
+  split_key: string | null;
   cycle_days: number;
   user_id: string | null;
   goal: string | null;
@@ -68,7 +71,7 @@ export default async function ProgramsPage({
   const [{ data: programs }, { data: active }, { data: settings }] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, name, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, cover_image_url, required_equipment, program_days(id)")
+      .select("id, name, short_name, split_key, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, cover_image_url, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
     supabase.from("user_settings").select("training_focus, display_name, available_equipment").maybeSingle(),
@@ -206,8 +209,18 @@ function ProgramRow({
   missingEquipment?: string[];
 }) {
   const environmentTag = formatProgramEnvironmentTag(p.environment);
+  // PLAN-05F: liczba RÓŻNYCH treningów w cyklu, nie sesji w tygodniu — zasila notację FBW A/B.
+  const splitTag = formatProgramSplitTag(p.split_key, p.program_days?.length ?? 0);
   const matchesPreferredFocus =
     kind === "preset" && preferredFocus === "lower_body" && p.focus_key === preferredFocus;
+  const frequency =
+    p.frequency_min !== null && p.frequency_max !== null
+      ? formatProgramFrequency(p.frequency_min, p.frequency_max)
+      : null;
+  const duration =
+    p.estimated_minutes_min !== null && p.estimated_minutes_max !== null
+      ? formatProgramDuration(p.estimated_minutes_min, p.estimated_minutes_max)
+      : null;
 
   return (
     <article
@@ -238,12 +251,23 @@ function ProgramRow({
             zostaje w bazie i na `/programs/[id]`. Karta wciąż wypowiada komplet
             informacji dla czytnika (tag, fakty, `aria-label` miernika), dlatego nie
             doklejamy tu ukrytej kopii pełnej nazwy. */}
-        <p className="break-words font-medium leading-snug">{formatProgramShortName(p.name)}</p>
-        {(environmentTag || matchesPreferredFocus) && (
+        <p className="break-words font-medium leading-snug">
+          {formatProgramCardTitle(p.short_name, p.name)}
+        </p>
+        {/* PLAN-05F: dwa tagi — gdzie trenujesz + jaką metodą. Oba neutralne: violet
+            jest zarezerwowany na prowadzenie/dane, ale reguła palety v1.4 zabrania
+            mieszać go z rust w jednym komponencie, a karta ma już rust w kropkach
+            poziomu i w „Ustaw”. Metoda i tak odróżnia się treścią, nie kolorem. */}
+        {(environmentTag || splitTag || matchesPreferredFocus) && (
           <div className="mt-2xs flex flex-wrap items-center gap-2xs">
             {environmentTag && (
               <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
                 {environmentTag}
+              </span>
+            )}
+            {splitTag && (
+              <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                {splitTag}
               </span>
             )}
             {matchesPreferredFocus && (
@@ -254,24 +278,31 @@ function ProgramRow({
           </div>
         )}
         {/* R2.1 (audyt P1): karta = nazwa + dwa fakty, nie tabela filtrów.
-            Pełna specyfikacja (rotacja, sprzęt, minuty) żyje w szczególe planu. */}
-        <p className="mt-2xs break-words text-xs text-muted-foreground">
-          {kind === "preset"
-            ? [
-                p.frequency_min !== null && p.frequency_max !== null
-                  ? formatProgramFrequency(p.frequency_min, p.frequency_max)
-                  : null,
-                p.estimated_minutes_min !== null && p.estimated_minutes_max !== null
-                  ? formatProgramDuration(
-                      p.estimated_minutes_min,
-                      p.estimated_minutes_max,
-                    )
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")
-            : `${p.cycle_days} dni w cyklu · edytuj →`}
-        </p>
+            PLAN-05G: ikony jak w szczególe planu (05D) — kalendarz przy rytmie,
+            zegar przy czasie. Dekoracyjne (`aria-hidden`), bo jednostka w tekście
+            już mówi, co to jest; ikona tylko przyspiesza skanowanie listy. */}
+        {kind === "preset" ? (
+          (frequency || duration) && (
+            <p className="mt-2xs flex flex-wrap items-center gap-x-sm gap-y-2xs text-xs text-muted-foreground">
+              {frequency && (
+                <span className="inline-flex items-center gap-1">
+                  <CalendarDays aria-hidden className="size-3.5 shrink-0" />
+                  {frequency}
+                </span>
+              )}
+              {duration && (
+                <span className="inline-flex items-center gap-1">
+                  <Clock aria-hidden className="size-3.5 shrink-0" />
+                  {duration}
+                </span>
+              )}
+            </p>
+          )
+        ) : (
+          <p className="mt-2xs break-words text-xs text-muted-foreground">
+            {p.cycle_days} dni w cyklu · edytuj →
+          </p>
+        )}
         {kind === "preset" && missingEquipment.length > 0 && (
           <p className="mt-2xs break-words text-xs text-amber-800 dark:text-amber-300">
             Potrzebujesz: {formatEquipment(missingEquipment, 2)}
@@ -284,18 +315,34 @@ function ProgramRow({
           Grid, nie `flex-wrap`: długa etykieta poziomu („Początkujący–średniozaawansowany”)
           ma zawijać się we własnej kolumnie, a nie spychać akcji do osobnej linii —
           na realnym buildzie 320 px robiło to poszarpaną kartę wyższą o 60 px. */}
-      <div className="col-start-2 row-start-2 mt-xs grid min-h-11 min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-sm">
+      <div
+        className={cn(
+          "col-start-2 row-start-2 mt-xs min-h-11 min-w-0 items-center gap-x-sm",
+          isActive
+            ? // Aktywna karta pokazuje etykietę poziomu i nie ma przycisku, więc status
+              // może spaść do drugiej linii. Dzięki temu „Średniozaawansowany” dostaje
+              // pełną szerokość kolumny i łamie się między słowami, a nie w środku
+              // wyrazu (pomiar 320 px, 2026-07-31).
+              "flex flex-wrap gap-y-2xs"
+            : // Karta biblioteki ma przycisk, który musi trzymać prawą krawędź
+              // niezależnie od zawartości po lewej — stąd grid, nie flex-wrap.
+              "grid grid-cols-[minmax(0,1fr)_auto]",
+        )}
+      >
         {kind === "preset" ? (
           <LevelMeter
             levelMin={p.level_min}
             levelMax={p.level_max}
             label={formatProgramLevelLabel(p.level)}
             variant="list"
+            /* Sekcja „Aktywny plan” nie ma nagłówka poziomu, więc tylko tam
+               kropkom towarzyszy tekst — w bibliotece niesie go nagłówek grupy. */
+            showLabel={isActive}
           />
         ) : (
           <span />
         )}
-        <div>
+        <div className={isActive ? "ml-auto" : undefined}>
           {isActive ? (
             <span className="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground">
               <Check aria-hidden className="size-4 text-primary" />

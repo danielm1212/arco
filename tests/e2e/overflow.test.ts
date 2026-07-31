@@ -18,9 +18,13 @@ import { build } from "esbuild";
 import { chromium, type Browser, type Page } from "@playwright/test";
 import { programCoverGradient, programCoverSizeClass } from "../../lib/programCover";
 import {
+  formatProgramCardTitle,
   formatProgramEnvironmentTag,
-  formatProgramShortName,
+  formatProgramSplitTag,
 } from "../../lib/programListCard";
+import { buildLevelMeter } from "../../lib/levelMeter";
+import { formatProgramDuration, formatProgramFrequency } from "../../lib/programDetail";
+import { PROGRAMS } from "../../scripts/seed";
 import { STICKY_HEADER_SAFE_AREA } from "../../components/navigation/stickyHeader";
 
 /**
@@ -270,79 +274,68 @@ test("PLAN-05B: miniatura ProgramCover size=row nie rozpycha wąskiej listy", as
   }
 });
 
-test("PLAN-05E: pełna lista 15 presetów i własnego planu mieści krótki tytuł, tag, poziom i CTA na 320/393 px", async () => {
-  // Realne nazwy z migracji `20260716160000_program_names_and_rotation_copy.sql`
-  // wraz ze środowiskiem — test przepuszcza je przez te same funkcje co ekran,
-  // więc zmiana konwencji nazw wywala ten test, a nie dopiero podgląd na telefonie.
-  const catalog = [
-    ["Początkujący · Siłownia · Całe ciało · 2× w tygodniu", "gym"],
-    ["Początkujący · Siłownia · Całe ciało · 2–3× w tygodniu", "gym"],
-    ["Początkujący–średniozaawansowany · Siłownia · Pośladki i nogi", "gym"],
-    ["Początkujący · Dom z hantlami · Całe ciało · 2× w tygodniu", "home"],
-    ["Początkujący · Dom z hantlami · Całe ciało · 2–3× w tygodniu", "home"],
-    ["Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi", "home"],
-    ["Początkujący · Masa ciała · Całe ciało", "bodyweight"],
-    ["Średniozaawansowany · Siłownia · Całe ciało", "gym"],
-    ["Średniozaawansowany · Siłownia · Góra / dół ciała", "gym"],
-    ["Średniozaawansowany · Dom z hantlami · Całe ciało", "home"],
-    ["Średniozaawansowany · Dom z hantlami · Góra / dół ciała", "home"],
-    ["Średniozaawansowany · Masa ciała · Całe ciało", "bodyweight"],
-    ["Zaawansowany · Siłownia · Push / Pull / Legs", "gym"],
-    ["Zaawansowany · Dom z hantlami · Góra / dół ciała", "home"],
-    ["Zaawansowany · Masa ciała · Góra / dół ciała", "bodyweight"],
-  ] as const;
+test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, dwa tagi, ikony, kropki i CTA na 320/393 px", async () => {
+  // Dane idą z REALNEGO seeda przez REALNE formattery — nie z ręcznie przepisanej
+  // kopii katalogu. Zmiana `short_name`/`split_key` w treści albo zmiana notacji
+  // metody wywala ten test, a nie dopiero podgląd na telefonie.
+  const catalog = PROGRAMS.map((program) => ({
+    title: formatProgramCardTitle(program.short_name, program.name),
+    environment: formatProgramEnvironmentTag(program.environment),
+    split: formatProgramSplitTag(program.split_key, program.days.length),
+    meter: buildLevelMeter(program.level_min, program.level_max, program.level),
+    frequency: formatProgramFrequency(program.frequency_min, program.frequency_max),
+    duration: formatProgramDuration(
+      program.estimated_minutes_min,
+      program.estimated_minutes_max,
+    ),
+    focusKey: program.focus_key ?? "balanced",
+  }));
 
-  /** PLAN-05E: wariant listowy miernika — trzy małe pionowe słupki o rosnącej
-   *  wysokości, etykieta `text-xs`. Odwzorowanie `LevelMeter variant="list"`. */
-  const meter = (label: string) => `<span
-    role="img"
-    aria-label="Poziom 2 z 3: ${label}"
-    class="inline-flex max-w-full flex-wrap items-center gap-x-xs gap-y-2xs"
-  >
-    <span aria-hidden="true" class="flex items-end gap-2xs">
-      <span class="h-2 w-2 rounded-full bg-muted-foreground/30"></span>
-      <span class="h-3 w-2 rounded-full bg-primary"></span>
-      <span class="h-4 w-2 rounded-full bg-muted-foreground/30"></span>
-    </span>
-    <span aria-hidden="true" class="min-w-0 max-w-full break-words text-xs text-muted-foreground">${label}</span>
+  /** Odwzorowanie `LevelMeter variant="list"` — trzy kropki, bez etykiety tekstowej. */
+  const meterHtml = (meter: NonNullable<ReturnType<typeof buildLevelMeter>>) => `<span
+    role="img" aria-label="${meter.ariaLabel}" class="inline-flex shrink-0 items-center gap-1">
+    ${meter.segments
+      .map(
+        (filled) =>
+          `<span aria-hidden="true" class="size-2 rounded-full ${
+            filled ? "bg-primary" : "bg-muted-foreground/30"
+          }"></span>`,
+      )
+      .join("")}
   </span>`;
-  const row = (name: string, environment: string | null, index: number, own = false) => {
+
+  // Ikony jak w karcie: `size-3.5`, dekoracyjne. Kształt bez znaczenia dla pomiaru,
+  // liczy się zajmowana szerokość, więc wystarczy pusty svg o tych samych klasach.
+  const icon = '<svg aria-hidden="true" class="size-3.5 shrink-0"></svg>';
+  const tag = (text: string) =>
+    `<span class="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">${text}</span>`;
+
+  const row = (card: (typeof catalog)[number], index: number, own = false) => {
     const coverClass = `${programCoverSizeClass("row")} ${programCoverGradient(
-      index % 3 === 2 ? "lower_body" : "balanced",
+      card.focusKey === "lower_body" ? "lower_body" : "balanced",
     )}`;
-    const label =
-      index === 2 || index === 5
-        ? "Początkujący–średniozaawansowany"
-        : index >= 12
-          ? "Zaawansowany"
-          : index >= 7
-            ? "Średniozaawansowany"
-            : "Początkujący";
     const isActive = index === 0;
-    const environmentTag = formatProgramEnvironmentTag(environment);
 
     return `<article data-program-row class="grid min-w-0 grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-xl border p-sm text-card-foreground shadow-sm ${
       isActive ? "border-primary/80 bg-primary/5" : "border-transparent bg-card"
     }">
       <div data-program-cover aria-hidden="true" class="${coverClass}"></div>
       <a href="#" class="col-start-2 row-start-1 block min-w-0 rounded-md">
-          <p data-program-title class="break-words font-medium leading-snug">${formatProgramShortName(name)}</p>
-          ${
-            environmentTag
-              ? `<div class="mt-2xs flex flex-wrap items-center gap-2xs"><span class="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">${environmentTag}</span></div>`
-              : ""
-          }
-          <p class="mt-2xs break-words text-xs text-muted-foreground">${
-            own ? "3 dni w cyklu · edytuj →" : "2–3 dni/tydz. · 45–65 min"
-          }</p>
-          ${
-            index === 6
-              ? '<p class="mt-2xs break-words text-xs text-amber-800">Potrzebujesz: drążek</p>'
-              : ""
-          }
+        <p data-program-title class="break-words font-medium leading-snug">${card.title}</p>
+        <div data-program-tags class="mt-2xs flex flex-wrap items-center gap-2xs">
+          ${card.environment ? tag(card.environment) : ""}${own || !card.split ? "" : tag(card.split)}
+        </div>
+        <p class="mt-2xs flex flex-wrap items-center gap-x-sm gap-y-2xs text-xs text-muted-foreground">
+          ${own ? "3 dni w cyklu · edytuj →" : `<span class="inline-flex items-center gap-1">${icon}${card.frequency}</span><span class="inline-flex items-center gap-1">${icon}${card.duration}</span>`}
+        </p>
+        ${
+          index === 6
+            ? '<p class="mt-2xs break-words text-xs text-amber-800">Potrzebujesz: drążek</p>'
+            : ""
+        }
       </a>
       <div class="col-start-2 row-start-2 mt-xs grid min-h-11 min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-sm">
-        ${own ? "<span></span>" : meter(label)}
+        ${own || !card.meter ? "<span></span>" : meterHtml(card.meter)}
         <div>${
           isActive
             ? '<span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span>'
@@ -351,9 +344,19 @@ test("PLAN-05E: pełna lista 15 presetów i własnego planu mieści krótki tytu
       </div>
     </article>`;
   };
+
+  const ownCard = {
+    title: "Mój własny plan z bardzo długą nazwą",
+    environment: null,
+    split: null,
+    meter: null,
+    frequency: null,
+    duration: null,
+    focusKey: "balanced" as const,
+  };
   const rows = [
-    ...catalog.map(([name, environment], index) => row(name, environment, index)),
-    row("Mój własny plan z bardzo długą nazwą", null, catalog.length, true),
+    ...catalog.map((card, index) => row(card, index)),
+    row(ownCard, catalog.length, true),
   ];
   const body = `<main class="mx-auto max-w-md space-y-sm p-md">${rows.join("")}</main>`;
 
@@ -374,7 +377,11 @@ test("PLAN-05E: pełna lista 15 presetów i własnego planu mieści krótki tytu
           (cover) => cover.getBoundingClientRect().width,
         ),
         titles: [...document.querySelectorAll<HTMLElement>("[data-program-title]")].map(
-          (title) => title.textContent ?? "",
+          (title) => title.textContent?.trim() ?? "",
+        ),
+        // Wysokość wiersza tagów: jeden rząd czy zawinięty na dwa.
+        tagRowHeights: [...document.querySelectorAll<HTMLElement>("[data-program-tags]")].map(
+          (tags) => Math.round(tags.getBoundingClientRect().height),
         ),
         meterCount: document.querySelectorAll('[role="img"][aria-label^="Poziom"]').length,
         activeCount: document.querySelectorAll("[data-program-active]").length,
@@ -387,7 +394,6 @@ test("PLAN-05E: pełna lista 15 presetów i własnego planu mieści krótki tytu
             return {
               width: box.width,
               height: box.height,
-              // Odległość prawej krawędzi CTA od wewnętrznej krawędzi karty.
               rightGap: cardBox.right - padding - box.right,
             };
           },
@@ -406,18 +412,37 @@ test("PLAN-05E: pełna lista 15 presetów i własnego planu mieści krótki tytu
       assert.deepEqual(metrics.coverWidths, Array(16).fill(64));
       assert.equal(metrics.meterCount, 15);
 
-      // Feedback właściciela 2026-07-30: tytuł nie powtarza poziomu, środowiska
-      // ani częstotliwości — te trzy mają na karcie własne miejsca.
+      // Feedback właściciela 2026-07-30: tytuł nie powtarza POZIOMU (niesie go nagłówek
+      // grupy) ani CZĘSTOTLIWOŚCI (stoi w wierszu faktów).
+      //
+      // Środowiska celowo NIE pilnujemy. Przy parserze „Siłownia" w tytule oznaczała
+      // przeciek członu specyfikacji, ale `short_name` jest treścią redakcyjną i słowo
+      // może być częścią nazwy własnej — „Siłownia w domu" (tag: Dom) czy „Start bez
+      // siłowni" to zatwierdzone nazwy, nie duplikaty taga.
       for (const title of metrics.titles) {
         assert.ok(
-          !/w tygodniu|Siłownia|Dom z hantlami|Początkujący|Średniozaawansowany|Zaawansowany/.test(
-            title,
-          ),
-          `tytuł powtarza dane pokazane osobno: „${title}”`,
+          !/w tygodniu|Początkując|Średniozaawansowan|Zaawansowan/.test(title),
+          `tytuł powtarza poziom lub częstotliwość: „${title}”`,
         );
       }
 
-      // Aktywny plan sygnalizuje stan całej karty + tekst, nie przycisk „Aktywny”.
+      // Zgłoszenie „te nazwy są praktycznie takie same" (2026-07-31): przed zmianą
+      // 14/15 kart dzieliło tytuł. Tu pilnujemy tego na realnym katalogu.
+      const presetTitles = metrics.titles.slice(0, catalog.length);
+      assert.equal(
+        new Set(presetTitles).size,
+        catalog.length,
+        `powtórzone tytuły presetów: ${presetTitles.join(", ")}`,
+      );
+
+      // Dwa tagi (środowisko + metoda) muszą zmieścić się w JEDNYM rzędzie —
+      // inaczej karta rośnie o 20 px na każdej z 15 pozycji.
+      assert.ok(
+        metrics.tagRowHeights.slice(0, catalog.length).every((height) => height <= 24),
+        `wiersz tagów zawija się przy ${width}px: ${metrics.tagRowHeights.join(", ")}`,
+      );
+
+      // Aktywny plan sygnalizuje stan całej karty + tekst, nie przycisk „Aktywny".
       assert.equal(metrics.activeCount, 1);
       assert.equal(metrics.actionBoxes.length, 15);
       assert.ok(
@@ -428,8 +453,7 @@ test("PLAN-05E: pełna lista 15 presetów i własnego planu mieści krótki tytu
       );
 
       // Regresja z podglądu 2026-07-30: przy `flex-wrap` długa etykieta poziomu
-      // spychała „Ustaw” do własnej linii i CTA lądowało po lewej. Stopka jest
-      // gridem, więc akcja ma trzymać się prawej krawędzi niezależnie od etykiety.
+      // spychała „Ustaw" do własnej linii i CTA lądowało po lewej.
       assert.ok(
         metrics.actionBoxes.every((box) => Math.abs(box.rightGap) <= 1),
         `CTA nie trzyma prawej krawędzi przy ${width}px: ${metrics.actionBoxes

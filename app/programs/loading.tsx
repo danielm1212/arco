@@ -38,11 +38,16 @@ function RowSkeleton() {
       <div className="size-16 rounded-lg bg-background/60" />
       <div className="col-start-2 row-start-1 space-y-2xs">
         <div className="h-4 w-3/5 rounded bg-background/60" />
-        <div className="h-4 w-16 rounded-full bg-background/60" />
+        {/* dwa tagi: środowisko + metoda */}
+        <div className="flex gap-2xs">
+          <div className="h-4 w-14 rounded-full bg-background/60" />
+          <div className="h-4 w-16 rounded-full bg-background/60" />
+        </div>
         <div className="h-3 w-4/5 rounded bg-background/60" />
       </div>
       <div className="col-start-2 row-start-2 mt-xs flex min-h-11 items-center gap-sm">
-        <div className="h-4 w-24 rounded bg-background/60" />
+        {/* trzy kropki poziomu */}
+        <div className="h-2 w-8 rounded-full bg-background/60" />
         <div className="ml-auto h-8 w-16 rounded-md bg-background/60" />
       </div>
     </div>
