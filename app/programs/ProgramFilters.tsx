@@ -100,7 +100,10 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
     if (draft.focus) query.set("focus", draft.focus);
     const value = query.toString();
     setOpen(false);
-    replace(value ? `/programs?${value}` : "/programs");
+    // `scroll: false` — sam błąd co przy chipach poziomu (`ProgramLevelChips`): to
+    // filtr tej samej listy, nie nowa strona, więc reset scrolla Next.js po zamknięciu
+    // sheeta byłby tą samą niespodzianką, tylko jeszcze nie zgłoszoną.
+    replace(value ? `/programs?${value}` : "/programs", { scroll: false });
   }
 
   return (

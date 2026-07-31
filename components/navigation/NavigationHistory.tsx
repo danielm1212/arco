@@ -10,7 +10,14 @@ interface NavigationHistoryValue {
   goBack: (fallback: string) => void;
   markNextNavigation: (mode: NavigationMode) => void;
   push: (href: string) => void;
-  replace: (href: string) => void;
+  /**
+   * `scroll` domyślnie `true` (zachowanie Next.js) — zmiana strony ma skoczyć na górę.
+   * Filtr na tej samej stronie (np. chip poziomu na `/programs`) powinien przekazać
+   * `{ scroll: false }`: to wciąż `router.replace`, nie inna nawigacja, więc reset
+   * scrolla przy każdym tapnięciu jest niespodzianką, nie oczekiwanym zachowaniem
+   * (zgłoszenie właściciela 2026-07-31 — chip poziomu przewijał widok do góry).
+   */
+  replace: (href: string, options?: { scroll?: boolean }) => void;
 }
 
 const NavigationHistoryContext = createContext<NavigationHistoryValue | null>(null);
@@ -64,11 +71,11 @@ export function NavigationHistoryProvider({ children }: { children: React.ReactN
   }, []);
 
   const replace = useCallback(
-    (href: string) => {
+    (href: string, options?: { scroll?: boolean }) => {
       requestNavigation(() => {
         const targetPathname = new URL(href, window.location.href).pathname;
         if (targetPathname !== pathname) nextMode.current = "replace";
-        router.replace(href);
+        router.replace(href, { scroll: options?.scroll ?? true });
       });
     },
     [pathname, requestNavigation, router],

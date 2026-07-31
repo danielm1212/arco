@@ -21,6 +21,36 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-31 · Claude Code · Fix: chip poziomu przewijał widok do góry: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/plan-05h1-scroll-fix`, po scaleniu i wdrożeniu PLAN-05H (#56).
+  Zgłoszenie właściciela z realnego użycia na produkcji: „naciśnięcie chipa scrolluje
+  mnie na górę zakładki". Zmienione: `components/navigation/NavigationHistory.tsx`,
+  `app/programs/ProgramLevelChips.tsx`, `app/programs/ProgramFilters.tsx`.
+- **Przyczyna:** współdzielony hook `useNavigationHistory().replace()` woła
+  `router.replace(href)` bez opcji `scroll` — domyślne zachowanie Next.js App Router to
+  scroll-to-top po KAŻDEJ nawigacji, nawet gdy zmienia się tylko query string na tej samej
+  stronie. Chip poziomu i „Pokaż programy” w sheecie filtrów robią właśnie to: filtr tej
+  samej listy przez `router.replace`, nie przejście na nową stronę.
+- **Naprawa celowo NIE zmienia domyślnego zachowania hooka.** `replace()` dostał opcjonalny
+  drugi parametr `{ scroll?: boolean }` (domyślnie `true` — bez zmian dla istniejących
+  wywołań). Sprawdzone przed zmianą: jedyny inny realny caller to `Logger.tsx` (`replace("/")`
+  po zakończeniu sesji), gdzie scroll-to-top jest POPRAWNYM zachowaniem — zostaje domyślne.
+  `scroll: false` dodane tylko w dwóch miejscach filtrujących `/programs`: chip poziomu
+  ORAZ „Pokaż programy” w sheecie (ten sam błąd, jeszcze niezgłoszony — naprawiony
+  proaktywnie, żeby nie wrócił za tydzień jako osobne zgłoszenie).
+- **Weryfikacja miała twardą granicę.** API `{ scroll: false }` potwierdzone w typach
+  paczki `next@16.2.11` faktycznie zainstalowanej w repo (nie z pamięci/dokumentacji).
+  Próba klik-testu w realnej przeglądarce: nawet nowa, niezwiązana z niczym trasa
+  scratch (`/_scroll-repro`) przekierowała do `/login` — cała aplikacja jest za globalnym
+  middlewarem auth, więc scroll w praktyce da się potwierdzić wyłącznie po zalogowaniu.
+  Trasa scratch usunięta, zero śladu w repo.
+- **Bramka:** lint ✓, tsc ✓, unit **239/239**, overflow **37/37**, build ✓. Brak migracji,
+  brak zmiany danych, brak deployu.
+- **Następny krok:** [Ty] potwierdzić na produkcji po merge, że chip nie przewija już
+  widoku — to jedyna pozostała weryfikacja tego fixa, której nie da się zrobić bez
+  zalogowanej sesji.
+
 ### 2026-07-31 · Claude Code · PLAN-05H chipy poziomu i zwężenie lower-body: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** gałąź `agent/plan-05h-level-nav`, po weryfikacji 05F/05G na produkcji.
