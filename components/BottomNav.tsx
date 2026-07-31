@@ -7,7 +7,10 @@ import type { AppTab } from "@/lib/appChrome";
 import { useNavigationHistory } from "./navigation/NavigationHistory";
 
 const TABS = [
-  { id: "home", href: "/", label: "Home", icon: House },
+  // HOME-05: „Dziś", nie „Home" — reszta nawigacji jest po polsku („Trening",
+  // „Ekipa"), a angielskie słowo w środku polskiego paska było jedynym wyjątkiem.
+  // „Dziś" mówi też, czego ten ekran dotyczy: dzisiejszego treningu, nie strony głównej.
+  { id: "home", href: "/", label: "Dziś", icon: House },
   { id: "training", href: "/programs", label: "Trening", icon: Dumbbell },
   { id: "team", href: "/ekipa", label: "Ekipa", icon: UsersRound },
 ] as const;
