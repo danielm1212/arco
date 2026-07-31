@@ -13,15 +13,21 @@ export type LevelMeterData = {
 };
 
 /**
- * PLAN-05G: plany o zakresie poziomów (`level_min < level_max`) dostają etykietę
- * „do ...", nie zlepek obu poziomów. Zakres opisuje sufit trudności, a nie dwa
- * równorzędne poziomy — „Do średniozaawansowanego" mówi to wprost i jest o 10
- * znaków krótsze niż „Początkujący–średniozaawansowany”. Klucz to `level_max`,
- * bo tyle segmentów zapala się na mierniku.
+ * PLAN-05G: miernik nazywa poziom wyłącznie na trzy sposoby — „Początkujący”,
+ * „Średniozaawansowany”, „Zaawansowany” (decyzja właściciela 2026-07-31).
+ *
+ * Plany o zakresie (`level_min < level_max`, dziś dwa plany lower-body) mają w bazie
+ * zlepek w stylu „początkujący–średniozaawansowany”. Na mierniku równamy je do nazwy
+ * `level_max`, bo tyle segmentów się zapala — etykieta ma opisywać to, co widać.
+ * Świadomy koszt: taki plan stoi w grupie wg `level_min`, więc pod nagłówkiem
+ * „Początkujący” zobaczysz kartę opisaną „Średniozaawansowany”. Alternatywa
+ * (zmiana `level_min` w danych) rusza grupowanie ORAZ macierz rekomendacji, więc
+ * zostaje na osobną decyzję produktową.
  */
-const RANGE_LABEL: Record<number, string> = {
-  2: "Do średniozaawansowanego",
-  3: "Do zaawansowanego",
+const LEVEL_MAX_LABEL: Record<number, string> = {
+  1: "Początkujący",
+  2: "Średniozaawansowany",
+  3: "Zaawansowany",
 };
 
 /** `null` gdy brakuje danych do sensownego renderu — komponent wtedy nie istnieje,
@@ -43,7 +49,7 @@ export function buildLevelMeter(
   const segments = Array.from({ length: LEVEL_METER_TOTAL }, (_, i) => i + 1 <= levelMax);
 
   const resolvedLabel =
-    levelMin === levelMax ? label : (RANGE_LABEL[levelMax] ?? label);
+    levelMin === levelMax ? label : (LEVEL_MAX_LABEL[levelMax] ?? label);
 
   return {
     segments,

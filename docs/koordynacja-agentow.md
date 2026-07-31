@@ -47,7 +47,12 @@
 - **Miernik poziomu: skala narastająca zamiast zakresu.** Poziom 1/2/3 zapala 1/2/3 kropki.
   Poprzedni model zapalał wyłącznie segment poziomu, więc poziom 2 wyglądał jak `○●○`.
   **To zmienia też wariant `bars` na `/programs/[id]`** — zamierzone, nie regresja. Plany
-  o zakresie 1–2 zapalają 2 kropki i dostają etykietę „Do średniozaawansowanego".
+  o zakresie 1–2 zapalają 2 kropki i są równane do nazwy `level_max`, bo miernik ma
+  używać wyłącznie trzech nazw: „Początkujący", „Średniozaawansowany", „Zaawansowany"
+  (decyzja właściciela 2026-07-31; wcześniejszy wariant „Do średniozaawansowanego"
+  odrzucony). Świadomy koszt: taki plan grupuje się wg `level_min`, więc pod nagłówkiem
+  „Początkujący" stoi karta opisana „Średniozaawansowany". Alternatywa — zmiana
+  `level_min` w danych — rusza grupowanie i macierz rekomendacji, więc została odłożona.
 - **Dwa znaleziska z przeglądu a11y, oba naprawione w tej paczce:** (1) sekcja „Aktywny plan"
   nie ma nagłówka poziomu, więc po usunięciu tekstowej etykiety jej kropki zostawały bez
   legendy dla osoby widzącej — `showLabel` włączony wyłącznie tam; (2) etykieta łamała się

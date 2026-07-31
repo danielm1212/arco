@@ -320,9 +320,9 @@ function ProgramRow({
           "col-start-2 row-start-2 mt-xs min-h-11 min-w-0 items-center gap-x-sm",
           isActive
             ? // Aktywna karta pokazuje etykietę poziomu i nie ma przycisku, więc status
-              // może spaść do drugiej linii. Dzięki temu „Do średniozaawansowanego”
-              // dostaje pełną szerokość kolumny i łamie się między słowami, a nie
-              // w środku wyrazu (pomiar 320 px, 2026-07-31).
+              // może spaść do drugiej linii. Dzięki temu „Średniozaawansowany” dostaje
+              // pełną szerokość kolumny i łamie się między słowami, a nie w środku
+              // wyrazu (pomiar 320 px, 2026-07-31).
               "flex flex-wrap gap-y-2xs"
             : // Karta biblioteki ma przycisk, który musi trzymać prawą krawędź
               // niezależnie od zawartości po lewej — stąd grid, nie flex-wrap.

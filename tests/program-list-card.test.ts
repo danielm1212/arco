@@ -7,6 +7,8 @@ import {
   formatProgramSplitTag,
 } from "../lib/programListCard";
 import { PROGRAMS } from "../scripts/seed";
+import { buildLevelMeter } from "../lib/levelMeter";
+import { formatProgramLevelLabel } from "../lib/programDetail";
 
 /** PLAN-05E: nazwa prezentacyjna wiersza biblioteki. Wejścia to realne nazwy
  *  z migracji `20260716160000_program_names_and_rotation_copy.sql` — jeśli
@@ -131,6 +133,22 @@ test("katalog: tytuł + środowisko + metoda są unikalne wewnątrz każdej grup
   for (const [level, keys] of groups) {
     const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
     assert.deepEqual(duplicates, [], `grupa poziomu ${level} ma nierozróżnialne karty`);
+  }
+});
+
+test("katalog: realne plany używają tylko trzech nazw poziomu", () => {
+  const allowed = new Set(["Początkujący", "Średniozaawansowany", "Zaawansowany"]);
+  for (const program of PROGRAMS) {
+    const meter = buildLevelMeter(
+      program.level_min,
+      program.level_max,
+      formatProgramLevelLabel(program.level),
+    );
+    assert.ok(meter, `${program.slug}: miernik się nie zbudował`);
+    assert.ok(
+      allowed.has(meter.label),
+      `${program.slug} (${program.level_min}-${program.level_max}): etykieta spoza trójki — „${meter.label}”`,
+    );
   }
 });
 

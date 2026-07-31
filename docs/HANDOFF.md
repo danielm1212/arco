@@ -387,7 +387,9 @@ koordynacji (2026-07-23).
    ikonę kalendarza i zegara jak w szczególe 05D. **Miernik poziomu przeszedł na skalę
    narastającą** (1/2/3 kropki zamiast zapalania samego segmentu poziomu) — to zmienia także
    wariant `bars` na `/programs/[id]`, zamierzenie, nie regresja; zakres 1–2 daje 2 kropki
-   i etykietę „Do średniozaawansowanego". `split_key` odblokowuje filtr metody w R2.2.
+   i są równane do nazwy `level_max` — miernik używa wyłącznie trzech nazw:
+   „Początkujący", „Średniozaawansowany", „Zaawansowany". `split_key` odblokowuje
+   filtr metody w R2.2.
    Bramka: lint, tsc, **237/237** unit, **36/36** overflow, `validate:training`,
    `validate:recommendations` **60/60**, build. Karty mają równe 144 px na 320 i 393 px,
    light i dark, bez overflow. `supabase db reset` świadomie pominięty (skasowałby lokalny

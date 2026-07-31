@@ -41,19 +41,43 @@ test("buildLevelMeter: poziom 3 zapala wszystkie trzy segmenty", () => {
   assert.deepEqual(meter.segments, [true, true, true]);
 });
 
-test("buildLevelMeter: zakres 1–2 wygląda jak poziom 2 i dostaje etykietę „do ...”", () => {
+/* Miernik nazywa poziom WYŁĄCZNIE na trzy sposoby (decyzja właściciela 2026-07-31).
+   Zakres w danych równamy do nazwy `level_max` — etykieta opisuje to, co widać
+   na kropkach, a nie zlepek z bazy. */
+
+test("buildLevelMeter: zakres 1–2 wygląda jak poziom 2 i nazywa się „Średniozaawansowany”", () => {
   const meter = buildLevelMeter(1, 2, "Początkujący–średniozaawansowany");
   assert.ok(meter);
-  assert.equal(meter.label, "Do średniozaawansowanego");
-  assert.equal(meter.ariaLabel, "Poziom 2 z 3: Do średniozaawansowanego");
+  assert.equal(meter.label, "Średniozaawansowany");
+  assert.equal(meter.ariaLabel, "Poziom 2 z 3: Średniozaawansowany");
   assert.deepEqual(meter.segments, [true, true, false]);
 });
 
-test("buildLevelMeter: zakres 2–3 zapala wszystko i mówi „Do zaawansowanego”", () => {
+test("buildLevelMeter: zakres 2–3 zapala wszystko i nazywa się „Zaawansowany”", () => {
   const meter = buildLevelMeter(2, 3, "Średnio–zaawansowany");
   assert.ok(meter);
-  assert.equal(meter.label, "Do zaawansowanego");
+  assert.equal(meter.label, "Zaawansowany");
   assert.deepEqual(meter.segments, [true, true, true]);
+});
+
+test("buildLevelMeter: cały katalog używa tylko trzech nazw poziomu", () => {
+  const allowed = new Set(["Początkujący", "Średniozaawansowany", "Zaawansowany"]);
+  const cases: [number, number, string][] = [
+    [1, 1, "Początkujący"],
+    [2, 2, "Średniozaawansowany"],
+    [3, 3, "Zaawansowany"],
+    [1, 2, "Początkujący–średniozaawansowany"],
+    [2, 3, "Średnio–zaawansowany"],
+    [1, 3, "Wszystkie poziomy"],
+  ];
+  for (const [min, max, dbLabel] of cases) {
+    const meter = buildLevelMeter(min, max, dbLabel);
+    assert.ok(meter);
+    assert.ok(
+      allowed.has(meter.label),
+      `poziom ${min}-${max} dał etykietę spoza trójki: „${meter.label}”`,
+    );
+  }
 });
 
 test("buildLevelMeter: pojedynczy poziom zachowuje etykietę z bazy, nie podmienia jej na „do ...”", () => {
