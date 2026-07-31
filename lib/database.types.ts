@@ -507,6 +507,8 @@ export type Database = {
           optional_equipment: string[]
           required_equipment: string[]
           slug: string | null
+          short_name: string | null
+          split_key: string | null
           user_id: string | null
         }
         Insert: {
@@ -532,6 +534,8 @@ export type Database = {
           optional_equipment?: string[]
           required_equipment?: string[]
           slug?: string | null
+          short_name?: string | null
+          split_key?: string | null
           user_id?: string | null
         }
         Update: {
@@ -557,6 +561,8 @@ export type Database = {
           optional_equipment?: string[]
           required_equipment?: string[]
           slug?: string | null
+          short_name?: string | null
+          split_key?: string | null
           user_id?: string | null
         }
         Relationships: []

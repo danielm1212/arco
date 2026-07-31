@@ -313,6 +313,10 @@ export interface Day {
 export interface Program {
   slug: string;
   name: string;
+  /** PLAN-05F: krótka nazwa prezentacyjna na karcie biblioteki. `name` zostaje kanoniczne. */
+  short_name: string;
+  /** PLAN-05F: metoda podziału — zasila tag na karcie i filtr metody w R2.2. */
+  split_key: "fbw" | "upper_lower" | "ppl" | "lower_body_focus";
   description: string;
   goal: string;
   goal_key: "strength_hypertrophy" | "hypertrophy" | "foundation";
@@ -337,6 +341,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "beginner-gym-fbw2",
     name: "Początkujący · Siłownia · Całe ciało · 2× w tygodniu",
+    short_name: "Spokojny start",
+    split_key: "fbw",
     description: "Dwa naprzemienne treningi całego ciała dla osób, które realnie mogą ćwiczyć dwa razy w tygodniu. Ucz się techniki, zostaw 2 lub 3 powtórzenia w zapasie i zwiększaj ciężar dopiero po osiągnięciu górnego zakresu.",
     goal: "Siłownia · baza siły i masy",
     goal_key: "foundation",
@@ -384,6 +390,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "beginner-gym-fbw3",
     name: "Początkujący · Siłownia · Całe ciało · 2–3× w tygodniu",
+    short_name: "Poznaj sztangę",
+    split_key: "fbw",
     description: "Plan całego ciała do nauki podstawowych ruchów ze sztangą. Gdy wykonasz górny zakres powtórzeń, zwiększ ciężar. Zostaw 2 lub 3 powtórzenia w zapasie.",
     goal: "Siłownia · masa i siła",
     goal_key: "strength_hypertrophy",
@@ -442,6 +450,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "beginner-home-fbw2",
     name: "Początkujący · Dom z hantlami · Całe ciało · 2× w tygodniu",
+    short_name: "Start bez siłowni",
+    split_key: "fbw",
     description: "Dwa naprzemienne treningi całego ciała z hantlami. Ławka i guma pomagają, ale każde ćwiczenie ma prosty wariant możliwy do wykonania w domu bez rozbudowanego sprzętu.",
     goal: "Dom (hantle) · baza siły i masy",
     goal_key: "foundation",
@@ -488,6 +498,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "beginner-home-fbw3",
     name: "Początkujący · Dom z hantlami · Całe ciało · 2–3× w tygodniu",
+    short_name: "Domowe podstawy",
+    split_key: "fbw",
     description: "Domowy plan całego ciała z hantlami i ławką. Przyda się też guma albo drążek. Gdy wykonasz górny zakres powtórzeń, zwiększ ciężar.",
     goal: "Dom (hantle) · masa i siła",
     goal_key: "strength_hypertrophy",
@@ -549,6 +561,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "lower-body-gym3",
     name: "Początkujący–średniozaawansowany · Siłownia · Pośladki i nogi",
+    short_name: "Mocne nogi",
+    split_key: "lower_body_focus",
     description: "Trzy różne treningi z większym naciskiem na pośladki, uda i tył nóg. Góra ciała nadal dostaje regularny bodziec, dzięki czemu plan pozostaje kompletny. Wykonuj rotację A → B → C dwa lub trzy razy w tygodniu.",
     goal: "Nacisk: pośladki i nogi",
     goal_key: "hypertrophy",
@@ -608,6 +622,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "lower-body-home3",
     name: "Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi",
+    short_name: "Pośladki na hantlach",
+    split_key: "lower_body_focus",
     description: "Domowy plan z większym naciskiem na pośladki i nogi, oparty na hantlach oraz ćwiczeniach jednostronnych. Góra ciała pozostaje w planie w mniejszej dawce. Wykonuj rotację A → B → C dwa lub trzy razy w tygodniu.",
     goal: "Nacisk: pośladki i nogi",
     goal_key: "hypertrophy",
@@ -666,6 +682,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "beginner-bodyweight-fbw3",
     name: "Początkujący · Masa ciała · Całe ciało",
+    short_name: "Ty i drążek",
+    split_key: "fbw",
     description: "Plan całego ciała z masą własnego ciała i drążkiem. Najpierw zwiększaj liczbę powtórzeń, a potem wybierz trudniejszy wariant ćwiczenia.",
     goal: "Masa ciała (drążek) · baza",
     goal_key: "foundation",
@@ -721,6 +739,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-bodyweight-fbw3",
     name: "Średniozaawansowany · Masa ciała · Całe ciało",
+    short_name: "Siła bez ciężarów",
+    split_key: "fbw",
     description: "Trzy treningi kalisteniczne z drążkiem dla osób, które opanowały podstawowe warianty. Progresuj powtórzeniami, tempem i trudnością dźwigni, zostawiając 1 lub 2 powtórzenia w zapasie.",
     goal: "Masa ciała (drążek) · siła i sprawność",
     goal_key: "strength_hypertrophy",
@@ -776,6 +796,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-gym-upper-lower4",
     name: "Średniozaawansowany · Siłownia · Góra / dół ciała",
+    short_name: "Rozkręcamy objętość",
+    split_key: "upper_lower",
     description: "Cztery treningi: dwa na górę i dwa na dół ciała. Dni A skupiają się na sile, a dni B na większej liczbie powtórzeń. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Siłownia · hipertrofia i siła",
     goal_key: "strength_hypertrophy",
@@ -848,6 +870,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-home-upper-lower4",
     name: "Średniozaawansowany · Dom z hantlami · Góra / dół ciała",
+    short_name: "Cztery dni z hantlami",
+    split_key: "upper_lower",
     description: "Cztery treningi z hantlami i drążkiem. Ćwiczenia jednostronne oraz większe zakresy powtórzeń pozwalają trenować mocno bez bardzo dużych ciężarów.",
     goal: "Dom (hantle) · hipertrofia",
     goal_key: "hypertrophy",
@@ -918,6 +942,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "advanced-home-upper-lower4",
     name: "Zaawansowany · Dom z hantlami · Góra / dół ciała",
+    short_name: "Siłownia w domu",
+    split_key: "upper_lower",
     description: "Czterodniowy plan dla osób z regulowanymi hantlami, ławką i drążkiem. Wykorzystuje ćwiczenia jednostronne, wolne tempo i trudniejsze warianty, żeby obejść ograniczony ciężar domowy.",
     goal: "Dom (hantle) · hipertrofia zaawansowana",
     goal_key: "hypertrophy",
@@ -986,6 +1012,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "advanced-bodyweight-upper-lower4",
     name: "Zaawansowany · Masa ciała · Góra / dół ciała",
+    short_name: "Dźwignia i kontrola",
+    split_key: "upper_lower",
     description: "Czterodniowy plan kalisteniczny z drążkiem i stabilnymi podporami. Progresja opiera się na trudniejszej dźwigni, tempie, pauzach i kontrolowanym zakresie, bez dokładania przypadkowej objętości.",
     goal: "Masa ciała (drążek) · siła zaawansowana",
     goal_key: "strength_hypertrophy",
@@ -1053,6 +1081,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "advanced-gym-ppl6",
     name: "Zaawansowany · Siłownia · Push / Pull / Legs",
+    short_name: "Pełen gaz",
+    split_key: "ppl",
     description: "Sześć treningów dla osób przyzwyczajonych do dużej objętości. Dni A są cięższe, a dni B mają więcej powtórzeń. Zaplanuj lżejszy tydzień co 6 do 8 tygodni.",
     goal: "Siłownia · hipertrofia zaawansowana",
     goal_key: "hypertrophy",
@@ -1152,6 +1182,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-gym-fbw2",
     name: "Średniozaawansowany · Siłownia · Całe ciało",
+    short_name: "Mało czasu, pełny plan",
+    split_key: "fbw",
     description: "Dwa treningi całego ciała na pełnym sprzęcie, z lekkim naciskiem na górę. Jedno duże ćwiczenie na dół w sesji, pełny push i pull, bezpośredni biceps i triceps. Plan projektowany na 3 dni w tygodniu — przy dwóch działa, ale rozwija wolniej. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Siłownia · masa i siła",
     goal_key: "strength_hypertrophy",
@@ -1205,6 +1237,8 @@ export const PROGRAMS: Program[] = [
   {
     slug: "intermediate-home-fbw2",
     name: "Średniozaawansowany · Dom z hantlami · Całe ciało",
+    short_name: "Hantle i kettle",
+    split_key: "fbw",
     description: "Dwa domowe treningi całego ciała z hantlami i kettlem. Jedna sesja zajmuje około 45 do 60 minut. Zostaw 1 lub 2 powtórzenia w zapasie.",
     goal: "Dom (hantle+kettlebell) · masa i siła",
     goal_key: "strength_hypertrophy",
@@ -1284,6 +1318,8 @@ async function seedPrograms() {
       description: prog.description,
       goal: prog.goal,
       goal_key: prog.goal_key,
+      short_name: prog.short_name,
+      split_key: prog.split_key,
       focus_key: prog.focus_key ?? "balanced",
       level: prog.level,
       environment: prog.environment,

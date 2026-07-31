@@ -374,8 +374,28 @@ koordynacji (2026-07-23).
    pełny vs pusty słupek w dark (**2,44:1**), udokumentowane w `components/LevelMeter.tsx`:
    słupki są warstwą pomocniczą, bo poziom stoi słownie obok i w `aria-label`.
    Bez migracji, deployu i zmian w Linearze.
+   **05F+05G jest gotowe technicznie 2026-07-31 na `agent/plan-05fg-program-naming`:**
+   karta biblioteki dostała nazwę własną i metodę. Migracja
+   `20260731103500_plan05f_program_split_and_short_name.sql` dodaje `split_key`
+   (enum: `fbw`/`upper_lower`/`ppl`/`lower_body_focus`) i `short_name`, z backfillem 15
+   presetów i guardem na pusty stan; `scripts/seed.ts` ustawia te same wartości.
+   Zmierzony problem wyjściowy: **14/15 kart dzieliło tytuł** („Całe ciało" ×8) — po zmianie
+   0 kolizji w każdej grupie poziomu, zabezpieczone testem. Tytuł to `short_name`
+   („Spokojny start", „Siła bez ciężarów", „Pełen gaz"), metoda to drugi tag obok środowiska
+   w języku siłowni (`FBW A/B`, `Upper/Lower`, `Push/Pull/Legs`) — zgodnie z regułą
+   „terminologia siłowni, nie słownikowa" z `r5a-slownik-pl-propozycja.md` §1. Fakty dostały
+   ikonę kalendarza i zegara jak w szczególe 05D. **Miernik poziomu przeszedł na skalę
+   narastającą** (1/2/3 kropki zamiast zapalania samego segmentu poziomu) — to zmienia także
+   wariant `bars` na `/programs/[id]`, zamierzenie, nie regresja; zakres 1–2 daje 2 kropki
+   i etykietę „Do średniozaawansowanego". `split_key` odblokowuje filtr metody w R2.2.
+   Bramka: lint, tsc, **237/237** unit, **36/36** overflow, `validate:training`,
+   `validate:recommendations` **60/60**, build. Karty mają równe 144 px na 320 i 393 px,
+   light i dark, bez overflow. `supabase db reset` świadomie pominięty (skasowałby lokalny
+   dziennik treningowy) — świeżą bazę pokrywa CI. Bez deployu i zmian w Linearze.
    **Do [Ty]:** przejście po zalogowanej trasie `/programs` (agent nie loguje się na konto)
-   i checkpoint iPhone PWA dla 05D oraz 05E; potem R2.2.
+   i checkpoint iPhone PWA dla 05D, 05E oraz 05F/05G. Potem PLAN-05H (bug: miniatura poza
+   `<Link>`, licznik wyników, spójność grup z filtrem, martwy chip „Pasuje do Twojego
+   kierunku", cache katalogu), PLAN-05I (test na realnym `ProgramRow`), następnie R2.2.
 7. [Ty] krok 5/6 `arco-release` dla SESSION-01A2…01A4 — weryfikacja proda w przeglądarce
    i regresja urządzeniowa (merge i auto-deploy Vercel już wykonane, #27/#28/#29 w `main`).
    Opcjonalny follow-up domykający ryzyko 6: podpiąć `lib/useFocusTrap.ts` do

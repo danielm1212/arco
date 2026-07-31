@@ -67,6 +67,53 @@ export function formatProgramShortName(name: string): string {
 }
 
 /**
+ * PLAN-05F: tytuł karty. `short_name` z bazy jest źródłem prawdy; parser nazwy
+ * zostaje wyłącznie jako awaryjne wyjście dla programów bez uzupełnionej treści
+ * (własne plany użytkownika, świeży rekord przed backfillem). Dzięki temu tytuł
+ * nigdy nie jest pusty, a jednocześnie nie zależy już od konwencji nazewniczej.
+ */
+export function formatProgramCardTitle(
+  shortName: string | null,
+  name: string,
+): string {
+  return shortName?.trim() || formatProgramShortName(name);
+}
+
+export type ProgramSplitKey = "fbw" | "upper_lower" | "ppl" | "lower_body_focus";
+
+/**
+ * PLAN-05F: tag metody — język siłowni, nie opis słownikowy (reguła z
+ * `docs/r5a-slownik-pl-propozycja.md` §1: „terminologia siłowni, nie słownikowa”,
+ * utrwalone anglicyzmy zostają).
+ *
+ * FBW dostaje notację treningów („FBW A/B”, „FBW A/B/C”), bo liczba RÓŻNYCH treningów
+ * to inna informacja niż liczba sesji w tygodniu — plan A/B bywa robiony trzy razy
+ * w tygodniu, a karta nie pokazuje tego nigdzie indziej. Pozostałe metody mają stałą
+ * etykietę: `Upper/Lower` zgodnie z nazwami dni w bazie (`Upper A · siła`).
+ */
+export function formatProgramSplitTag(
+  splitKey: string | null,
+  workoutCount: number,
+): string | null {
+  switch (splitKey) {
+    case "fbw":
+      return workoutCount >= 2 && workoutCount <= LETTERS.length
+        ? `FBW ${LETTERS.slice(0, workoutCount).join("/")}`
+        : "FBW";
+    case "upper_lower":
+      return "Upper/Lower";
+    case "ppl":
+      return "Push/Pull/Legs";
+    case "lower_body_focus":
+      return "Pośladki i nogi";
+    default:
+      return null;
+  }
+}
+
+const LETTERS = ["A", "B", "C", "D", "E", "F"];
+
+/**
  * Etykieta taga środowiska na liście. Krótsza niż etykieta filtra
  * („Dom” zamiast „Dom z hantlami”) — tag ma być znacznikiem, nie zdaniem;
  * pełny opis sprzętu żyje w szczególe planu.

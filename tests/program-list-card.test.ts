@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  formatProgramCardTitle,
   formatProgramEnvironmentTag,
   formatProgramShortName,
+  formatProgramSplitTag,
 } from "../lib/programListCard";
+import { PROGRAMS } from "../scripts/seed";
 
 /** PLAN-05E: nazwa prezentacyjna wiersza biblioteki. Wejścia to realne nazwy
  *  z migracji `20260716160000_program_names_and_rotation_copy.sql` — jeśli
@@ -66,6 +69,79 @@ test("formatProgramEnvironmentTag: tag jest krótszy niż etykieta filtra", () =
 test("formatProgramEnvironmentTag: brak środowiska nie renderuje taga", () => {
   assert.equal(formatProgramEnvironmentTag(null), null);
   assert.equal(formatProgramEnvironmentTag("nieznane"), null);
+});
+
+/* PLAN-05F: tytuł ze `short_name`, metoda ze `split_key` — dane strukturalne
+   zamiast parsowania nazwy. Parser zostaje wyłącznie jako awaryjne wyjście. */
+
+test("formatProgramCardTitle: short_name wygrywa z parsowaniem nazwy", () => {
+  assert.equal(
+    formatProgramCardTitle("Spokojny start", "Początkujący · Siłownia · Całe ciało · 2× w tygodniu"),
+    "Spokojny start",
+  );
+});
+
+test("formatProgramCardTitle: brak short_name spada do parsera, nie do pustego tytułu", () => {
+  assert.equal(
+    formatProgramCardTitle(null, "Początkujący · Siłownia · Całe ciało · 2× w tygodniu"),
+    "Całe ciało",
+  );
+  assert.equal(formatProgramCardTitle("   ", "Mój własny plan"), "Mój własny plan");
+});
+
+test("formatProgramSplitTag: FBW dostaje notację liczby RÓŻNYCH treningów", () => {
+  assert.equal(formatProgramSplitTag("fbw", 2), "FBW A/B");
+  assert.equal(formatProgramSplitTag("fbw", 3), "FBW A/B/C");
+});
+
+test("formatProgramSplitTag: pozostałe metody mają stałą etykietę w języku siłowni", () => {
+  assert.equal(formatProgramSplitTag("upper_lower", 4), "Upper/Lower");
+  assert.equal(formatProgramSplitTag("ppl", 6), "Push/Pull/Legs");
+  assert.equal(formatProgramSplitTag("lower_body_focus", 3), "Pośladki i nogi");
+});
+
+test("formatProgramSplitTag: brak metody nie renderuje taga (własny plan użytkownika)", () => {
+  assert.equal(formatProgramSplitTag(null, 3), null);
+  assert.equal(formatProgramSplitTag("nieznane", 3), null);
+});
+
+test("formatProgramSplitTag: absurdalna liczba treningów degraduje się do samego FBW", () => {
+  assert.equal(formatProgramSplitTag("fbw", 0), "FBW");
+  assert.equal(formatProgramSplitTag("fbw", 99), "FBW");
+});
+
+/**
+ * Sedno PLAN-05F. Zgłoszenie właściciela brzmiało „te nazwy są praktycznie takie same";
+ * pomiar przed zmianą: 14/15 kart dzieliło tytuł z inną kartą. Strona grupuje plany po
+ * `level_min`, więc liczy się rozróżnialność WEWNĄTRZ widocznej grupy — dwie karty
+ * o tym samym opisie nigdy nie mogą stanąć obok siebie.
+ */
+test("katalog: tytuł + środowisko + metoda są unikalne wewnątrz każdej grupy poziomu", () => {
+  const groups = new Map<number, string[]>();
+  for (const program of PROGRAMS) {
+    const key = [
+      formatProgramCardTitle(program.short_name, program.name),
+      formatProgramEnvironmentTag(program.environment),
+      formatProgramSplitTag(program.split_key, program.days.length),
+    ].join(" | ");
+    groups.set(program.level_min, [...(groups.get(program.level_min) ?? []), key]);
+  }
+
+  assert.ok(groups.size > 0, "brak programów w seedzie");
+  for (const [level, keys] of groups) {
+    const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
+    assert.deepEqual(duplicates, [], `grupa poziomu ${level} ma nierozróżnialne karty`);
+  }
+});
+
+test("katalog: każdy preset ma uzupełnione short_name i split_key", () => {
+  for (const program of PROGRAMS) {
+    assert.ok(program.short_name?.trim(), `${program.slug}: brak short_name`);
+    assert.ok(
+      formatProgramSplitTag(program.split_key, program.days.length),
+      `${program.slug}: split_key nie daje taga`,
+    );
+  }
 });
 
 test("formatProgramShortName: pełne 15 nazw katalogu daje krótkie, niepuste tytuły", () => {
