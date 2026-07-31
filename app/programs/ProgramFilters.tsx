@@ -19,14 +19,17 @@ const ENVIRONMENTS = [
   ["bodyweight", "Masa ciała"],
 ] as const;
 
-const LEVELS = [
-  ["1", "Początkujący"],
-  ["2", "Średniozaawansowany"],
-  ["3", "Zaawansowany"],
-] as const;
-
-function countFilters(filters: Filters) {
-  return Number(Boolean(filters.environment)) + Number(Boolean(filters.level)) + Number(Boolean(filters.goal)) + Number(Boolean(filters.focus));
+/**
+ * PLAN-05H: poziom wyszedł z tego sheeta do stałych chipów nad listą
+ * (`ProgramLevelChips`) — dwie kontrolki na jeden filtr rozjeżdżały stan. Licznik
+ * poniżej celowo pomija `filters.level`: liczy tylko pola, które ten sheet faktycznie
+ * pokazuje, więc plakietka „Filtry · N” nigdy nie liczy czegoś niewidocznego na ekranie,
+ * który się właśnie otworzył. `draft.level` nadal PRZEPŁYWA przez `apply()` niezmieniony
+ * (ustawiony przez chip, zanim sheet się otworzył) — sheet dokłada własne pola, nie
+ * kasuje wyboru poziomu.
+ */
+function countFilters(filters: Omit<Filters, "level">) {
+  return Number(Boolean(filters.environment)) + Number(Boolean(filters.goal)) + Number(Boolean(filters.focus));
 }
 
 function FilterGroup({
@@ -105,7 +108,7 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
       open={open}
       onOpenChange={changeOpen}
       title="Filtry programów"
-      description="Dopasuj bibliotekę programów do miejsca, poziomu, celu i kierunku treningu."
+      description="Dopasuj bibliotekę programów do miejsca, celu i kierunku treningu. Poziom filtrujesz chipami nad listą."
       trigger={
         <Button type="button" variant="outline" size="sm" className="shrink-0 gap-xs">
           <SlidersHorizontal className="size-4" aria-hidden />
@@ -129,12 +132,6 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
           ]}
           onChange={(focus) => setDraft((current) => ({ ...current, focus }))}
         />
-        <FilterGroup
-          label="Poziom"
-          value={draft.level}
-          options={LEVELS}
-          onChange={(level) => setDraft((current) => ({ ...current, level }))}
-        />
         {goals.length > 1 && (
           <FilterGroup
             label="Cel"
@@ -151,7 +148,10 @@ export function ProgramFilters({ filters, goals }: { filters: Filters; goals: st
             <button
               type="button"
               className="flex min-h-11 w-full items-center justify-center text-sm font-medium text-primary underline-offset-2 hover:underline"
-              onClick={() => setDraft({})}
+              // Czyści tylko pola widoczne w tym sheecie — poziom żyje w chipach
+              // nad listą i "Wyczyść filtry" nie powinno cichcem zdejmować wyboru,
+              // którego ten ekran nawet nie pokazuje.
+              onClick={() => setDraft((current) => ({ level: current.level }))}
             >
               Wyczyść filtry
             </button>

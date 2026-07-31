@@ -21,6 +21,59 @@
 
 ## Ostatnie wpisy
 
+### 2026-07-31 · Claude Code · PLAN-05H chipy poziomu i zwężenie lower-body: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/plan-05h-level-nav`, po weryfikacji 05F/05G na produkcji.
+  Migracja `20260731115619_plan05h_lower_body_intermediate_only.sql`; nowy
+  `app/programs/ProgramLevelChips.tsx`; zmienione `app/programs/page.tsx`,
+  `app/programs/ProgramFilters.tsx`, `components/LevelMeter.tsx`, `scripts/seed.ts`,
+  `tests/e2e/overflow.test.ts`, `tests/level-meter.test.ts`, `tests/program-list-card.test.ts`.
+- **Feedback właściciela z produkcji — cztery punkty:**
+  1. Etykieta „Średniozaawansowany” tylko na aktywnym planie, nie na reszcie — usunięte
+     przez wyrównanie: etykieta jest teraz na KAŻDEJ karcie presetu, nagłówki grup, które
+     ją wcześniej niosły, zniknęły.
+  2. Słupki poziomu miały rosnąć jak w benchmarkach (Tempo/Gymshark `▂▃`), nie być
+     równymi kropkami — poprzednia sesja źle odczytała „kropeczki” dosłownie.
+  3. Plany 2. poziomu renderowały się pod nagłówkiem „Początkujący” (bo grupowanie szło
+     po `level_min`, a `lower-body-*` miały zakres 1–2) — nagłówki zastąpione chipami
+     „Wszystkie/Początkujący/Średniozaawansowany/Zaawansowany”, przewijalnymi w poziomie,
+     bez zawijania do drugiej linii.
+  4. Decyzja o `lower-body-*`: właściciel wybrał zwężenie do `level_min=2` (wyłącznie
+     średniozaawansowani), po pokazaniu symulacji macierzy rekomendacji — rekomendowany
+     PROGRAM się nie zmienia, zmienia się tylko framing 4/60 profili onboardingu
+     (`exact`→`fallback`, „Dopasowany plan”→„Najbliższy plan w bibliotece”).
+- **Migracja zaktualizowała trzy pola naraz** (`level_min`, `level`, `name`) dla obu
+  planów — `buildLevelMeter` czyta `level` wprost, gdy `level_min === level_max`, więc
+  aktualizacja samego `level_min` zostawiłaby dwie kropki obok starej etykiety zakresu
+  („Początkujący–średniozaawansowany”). Złapane przed wdrożeniem, nie na produkcji.
+- **Realny błąd znaleziony dopiero w weryfikacji wizualnej, nie w testach:** słupki +
+  etykieta + „Ustaw” w jednym wierszu **nie mieściły się na 320 px dla 10 z 15 presetów**
+  (poziom 2–3, brakowało ~30–40 px). Root cause: etykieta jest teraz zawsze widoczna
+  (poprzednio dzieliła los tylko z aktywną kartą), a jej długość („Średniozaawansowany”)
+  razem z przyciskiem przekraczała dostępną szerokość. Naprawa architektoniczna, nie
+  kosmetyczna: miernik przeniesiony na własną linię nad stopką (wzorzec z Gymsharka —
+  `📅 7 Day · ◎ Size · ▂▃ Beginner` na jednej linii faktów, bez przycisku obok), stopka
+  została wyłącznie akcją. Wszystkie karty **równe 172 px** (wcześniej 144/164 px na
+  przemian), na 320/393 px, light/dark, zero overflow.
+  Test overflow dostał dedykowaną kontrolę negatywną (`flex-wrap` zamiast
+  `overflow-x-auto` na chipach faktycznie wywala test na 100px zamiast ≤60px) —
+  potwierdza, że asercja realnie coś pilnuje, nie tylko przechodzi przez przypadek.
+- **Korekta własnej oceny.** Chip „Pasuje do Twojego kierunku” z audytu poprzedniej sesji
+  nazwany „martwym kodem” — po weryfikacji to NIE bug: `training_focus` jest realnym,
+  przełączanym ustawieniem w `SettingsForm.tsx`, chip po prostu nie renderuje się dla
+  domyślnej wartości `balanced`. Nie dotknięte. `force-dynamic`/cache katalogu odłożone
+  jawnie — większa zmiana architektoniczna, poza zakresem czterech próśb właściciela.
+- **Bramka:** lint ✓, tsc ✓, unit **239/239**, overflow **37/37**, `validate:training` ✓,
+  `validate:recommendations` **60/60**, build ✓. Migracja zastosowana lokalnie przez
+  `migration up` (nie `db reset` — auto-mode zablokował reset jako ryzyko utraty
+  lokalnego dziennika treningowego; wykonano nieniszczącą alternatywę).
+- **Czego NIE zrobiono:** `db push` na produkcję (ten PR ma migrację — wymaga jawnej
+  zgody przed merge, zgodnie z incydentem 2026-07-31 przy PLAN-05F). Bez deployu, bez
+  zmian w Linearze. Nie tworzono konta testowego.
+- **Następny krok:** [Ty] `db push` przed merge, przejście po zalogowanej trasie
+  `/programs`, checkpoint iPhone PWA. Potem PLAN-05I (test na realnym `ProgramRow`),
+  R2.2 (dopiero po 05H — ta sama powierzchnia `/programs`).
+
 ### 2026-07-31 · Claude Code · PLAN-05F+05G nazwy i metoda planów: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** gałąź `agent/plan-05fg-program-naming`. Migracja

@@ -23,6 +23,7 @@ import {
 } from "@/lib/programListCard";
 import { cn } from "@/lib/utils";
 import { ProgramFilters } from "./ProgramFilters";
+import { ProgramLevelChips } from "./ProgramLevelChips";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 
@@ -96,31 +97,26 @@ export default async function ProgramsPage({
         (a.frequency_min ?? 9) - (b.frequency_min ?? 9)
       );
     });
+  // PLAN-05H: chipsy poziomu zastępują nagłówki grup „Początkujący”/„Średniozaawansowani”/
+  // „Zaawansowani”. Lista jest teraz płaska — kolejność daje wcześniejsze sortowanie
+  // `presets` (sprzęt → poziom → kierunek → środowisko → częstotliwość), więc plan
+  // startowy nadal wypada przed zaawansowanym pod chipem „Wszystkie” bez osobnych koszy.
+  // Plan o ZAKRESIE poziomów (`level_min < level_max`) pasuje do każdego chipa w tym
+  // zakresie — dziś żaden preset takiego zakresu nie ma (ostatnie dwa zwężone do
+  // pojedynczego poziomu w tej samej paczce), ale filtr zostaje na to odporny.
   const selectedLevel = Number(filters.level);
   const hasSelectedLevel = Number.isInteger(selectedLevel) && selectedLevel >= 1 && selectedLevel <= 3;
-  const presetGroups = [
-    { rank: 1, label: "Początkujący" },
-    { rank: 2, label: "Średniozaawansowani" },
-    { rank: 3, label: "Zaawansowani" },
-  ]
-    .map((group) => ({
-      ...group,
-      programs: presets.filter(
-        (program) =>
-          (hasSelectedLevel
-            ? group.rank === selectedLevel &&
-              program.level_min !== null &&
-              program.level_max !== null &&
-              program.level_min <= selectedLevel &&
-              program.level_max >= selectedLevel
-            : program.level_min === group.rank) &&
-          (!filters.environment || program.environment === filters.environment) &&
-          (!filters.goal || program.goal === filters.goal) &&
-          (!filters.focus || program.focus_key === filters.focus),
-      ),
-    }))
-    .filter((group) => group.programs.length > 0);
-  const visibleGroups = presetGroups;
+  const visiblePresets = presets.filter(
+    (program) =>
+      (!hasSelectedLevel ||
+        (program.level_min !== null &&
+          program.level_max !== null &&
+          program.level_min <= selectedLevel &&
+          program.level_max >= selectedLevel)) &&
+      (!filters.environment || program.environment === filters.environment) &&
+      (!filters.goal || program.goal === filters.goal) &&
+      (!filters.focus || program.focus_key === filters.focus),
+  );
   const goals = [...new Set(presets.map((program) => program.goal).filter((goal): goal is string => !!goal))].sort((a, b) => a.localeCompare(b, "pl"));
 
   return (
@@ -162,23 +158,32 @@ export default async function ProgramsPage({
             </div>
             <ProgramFilters filters={filters} goals={goals} />
           </div>
-          {visibleGroups.length === 0 && (
+          <ProgramLevelChips filters={filters} />
+          {/* Licznik wyników: filtr bez sprzężenia zwrotnego zostawiał wątpliwość,
+              czy pusta przestrzeń to koniec listy czy błąd. Liczba mnoga po polsku
+              ma trzy formy — 1 plan / 2-4 plany / 5+ planów. */}
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            {visiblePresets.length}{" "}
+            {visiblePresets.length === 1
+              ? "plan"
+              : visiblePresets.length % 10 >= 2 &&
+                  visiblePresets.length % 10 <= 4 &&
+                  !(visiblePresets.length % 100 >= 12 && visiblePresets.length % 100 <= 14)
+                ? "plany"
+                : "planów"}
+          </p>
+          {visiblePresets.length === 0 && (
             <div className="rounded-xl bg-muted p-md text-sm text-muted-foreground">Nie ma jeszcze planu spełniającego te warunki. Wyczyść filtr albo wybierz najbliższy wariant.</div>
           )}
-          {visibleGroups.map((group) => (
-            <div key={group.rank} className="space-y-sm">
-              <h3 className="pt-xs text-sm font-medium text-muted-foreground">{group.label}</h3>
-              {group.programs.map((p) => (
-                <ProgramRow
-                  key={p.id}
-                  p={p}
-                  kind="preset"
-                  isActive={false}
-                  preferredFocus={preferredFocus}
-                  missingEquipment={missingProgramEquipment(p.required_equipment, availableEquipment)}
-                />
-              ))}
-            </div>
+          {visiblePresets.map((p) => (
+            <ProgramRow
+              key={p.id}
+              p={p}
+              kind="preset"
+              isActive={false}
+              preferredFocus={preferredFocus}
+              missingEquipment={missingProgramEquipment(p.required_equipment, availableEquipment)}
+            />
           ))}
         </section>
 
@@ -236,127 +241,123 @@ function ProgramRow({
         isActive ? "border-primary/80 bg-primary/5" : "border-transparent bg-card",
       )}
     >
-      <ProgramCover
-        coverImageUrl={p.cover_image_url}
-        focusKey={p.focus_key}
-        programName={p.name}
-        size="row"
-      />
+      {/* PLAN-05H: miniatura wchodzi do wnętrza `<Link>` (bug z audytu 2026-07-30 —
+          `ProgramCover` leżał poza linkiem jako osobne dziecko grida, więc klikanie
+          w zdjęcie, najbardziej rzucający się w oczy element karty, nic nie robiło).
+          `<Link>` rozciąga się na obie kolumny w rzędzie 1 i sam układa miniaturę +
+          treść przez wewnętrzny grid o tym samym szablonie co `<article>`. */}
       <Link
         href={`/programs/${p.id}`}
-        className="col-start-2 row-start-1 block min-w-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="col-span-2 row-start-1 grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        {/* PLAN-05E: tytuł prezentacyjny. Poziom, środowisko i częstotliwość mają
-            na karcie własne miejsca, więc nie powtarzamy ich w nazwie — pełna nazwa
-            zostaje w bazie i na `/programs/[id]`. Karta wciąż wypowiada komplet
-            informacji dla czytnika (tag, fakty, `aria-label` miernika), dlatego nie
-            doklejamy tu ukrytej kopii pełnej nazwy. */}
-        <p className="break-words font-medium leading-snug">
-          {formatProgramCardTitle(p.short_name, p.name)}
-        </p>
-        {/* PLAN-05F: dwa tagi — gdzie trenujesz + jaką metodą. Oba neutralne: violet
-            jest zarezerwowany na prowadzenie/dane, ale reguła palety v1.4 zabrania
-            mieszać go z rust w jednym komponencie, a karta ma już rust w kropkach
-            poziomu i w „Ustaw”. Metoda i tak odróżnia się treścią, nie kolorem. */}
-        {(environmentTag || splitTag || matchesPreferredFocus) && (
-          <div className="mt-2xs flex flex-wrap items-center gap-2xs">
-            {environmentTag && (
-              <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                {environmentTag}
-              </span>
-            )}
-            {splitTag && (
-              <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-                {splitTag}
-              </span>
-            )}
-            {matchesPreferredFocus && (
-              <span className="inline-flex rounded-full bg-support/15 px-2 py-0.5 text-xs font-medium text-support">
-                Pasuje do Twojego kierunku
-              </span>
-            )}
-          </div>
-        )}
-        {/* R2.1 (audyt P1): karta = nazwa + dwa fakty, nie tabela filtrów.
-            PLAN-05G: ikony jak w szczególe planu (05D) — kalendarz przy rytmie,
-            zegar przy czasie. Dekoracyjne (`aria-hidden`), bo jednostka w tekście
-            już mówi, co to jest; ikona tylko przyspiesza skanowanie listy. */}
-        {kind === "preset" ? (
-          (frequency || duration) && (
-            <p className="mt-2xs flex flex-wrap items-center gap-x-sm gap-y-2xs text-xs text-muted-foreground">
-              {frequency && (
-                <span className="inline-flex items-center gap-1">
-                  <CalendarDays aria-hidden className="size-3.5 shrink-0" />
-                  {frequency}
+        <ProgramCover
+          coverImageUrl={p.cover_image_url}
+          focusKey={p.focus_key}
+          programName={p.name}
+          size="row"
+        />
+        <div className="min-w-0">
+          {/* PLAN-05E: tytuł prezentacyjny. Poziom, środowisko i częstotliwość mają
+              na karcie własne miejsca, więc nie powtarzamy ich w nazwie — pełna nazwa
+              zostaje w bazie i na `/programs/[id]`. Karta wciąż wypowiada komplet
+              informacji dla czytnika (tag, fakty, `aria-label` miernika), dlatego nie
+              doklejamy tu ukrytej kopii pełnej nazwy. */}
+          <p className="break-words font-medium leading-snug">
+            {formatProgramCardTitle(p.short_name, p.name)}
+          </p>
+          {/* PLAN-05F: dwa tagi — gdzie trenujesz + jaką metodą. Oba neutralne: violet
+              jest zarezerwowany na prowadzenie/dane, ale reguła palety v1.4 zabrania
+              mieszać go z rust w jednym komponencie, a karta ma już rust w kropkach
+              poziomu i w „Ustaw”. Metoda i tak odróżnia się treścią, nie kolorem. */}
+          {(environmentTag || splitTag || matchesPreferredFocus) && (
+            <div className="mt-2xs flex flex-wrap items-center gap-2xs">
+              {environmentTag && (
+                <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                  {environmentTag}
                 </span>
               )}
-              {duration && (
-                <span className="inline-flex items-center gap-1">
-                  <Clock aria-hidden className="size-3.5 shrink-0" />
-                  {duration}
+              {splitTag && (
+                <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                  {splitTag}
                 </span>
               )}
-            </p>
-          )
-        ) : (
-          <p className="mt-2xs break-words text-xs text-muted-foreground">
-            {p.cycle_days} dni w cyklu · edytuj →
-          </p>
-        )}
-        {kind === "preset" && missingEquipment.length > 0 && (
-          <p className="mt-2xs break-words text-xs text-amber-800 dark:text-amber-300">
-            Potrzebujesz: {formatEquipment(missingEquipment, 2)}
-          </p>
-        )}
-      </Link>
-      {/* PLAN-05E: stopka karty w kolumnie treści — poziom po lewej, aktywacja po prawej.
-          „Ustaw” wychodzi spod miniatury, więc kolumna zdjęcia zostaje wyłącznie obrazem,
-          a wejście w szczegół (cała treść) jest wizualnie oddzielone od aktywacji planu.
-          Grid, nie `flex-wrap`: długa etykieta poziomu („Początkujący–średniozaawansowany”)
-          ma zawijać się we własnej kolumnie, a nie spychać akcji do osobnej linii —
-          na realnym buildzie 320 px robiło to poszarpaną kartę wyższą o 60 px. */}
-      <div
-        className={cn(
-          "col-start-2 row-start-2 mt-xs min-h-11 min-w-0 items-center gap-x-sm",
-          isActive
-            ? // Aktywna karta pokazuje etykietę poziomu i nie ma przycisku, więc status
-              // może spaść do drugiej linii. Dzięki temu „Średniozaawansowany” dostaje
-              // pełną szerokość kolumny i łamie się między słowami, a nie w środku
-              // wyrazu (pomiar 320 px, 2026-07-31).
-              "flex flex-wrap gap-y-2xs"
-            : // Karta biblioteki ma przycisk, który musi trzymać prawą krawędź
-              // niezależnie od zawartości po lewej — stąd grid, nie flex-wrap.
-              "grid grid-cols-[minmax(0,1fr)_auto]",
-        )}
-      >
-        {kind === "preset" ? (
-          <LevelMeter
-            levelMin={p.level_min}
-            levelMax={p.level_max}
-            label={formatProgramLevelLabel(p.level)}
-            variant="list"
-            /* Sekcja „Aktywny plan” nie ma nagłówka poziomu, więc tylko tam
-               kropkom towarzyszy tekst — w bibliotece niesie go nagłówek grupy. */
-            showLabel={isActive}
-          />
-        ) : (
-          <span />
-        )}
-        <div className={isActive ? "ml-auto" : undefined}>
-          {isActive ? (
-            <span className="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground">
-              <Check aria-hidden className="size-4 text-primary" />
-              Aktywny
-            </span>
+              {matchesPreferredFocus && (
+                <span className="inline-flex rounded-full bg-support/15 px-2 py-0.5 text-xs font-medium text-support">
+                  Pasuje do Twojego kierunku
+                </span>
+              )}
+            </div>
+          )}
+          {/* R2.1 (audyt P1): karta = nazwa + dwa fakty, nie tabela filtrów.
+              PLAN-05G: ikony jak w szczególe planu (05D) — kalendarz przy rytmie,
+              zegar przy czasie. Dekoracyjne (`aria-hidden`), bo jednostka w tekście
+              już mówi, co to jest; ikona tylko przyspiesza skanowanie listy. */}
+          {kind === "preset" ? (
+            (frequency || duration) && (
+              <p className="mt-2xs flex flex-wrap items-center gap-x-sm gap-y-2xs text-xs text-muted-foreground">
+                {frequency && (
+                  <span className="inline-flex items-center gap-1">
+                    <CalendarDays aria-hidden className="size-3.5 shrink-0" />
+                    {frequency}
+                  </span>
+                )}
+                {duration && (
+                  <span className="inline-flex items-center gap-1">
+                    <Clock aria-hidden className="size-3.5 shrink-0" />
+                    {duration}
+                  </span>
+                )}
+              </p>
+            )
           ) : (
-            <form action={setActiveProgram.bind(null, p.id)}>
-              {/* R2.1: aktywacja podporządkowana wyborowi karty — ghost zamiast outline */}
-              <Button variant="ghost" type="submit" className="px-3 text-primary">
-                Ustaw
-              </Button>
-            </form>
+            <p className="mt-2xs break-words text-xs text-muted-foreground">
+              {p.cycle_days} dni w cyklu · edytuj →
+            </p>
+          )}
+          {/* PLAN-05H: poziom na WŁASNEJ linii, nie w stopce obok „Ustaw”. Etykieta jest
+              teraz na KAŻDEJ karcie presetu (nagłówki grup zniknęły — poziom filtrują
+              chipy nad listą), a `Średniozaawansowany`/`Zaawansowany` + przycisk razem
+              nie mieszczą się w jednym wierszu na 320 px — brakuje ~30–40 px, więcej niż
+              da się odzyskać ścieśnieniem odstępów. 10 z 15 presetów (poziom 2–3) łamało
+              stopkę i rosło o 20 px (zmierzone 2026-07-31). Własna linia ma pełną
+              szerokość kolumny treści, więc mieści się z zapasem — zweryfikowane dla
+              najdłuższej etykiety na 320 px. */}
+          {kind === "preset" && (
+            <div className="mt-2xs">
+              <LevelMeter
+                levelMin={p.level_min}
+                levelMax={p.level_max}
+                label={formatProgramLevelLabel(p.level)}
+                variant="list"
+              />
+            </div>
+          )}
+          {kind === "preset" && missingEquipment.length > 0 && (
+            <p className="mt-2xs break-words text-xs text-amber-800 dark:text-amber-300">
+              Potrzebujesz: {formatEquipment(missingEquipment, 2)}
+            </p>
           )}
         </div>
+      </Link>
+      {/* PLAN-05H: stopka to teraz WYŁĄCZNIE akcja, dosunięta do prawej krawędzi —
+          poziom przeniósł się na własną linię wyżej (patrz komentarz w `<Link>`), więc
+          stopka nie ma już z czym dzielić wiersza i zawsze mieści się w jednej linii,
+          niezależnie od długości etykiety poziomu. „Ustaw” zostaje poza miniaturą i
+          poza `<Link>` — wejście w szczegół i aktywacja planu to dwie różne akcje. */}
+      <div className="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end">
+        {isActive ? (
+          <span className="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground">
+            <Check aria-hidden className="size-4 text-primary" />
+            Aktywny
+          </span>
+        ) : (
+          <form action={setActiveProgram.bind(null, p.id)}>
+            {/* R2.1: aktywacja podporządkowana wyborowi karty — ghost zamiast outline */}
+            <Button variant="ghost" type="submit" className="px-3 text-primary">
+              Ustaw
+            </Button>
+          </form>
+        )}
       </div>
     </article>
   );

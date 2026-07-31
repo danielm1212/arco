@@ -560,16 +560,20 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "lower-body-gym3",
-    name: "Początkujący–średniozaawansowany · Siłownia · Pośladki i nogi",
+    // PLAN-05H: zwężone do średniozaawansowanych (decyzja właściciela 2026-07-31) —
+    // `name` i `level` muszą zgadzać się z `level_min`, inaczej miernik pokazuje dwie
+    // kropki obok tekstu "Początkujący–średniozaawansowany" (buildLevelMeter bierze
+    // etykietę wprost z `level`, gdy level_min === level_max).
+    name: "Średniozaawansowany · Siłownia · Pośladki i nogi",
     short_name: "Mocne nogi",
     split_key: "lower_body_focus",
     description: "Trzy różne treningi z większym naciskiem na pośladki, uda i tył nóg. Góra ciała nadal dostaje regularny bodziec, dzięki czemu plan pozostaje kompletny. Wykonuj rotację A → B → C dwa lub trzy razy w tygodniu.",
     goal: "Nacisk: pośladki i nogi",
     goal_key: "hypertrophy",
     focus_key: "lower_body",
-    level: "początkujący–średniozaawansowany",
+    level: "średniozaawansowany",
     environment: "gym",
-    level_min: 1,
+    level_min: 2,
     level_max: 2,
     frequency_min: 2,
     frequency_max: 3,
@@ -621,16 +625,17 @@ export const PROGRAMS: Program[] = [
   },
   {
     slug: "lower-body-home3",
-    name: "Początkujący–średniozaawansowany · Dom z hantlami · Pośladki i nogi",
+    // PLAN-05H: zwężone do średniozaawansowanych — patrz uzasadnienie przy lower-body-gym3.
+    name: "Średniozaawansowany · Dom z hantlami · Pośladki i nogi",
     short_name: "Pośladki na hantlach",
     split_key: "lower_body_focus",
     description: "Domowy plan z większym naciskiem na pośladki i nogi, oparty na hantlach oraz ćwiczeniach jednostronnych. Góra ciała pozostaje w planie w mniejszej dawce. Wykonuj rotację A → B → C dwa lub trzy razy w tygodniu.",
     goal: "Nacisk: pośladki i nogi",
     goal_key: "hypertrophy",
     focus_key: "lower_body",
-    level: "początkujący–średniozaawansowany",
+    level: "średniozaawansowany",
     environment: "home",
-    level_min: 1,
+    level_min: 2,
     level_max: 2,
     frequency_min: 2,
     frequency_max: 3,
