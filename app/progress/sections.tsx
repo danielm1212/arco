@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { Button } from "@/components/ui/button";
-import { Flame } from "lucide-react";
+import { StreakFlame } from "@/components/StreakFlame";
+import { streakWeeksText } from "@/lib/streakCopy";
 import { Sparkline } from "@/components/Sparkline";
 import { MuscleHeatmapLazy } from "@/components/MuscleHeatmapLazy";
 import type { UnitSystem } from "@/lib/types";
@@ -25,7 +26,11 @@ export function ActivitySection({
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold">Aktywność</h2>
         <span className="flex items-center gap-1 text-sm font-medium text-primary">
-          <Flame className="size-4 fill-current" aria-hidden /> {streak} {streak === 1 ? "tydzień" : "tyg."} z rzędu
+          {/* HOME-05b: jeden glif passy w całej aplikacji (`StreakFlame`) —
+              wcześniej ten sam symbol miał tu `fill-current`, w karcie home
+              `fill-primary strokeWidth={0}`, w sheecie obrys, a w kalendarzu i
+              Ekipie emoji. Odmiana liczby też jest wspólna (`streakWeeksText`). */}
+          <StreakFlame className="size-4" /> {streakWeeksText(streak)}
         </span>
       </div>
       <div className="flex gap-px">

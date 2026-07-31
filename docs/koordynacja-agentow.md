@@ -1548,6 +1548,41 @@
   renderują); (4) `node_modules` — rozważyć `npm ci` i wyłączenie synchronizacji iCloud dla repo.
 - **Następny krok:** przegląd violet-surfaces na koncie z historią; decyzja o zakresie dalszego mapowania.
 
+### 2026-07-31 · Claude · HOME-05b (ujednolicenie symbolu passy i dnia)
+
+- **Zakres:** domknięcie defektu z PR #58 (semantyka symboli zrobiona w połowie ekranu) plus dwa
+  zgłoszenia właściciela: „na górze miał być strike tygodniowy, a nie jakaś tarcza" oraz „w
+  kalendarzu nie zaznaczałbym płomieniem, bo nie widać daty".
+- **Kanon po paczce:** płomień = WYŁĄCZNIE passa · wypełnione kółko = dzień z treningiem · cel
+  tygodnia bez ikony (liczba „2/4" w karcie „Ten tydzień"). Tarcza (`Target`) usunięta.
+- **Pliki:** nowe `components/StreakFlame.tsx` (jedyny glif passy, jedyny gradient w ikonie),
+  `components/WeekStrip.tsx` (jedyna siatka 7 dni), `components/StreakBadge.tsx` (passa w headerze
+  + sheet „Twoja passa"), `app/WeekCard.tsx`. Usunięte: `components/WeeklyGoalBadge.tsx`,
+  `app/StreakCard.tsx`. Zmienione: `components/MonthCalendar.tsx` (numer dnia w kółku, bez ognia,
+  bez emoji), `components/TrainingHeader.tsx` (`goalSlot`→`badgeSlot`), `app/page.tsx`,
+  `app/progress/sections.tsx`, `app/ekipa/TeamPanel.tsx`, `lib/week.ts` (`WeekDay`, `WEEK_DOW`,
+  `buildWeekDays`), `lib/streakCopy.ts` (`weekWord`, `streakWeeksText`, `streakBadgeLabel` +
+  poprawka orzeczenia „5 treningów domyka"), `app/globals.css` (tokeny `--streak-flame-*`,
+  `goal-ignite`→`ignite`, usunięty `today-pulse`). Docs: `HANDOFF.md`, `wytyczne-designu.md`
+  (§2b glif ognia + §2c animacja spoczynkowa), `paleta-arco-warm.md` (§Gradienty),
+  `.claude/skills/arco-motion-review/SKILL.md` (nazwy animacji były nieaktualne od HOME-05).
+- **Commit/stan:** gałąź `agent/home-05b-streak-symbol` z `origin/main` (79e29c7), PR otwarty,
+  **niescalony**. Baza nietknięta, bez migracji, bez nowego zapytania.
+- **Testy:** lint czysty, tsc OK, build OK, **251/251** unit (+12: `weekWord`/`streakWeeksText`/
+  `streakBadgeLabel`, `buildWeekDays` z przypadkiem DST, guard kontrastu na tokenach),
+  **45/45** overflow — w tym **8 nowych na PRAWDZIWYCH komponentach** (`tests/e2e/streak-week.test.ts`:
+  esbuild + `createRoot` + skompilowany CSS, stuby `next/link` i `next/navigation`). To pierwsza
+  rata długu PLAN-05I. Podgląd wizualny 320/375/393 px, light i dark.
+- **Dwie rzeczy wyłapane pomiarem, nie okiem:** (1) guard kontrastu odrzucił pierwszą wersję
+  gradientu (rust-500 w dark daje 2,71:1 na tle hoveru) — dark idzie JAŚNIEJ (rust-200→rust-400);
+  (2) podgląd pokazał owale zamiast kółek w kalendarzu (`size-full` + `max-w-8` na komórce
+  `aspect-square`) i błąd gramatyczny „Tyle tygodnie" w sheecie.
+- **Produkcja:** nietknięta. Deploy i Linear świadomie pominięte (polecenie właściciela).
+- **Otwarte:** przejście po zalogowanej trasie `/` i `/history` + checkpoint iPhone PWA (zaległe od
+  PLAN-05D); pasek 14 dni w `/postępy` ma jeszcze własny język (prostokąty, brak stanu „dziś",
+  jednoliterowe „P" dla poniedziałku i piątku) — nie wchodził w zakres tej paczki; reszta PLAN-05I.
+- **Następny krok:** decyzja właściciela o merge PR-a HOME-05b, potem PLAN-05I albo HOME-06.
+
 ## Szablon rezerwacji
 
 ```md

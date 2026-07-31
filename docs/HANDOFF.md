@@ -30,20 +30,36 @@ lokalnych zakładek. Floating nav ma równy margines 12 px i respektuje safe are
 HOME-01…03 oraz NAV-01 są na `main` i produkcji (PR #33/#48/#49/#50); szczegóły i zaległy
 checkpoint urządzeniowy są w §6 punkt 5.
 
-**HOME-04+05 gotowe technicznie 2026-07-31 na `agent/home-04-05-stats-and-streak`:**
-kontenery danych na Home scalone z czterech pudełek w jedną kartę (hierarchia typografią,
-nie obrysem; liczby `text-2xl` na wspólnej linii bazowej; zdjęta siatka kresek; scalony
-zdublowany tonaż), a semantyka symboli rozdzielona — **tarcza = cel tygodnia, odhaczone
-kółko = zaliczony dzień, płomień = wyłącznie passa** (wcześniej płomień oznaczał wszystkie
-trzy rzeczy naraz). Nawigacja: `Home` → `Dziś`. Bez migracji i **bez nowego zapytania** —
-budżet Home nietknięty. Wynik oceny zewnętrznego planu `docs/arco-home-agent-handoff/`,
+**HOME-04+05 na `main` i produkcji (PR #58, merge 2026-07-31):** kontenery danych na Home
+scalone z czterech pudełek w jedną kartę (hierarchia typografią, nie obrysem; liczby
+`text-2xl` na wspólnej linii bazowej; zdjęta siatka kresek; scalony zdublowany tonaż) oraz
+pierwszy podział semantyki symboli. Nawigacja: `Home` → `Dziś`. Bez migracji i **bez nowego
+zapytania** — budżet Home nietknięty.
+
+**HOME-05b gotowe technicznie 2026-07-31 na `agent/home-05b-streak-symbol`** (domknięcie
+defektu z PR #58 + zgłoszenia właściciela „na górze miał być strike tygodniowy, a nie jakaś
+tarcza" oraz „w kalendarzu nie widać daty"). Kanon symboli po tej paczce:
+**płomień = wyłącznie passa · wypełnione kółko = dzień z treningiem · cel tygodnia nie ma
+ikony** (niesie go liczba „2/4" w karcie „Ten tydzień"; tarcza z HOME-05 usunięta).
+Header Dziś pokazuje passę (`StreakBadge`, gradientowy `StreakFlame` + „4 tyg."), karta na
+home to „Ten tydzień" (`WeekCard`, bez wielkiej liczby passy — koniec duplikatu), kalendarz
+historii zachowuje **numer dnia** w wypełnionym kółku zamiast zastępować go płomieniem.
+Architektura: jedna siatka (`components/WeekStrip.tsx`) i jeden glif (`components/StreakFlame.tsx`)
+dla całej aplikacji — dwie kopie siatki były przyczyną, dla której HOME-05 ujednoliciło
+symbole tylko w połowie ekranu. Gradient w ikonie jest pierwszy w systemie i **pilnowany
+testem kontrastu na tokenach** (`tests/token-contrast.test.ts`). Usunięta jedyna animacja
+spoczynkowa (`animate-today-pulse`). Pierwsza rata długu PLAN-05I: `tests/e2e/streak-week.test.ts`
+renderuje **prawdziwe** komponenty (esbuild + `createRoot` + skompilowany CSS), nie klon. Wynik oceny zewnętrznego planu `docs/arco-home-agent-handoff/`,
 który jako całość odrzucono: proponował przebudowę już wdrożonych HOME-01…03, własne
 surowe heksy rozjeżdżające się z `paleta-arco-warm.md` v1.4 (neutrale **cieplejsze**, wbrew
 datowanej decyzji) i ujednolicenie okresów metryk cofające zatwierdzony POC HOME-02.
-Bramka: lint, tsc, **239/239** unit, **37/37** overflow, build; 320/393 px light i dark.
-**Do [Ty]:** przejście po zalogowanej trasie `/` i checkpoint iPhone PWA. Otwarte z tej
-oceny: **HOME-06** (jeden dominujący CTA) i **CONTENT-03** (semantyczne nazwy dni — 20 z 48
-to „Trening A"/„Dzień A"; migracja + sesja treściowa).
+Bramka HOME-05b: lint, tsc, **251/251** unit, **45/45** overflow (w tym 8 nowych na
+prawdziwych komponentach), build; 320/375/393 px, light i dark.
+**Do [Ty]:** przejście po zalogowanej trasie `/` i `/history` oraz checkpoint iPhone PWA
+(zaległe od PLAN-05D). Otwarte: **PLAN-05I** (reszta długu testowego), **HOME-06** (jeden
+dominujący CTA) i **CONTENT-03** (semantyczne nazwy dni — 20 z 48 to „Trening A"/„Dzień A";
+migracja + sesja treściowa). Wciąż nierozstrzygnięte: czy `docs/arco-home-agent-handoff/`
+wchodzi do repo (folder nieśledzony).
 
 ## 2. Co jest wdrożone
 

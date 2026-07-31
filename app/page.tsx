@@ -8,17 +8,17 @@ import { Button } from "@/components/ui/button";
 import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeInsights } from "@/lib/getHomeGuidance";
 import type { UnitSystem } from "@/lib/types";
-import { localDayKey, weekStart, computeStreak, addWarsawDays, weeksMeetingGoal } from "@/lib/week";
+import { localDayKey, weekStart, computeStreak, buildWeekDays, weeksMeetingGoal } from "@/lib/week";
 import { DayPickerSheet } from "./DayPickerSheet";
 import { FreestyleStartButton } from "./FreestyleStartButton";
 import { GuidanceChip } from "./GuidanceChip";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
-import { StreakCard } from "./StreakCard";
+import { WeekCard } from "./WeekCard";
 import { HomeStats } from "./HomeStats";
 import { HomeExerciseProgress } from "./HomeExerciseProgress";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
-import { WeeklyGoalBadge } from "@/components/WeeklyGoalBadge";
+import { StreakBadge } from "@/components/StreakBadge";
 import {
   formatCycleStructure,
   type ProgramCandidate,
@@ -144,12 +144,11 @@ export default async function HomePage() {
   const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
   const mondayEpoch = weekStart(new Date());
   const todayKey = dayKey(new Date());
-  const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
-  const week = Array.from({ length: 7 }, (_, i) => {
-    const key = dayKey(new Date(addWarsawDays(mondayEpoch, i)));
-    return { key, on: doneDays.has(key), today: key === todayKey, dow: DOW[i] };
-  });
-  // Cel tygodniowy + postęp (badge w headerze liczy UKOŃCZONE TRENINGI — plan §R2)
+  // HOME-05b: budowa paska przeniesiona do `lib/week` (`buildWeekDays`) — te same
+  // dni liczy teraz karta „Ten tydzień" i sheet passy, a test jednostkowy sprawdza
+  // je bez renderowania strony serwerowej.
+  const week = buildWeekDays(mondayEpoch, doneDays, todayKey);
+  // Cel tygodniowy + postęp (karta „Ten tydzień" liczy UKOŃCZONE TRENINGI — plan §R2)
   const weeklyGoal = settings?.weekly_goal ?? 2;
   const thisWeek = mondayEpoch;
   const weeklyDone = (finished ?? []).filter(
@@ -226,10 +225,15 @@ export default async function HomePage() {
         }))}
       />
       <TrainingHeader
-        goalSlot={
+        badgeSlot={
           settings?.onboarding_completed_at ? (
             <Suspense fallback={null}>
-              <WeeklyGoalBadge done={weeklyDone} goal={weeklyGoal} week={week} streak={streak} />
+              <StreakBadge
+                streak={streak}
+                week={week}
+                weeklyDone={weeklyDone}
+                weeklyGoal={weeklyGoal}
+              />
             </Suspense>
           ) : null
         }
@@ -325,9 +329,7 @@ export default async function HomePage() {
           </div>
         )}
 
-        {hasHistory && (
-          <StreakCard streak={streak} week={week} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />
-        )}
+        {hasHistory && <WeekCard week={week} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />}
 
         <Suspense fallback={null}>
           <HomeInsights

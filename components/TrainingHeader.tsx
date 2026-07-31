@@ -2,19 +2,22 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 /**
- * Header przestrzeni Trening (userflows §3): logo po lewej, slot celu
- * tygodniowego i awatar po prawej. Cel na Dziś to interaktywny
- * `WeeklyGoalBadge` (R2.1 — tap otwiera szczegół tygodnia); Plany świadomie
- * go nie pokazują (decyzja P2 audytu R2 — badge odpowiada na pytanie ekranu
- * Dziś). Awatar zastępuje koło zębate; do czasu pełnego ekranu profilu
- * prowadzi do /settings.
+ * Header przestrzeni Trening (userflows §3): logo po lewej, slot badge'a i awatar
+ * po prawej. Na Dziś w slocie stoi interaktywna passa (`StreakBadge` — tap
+ * otwiera szczegół tygodnia); Plany świadomie nie pokazują nic (decyzja P2
+ * audytu R2 — badge odpowiada na pytanie ekranu Dziś). Awatar zastępuje koło
+ * zębate; do czasu pełnego ekranu profilu prowadzi do /settings.
+ *
+ * HOME-05b: prop nazywał się `goalSlot`, gdy w slocie stał cel tygodnia. Nazwa
+ * jest teraz neutralna — slot opisuje MIEJSCE w headerze, nie treść, więc kolejna
+ * zmiana symbolu nie wymaga ruszania headera.
  */
 export function TrainingHeader({
-  goalSlot,
+  badgeSlot,
   displayName,
 }: {
-  /** Interaktywny badge celu (Dziś) albo nic (Plany). */
-  goalSlot?: ReactNode;
+  /** Interaktywny badge (Dziś: passa) albo nic (Plany). */
+  badgeSlot?: ReactNode;
   displayName: string | null;
 }) {
   const monogram = (displayName ?? "").trim().charAt(0).toUpperCase() || null;
@@ -41,7 +44,7 @@ export function TrainingHeader({
         />
       </span>
       <div className="flex items-center gap-xs">
-        {goalSlot}
+        {badgeSlot}
         <Link
           href="/settings"
           aria-label="Profil i ustawienia"

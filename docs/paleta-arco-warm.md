@@ -156,7 +156,21 @@ W dark elevation buduj tonalnie (poziom powierzchni) + delikatny cień.
 `border-subtle` (dekoracyjne, może mieć niski kontrast) · `border-control` (granica kontrolki,
 ≥3:1) · `border-focus` = violet-400 · `border-danger`. Outline-only input → `border-control`;
 input z wypełnieniem `surface-muted` → `border-subtle`. *Polished edge (gradientowa krawędź) z guide
-§10 — jeszcze niewdrożone; do zaprojektowania na wybranych kartach.*
+§10 — wdrożone jako `.surface-polished*` (`globals.css`), dziś na karcie „Następny trening" na home.
+NIE na inputach, wierszach list ani elementach osadzonych.*
+
+### Gradienty — gdzie wolno (stan 2026-07-31)
+
+Trzy miejsca, każde z uzasadnieniem w kodzie. Nowy gradient = nowa decyzja, nie „skoro tam wolno":
+
+1. `--polished-rim` — krawędź wybranych kart (ślad violet na końcu, nieczytelny jako ramka).
+2. `lib/programCover.ts` — dekoracyjna okładka planu na primitives, **jeden hue na wariant**.
+3. `--streak-flame-from/to` — **jedyny gradient wewnątrz ikony**: glif passy (`StreakFlame`).
+   rust→rust, bo amber jest tokenem ostrzeżenia, a rust+violet w jednym komponencie łamie regułę
+   v1.4 (wyjątek D-20 dotyczy momentów, a header to narzędzie). Light `rust-500→rust-700`,
+   dark `rust-200→rust-400` — dark idzie JAŚNIEJ. **Każdy stopień trzyma ≥3:1 wobec canvasu i
+   wobec `surface-muted` (tło hoveru badge'a); pilnuje tego `tests/token-contrast.test.ts`**,
+   więc podmiana odcienia „na ładniejszy" wywali testy, nie produkcję.
 
 ### Wykresy (guide §8)
 

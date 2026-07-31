@@ -118,8 +118,8 @@ Zamknij decyzją:
 
 ## Znane tokeny repo (odwołuj się, nie wymyślaj)
 
-- `animate-flame-ignite` — `flame-ignite 0.6s cubic-bezier(0.34,1.56,0.64,1) 1` (moment: zapłon po treningu).
-- `animate-flame-today` — `flame-today-pulse 2.2s ease-in-out infinite` (jedyna animacja spoczynkowa Home).
+- `animate-ignite` — `ignite 0.6s cubic-bezier(0.34,1.56,0.64,1) 1` (moment: zapłon symbolu passy w headerze po powrocie z celebracji, `?trained=1`). Nazwy `animate-flame-ignite` i `animate-goal-ignite` to poprzednie wersje tego samego tokenu — nie istnieją w kodzie.
+- **Nie ma żadnej animacji spoczynkowej** — `animate-today-pulse` (dawniej `animate-flame-today`) usunięty w HOME-05b, bo siatka tygodnia renderuje się w dwóch miejscach na jednym ekranie. Każda nowa pętla `infinite` = finding, nie „zajęcie wolnego slotu".
 - `animate-pulse-once` — `pr-flash 1.2s ease-out 1` (mikro-celebracja PR; flash `background-color` dozwolony jako moment).
 - Sheety: `components/ui/bottom-sheet.tsx` — `slide-in-from-bottom-8`, 180–200 ms, przerywalny drag, blokada tła, focus + `preventScroll`.
 - Blok reduced-motion: `app/globals.css` `@media (prefers-reduced-motion: reduce)` — **każdy nowy `@keyframes` dopisujesz tutaj**.

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Flame } from "lucide-react";
+import { StreakFlame } from "@/components/StreakFlame";
 import { localDayKey } from "@/lib/week";
+import { streakWeeksText } from "@/lib/streakCopy";
 
 const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
 const MONTHS = [
@@ -76,31 +77,61 @@ export function MonthCalendar({
           c === null ? (
             <span key={`b${i}`} />
           ) : (
-            /* W2 (audyt-wizualny): dzień treningowy = TEN SAM glif ognia co szczegół tygodnia (WeeklyGoalBadge) —
-               jeden symbol od home przez historię po przyszły recap. Numer dnia niesie
-               pozycja w siatce + sr-only; „dziś" bez zmian (ring). */
+            /* HOME-05b (zgłoszenie właściciela 2026-07-31: „w kalendarzu nie widać
+               daty, uxowo chujowo"): dzień treningowy NIE zastępuje już numeru
+               płomieniem. Płomień oznacza wyłącznie passę (HOME-05), a kalendarz
+               mówi o pojedynczych dniach — więc dostaje ten sam język co siatka
+               tygodnia (`WeekStrip`): wypełnione kółko = dzień z treningiem.
+               Różnica jest tylko w tym, CO stoi w kółku — tu numer dnia, bo
+               kalendarz bez daty jest bezużyteczny; w pasku tygodnia check, bo
+               tam datę niesie litera pod spodem.
+
+               Poprzedni komentarz (W2) twierdził, że ogień to „TEN SAM glif co
+               szczegół tygodnia" — po HOME-05 przestało to być prawdą, bo tydzień
+               dostał check. Kalendarz był ostatnim miejscem, gdzie ogień znaczył
+               dzień. Sprzeczny zapis w `wytyczne-designu.md` §glif ognia jest
+               poprawiony tą samą paczką.
+
+               Kontrast: `primary-foreground` na `bg-primary` = 5,08:1 (light) /
+               5,65:1 (dark, tekst CIEMNY na rust-400 — nie biel). „Dziś" bez
+               treningu to pierścień `border-2` jak w `WeekStrip`; „dziś" z
+               treningiem wygrywa wypełnieniem, a dzisiejszość niesie pogrubienie
+               i `sr-only` (pierścień primary na wypełnieniu primary byłby
+               niewidoczny, a offset kolidowałby z sąsiadem przy `gap-1`). */
             <div
               key={c.key}
-              className={`flex aspect-square items-center justify-center rounded-md text-xs tabular-nums ${
-                days.has(c.key) ? "" : "text-muted-foreground"
-              } ${c.key === todayKey ? "ring-1 ring-primary" : ""}`}
+              className="flex aspect-square items-center justify-center text-xs tabular-nums"
             >
-              {days.has(c.key) ? (
-                <>
-                  <Flame className="size-4 fill-primary text-primary" strokeWidth={0} aria-hidden />
-                  <span className="sr-only">{c.n}, trening zaliczony</span>
-                </>
-              ) : (
-                c.n
-              )}
+              {/* `aspect-square w-full max-w-8`, NIE `size-full max-w-8`: komórka
+                  siatki jest szersza niż 32 px na 393 px, więc pełna wysokość +
+                  ograniczona szerokość dawały owal, nie kółko (wyłapane w podglądzie). */}
+              <span
+                className={`grid aspect-square w-full max-w-8 place-items-center rounded-full ${
+                  days.has(c.key)
+                    ? "bg-primary font-semibold text-primary-foreground"
+                    : c.key === todayKey
+                      ? "border-2 border-primary font-semibold text-foreground"
+                      : "text-muted-foreground"
+                }`}
+              >
+                {c.n}
+                <span className="sr-only">
+                  {c.key === todayKey ? ", dziś" : ""}
+                  {days.has(c.key) ? ", trening zaliczony" : ""}
+                </span>
+              </span>
             </div>
           ),
         )}
       </div>
 
       {streak > 0 && (
-        <p className="mt-sm text-xs text-muted-foreground">
-          🔥 Passa: {streak} {streak === 1 ? "tydzień" : "tyg."} z rzędu
+        <p className="mt-sm flex items-center gap-1.5 text-xs text-muted-foreground">
+          {/* Emoji 🔥 wypadło: w warstwie narzędzia glif ma pierwszeństwo przed
+              emoji (wytyczne-designu §glif ognia), a `StreakFlame` jest tym
+              glifem — ten sam rysunek co badge w headerze i `/postępy`. */}
+          <StreakFlame className="size-3.5 shrink-0" />
+          Passa: {streakWeeksText(streak)}
         </p>
       )}
     </section>
