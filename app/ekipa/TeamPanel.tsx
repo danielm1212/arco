@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Flame, MoreHorizontal, Send, Settings2, Share2, UsersRound } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Send, Settings2, Share2, UsersRound } from "lucide-react";
 import { toast } from "sonner";
 import {
   createTeam,
@@ -16,6 +16,8 @@ import {
 } from "@/app/actions/team";
 import { formatTeamInviteCode, normalizeTeamInviteCode, TEAM_AVATARS } from "@/lib/team";
 import { formatGoalSentence } from "@/lib/programRecommendation";
+import { streakBadgeLabel } from "@/lib/streakCopy";
+import { StreakFlame } from "@/components/StreakFlame";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -247,7 +249,7 @@ export function TeamPanel({
             return (
               <li key={member.id} className="flex items-center gap-sm px-md py-sm">
                 <span className={`grid size-11 shrink-0 place-items-center rounded-full text-lg ${member.lastWorkout ? "bg-primary/15" : "bg-muted"}`}>{member.avatar}</span>
-                <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{own ? `${member.name} (Ty)` : member.name}</p><p className="truncate text-xs text-muted-foreground">{progressLabel}{member.streakWeeks > 0 ? ` · 🔥 ${member.streakWeeks} tyg.` : ""}{member.reactionCount > 0 ? ` · ${member.reactionCount} reakcje` : ""}</p></div>
+                <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{own ? `${member.name} (Ty)` : member.name}</p><p className="truncate text-xs text-muted-foreground">{progressLabel}{member.streakWeeks > 0 && (<> · <StreakFlame className="inline-block size-3.5 align-[-0.15em]" />{` ${streakBadgeLabel(member.streakWeeks)}`}</>)}{member.reactionCount > 0 ? ` · ${member.reactionCount} reakcje` : ""}</p></div>
                 {!own && <button type="button" onClick={() => setMemberAction(member)} className="grid size-11 shrink-0 place-items-center rounded-full text-muted-foreground hover:bg-primary/15 hover:text-primary" aria-label={`Opcje wsparcia dla ${member.name}`}><MoreHorizontal className="size-5" /></button>}
               </li>
             );
@@ -255,7 +257,11 @@ export function TeamPanel({
         </ul>
       </section>
 
-      <p className="flex items-center gap-1.5 px-1 text-xs leading-relaxed text-muted-foreground"><Flame className="size-4 shrink-0 text-primary" />Ukończony trening pojawi się tutaj automatycznie.</p>
+      {/* HOME-05b: płomień znaczy WYŁĄCZNIE passę, a tu był czystą dekoracją
+          zdania o feedzie („ukończony trening pojawi się tutaj"). Zdanie stoi
+          samo — dokładanie tu innego glifu tylko po to, żeby coś stało, dorobiłoby
+          czwarte znaczenie do symbolu, który właśnie porządkujemy. */}
+      <p className="px-1 text-xs leading-relaxed text-muted-foreground">Ukończony trening pojawi się tutaj automatycznie.</p>
 
       <BottomSheet open={memberAction !== null} onOpenChange={(open) => !open && setMemberAction(null)} title={memberAction ? `Wesprzyj: ${memberAction.name}` : "Wsparcie"} description="Wybierz reakcję albo wyślij wsparcie">
         {memberAction && <div className="space-y-md"><p className="text-sm text-muted-foreground">Wybierz mały, życzliwy gest. Druga osoba nie widzi Twoich danych treningowych.</p>

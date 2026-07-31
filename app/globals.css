@@ -353,14 +353,21 @@
   animation: pr-flash 1.2s ease-out 1;
 }
 
-/* F2 (redesign-home.md §3.1): zapłon znaku celu w WeeklyGoalBadge po powrocie
-   z celebracji — overshoot skali, jednorazowo. Dziś-nietrenowany dostaje osobny,
-   spokojny puls.
-   HOME-05: nazwy przestały mówić „flame". Płomień oznacza teraz WYŁĄCZNIE passę
-   (`StreakCard`), a te dwie animacje siedzą na znaku celu tygodnia i na pierścieniu
-   dnia dzisiejszego — czyli na czymś, co płomieniem już nie jest. Same keyframes
-   są generyczne (skala + krycie), więc zmieniła się tylko nazwa, nie ruch. */
-@keyframes goal-ignite {
+/* F2 (redesign-home.md §3.1): zapłon symbolu w headerze po powrocie z celebracji
+   — overshoot skali, jednorazowo.
+   HOME-05: nazwa przestała mówić „flame", bo animacja siedziała wtedy na znaku
+   celu (tarcza).
+   HOME-05b: siedzi znów na płomieniu, ale nazwa zostaje GENERYCZNA („ignite" =
+   skala + krycie) — animacja opisuje ruch, nie symbol, więc nie trzeba jej
+   przemianowywać przy każdej zmianie ikony. Zapłon = passa mogła się właśnie
+   przesunąć (wracamy z ukończonego treningu).
+   Usunięty `today-pulse`: to była jedyna animacja spoczynkowa w aplikacji i
+   siedziała na pierścieniu dnia dzisiejszego w siatce tygodnia. Po HOME-05b
+   siatka żyje w dwóch miejscach jednocześnie (karta na home + sheet), więc ta
+   sama pętla renderowałaby się dwa razy na jednym ekranie — wbrew
+   „jedna animacja spoczynkowa na ekran max" (wytyczne-designu §2c). Dziś jest
+   teraz oznaczone statycznym pierścieniem, a ruch został tylko w momentach. */
+@keyframes ignite {
   0% {
     transform: scale(0.5);
     opacity: 0.3;
@@ -374,24 +381,11 @@
     opacity: 1;
   }
 }
-.animate-goal-ignite {
-  animation: goal-ignite 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
-}
-@keyframes today-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.55;
-  }
-}
-.animate-today-pulse {
-  animation: today-pulse 2.2s ease-in-out infinite;
+.animate-ignite {
+  animation: ignite 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
 }
 @media (prefers-reduced-motion: reduce) {
-  .animate-goal-ignite,
-  .animate-today-pulse,
+  .animate-ignite,
   .animate-pulse-once {
     animation: none !important;
   }
@@ -400,6 +394,34 @@
   .confetti-layer {
     display: none !important;
   }
+}
+
+/* ── HOME-05b · glif passy: jedyny gradient WEWNĄTRZ ikony w całym systemie ──
+   Płomień oznacza passę i tylko passę (HOME-05). Gradient jest rust→rust, i to
+   nie jest ostrożność, a trzy twarde ograniczenia:
+   1. rust→amber odpada: `--arco-amber-500` to jednocześnie `--color-warning`
+      (paleta §6) — barwa ostrzeżenia w symbolu sukcesu. Do tego amber-500 na
+      białym daje ~1,9:1, czyli najjaśniejszy punkt gradientu łamałby WCAG 1.4.11.
+   2. rust→violet odpada: „jeden kolor chromatyczny na komponent" (v1.4). Wyjątek
+      D-20 (moment może mieszać rust z violet) dotyczy warstwy MOMENTÓW — header
+      i kalendarz historii to warstwa NARZĘDZIA.
+   3. Stopnie wybrane tak, by KAŻDY punkt gradientu trzymał ≥3:1 wobec canvasu
+      ORAZ wobec `--color-surface-muted` (tło hoveru badge'a) — pilnuje tego
+      `tests/token-contrast.test.ts`, więc podmiana stopnia „na ładniejszy"
+      wywali testy, nie produkcję.
+   light: rust-500 → rust-700 (4,74:1 … 8,38:1 na canvas; 4,43:1 … 7,82:1 na hover)
+   dark:  rust-200 → rust-400 (10,53:1 … 5,29:1 na canvas; 8,30:1 … 4,17:1 na hover)
+   W dark idziemy JAŚNIEJ, nie ciemniej — ta sama logika co w confetti niżej.
+   Pierwsza wersja miała w dark rust-300→rust-500; test wyłapał, że rust-500 na
+   tle hoveru (`ink-600`) daje 2,71:1. Liczby powyżej pochodzą z tego testu, nie
+   z oszacowania. */
+:root {
+  --streak-flame-from: hsl(var(--arco-rust-500));
+  --streak-flame-to: hsl(var(--arco-rust-700));
+}
+.dark {
+  --streak-flame-from: hsl(var(--arco-rust-200));
+  --streak-flame-to: hsl(var(--arco-rust-400));
 }
 
 /* ── MOMENT-01 · wystrzał konfetti po rekordzie (done-screen) ────────────────

@@ -56,14 +56,15 @@ Mini-bar aktywnego treningu nie jest częścią bottom baru. To globalny status 
 - **Waga sans: max `font-semibold` (600). `font-bold` nie istnieje w apce** — „krzyk" robi Gambarino (`font-display`), nie tłuszcz. Sweep wykonany (17 wystąpień).
 - **Liczby-momenty = `font-display`** (Gambarino, tabular-nums): liczba-bohater done-screen, Stat na /progress, podsumowanie sesji w historii, waga na /body. Nowa duża liczba? → font-display.
 - **Radiusy:** karty `rounded-xl` · wiersze-w-kartach i chipy prostokątne `rounded-md` · pigułki `rounded-full` · mikro-elementy <8 px wysokości (paski aktywności) `rounded-sm`. Innych nie używamy.
-- **Glif ognia = jeden** (lucide `Flame`): FlameWeek, kalendarz historii (dzień treningowy), przyszłe recap/streak-badge. Żadnych 🔥-emoji w UI narzędzia tam, gdzie może stać glif (emoji zostaje w copy momentów).
+- **Glif ognia = jeden i znaczy WYŁĄCZNIE passę** (HOME-05 + HOME-05b, 2026-07-31). Jedno źródło: `components/StreakFlame.tsx` (path lucide `flame` wypełniony gradientem rust→rust). Powierzchnie: badge passy w headerze, sheet passy, `/postępy`, linia passy pod kalendarzem, lista Ekipy. **Nie oznacza dnia treningowego** — dzień to wypełnione kółko (`WeekStrip`; w kalendarzu to samo kółko z numerem dnia w środku, bo data musi zostać widoczna). Cel tygodnia nie ma własnej ikony — niesie go liczba („2/4") w karcie „Ten tydzień" i nagłówek sheeta; tarcza z HOME-05 usunięta. Żadnych 🔥-emoji w UI narzędzia tam, gdzie może stać glif (emoji zostaje w copy momentów).
+- **Siatka tygodnia = jeden komponent** (`components/WeekStrip.tsx`). Nie kopiuj siedmiu kółek do nowego ekranu — dwie kopie tej siatki są dokładnie tym, przez co HOME-05 ujednoliciło symbole tylko w połowie Home.
 
 ## 2c. Motion (dodane 2026-07-12, decyzja [Ty]: „animacje dopisać")
 
 - **Animacje żyją w momentach, nie w narzędziu** (architektura dwuwarstwowa): zapłon płomienia po treningu, mikro-celebracja PR, done-screen, przyszłe recap/wrap. Logger = zero animacji dekoracyjnych (ręce w magnezji, nie w teatrze).
 - **UI-transitions: 150–300 ms**, ease-out; sheety/drawery wg domyślnych vaul. Nic nie „pływa" dłużej niż 300 ms w warstwie narzędzia.
 - **`prefers-reduced-motion` respektowane wszędzie** — momenty degradują się do zmiany stanu bez ruchu (WCAG).
-- **Jedna animacja spoczynkowa na ekran max** (dziś: puls dzisiejszego płomienia na home — i to wszystko).
+- **Jedna animacja spoczynkowa na ekran max** — dziś w aplikacji nie ma ŻADNEJ. Puls dnia dzisiejszego (`animate-today-pulse`) usunięty w HOME-05b: siatka tygodnia żyje teraz w dwóch miejscach jednocześnie (karta na home + sheet passy), więc jedna pętla renderowałaby się dwa razy na tym samym ekranie. Ruch został wyłącznie w momentach (`animate-ignite`, `animate-pulse-once`).
 - Feedback akcji (tap ✓, zapis serii) to nie animacja, tylko natychmiastowa zmiana stanu (<100 ms, pkt 5 checklisty) — ewentualny ruch jest ozdobą po fakcie, nigdy opóźnieniem.
 - Narzędziowo: CSS transitions/keyframes + sporadycznie WAAPI; **bez bibliotek animacji** (framer-motion = +40 kB na coś, co robi CSS), chyba że przyszły moment tego realnie wymaga.
 

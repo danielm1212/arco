@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { computeStreak, localDayKey, weekStart, addWarsawDays } from "../lib/week";
+import { buildWeekDays, computeStreak, localDayKey, weekStart, addWarsawDays } from "../lib/week";
 
 /**
  * F0.5 (audyt 2026-07-18): testy budują daty przez `Date.UTC(...)` (instant
@@ -95,4 +95,36 @@ test("computeStreak: dziura przerywa passę", () => {
   const twoWeeksAgo = addWarsawDays(thisWeek, -14);
   // Brak tygodnia -1 — passa liczy tylko bieżący.
   assert.equal(computeStreak(new Set([thisWeek, twoWeeksAgo])), 1);
+});
+
+/** HOME-05b: budowa paska tygodnia wyjechała z `app/page.tsx` do `lib/week`,
+ *  żeby karta na home, sheet passy i test liczyły te same siedem dni. */
+
+test("buildWeekDays: siedem dni od poniedziałku, z zaznaczonymi treningami i dziś", () => {
+  const monday = weekStart(new Date());
+  const wednesdayKey = localDayKey(new Date(addWarsawDays(monday, 2)));
+  const thursdayKey = localDayKey(new Date(addWarsawDays(monday, 3)));
+  const week = buildWeekDays(monday, new Set([wednesdayKey]), thursdayKey);
+
+  assert.equal(week.length, 7);
+  assert.deepEqual(
+    week.map((d) => d.dow),
+    ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"],
+  );
+  assert.deepEqual(
+    week.map((d) => d.on),
+    [false, false, true, false, false, false, false],
+  );
+  assert.deepEqual(
+    week.map((d) => d.today),
+    [false, false, false, true, false, false, false],
+  );
+});
+
+test("buildWeekDays: tydzień ze zmianą czasu ma nadal siedem różnych dni", () => {
+  // Ostatni weekend marca 2026 (CET→CEST w nocy 28/29.03) — pasek nie może
+  // zdublować ani zgubić dnia przy liczeniu w ms.
+  const monday = weekStart(new Date(Date.UTC(2026, 2, 25, 12, 0, 0)));
+  const week = buildWeekDays(monday, new Set(), "brak");
+  assert.equal(new Set(week.map((d) => d.key)).size, 7);
 });

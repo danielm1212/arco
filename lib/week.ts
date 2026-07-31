@@ -18,6 +18,40 @@
 
 export const WEEK_MS = 7 * 86_400_000;
 
+/** Jeden dzień paska tygodnia. HOME-05b: typ przeniesiony z komponentu badge'a do
+ *  `lib/week`, bo opisuje DANE tygodnia, nie widok — po przeniesieniu karta na home
+ *  i sheet w headerze zależą od tego samego kontraktu, a nie jedna od drugiej.
+ *  (Wcześniej `StreakCard` importował typ z `WeeklyGoalBadge` — komponent home
+ *  zależał od komponentu headera tylko po to, żeby dostać interfejs.) */
+export interface WeekDay {
+  /** Klucz dnia w Europe/Warsaw (YYYY-MM-DD) — porównywalny z `localDayKey`. */
+  key: string;
+  /** Dzień z co najmniej jednym ukończonym treningiem. */
+  on: boolean;
+  today: boolean;
+  /** Dwuliterowy skrót dnia (Pn…Nd) — patrz `WEEK_DOW`. */
+  dow: string;
+}
+
+/** Skróty dni w kolejności od poniedziałku. Dwuliterowe, bo jednoliterowe
+ *  („P" dla poniedziałku i piątku) są niejednoznaczne — pasek 14 dni w
+ *  `/progress` ma jeszcze tę wadę i jest osobnym długiem. */
+export const WEEK_DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"] as const;
+
+/** Buduje siedmiodniowy pasek bieżącego tygodnia (poniedziałek → niedziela).
+ *  Wydzielone z `app/page.tsx`, żeby dało się przetestować bez renderowania
+ *  strony serwerowej i żeby każdy konsument liczył dni tą samą drogą. */
+export function buildWeekDays(
+  mondayEpoch: number,
+  doneDayKeys: Set<string>,
+  todayKey: string,
+): WeekDay[] {
+  return Array.from({ length: 7 }, (_, i) => {
+    const key = localDayKey(new Date(addWarsawDays(mondayEpoch, i)));
+    return { key, on: doneDayKeys.has(key), today: key === todayKey, dow: WEEK_DOW[i] };
+  });
+}
+
 const WARSAW_TZ = "Europe/Warsaw";
 
 interface ZonedParts {
