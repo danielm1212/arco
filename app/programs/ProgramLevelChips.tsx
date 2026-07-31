@@ -38,7 +38,10 @@ export function ProgramLevelChips({ filters }: { filters: Filters }) {
     if (filters.goal) query.set("goal", filters.goal);
     if (filters.focus) query.set("focus", filters.focus);
     const value = query.toString();
-    replace(value ? `/programs?${value}` : "/programs");
+    // `scroll: false`: tap na chip to filtr na TEJ SAMEJ liście, nie przejście na
+    // nową stronę — domyślny reset scrolla Next.js (`router.replace` skacze na górę)
+    // wyrzucał użytkownika z miejsca przeglądania biblioteki (zgłoszenie 2026-07-31).
+    replace(value ? `/programs?${value}` : "/programs", { scroll: false });
   }
 
   return (
