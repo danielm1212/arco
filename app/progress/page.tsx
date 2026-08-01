@@ -41,7 +41,7 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
   // F0.6: passa w pasku aktywności liczy tygodnie spełniające cel planu (D4).
   const weeklyGoal = settings?.weekly_goal ?? 2;
 
-  const [{ cur, volInsight, balanceInsight, deltas }, prRows, { strip, streak }, strength] =
+  const [{ cur, volInsight, balanceInsight, deltas }, prRows, { weekRows, streak }, strength] =
     await Promise.all([
       getPeriodOverview(supabase, period),
       getPersonalRecords(supabase),
@@ -69,7 +69,7 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
           </section>
         ) : (
         <>
-        <ActivitySection strip={strip} streak={streak} />
+        <ActivitySection weekRows={weekRows} streak={streak} weeklyGoal={weeklyGoal} />
 
         <PeriodTabs activeKey={period.key} />
 

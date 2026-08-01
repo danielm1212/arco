@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { randomUUID } from "crypto";
 import type { ExerciseType, MovementPattern } from "@/lib/types";
+import { userFacingError } from "@/lib/actionError";
 
 /** Dozwolone wartości (sprzężone z seedem/free-exercise-db — jak lib/exerciseFilters). */
 const EQUIPMENT_VALUES = [
@@ -114,7 +115,7 @@ export async function createUserExercise(
       : [],
     images,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: userFacingError(error, "Nie udało się zapisać ćwiczenia.") };
 
   return { id, name };
 }
@@ -157,6 +158,6 @@ export async function deleteUserExercise(exerciseId: string): Promise<{ error?: 
   }
 
   const { error } = await supabase.from("exercises").delete().eq("id", exerciseId);
-  if (error) return { error: error.message };
+  if (error) return { error: userFacingError(error, "Nie udało się usunąć ćwiczenia.") };
   return {};
 }

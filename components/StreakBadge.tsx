@@ -7,7 +7,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { StreakFlame } from "@/components/StreakFlame";
 import { WeekStrip } from "@/components/WeekStrip";
 import type { WeekDay } from "@/lib/week";
-import { streakBadgeLabel, streakWeeksText } from "@/lib/streakCopy";
+import { STREAK_NOT_STARTED, streakBadgeLabel, streakWeeksText } from "@/lib/streakCopy";
 import { formatGoalSentence } from "@/lib/programRecommendation";
 
 /**
@@ -51,6 +51,8 @@ export function StreakBadge({
   const badgeRef = useRef<HTMLButtonElement>(null);
   const lit = streak > 0;
   const label = streakBadgeLabel(streak);
+  // Jedno źródło zdania o passie — `null` samo niesie „jeszcze nie zaczęta".
+  const weeksText = streakWeeksText(streak);
 
   useEffect(() => {
     if (cleaned.current) return;
@@ -74,8 +76,8 @@ export function StreakBadge({
           type="button"
           aria-haspopup="dialog"
           aria-label={
-            lit
-              ? `Passa: ${streakWeeksText(streak)}. Pokaż szczegóły tygodnia`
+            weeksText
+              ? `Passa: ${weeksText}. Pokaż szczegóły tygodnia`
               : "Passa jeszcze nie zaczęta. Pokaż szczegóły tygodnia"
           }
           /* Bez wypełnionego tła — rust wypełniony zostaje wyłącznie dla „Zacznij
@@ -98,7 +100,7 @@ export function StreakBadge({
           <StreakFlame lit={lit} className="size-8 shrink-0" />
           <div>
             <p className="text-2xl font-semibold leading-tight tabular-nums">
-              {lit ? streakWeeksText(streak) : "Passa startuje w tym tygodniu"}
+              {weeksText ?? STREAK_NOT_STARTED}
             </p>
             {/* Bez „Tyle ${weekWord(streak)}…": po „tyle" polski wymusza dopełniacz
                 („tyle tygodni"), więc odmiana liczbowa dałaby tu „Tyle tygodnie".

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { StreakFlame } from "@/components/StreakFlame";
 import { localDayKey } from "@/lib/week";
-import { streakWeeksText } from "@/lib/streakCopy";
+import { STREAK_NOT_STARTED, streakWeeksText } from "@/lib/streakCopy";
 
 const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
 const MONTHS = [
@@ -131,7 +131,7 @@ export function MonthCalendar({
               emoji (wytyczne-designu §glif ognia), a `StreakFlame` jest tym
               glifem — ten sam rysunek co badge w headerze i `/postępy`. */}
           <StreakFlame className="size-3.5 shrink-0" />
-          Passa: {streakWeeksText(streak)}
+          Passa: {streakWeeksText(streak) ?? STREAK_NOT_STARTED}
         </p>
       )}
     </section>

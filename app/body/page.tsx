@@ -60,10 +60,12 @@ export default async function BodyPage() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      {/* Tytuł ekranu pozostaje stabilny; wspólny pasek niżej komunikuje,
-          że Ciało jest równorzędnym podwidokiem przestrzeni Trening. */}
+      {/* Wspólny pasek niżej komunikuje, że Ciało jest równorzędnym podwidokiem
+          przestrzeni Trening. D7: nagłówek mówił „Postępy" — nazwę sąsiedniej
+          trasy — więc `/ciało` i `/postępy` przedstawiały się identycznie, a
+          zakładka pod spodem twierdziła co innego. */}
       <header className="border-b px-md py-md text-center">
-        <h1 className="font-semibold">Postępy</h1>
+        <h1 className="font-semibold">Ciało</h1>
       </header>
       <TrainingSubnav active="body" />
 

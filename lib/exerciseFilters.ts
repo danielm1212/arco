@@ -44,6 +44,10 @@ export const MOVEMENT_PATTERNS: { id: MovementPattern; label: string }[] = [
 
 /** Pojedyncze mięśnie DB → etykieta PL (formularz własnego ćwiczenia). */
 export const MUSCLE_OPTIONS: { id: string; label: string }[] = [
+  // D4: ta lista jest JEDYNYM źródłem polskich nazw partii. Ekran Done czytał ją
+  // przez `MuscleSplitBars`, a `/postępy` renderowało surowe `primary_muscles`
+  // z bazy z `capitalize` — ten sam trening opisywały tam „Quadriceps", a tu
+  // „Czworogłowe". Nowi konsumenci biorą `muscleLabelPl`, nie własną mapę.
   { id: "chest", label: "Klatka" },
   { id: "shoulders", label: "Barki" },
   { id: "biceps", label: "Biceps" },
@@ -62,6 +66,15 @@ export const MUSCLE_OPTIONS: { id: string; label: string }[] = [
   { id: "abductors", label: "Odwodziciele" },
   { id: "neck", label: "Kark" },
 ];
+
+const MUSCLE_LABEL_PL = new Map(MUSCLE_OPTIONS.map((m) => [m.id, m.label]));
+
+/** Nazwa partii po polsku. Fallback to surowa wartość z bazy — świadomie, żeby
+ *  nowe `primary_muscles` z importu były widoczne jako brak tłumaczenia, a nie
+ *  cicho znikały. */
+export function muscleLabelPl(muscle: string): string {
+  return MUSCLE_LABEL_PL.get(muscle) ?? muscle;
+}
 
 /** Pojedyncze wartości `equipment` DB → etykieta PL (formularz własnego ćwiczenia). */
 export const EQUIPMENT_DB_OPTIONS: { id: string; label: string }[] = [
