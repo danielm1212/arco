@@ -10,7 +10,7 @@ import { weekStart, computeStreak, weeksMeetingGoal } from "@/lib/week";
 import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatGoalProgress } from "@/lib/programRecommendation";
 import { weightToDisplay } from "@/lib/format";
-import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
+import { isCompletedWorkingSet, sumVolumeKg } from "@/lib/sessionSetFacts";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +40,7 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
     supabase
       .from("sessions")
       .select(
-        "id, started_at, finished_at, session_exercises(id, skipped, exercises(exercise_type, primary_muscles), session_sets(id, weight, reps, duration_seconds, set_type, completed))",
+        "id, started_at, finished_at, session_exercises(id, skipped, exercises(exercise_type, primary_muscles), session_sets(id, weight, reps, duration_seconds, added_weight, set_type, completed))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -64,7 +64,7 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
 
   const allSets = exercises.flatMap((e) => e.session_sets);
   const completed = allSets.filter(isCompletedWorkingSet);
-  const volume = completed.reduce((n, s) => n + (s.weight ?? 0) * (s.reps ?? 0), 0);
+  const volume = sumVolumeKg(completed);
   const totalReps = completed.reduce((n, s) => n + (s.reps ?? 0), 0);
   const totalSeconds = completed.reduce((n, s) => n + (s.duration_seconds ?? 0), 0);
   const exCount = exercises.filter((e) =>

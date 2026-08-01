@@ -23,6 +23,7 @@ function row(daysAgo: number, over: Partial<HomeFactRow> = {}): HomeFactRow {
     weight: 100,
     reps: 5,
     duration_seconds: null,
+    added_weight: null,
     ...over,
   };
 }

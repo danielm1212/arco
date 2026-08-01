@@ -119,7 +119,7 @@ export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
   }
   const { data: sets } = await supabase
     .from("session_sets")
-    .select("session_exercise_id, weight, reps, duration_seconds")
+    .select("session_exercise_id, weight, reps, duration_seconds, added_weight")
     .in("session_exercise_id", seIds)
     .eq("completed", true)
     .eq("set_type", "working");
@@ -147,6 +147,7 @@ export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
       weight: s.weight,
       reps: s.reps,
       duration_seconds: s.duration_seconds,
+      added_weight: s.added_weight,
     });
     const inThisWeek = weekStart(info.date) === thisWeek;
     for (const cat of info.categories) {

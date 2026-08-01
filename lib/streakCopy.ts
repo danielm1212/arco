@@ -37,6 +37,19 @@ export function streakBadgeLabel(streak: number): string | null {
   return streak > 0 ? `${streak} tyg.` : null;
 }
 
+/** Polska odmiana „seria" po liczbie: 1 seria, 2–4/22–24 serie, 5–21/25+ serii.
+ *  AUDIT-A1: dodane, bo licznik niezsynchronizowanych serii przy wylogowaniu
+ *  potrzebował odmiany, a repo miało ją tylko dla „trening" i „tydzień" —
+ *  i za każdym razem, gdy jej brakowało, powstawał sklejony literał („1 serie").
+ *  Audyt 2026-07-31 znalazł tę klasę błędu w 12 miejscach; to pierwsze z nich. */
+export function setWord(n: number): "seria" | "serie" | "serii" {
+  if (n === 1) return "seria";
+  const last2 = Math.abs(n) % 100;
+  const last = Math.abs(n) % 10;
+  if (last2 >= 12 && last2 <= 14) return "serii";
+  return last >= 2 && last <= 4 ? "serie" : "serii";
+}
+
 /** Polska odmiana po liczbie: 1 trening, 2/22/102 treningi, 5/12/112 treningów. */
 export function trainingWord(n: number): "trening" | "treningi" | "treningów" {
   if (n === 1) return "trening";

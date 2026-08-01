@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { logout } from "@/app/login/actions";
-import { Button } from "@/components/ui/button";
+import { LogoutButton } from "./LogoutButton";
 import { SettingsForm } from "./SettingsForm";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { joinMaybe } from "@/lib/dbJoins";
@@ -48,13 +47,13 @@ export default async function SettingsPage() {
           focus={s?.training_focus ?? "balanced"}
           userId={auth.user?.id ?? "anonymous"}
         />
-        {/* F1 (redesign-home.md §3.4): przeniesione z home — jedna ikona
-            wylogowania w apce, tu gdzie się jej realnie szuka */}
-        <form action={logout} className="mt-lg">
-          <Button variant="outline" type="submit" className="w-full text-danger">
-            Wyloguj
-          </Button>
-        </form>
+        {/* F1 (redesign-home.md §3.4): przeniesione z home — jedno wylogowanie
+            w apce, tu gdzie się go realnie szuka.
+            AUDIT-A1: `<form action={logout}>` zamienione na komponent kliencki,
+            bo wylogowanie musi najpierw wyczyścić Cache Storage (kopie stron z
+            danymi konta) — a tego nie zrobi akcja serwerowa. Cena: wylogowanie
+            wymaga JS. W PWA, gdzie logger i tak jest kliencki, to uczciwa wymiana. */}
+        <LogoutButton />
       </main>
     </div>
   );

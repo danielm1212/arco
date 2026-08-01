@@ -1583,6 +1583,43 @@
   jednoliterowe „P" dla poniedziałku i piątku) — nie wchodził w zakres tej paczki; reszta PLAN-05I.
 - **Następny krok:** decyzja właściciela o merge PR-a HOME-05b, potem PLAN-05I albo HOME-06.
 
+### 2026-07-31 · Claude · Audyt kodu/UI + paczka A (dane i zaufanie)
+
+- **Zakres:** pełny audyt siedmioma równoległymi przebiegami (architektura, UI/DS, a11y,
+  wydajność/dane, testy, treść, bezpieczeństwo/RLS) → `docs/audyt-kodu-i-ui-2026-07-31.md`.
+  Potem paczka A: trzy naprawy P0 z tego audytu.
+- **A1 — cache SW:** `defaultCache` trzymał odpowiedzi RSC/HTML zalogowanego konta ORAZ podpisane
+  URL-e zdjęć sylwetki (reguła `cross-origin`), a `signOut` czyścił wyłącznie cookie. Odcięte
+  `cross-origin`/`others`/`apis`, dołożona reguła celowana w publiczne obrazy ćwiczeń, nowy
+  `lib/appCaches.ts` czyści Cache Storage przy wylogowaniu. **Cache stron ZOSTAJE** — to jedyny
+  offline przy ubitej apce; kasowanie go wymieniłoby wyciek na regresję rdzenia.
+- **A3 — objętość:** sześć kopii `weight * reps`, żadna nie znała `added_weight`. Podciąganie
+  z +20 kg wnosiło zero do tonażu na Home, `/postępy`, Done i w Historii. Jedno źródło:
+  `setVolumeKg`/`sumVolumeKg` w `lib/sessionSetFacts.ts`; do trzech zapytań dołożona kolumna.
+  **Skutek widoczny dla właściciela: historyczny tonaż wzrośnie tam, gdzie były dociążenia.**
+- **A4 — stany błędu:** nie było ani jednego `error.tsx`/`not-found.tsx`. Nowe: `app/error.tsx`,
+  `app/not-found.tsx`, `app/session/[id]/error.tsx` (osobne copy: serie z outboxa nie zginęły)
+  + wspólny `components/RouteError.tsx`, świadomie bez ikony 3D (200 KB na ścieżce awarii).
+- **A2 odrzucone po weryfikacji:** teza „`router.refresh()` kasuje niezapisany wpis w loggerze"
+  nie reprodukuje się — `onBlur` persystuje do outboxa, a hydracja nakłada outbox z powrotem;
+  wszystkie 14 wywołań `refresh` siedzi w handlerach akcji. Uzasadnienie w audycie §3.
+- **Pliki:** `app/sw.ts`, `lib/appCaches.ts`, `app/settings/LogoutButton.tsx` + `page.tsx`,
+  `lib/sessionSetFacts.ts`, `lib/homePeriods.ts`, `lib/getHomeGuidance.ts`, `app/progress/stats.ts`,
+  `app/session/[id]/Logger.tsx`, `app/session/[id]/done/page.tsx`, `app/history/[id]/page.tsx`,
+  `app/exercise/[id]/page.tsx`, `lib/streakCopy.ts` (`setWord`), trzy nowe pliki błędów,
+  `components/RouteError.tsx`. Testy: `tests/sw-runtime-caching.test.ts` (nowy),
+  `tests/session-set-facts.test.ts` (+6), `tests/session-done.test.ts` (przepisana krucha asercja).
+  Docs: audyt, `optymalizacja.md` §3 (sprostowanie), `HANDOFF.md`.
+- **Commit/stan:** gałąź `agent/audit-a-data-trust` z `origin/main` (b975fe0), PR #60. Baza
+  nietknięta, bez migracji.
+- **Testy:** lint czysty, tsc OK, build OK, **260/260** unit, overflow bez zmian.
+  Filtr cache'u zweryfikowany empirycznie (import prawdziwego `defaultCache`: odcina dokładnie 3
+  reguły, zostawia `pages*`), ekrany błędu obejrzane w harnessie na 393 px.
+- **Produkcja:** nietknięta. Deploy i Linear świadomie pominięte (polecenie właściciela).
+- **Otwarte:** paczki B (a11y, 11 pozycji), C (spójność `/postępy` + copy), D (skala) z audytu.
+  Wciąż zaległe po stronie właściciela: przejście po zalogowanej trasie i checkpoint iPhone PWA.
+- **Następny krok:** decyzja właściciela, czy lecimy paczką B, czy C (tam siedzi pasek 14 dni).
+
 ## Szablon rezerwacji
 
 ```md

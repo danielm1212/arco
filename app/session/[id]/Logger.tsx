@@ -51,6 +51,7 @@ import {
 import {
   isCompletedWorkingSet,
   isIncompleteWorkingSet,
+  sumVolumeKg,
 } from "@/lib/sessionSetFacts";
 import { RoutineTimer } from "./RoutineTimer";
 import { LoggerHint } from "./LoggerHint";
@@ -442,16 +443,7 @@ export function Logger({
     0,
   );
   const volume = factExercises.reduce(
-    (n, ex) =>
-      n +
-      ex.sets.reduce(
-        (m, s) =>
-          m +
-          (isCompletedWorkingSet(s) && s.weight != null && s.reps != null
-            ? s.weight * s.reps
-            : 0),
-        0,
-      ),
+    (n, ex) => n + sumVolumeKg(ex.sets.filter(isCompletedWorkingSet)),
     0,
   );
   const elapsedSeconds = elapsed ?? 0;

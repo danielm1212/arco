@@ -1,4 +1,5 @@
 import { weightToDisplay } from "@/lib/format";
+import { setVolumeKg } from "@/lib/sessionSetFacts";
 import { setMetric } from "@/lib/exerciseMetrics";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 
@@ -29,6 +30,8 @@ export interface HomeFactRow {
   weight: number | null;
   reps: number | null;
   duration_seconds: number | null;
+  /** AUDIT-A3: dociążenie przy ćwiczeniach z masą własną — wchodzi do objętości. */
+  added_weight: number | null;
 }
 
 export interface HomeTopProgress {
@@ -145,8 +148,8 @@ export function aggregateHomePeriods({
     const at = row.sessionDate.getTime();
     if (at >= from30) workingSets30 += 1;
     // Objętość: iloczyn tylko gdy obie wartości istnieją — jak `periodStats`.
-    if (row.weight == null || row.reps == null) continue;
-    const volume = row.weight * row.reps;
+    const volume = setVolumeKg(row);
+    if (volume === 0) continue;
     if (at >= from7) volume7Kg += volume;
     else if (at >= from14) volumePrev7Kg += volume;
   }

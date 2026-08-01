@@ -6,6 +6,7 @@ import { localDayKey, computeStreak, dayOfWeek, weeksMeetingGoal } from "@/lib/w
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 import { joinMany, joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 import { weightToDisplay } from "@/lib/format";
+import { setVolumeKg } from "@/lib/sessionSetFacts";
 import { finishedSessions } from "@/lib/qualifiedFacts";
 
 /**
@@ -67,14 +68,15 @@ async function periodStats(
   if (!seIds.length) return empty;
   const { data: sets } = await supabase
     .from("session_sets")
-    .select("session_exercise_id, weight, reps")
+    .select("session_exercise_id, weight, reps, added_weight")
     .in("session_exercise_id", seIds)
     .eq("completed", true)
     .eq("set_type", "working");
 
   const out = { ...empty, setCount: (sets ?? []).length };
   (sets ?? []).forEach((s) => {
-    if (s.weight != null && s.reps != null) out.volume += s.weight * s.reps;
+    // AUDIT-A3: jeden wzór objętości dla całej apki (uwzględnia `added_weight`).
+    out.volume += setVolumeKg(s);
     const info = bySe.get(s.session_exercise_id);
     for (const m of info?.muscles ?? [])
       out.setsPerMuscle.set(m, (out.setsPerMuscle.get(m) ?? 0) + 1);

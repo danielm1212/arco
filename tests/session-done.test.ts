@@ -4,11 +4,25 @@ import test from "node:test";
 
 const source = readFileSync("app/session/[id]/done/page.tsx", "utf8");
 
-test("Done: zapytanie pobiera czas serii potrzebny treningom timed", () => {
-  assert.match(
-    source,
-    /session_sets\(id, weight, reps, duration_seconds, set_type, completed\)/,
-  );
+test("Done: zapytanie pobiera wszystkie kolumny serii, od których zależy podsumowanie", () => {
+  // AUDIT-A3: asercja była przyklejona do DOKŁADNEGO ciągu selecta, więc pękała
+  // przy dołożeniu kolumny (`added_weight`) i niczego nie chroniła poza kolejnością
+  // słów. Sprawdzamy teraz obecność każdej potrzebnej kolumny osobno — czyli
+  // warunek, który realnie musi być spełniony, żeby ekran Done liczył poprawnie.
+  const select = source.match(/session_sets\(([^)]*)\)/)?.[1] ?? "";
+  for (const column of [
+    "weight",
+    "reps",
+    "duration_seconds",
+    "added_weight", // objętość dla ćwiczeń z masą własną (lib/sessionSetFacts)
+    "set_type",
+    "completed",
+  ]) {
+    assert.ok(
+      select.split(/\s*,\s*/).includes(column),
+      `select serii na ekranie Done nie pobiera kolumny "${column}"`,
+    );
+  }
 });
 
 test("Done: podsumowanie nie celebruje pominiętych ćwiczeń", () => {
