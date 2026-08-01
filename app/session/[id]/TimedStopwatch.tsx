@@ -113,6 +113,7 @@ export function TimedStopwatch({
     <div className="flex flex-1 items-center gap-xs">
       <Input
         type="number"
+        aria-label="Czas docelowy w sekundach"
         inputMode="numeric"
         min={0}
         max={LIMITS.duration}

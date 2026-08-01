@@ -529,7 +529,10 @@ export function Logger({
             <div className="min-w-0">
               {/* Nazwa dnia = tytuł: jedyna część odróżniająca sesję, program
                   w trakcie treningu jest bezwartościowy — zostaje podpisem */}
-              <p className="truncate font-semibold leading-tight">{title}</p>
+              {/* B8: tytuł sesji to `h1` — nazwy ćwiczeń są pod nim `h2`, więc
+                  rotor VoiceOvera daje spis ćwiczeń zamiast ~30 serii z rzędu.
+                  Wygląd bez zmian: klasy te same co przy <p>. */}
+              <h1 className="truncate font-semibold leading-tight">{title}</h1>
               {programName && (
                 <p className="truncate text-xs text-muted-foreground">{programName}</p>
               )}
@@ -540,9 +543,9 @@ export function Logger({
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                   !online
-                    ? "bg-warning/15 text-warning"
+                    ? "bg-warning/15 text-warning-text"
                     : quarantined > 0
-                      ? "bg-danger/10 text-danger"
+                      ? "bg-danger/10 text-danger-text"
                       : "bg-muted text-muted-foreground"
                 }`}
                 title={
@@ -804,7 +807,7 @@ export function Logger({
             <p className="text-sm text-muted-foreground">
               Chcesz zaliczyć <span className="font-semibold text-foreground">{weightToDisplay(weightReview.set.weight ?? 0, unit)} {unit} × {weightReview.set.reps ?? "—"}</span> w ćwiczeniu {weightReview.ex.name}.
             </p>
-            <ul className="space-y-xs rounded-lg bg-warning/10 p-sm text-sm text-warning">
+            <ul className="space-y-xs rounded-lg bg-warning/10 p-sm text-sm text-warning-text">
               {weightReview.review.reasons.includes("high_weight") && (
                 <li>To więcej niż {weightToDisplay(WEIGHT_REVIEW_KG, unit)} {unit}. Sprawdź, czy ciężar jest wpisany poprawnie.</li>
               )}

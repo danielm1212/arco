@@ -268,7 +268,7 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
                     setPreviews((current) => current.filter((_, previewIndex) => previewIndex !== index));
                   }}
                   aria-label={`Usuń zdjęcie ${index + 1}`}
-                  className="absolute right-1 top-1 min-h-11 rounded-md bg-background/90 px-3 text-sm font-medium text-danger shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="absolute right-1 top-1 min-h-11 rounded-md bg-background/90 px-3 text-sm font-medium text-danger-text shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   Usuń
                 </button>

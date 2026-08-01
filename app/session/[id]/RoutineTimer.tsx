@@ -190,7 +190,7 @@ export function RoutineTimer({
         </div>
       ) : finished ? (
         <div className="mt-sm flex items-center gap-xs">
-          <span className="flex min-h-11 min-w-0 flex-1 items-center gap-xs text-sm font-medium text-success">
+          <span className="flex min-h-11 min-w-0 flex-1 items-center gap-xs text-sm font-medium text-success-text">
             <Check className="size-4" aria-hidden />
             Gotowe
           </span>

@@ -209,7 +209,7 @@ export function ExerciseBrowser({
       </div>
 
       {showDefault && defaultNote && (
-        <p className="text-xs text-warning">{defaultNote}</p>
+        <p className="text-xs text-warning-text">{defaultNote}</p>
       )}
       {showDefault && wantRecent && items.length > 0 && (
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

@@ -70,6 +70,26 @@ pułapki fokusu w `BottomSheet` i check zaliczonej serii 2,37:1 w dark), **C** (
 + copy, w tym pasek 14 dni i 12 błędów odmiany liczebników), **D** (skala: `/postępy` 13 zapytań,
 kod zaproszenia Ekipy bez rotacji, brak CHECK-ów na wejściu).
 
+**Paczka B gotowa technicznie 2026-08-01 na `agent/a11y-p1`:** wszystkie jedenaście pozycji
+P1 (dostępność) z audytu plus dwa znaleziska własne. Najważniejsze: `BottomSheet` i onboarding
+mają wreszcie pułapkę fokusu i `inert` na tle (wspólny `lib/inertBackground.ts`) — dotąd Tab
+wychodził z arkusza w listę pod spodem, również na potwierdzeniach usuwania; pola liczbowe
+loggera mają dostępne nazwy z numerem serii („Ciężar w kg, seria 3") zamiast samego
+`placeholdera`; Dziś i Plany dostały `h1`, a ćwiczenia w loggerze są `h2` (rotor VoiceOvera
+daje spis ćwiczeń zamiast 30 serii z rzędu); `prefers-reduced-motion` objęło 6 z 6 animacji.
+**Wniosek systemowy:** cztery z trzynastu pozycji to ta sama pomyłka — stopień WYPEŁNIENIA
+użyty jako tekst (`text-white` na `bg-success` = 2,37:1 w dark, amber jako tekst 1,91:1 w
+light, zieleń 4,18:1 na canvas, czerwień w dark 3,98:1 na własnym tincie). Stąd kontrakt
+trzech ról koloru semantycznego — `bg-<kolor>` (wypełnienie) · `text-<kolor>-foreground`
+(tekst NA wypełnieniu) · `text-<kolor>-text` (barwa jako tekst) — i trzy nowe, wyłącznie
+tekstowe stopnie: `amber-700`, `green-600`, `red-300`. Kanon w `paleta-arco-warm.md`
+§„Trzy role koloru semantycznego". Progi liczy `tests/token-contrast.test.ts` na tincie
+złożonym nad KAŻDYM realnym tłem wiersza — pierwsza wersja `amber-700` przechodziła tylko
+na białej karcie i test to wyłapał. CI dostało brakujący krok `npm run typecheck`
+(`next build` nie typuje plików testowych, więc błąd typów z #60 przeszedł niezauważony).
+Bez migracji. **Do [Ty]:** przejście po zalogowanej trasie z VoiceOverem — arkusze, onboarding
+i logger.
+
 **Paczka A gotowa technicznie 2026-07-31 na `agent/audit-a-data-trust` (PR #60):**
 service worker przestał cache'ować odpowiedzi RSC/HTML zalogowanego konta i podpisane URL-e zdjęć
 sylwetki, a wylogowanie czyści Cache Storage (`lib/appCaches.ts`); objętość liczy jeden wzór

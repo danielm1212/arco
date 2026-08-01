@@ -1343,3 +1343,52 @@ test("TRUST-03: BottomSheet zachowuje pozycję strony przy każdym sposobie zamk
     }
   }
 });
+
+/**
+ * B2 (audyt 2026-07-31 §1 P1): arkusz deklarował `aria-modal="true"`, ale tło
+ * zostawało dostępne — Tab wychodził z arkusza w listę pod spodem, również na
+ * potwierdzeniach usuwania. `CLAUDE.md` §overlaye wymaga tego wprost.
+ *
+ * Test jedzie na PRAWDZIWYM `BottomSheet` w Chromium, bo obie rzeczy, które tu
+ * sprawdzamy (`inert` i kolejność Tab), w jsdomie po prostu nie istnieją.
+ */
+test("B2: BottomSheet zamyka fokus w arkuszu i wyłącza tło", async (t) => {
+  const inDialog = (page: Page) =>
+    page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]');
+      return !!dialog && !!document.activeElement && dialog.contains(document.activeElement);
+    });
+  const rootInert = (page: Page) =>
+    page.evaluate(() => document.getElementById("root")?.inert === true);
+
+  await t.test("tło jest `inert`, a Tab i Shift+Tab krążą w arkuszu", async () => {
+    const { context, page } = await bottomSheetPage({ width: 375, height: 780 });
+    try {
+      assert.ok(await rootInert(page), "tło nie zostało wyłączone przez `inert`");
+
+      // 12 kroków to więcej niż fokusowalnych elementów w arkuszu — pętla musi
+      // się domknąć, a nie wypaść na <body> albo na przycisk pod spodem.
+      for (let i = 1; i <= 12; i++) {
+        await page.keyboard.press("Tab");
+        assert.ok(await inDialog(page), `fokus wyszedł poza arkusz po ${i} × Tab`);
+      }
+      for (let i = 1; i <= 12; i++) {
+        await page.keyboard.press("Shift+Tab");
+        assert.ok(await inDialog(page), `fokus wyszedł poza arkusz po ${i} × Shift+Tab`);
+      }
+    } finally {
+      await context.close();
+    }
+  });
+
+  await t.test("zamknięcie przywraca tło", async () => {
+    const { context, page } = await bottomSheetPage({ width: 375, height: 780 });
+    try {
+      await page.keyboard.press("Escape");
+      await page.getByRole("dialog", { name: "Arkusz testowy" }).waitFor({ state: "detached" });
+      assert.equal(await rootInert(page), false, "tło zostało wyłączone na stałe");
+    } finally {
+      await context.close();
+    }
+  });
+});

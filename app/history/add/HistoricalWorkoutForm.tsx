@@ -253,7 +253,7 @@ export function HistoricalWorkoutForm({
 
       {state?.error && (
         <div className="space-y-xs rounded-lg border border-danger/30 bg-danger/5 p-sm" role="alert">
-          <p className="text-sm text-danger">{state.error}</p>
+          <p className="text-sm text-danger-text">{state.error}</p>
           {state.activeSessionId && (
             <Button asChild variant="outline" className="w-full">
               <Link href={`/session/${state.activeSessionId}`}>Wróć do treningu w toku</Link>

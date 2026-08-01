@@ -41,6 +41,12 @@ jobs:
       - name: Sprawdź lint
         run: npm run lint
 
+      # `next build` typuje wyłącznie kod aplikacji — błąd typów w `tests/` albo
+      # `scripts/` przechodził niezauważony (tak wjechał TS2540 z PR #60). Krok
+      # jest przed testami, bo pada w sekundy i mówi wprost, co jest nie tak.
+      - name: Sprawdź typy
+        run: npm run typecheck
+
       - name: Uruchom testy reguł produktu
         run: npm run test:unit
 

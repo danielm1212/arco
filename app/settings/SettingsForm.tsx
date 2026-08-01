@@ -391,7 +391,7 @@ export function SettingsForm({
         <Button onClick={save} disabled={pending}>
           {pending ? "Zapisuję…" : "Zapisz"}
         </Button>
-        {saved && <span className="text-sm text-success">Zapisano ✓</span>}
+        {saved && <span className="text-sm text-success-text">Zapisano ✓</span>}
       </div>
     </div>
   );

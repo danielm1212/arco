@@ -25,7 +25,7 @@ export function DeleteBodyMetricButton({ id }: { id: string }) {
 
   return (
     <>
-      <button type="button" aria-label="Usuń pomiar" disabled={pending} onClick={() => setOpen(true)} className="grid size-11 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-danger/10 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"><Trash2 className="size-4" aria-hidden /></button>
+      <button type="button" aria-label="Usuń pomiar" disabled={pending} onClick={() => setOpen(true)} className="grid size-11 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-danger/10 hover:text-danger-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"><Trash2 className="size-4" aria-hidden /></button>
       <BottomSheet open={open} onOpenChange={setOpen} title="Usunąć pomiar?" description="Potwierdzenie trwałego usunięcia pomiaru ciała.">
         <div className="space-y-md"><p className="text-sm text-muted-foreground">Pomiar i przypisane do niego zdjęcie zostaną trwale usunięte.</p><Button className="w-full" variant="destructive" disabled={pending} onClick={remove}>{pending ? "Usuwam…" : "Usuń pomiar"}</Button><Button className="w-full" variant="ghost" disabled={pending} onClick={() => setOpen(false)}>Anuluj</Button></div>
       </BottomSheet>

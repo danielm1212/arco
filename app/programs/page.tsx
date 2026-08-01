@@ -128,6 +128,9 @@ export default async function ProgramsPage({
       <TrainingSubnav active="plans" />
 
       <main className="flex-1 space-y-lg p-md">
+        {/* B8: jak na Dziś — tytuł strony niesie wizualnie `TrainingSubnav`,
+            więc `h1` jest sr-only, a sekcje zostają na `h2`. */}
+        <h1 className="sr-only">Plany</h1>
         {activeProgram && (
           <section className="space-y-sm">
             <h2 className="text-base font-semibold">Aktywny plan</h2>

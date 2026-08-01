@@ -48,7 +48,7 @@ export function LogoutButton() {
       <Button
         variant="outline"
         type="button"
-        className="w-full text-danger"
+        className="w-full text-danger-text"
         disabled={isRunning}
         onClick={() => {
           startTransition(async () => {

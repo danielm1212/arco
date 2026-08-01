@@ -81,7 +81,7 @@ export default async function BodyPage() {
                 <span className="text-base font-normal text-muted-foreground"> {unit}</span>
               </span>
               {delta != null && (
-                <span className={delta < 0 ? "text-success" : delta > 0 ? "text-warning" : "text-muted-foreground"}>
+                <span className={delta < 0 ? "text-success-text" : delta > 0 ? "text-warning-text" : "text-muted-foreground"}>
                   {delta > 0 ? "+" : ""}
                   {delta} {unit}
                 </span>

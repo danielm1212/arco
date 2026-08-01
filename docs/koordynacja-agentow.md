@@ -21,6 +21,38 @@
 
 ## Ostatnie wpisy
 
+### 2026-08-01 · Claude Code · Paczka B z audytu (dostępność, P1): ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/a11y-p1` z `origin/main` (0ab1627, po scaleniu #60). Wszystkie
+  jedenaście pozycji P1 z `audyt-kodu-i-ui-2026-07-31.md` §1 + dwa znaleziska własne
+  (B12/B13). Nowy plik `lib/inertBackground.ts`. Bez migracji.
+- **Metoda:** każde znalezisko potwierdzone w kodzie PRZED naprawą, kontrasty policzone
+  z realnych tokenów `app/globals.css`. Audyt okazał się rzetelny — jedyne odchylenie to
+  B6, gdzie `TimedStopwatch` miał `min-h-11` już wcześniej (brakowało tylko w `RestTimer`).
+- **Wniosek systemowy:** cztery z trzynastu pozycji to JEDNA pomyłka powtórzona cztery razy —
+  stopień WYPEŁNIENIA użyty jako tekst. Stąd kontrakt trzech ról koloru semantycznego
+  (`bg-<kolor>` · `text-<kolor>-foreground` · `text-<kolor>-text`) w `tailwind.config.ts`
+  i `paleta-arco-warm.md`. Trzy nowe stopnie, wszystkie wyłącznie tekstowe: `amber-700`
+  (#835801), `green-600` (#2B734A), `red-300` (#E87D89). Wypełnienia nietknięte.
+- **Progi liczone na tincie ZŁOŻONYM nad każdym realnym tłem**, nie nad samą kartą —
+  badge rozgrzewki bywa też wierszem zaliczonym (`success/10`) i rekordowym (`primary/10`).
+  Pierwsza wersja `amber-700` (L 28%) przechodziła tylko na białej karcie: 4,39:1 na
+  wierszu PR. Złapał to guard w `tests/token-contrast.test.ts`, nie oko — i to jest
+  argument za tym, żeby każdy nowy stopień wchodził razem z testem.
+- **Overlaye:** `BottomSheet` i `WelcomeOverlay` dostały wspólny `inertOutside()`, który
+  idzie ścieżką w górę do `<body>` i wyłącza rodzeństwo na każdym poziomie. Płaska pętla
+  po `document.body.children` nie wystarcza, bo onboarding renderuje się WEWNĄTRZ
+  kontenera strony, a nie w portalu.
+- **Dług spoza zakresu, naprawiony przy okazji:** `tests/sw-runtime-caching.test.ts`
+  (z PR #60) nie przechodził `tsc --noEmit` — przypisanie do `NODE_ENV`, które Next.js
+  deklaruje jako `readonly`. Nikt tego nie widział, bo `next build` **nie typuje plików
+  testowych**, a CI nie miało kroku `tsc`. Dołożony `npm run typecheck` do `quality.yml`.
+- **Uwaga środowiskowa:** w `tests/` leży osiem nieśledzonych duplikatów iCloud z sufiksem
+  ` 2`, w tym `session-preparation.test 2.ts` — **sierota bez oryginału**, importująca
+  nieistniejący moduł. Psuje lokalny `tsc`, nie psuje CI (nieśledzone) ani `test:unit`
+  (glob nie łapie `.test 2.ts`). Nie ruszane — decyzja właściciela.
+- **Rezerwacja zdjęta.** Następny krok: paczka C (spójność `/postępy` + copy).
+
 ### 2026-07-31 · Claude Code · HOME-04+05 kontenery danych i semantyka symboli: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** gałąź `agent/home-04-05-stats-and-streak`. Zmienione `app/HomeStats.tsx`,

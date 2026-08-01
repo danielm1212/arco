@@ -75,7 +75,29 @@
        danger odsunięty od rusta w malinę (hue 353), success przygaszona zieleń */
     --arco-green-500: 146 45% 36%;
     --arco-green-400: 146 40% 55%;   /* dark */
+    /* Stopnie WYŁĄCZNIE tekstowe (poza paczką B, ta sama klasa błędu co amber):
+       `green-500` jako tekst ma na canvas 4.18:1, a `red-400` w dark 4.47:1 na
+       powierzchni i 3.98:1 na `danger/10` — czyli komunikaty błędu w dark były
+       pod progiem. Wypełnienia (`bg-success`, `bg-danger`, obramowania) zostają
+       na stopniach 500/400; te dwa wchodzą tylko pod `*-text`.
+       Najgorszy przypadek z czterech realnych teł: 4.98:1 (zieleń, hover)
+       i 5.13:1 (czerwień, surface-muted). Pilnuje tego token-contrast.test. */
+    --arco-green-600: 146 45% 31%;   /* #2B734A — tekst sukcesu w light */
+    --arco-red-300:   353 70% 70%;   /* #E87D89 — tekst błędu w dark */
     --arco-amber-500: 38 92% 50%;
+    /* B4 (a11y): amber-500 jako TEKST jest nieużywalny w light — 1.91:1 na
+       `warning/15`, 1.97:1 na canvas, a nawet jako obramowanie 2.14:1 (<3:1
+       z 1.4.11). Ten stopień jest wyłącznie tekstowy.
+       Próg liczymy na tincie `warning/15` złożonym nad KAŻDYM realnym tłem
+       wiersza serii, nie nad samą kartą: rozgrzewka bywa też wierszem
+       zaliczonym (`success/10`) i wierszem rekordu (`primary/10`), a te dwa są
+       najciemniejsze. Najgorszy przypadek: 4.89:1 (wiersz PR). Pierwsza wersja
+       (L 28%) miała tam 4.39:1 i przechodziła tylko na białej karcie — złapał
+       to guard w `tests/token-contrast.test.ts`, nie oko.
+       Hue 40, nie 36: ciemny amber zbliża się percepcyjnie do rusta, a 40
+       trzyma ΔE00 23.9 od `rust-500` zamiast 19.6. W dark stopień jest zbędny —
+       `amber-500` daje tam 7.43:1 na `surface` (logika „w dark jaśniej"). */
+    --arco-amber-700: 40 98% 26%;    /* #835801 — tekst ostrzeżenia w light */
     --arco-red-500:   353 65% 46%;
     --arco-red-400:   353 70% 62%;   /* dark */
 
@@ -142,8 +164,12 @@
     --color-brand-text:      var(--arco-ink-800);
     --color-brand-muted:     var(--arco-stone-600);     /* szarość STONE tylko na sand */
     --color-success:         var(--arco-green-500);
-    --color-warning:         var(--arco-amber-500);
+    --color-success-contrast: var(--arco-grey-0);      /* tekst/glif NA success (4.53:1) */
+    --color-success-text:    var(--arco-green-600);    /* sukces jako TEKST (min. 4.98:1) */
+    --color-warning:         var(--arco-amber-500);    /* wypełnienie/obramowanie, NIE tekst */
+    --color-warning-text:    var(--arco-amber-700);    /* tekst w barwie ostrzeżenia (min. 4.89:1) */
     --color-danger:          var(--arco-red-500);
+    --color-danger-text:     var(--arco-red-500);      /* w light ta sama barwa wystarcza (5.29:1) */
     --color-ring:            var(--arco-violet-400); /* focus = violet (guide §5/§10), 3.22:1 na canvas */
 
     /* support — Violet: prowadzenie / plany / dane (guide §5). Nowa oś, obok akcentu. */
@@ -229,9 +255,16 @@
     --color-brand-surface:   var(--arco-ink-700);
     --color-brand-text:      var(--arco-sand-50);
     --color-brand-muted:     var(--arco-sand-400);
+    /* Na jasnym `green-400` tekst musi być CIEMNY — biel daje 2.37:1 (był to
+       jedyny magic-color w repo: `text-white` w SetRow). Ta sama inwersja co
+       przy rust (`accent-contrast`) i violet (`support-contrast`) w dark. */
     --color-success:         var(--arco-green-400);
+    --color-success-contrast: var(--arco-ink-900);     /* 7.90:1 */
+    --color-success-text:    var(--arco-green-400);    /* w dark stopień wypełnienia wystarcza */
     --color-warning:         var(--arco-amber-500);
+    --color-warning-text:    var(--arco-amber-500);    /* w dark bez ciemnego stopnia: 7.43:1 na surface */
     --color-danger:          var(--arco-red-400);
+    --color-danger-text:     var(--arco-red-300);      /* jaśniejszy stopień: 4.47 → min. 5.13:1 */
     --color-ring:            var(--arco-violet-400);
 
     /* support (dark) — na violet-400 tekst CIEMNY (biały nie daje 4.5:1, guide §7) */
@@ -266,7 +299,11 @@
       rgb(136 124 231 / 0.16) 48%,
       rgb(255 255 255 / 0.035) 100%);
 
-    --destructive-foreground: var(--arco-sand-50);
+    /* B5 (a11y): `sand-50` na `red-400` to 3.36:1 — a ten wariant siedzi na
+       ośmiu potwierdzeniach nieodwracalnych operacji. W dark tekst na barwie
+       chromatycznej jest CIEMNY (jak `accent-contrast` i `support-contrast`):
+       `ink-900` daje 5.27:1. Light zostaje bielą — tam `red-500` ma 5.73:1. */
+    --destructive-foreground: var(--arco-ink-900);
 
     /* L3-bridge musi być re-deklarowany w .dark — inaczej var() w moście
        (zadeklarowanym w :root) nie re-resolvuje się w poddrzewie z klasą .dark
@@ -385,8 +422,16 @@
   animation: ignite 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
 }
 @media (prefers-reduced-motion: reduce) {
+  /* B9 (a11y): blok pokrywał 3 z 6 animacji w systemie. Brakowało dwóch
+     najczęstszych — wjazdu arkuszy (`animate-in` z tailwindcss-animate, każdy
+     BottomSheet) i pulsujących szkieletów (`animate-pulse`). `animation: none`
+     zostawia element w stanie docelowym: arkusz jest od razu na miejscu i
+     nieprzezroczysty, szkielet stoi bez migotania. */
   .animate-ignite,
-  .animate-pulse-once {
+  .animate-pulse-once,
+  .animate-in,
+  .animate-out,
+  .animate-pulse {
     animation: none !important;
   }
   /* MOMENT-01: warstwa konfetti i tak nie powstaje (komponent zwraca null przy
