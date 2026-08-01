@@ -21,6 +21,7 @@ function row(
     weight,
     reps: 5,
     duration_seconds: null,
+    added_weight: null,
     ...over,
   };
 }

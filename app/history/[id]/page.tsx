@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/navigation/PageHeader";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { joinMany, joinMaybe, type DayJoin, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatWarsawDateTime } from "@/lib/dateTime";
-import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
+import { isCompletedWorkingSet, setVolumeKg } from "@/lib/sessionSetFacts";
 
 export const dynamic = "force-dynamic";
 
@@ -58,7 +58,7 @@ export default async function SessionDetailPage(props: {
   const allSets = factExercises.flatMap((e) => e.session_sets);
   const completed = allSets.filter(isCompletedWorkingSet);
   const volume = completed.reduce(
-    (n, s) => n + (s.weight ?? 0) * (s.reps ?? 0),
+    (n, s) => n + setVolumeKg(s),
     0,
   );
   const durationMin = session.finished_at

@@ -10,7 +10,7 @@ import { Sparkline } from "@/components/Sparkline";
 import { PageHeader } from "@/components/navigation/PageHeader";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { joinMany } from "@/lib/dbJoins";
-import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
+import { isCompletedWorkingSet, sumVolumeKg } from "@/lib/sessionSetFacts";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
@@ -126,17 +126,16 @@ export default async function ExercisePage(props: {
         return b;
       }
       if (sel === "vol") {
-        const v = workingSets.reduce(
-          (m, s) =>
-            s.weight != null &&
-            s.weight >= 0 &&
-            s.weight <= LIMITS.weight &&
-            s.reps != null &&
-            s.reps >= 1 &&
-            s.reps <= LIMITS.reps
-              ? m + s.weight * s.reps
-              : m,
-          0,
+        // AUDIT-A3: wspólny wzór objętości; zaciski `LIMITS` zostają, bo to
+        // jedyne miejsce, które broni wykresu przed skrajną wartością z bazy.
+        const v = sumVolumeKg(
+          workingSets.filter(
+            (s) =>
+              (s.weight == null || (s.weight >= 0 && s.weight <= LIMITS.weight)) &&
+              s.reps != null &&
+              s.reps >= 1 &&
+              s.reps <= LIMITS.reps,
+          ),
         );
         return v > 0 ? Math.round(v) : null;
       }

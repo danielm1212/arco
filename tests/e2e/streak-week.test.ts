@@ -107,6 +107,16 @@ async function harnessBundle(): Promise<string> {
         const week = buildWeekDays(monday, doneKeys, todayKey);
         const weeklyDone = doneKeys.size;
 
+        // Kalendarz otwiera się na BIEŻĄCYM miesiącu, więc jego fixture musi mieć
+        // dni z tego miesiąca — nie z tego tygodnia. Pierwszego dnia miesiąca
+        // poniedziałek wypada jeszcze w poprzednim i siatka nie pokazuje żadnego
+        // dnia treningowego: test padał 2026-08-01, choć kod był bez zmian.
+        // Dzień 5. i 12. istnieją w każdym miesiącu, więc fixture jest stabilny.
+        const today = new Date();
+        const inThisMonth = (dayOfMonth) =>
+          localDayKey(new Date(today.getFullYear(), today.getMonth(), dayOfMonth));
+        const calendarDays = [inThisMonth(5), inThisMonth(12)];
+
         function Harness() {
           return <div className="mx-auto flex max-w-md flex-col">
             <TrainingHeader
@@ -115,7 +125,7 @@ async function harnessBundle(): Promise<string> {
             />
             <main className="space-y-lg p-md">
               <WeekCard week={week} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />
-              <MonthCalendar trainingDays={[...doneKeys]} streak={streak} />
+              <MonthCalendar trainingDays={calendarDays} streak={streak} />
             </main>
           </div>;
         }

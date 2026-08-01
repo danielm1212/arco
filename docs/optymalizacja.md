@@ -36,7 +36,7 @@ Pomiar: Lighthouse (DevTools, tryb mobile + throttling) przy każdej bramce; **w
 ## 3. Przegląd stanu (2026-07-08, na repo)
 
 ### ✅ Dobre (utrzymać)
-Lean deps (zero wykresów z paczek, 16 zależności, vendor 100 KB) · 13 indeksów DB z sensem (`sessions_user_date_idx`, gin na `primary_muscles`) · skeletony + `loading.tsx` (S14) · picker z limitem 30 i debounce 200 ms · `next/font` self-host (DM Sans) · Serwist precache + defaultCache · optymistyczny logger z outboxem · `force-dynamic` świadomie na stronach danych usera.
+Lean deps (zero wykresów z paczek, 16 zależności, vendor 100 KB) · 13 indeksów DB z sensem (`sessions_user_date_idx`, gin na `primary_muscles`) · skeletony + `loading.tsx` (S14) · picker z limitem 30 i debounce 200 ms · `next/font` self-host (DM Sans) · Serwist precache + **zawężony** runtime cache (AUDIT-A1 2026-07-31: `defaultCache` w całości trzymał odpowiedzi RSC/HTML zalogowanego konta i podpisane URL-e zdjęć sylwetki; odcięte `cross-origin`/`others`/`apis`, wylogowanie czyści Cache Storage — patrz `app/sw.ts` i `docs/audyt-kodu-i-ui-2026-07-31.md` §A1) · optymistyczny logger z outboxem · `force-dynamic` świadomie na stronach danych usera.
 
 ### ⚠️ Findings (priorytet · co · kiedy)
 | P | Finding | Akcja | Etap |

@@ -61,6 +61,23 @@ dominujący CTA) i **CONTENT-03** (semantyczne nazwy dni — 20 z 48 to „Treni
 migracja + sesja treściowa). Wciąż nierozstrzygnięte: czy `docs/arco-home-agent-handoff/`
 wchodzi do repo (folder nieśledzony).
 
+**Audyt kodu/UI 2026-07-31 → `docs/audyt-kodu-i-ui-2026-07-31.md`.** Siedem przebiegów
+(architektura, UI/DS, a11y, wydajność, testy, treść, bezpieczeństwo). Fundamenty są zdrowe: RLS
+kompletne na 20 tabelach, niezmienniki w bazie, zero magic-hexów, service role tylko w skryptach.
+Problem jest w egzekucji: v1.4 i budżety z `optymalizacja.md` żyją w tokenach i w dokumencie, nie
+w komponentach i trasach. Kolejka: **A (P0) zrobione**, otwarte **B** (11 pozycji a11y, m.in. brak
+pułapki fokusu w `BottomSheet` i check zaliczonej serii 2,37:1 w dark), **C** (spójność `/postępy`
++ copy, w tym pasek 14 dni i 12 błędów odmiany liczebników), **D** (skala: `/postępy` 13 zapytań,
+kod zaproszenia Ekipy bez rotacji, brak CHECK-ów na wejściu).
+
+**Paczka A gotowa technicznie 2026-07-31 na `agent/audit-a-data-trust` (PR #60):**
+service worker przestał cache'ować odpowiedzi RSC/HTML zalogowanego konta i podpisane URL-e zdjęć
+sylwetki, a wylogowanie czyści Cache Storage (`lib/appCaches.ts`); objętość liczy jeden wzór
+(`setVolumeKg`) i **wreszcie uwzględnia `added_weight`** — historyczny tonaż wzrośnie tam, gdzie
+były dociążenia; aplikacja dostała pierwsze w historii stany błędu i 404 (`app/error.tsx`,
+`app/not-found.tsx`, `app/session/[id]/error.tsx`). Bramka: lint, tsc, **260/260** unit, build.
+Bez migracji.
+
 ## 2. Co jest wdrożone
 
 Na `main` i w migracjach są:
