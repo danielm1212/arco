@@ -96,8 +96,41 @@
 | Rola | Light | Dark | Uzasadnienie |
 |---|---|---|---|
 | danger | `hsl(353 65% 46%)` ≈ #C22A44 (malina) | `hsl(353 70% 62%)` | hue 353 vs rust 11–15 — wyraźnie inna barwa, nadal ciepła rodzina |
-| success | `hsl(146 45% 36%)` ≈ #33875A | `hsl(146 40% 55%)` | przygaszona zieleń, nie neonowa; AA jako tekst na canvas |
+| success | `hsl(146 45% 36%)` ≈ #33875A | `hsl(146 40% 55%)` | przygaszona zieleń, nie neonowa |
 | warning | `hsl(38 92% 50%)` (amber, bez zmian) | jw. | używany głównie jako badge W/nota — odróżnialny od rusta |
+
+### Trzy role koloru semantycznego (a11y, paczka B — 2026-08-01)
+
+Stopnie powyżej są stopniami **WYPEŁNIENIA**. Użycie ich jako tekstu było źródłem
+czterech z trzynastu znalezisk paczki B, w tym jedynego magic-coloru w repo. Stąd
+kontrakt, który obowiązuje każdy kolor semantyczny:
+
+| Rola w UI | Klasa | Czym jest |
+|---|---|---|
+| wypełnienie, obramowanie, tint | `bg-<kolor>`, `border-<kolor>` | stopień 500 (light) / 400 (dark) |
+| tekst NA tym wypełnieniu | `text-<kolor>-foreground` | biel w light, `ink-900` w dark |
+| ta barwa jako tekst na neutralnym tle | `text-<kolor>-text` | osobny stopień, patrz niżej |
+
+| Token | Light | Dark | Najgorsze realne tło |
+|---|---|---|---|
+| `--color-warning-text` | `--arco-amber-700` `hsl(40 98% 26%)` #835801 | `amber-500` (bez zmian) | **4,89:1** (badge „W" na wierszu rekordu) |
+| `--color-success-text` | `--arco-green-600` `hsl(146 45% 31%)` #2B734A | `green-400` (bez zmian) | **4,98:1** (tło hoveru) |
+| `--color-danger-text` | `red-500` (bez zmian) | `--arco-red-300` `hsl(353 70% 70%)` #E87D89 | **5,13:1** (`surface-muted`) |
+| `--color-success-contrast` | `grey-0` | `ink-900` | **7,90:1** (check zaliczonej serii) |
+
+Trzy reguły, które z tego wynikają:
+
+1. **Amber nigdy nie jest tekstem w light** — `amber-500` daje tam 1,91:1 na własnym
+   tincie i 2,14:1 jako obramowanie, czyli łamie nawet próg 3:1 z WCAG 1.4.11.
+2. **W dark idziemy JAŚNIEJ, nie ciemniej** (`red-300`, `amber-500`) — ta sama logika co
+   przy gradiencie passy i konfetti. Przy okazji ΔE00 czerwieni od `rust-400` rośnie
+   z 15,3 do 17,1, więc błąd oddala się od akcentu.
+3. **Ciemny amber trzyma hue 40, nie 36** — przyciemniany amber wchodzi percepcyjnie
+   w rusta; 40 daje ΔE00 23,9 od `rust-500` zamiast 19,6.
+
+Progi liczy `tests/token-contrast.test.ts` z realnych tokenów — na tincie **złożonym nad
+każdym realnym tłem** (karta, wiersz aktywny, zaliczony, rekordowy, canvas, hover), bo
+pierwsza wersja `amber-700` przechodziła tylko na białej karcie.
 
 ## Adopcja „Arco UI v1.4" (2026-07-23, decyzja [Ty])
 

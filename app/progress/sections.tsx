@@ -205,9 +205,9 @@ export function StrengthSection({ strength }: { strength: StrengthRow[] }) {
               <p
                 className={`text-xs tabular-nums ${
                   s.delta > 0
-                    ? "text-success"
+                    ? "text-success-text"
                     : s.delta < 0
-                      ? "text-warning"
+                      ? "text-warning-text"
                       : "text-muted-foreground"
                 }`}
               >

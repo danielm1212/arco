@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { track } from "@/lib/analytics";
+import { inertOutside } from "@/lib/inertBackground";
 import {
   EQUIPMENT_BY_ENVIRONMENT,
   PROGRAM_FOCUSES,
@@ -119,7 +120,27 @@ export function WelcomeOverlay({
     });
   }, [level, env, effectiveGoal, focus, programs]);
 
-  if (completed || dismissed) return null;
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const hidden = completed || dismissed;
+
+  // Reszta Dziś nie może zostać dostępna pod pełnoekranowym onboardingiem.
+  useEffect(() => {
+    if (hidden) return;
+    return inertOutside(overlayRef.current);
+  }, [hidden]);
+
+  // Kroki 2-6 przełączają się same po tapnięciu karty. Bez przeniesienia fokusu
+  // czytnik zostaje przy zniknięciu przycisku i nie zapowiada nowego pytania.
+  useEffect(() => {
+    if (hidden) return;
+    const root = overlayRef.current;
+    if (!root) return;
+    // Pola z `autoFocus` (E1 „imię") biorą fokus same — nie odbieramy im go.
+    if (root.contains(document.activeElement) && document.activeElement !== root) return;
+    root.focus({ preventScroll: true });
+  }, [step, hidden]);
+
+  if (hidden) return null;
 
   function finish() {
     setDismissed(true);
@@ -198,7 +219,19 @@ export function WelcomeOverlay({
 
   return (
     // fixed → poza pt-safe z <body>; własny safe-area (notch PWA, ekran pełnoekranowy)
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] text-brand-foreground">
+    //
+    // B7: onboarding zasłania cały ekran, więc jest dialogiem — inaczej czytnik
+    // nadal wędruje po Dziś pod spodem, a rotor pokazuje nagłówki obu warstw
+    // naraz. `tabIndex={-1}` + fokus przy każdym kroku sprawia, że VoiceOver
+    // czyta nowe pytanie zamiast milczeć po auto-advance.
+    <div
+      ref={overlayRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Wprowadzenie do Arco"
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-brand p-md pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))] text-brand-foreground"
+    >
       <div className="flex min-h-11 items-center justify-between">
         {step >= 1 && step <= 7 ? (
           <button
@@ -246,6 +279,7 @@ export function WelcomeOverlay({
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={40}
+              aria-label="Imię"
               placeholder="Imię (opcjonalnie)"
               autoFocus
             />
@@ -276,6 +310,8 @@ export function WelcomeOverlay({
               {ENVS.map((e) => (
                 <button
                   key={e.id}
+                  type="button"
+                  aria-pressed={env === e.id}
                   onClick={() => {
                     setEnv(e.id);
                     setStep(3);
@@ -302,6 +338,8 @@ export function WelcomeOverlay({
               {LEVELS.map((l) => (
                 <button
                   key={l.id}
+                  type="button"
+                  aria-pressed={level === l.id}
                   onClick={() => {
                     setLevel(l.id);
                     setStep(4);
@@ -329,6 +367,8 @@ export function WelcomeOverlay({
               {TRAINING_PRIORITIES.map((item) => (
                 <button
                   key={item.id}
+                  type="button"
+                  aria-pressed={priority === item.id}
                   onClick={() => {
                     setPriority(item.id);
                     setStep(5);
@@ -355,6 +395,8 @@ export function WelcomeOverlay({
               {PROGRAM_FOCUSES.map((item) => (
                 <button
                   key={item.id}
+                  type="button"
+                  aria-pressed={focus === item.id}
                   onClick={() => {
                     setFocus(item.id);
                     setStep(6);

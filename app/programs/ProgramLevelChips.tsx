@@ -45,8 +45,13 @@ export function ProgramLevelChips({ filters }: { filters: Filters }) {
   }
 
   return (
+    // Rola `group`, nie `tablist`: chipy filtrują listę pod spodem, nie
+    // przełączają paneli. Wzorzec `tab`/`tablist` obiecuje czytnikowi
+    // `tabpanel` z `aria-controls` i nawigację strzałkami — bez nich VoiceOver
+    // zapowiada zakładki, których nie da się obsłużyć. `aria-pressed` opisuje
+    // to, czym te chipy naprawdę są: przełącznikami (tak samo `ProgramFilters`).
     <div
-      role="tablist"
+      role="group"
       aria-label="Filtruj bibliotekę po poziomie"
       className="flex gap-xs overflow-x-auto pb-1"
     >
@@ -56,8 +61,7 @@ export function ProgramLevelChips({ filters }: { filters: Filters }) {
           <button
             key={label}
             type="button"
-            role="tab"
-            aria-selected={active}
+            aria-pressed={active}
             onClick={() => go(level)}
             className={`h-11 shrink-0 rounded-full px-4 text-sm font-medium transition-colors ${
               active

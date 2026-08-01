@@ -188,7 +188,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
                 role="status"
                 className="flex min-h-11 w-full items-center justify-center gap-xs rounded-md bg-success/10 px-md text-sm font-semibold text-foreground"
               >
-                <Check aria-hidden="true" className="size-4 text-success" />
+                <Check aria-hidden="true" className="size-4 text-success-text" />
                 Aktywny
               </div>
             ) : (

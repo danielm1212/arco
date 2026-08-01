@@ -62,10 +62,28 @@ const config: Config = {
           foreground: "hsl(var(--brand-foreground))",
           muted: "hsl(var(--brand-muted))",
         },
-        // Semantyczne kolory feedbacku (poza zestawem shadcn)
-        success: "hsl(var(--color-success))",
-        warning: "hsl(var(--color-warning))",
-        danger: "hsl(var(--color-danger))",
+        // Semantyczne kolory feedbacku (poza zestawem shadcn).
+        //
+        // Każda barwa ma do trzech ról i NIE są wymienne:
+        //   `bg-<kolor>`        wypełnienie (stopień 500 w light / 400 w dark),
+        //   `text-<kolor>-foreground`  tekst NA tym wypełnieniu,
+        //   `text-<kolor>-text` ta sama barwa jako tekst na neutralnym tle.
+        // Trzecia rola istnieje, bo stopień wypełnienia jako tekst nie
+        // przechodzi 4.5:1 — amber ma w light 1.91:1, zieleń 4.18:1 na canvas,
+        // czerwień w dark 3.98:1 na własnym tincie. Szczegóły przy tokenach.
+        success: {
+          DEFAULT: "hsl(var(--color-success))",
+          foreground: "hsl(var(--color-success-contrast))",
+          text: "hsl(var(--color-success-text))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--color-warning))",
+          text: "hsl(var(--color-warning-text))",
+        },
+        danger: {
+          DEFAULT: "hsl(var(--color-danger))",
+          text: "hsl(var(--color-danger-text))",
+        },
         // Support (violet) — prowadzenie, plany, dane; oś uzupełniająca akcentu
         support: {
           DEFAULT: "hsl(var(--color-support))",

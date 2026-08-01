@@ -43,10 +43,16 @@ test("filtr faktycznie odcina reguły z danymi konta i zostawia offline stron", 
   // sprawdzał tablicę, która realnie trafia na produkcję, niezależnie od tego, jak
   // uruchomiono `test:unit`. Plik jest osobnym procesem (`node --test`), ale i tak
   // przywracamy poprzednią wartość.
-  const previousEnv = process.env.NODE_ENV;
-  process.env.NODE_ENV = "production";
+  //
+  // Zapis przez rzutowanie, bo Next.js deklaruje `NODE_ENV` jako read-only w
+  // `NodeJS.ProcessEnv` — samo przypisanie nie przechodzi `tsc --noEmit`
+  // (błąd wjechał z PR #60: build nie typuje plików testowych, więc nikt tego
+  // nie zauważył). Runtime nietknięty, zmienia się wyłącznie typowanie.
+  const env = process.env as Record<string, string | undefined>;
+  const previousEnv = env.NODE_ENV;
+  env.NODE_ENV = "production";
   const { defaultCache } = await import("@serwist/next/worker");
-  process.env.NODE_ENV = previousEnv;
+  env.NODE_ENV = previousEnv;
   const cacheNames = (entries: typeof defaultCache) =>
     entries.map((entry) => (entry.handler as { cacheName?: string }).cacheName);
 

@@ -135,19 +135,21 @@ export const ExerciseCard = memo(function ExerciseCard({
               affordance robi wyłącznie ⓘ; aria-label zamiast title (tooltipy
               title= niedostępne na dotyku). */}
           <div className="flex items-center gap-xs">
-            <span className="min-w-0 truncate font-medium">{ex.name}</span>
+            <h2 className="min-w-0 truncate font-medium">{ex.name}</h2>
             {/* key = remount po podmianie (N2#4) — zero szans na stary cache opisu */}
             <ExerciseInfoSheet key={ex.exerciseId} exerciseId={ex.exerciseId}>
               <button
                 type="button"
-                aria-label="Jak wykonać"
+                aria-label={`Jak wykonać: ${ex.name}`}
                 className="flex size-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Info className="size-3.5" aria-hidden />
               </button>
             </ExerciseInfoSheet>
             {grouped && (
-              <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+              // Badge supersetu jest informacją, nie działaniem — rust na
+              // `primary/15` dawał 4.13:1 (light) i 3.89:1 (dark).
+              <span className="shrink-0 rounded-full bg-support-surface px-2 py-0.5 text-xs font-medium text-support-surface-text">
                 SS{ex.supersetGroup}
               </span>
             )}
@@ -221,6 +223,7 @@ export const ExerciseCard = memo(function ExerciseCard({
             <input
               defaultValue={ex.notes ?? ""}
               autoFocus={!!noteOpen}
+              aria-label={`Notatka do ćwiczenia ${ex.name}`}
               placeholder="Notatka do ćwiczenia…"
               onBlur={(e) => onPersistNotes(ex.sessionExerciseId, e.target.value)}
               className="min-h-11 w-full rounded-md border border-input bg-background px-sm text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -230,7 +233,10 @@ export const ExerciseCard = memo(function ExerciseCard({
           {(() => {
             const goal = progressionGoal(ex, unit, trainingPriority);
             return goal ? (
-              <p className="flex items-start gap-1.5 rounded-md bg-success/10 px-sm py-xs text-xs text-success">
+              // Prowadzenie = violet (v1.4), nie zielony: zielony ma zostać przy
+              // „zaliczone", a `success` na `success/10` dawał w light 4.00:1.
+              // Na support-surface tekst support ma 7.00:1 (light) i 12.81:1 (dark).
+              <p className="flex items-start gap-1.5 rounded-md bg-support-surface px-sm py-xs text-xs text-support-surface-text">
                 <Lightbulb className="mt-0.5 size-3.5 shrink-0" />
                 <span>
                   <strong className="font-semibold">Prowadzenie progresji:</strong> {goal.message}

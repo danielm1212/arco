@@ -240,6 +240,10 @@ export default async function HomePage() {
         displayName={settings?.display_name ?? null}
       />
       <main className="flex-1 space-y-lg p-md">
+        {/* B8: nazwa ekranu wyłącznie dla czytnika — wizualnie niesie ją aktywna
+            zakładka nawigacji, a powitanie jest treścią, nie tytułem strony (i
+            znika bez imienia, więc nie może pełnić roli `h1`). */}
+        <h1 className="sr-only">Dziś</h1>
         {/* HOME-01: powitanie jest linią treści nad hero, nie modułem — karta
             startu zostaje pierwszym modułem (D-03, audyt R2.1). Brak imienia =
             węzeł w ogóle nie istnieje (POC: "brak imienia = brak powitania"). */}

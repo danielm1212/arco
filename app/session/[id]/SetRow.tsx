@@ -175,6 +175,12 @@ export const SetRow = memo(function SetRow({
   // listę (lokalnie przechodziło, CI łapało). Sąsiedni wiersz i „+ seria" przeżywają
   // usunięcie, a klucz `set.id` gwarantuje, że React użyje tego samego węzła DOM —
   // fokus zostaje tam, gdzie go postawiliśmy.
+  // Nazwa pola musi nieść, KTÓREJ serii dotyczy: w loggerze bywa ich ~30 pod
+  // rząd, a rotor VoiceOvera czyta je jednym ciągiem. Bez tego „Ciężar” pada
+  // trzydzieści razy i nie da się wrócić do właściwego wiersza.
+  const fieldLabel = (name: string) =>
+    isWarmup ? `${name}, seria rozgrzewkowa` : `${name}, seria ${index}`;
+
   function deleteSet() {
     const row = rowRef.current;
     const neighbour = (row?.nextElementSibling ?? row?.previousElementSibling) as
@@ -213,11 +219,15 @@ export const SetRow = memo(function SetRow({
           onActivate();
           setSetMenuOpen((open) => !open);
         }}
+        // Ani „W", ani numer nie dostają barwy semantycznej jako TEKST: amber
+        // ma na to osobny ciemny stopień (`warning-text`), a zielony na tincie
+        // `success/10` daje w light tylko 4.00:1 — status niesie i tak tło
+        // wiersza oraz check, więc numer zostaje neutralny (5.00:1 / 6.21:1).
         className={`size-11 shrink-0 rounded-md border text-xs font-medium tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           isWarmup
-            ? "border-warning bg-warning/15 text-warning"
+            ? "border-warning-text bg-warning/15 text-warning-text"
             : doneSurface
-              ? "border-transparent text-success"
+              ? "border-transparent text-muted-foreground"
               : "border-input text-muted-foreground"
         }`}
         aria-label={isWarmup ? "Opcje serii rozgrzewkowej" : `Opcje serii ${index}`}
@@ -257,7 +267,7 @@ export const SetRow = memo(function SetRow({
             type="button"
             role="menuitem"
             onClick={deleteSet}
-            className="flex min-h-11 w-full items-center rounded-md px-sm text-left text-sm text-danger hover:bg-danger/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex min-h-11 w-full items-center rounded-md px-sm text-left text-sm text-danger-text hover:bg-danger/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Usuń serię
           </button>
@@ -279,6 +289,7 @@ export const SetRow = memo(function SetRow({
         <>
           <Field
             inputRef={firstFieldRef}
+            label={fieldLabel("Powtórzenia")}
             value={set.reps}
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
@@ -290,6 +301,7 @@ export const SetRow = memo(function SetRow({
             onEnter={() => actionRef.current?.focus()}
           />
           <Field
+            label={fieldLabel(`Dociążenie w ${unit}`)}
             value={set.added_weight != null ? weightToDisplay(set.added_weight, unit) : null}
             max={weightMax}
             placeholder={phWeight(prev?.added_weight)}
@@ -305,6 +317,7 @@ export const SetRow = memo(function SetRow({
         <>
           <Field
             inputRef={firstFieldRef}
+            label={fieldLabel(`Ciężar w ${unit}`)}
             value={set.weight != null ? weightToDisplay(set.weight, unit) : null}
             step="0.5"
             max={weightMax}
@@ -318,6 +331,7 @@ export const SetRow = memo(function SetRow({
           />
           <Field
             inputRef={repsFieldRef}
+            label={fieldLabel("Powtórzenia")}
             value={set.reps}
             max={LIMITS.reps}
             placeholder={ph(prev?.reps)}
@@ -333,6 +347,7 @@ export const SetRow = memo(function SetRow({
 
       {type !== "timed" && showRpe && (
         <Field
+          label={fieldLabel("RPE, skala 1-10")}
           value={set.rpe}
           step="0.5"
           grow={false}
@@ -373,7 +388,7 @@ export const SetRow = memo(function SetRow({
             : flowState === "ready"
               ? "border-primary bg-primary text-primary-foreground"
               : set.completed
-                ? "border-success bg-success text-white"
+                ? "border-success bg-success text-success-foreground"
                 : "border-input text-muted-foreground"
         }`}
       >
@@ -411,6 +426,7 @@ export const SetRow = memo(function SetRow({
 
 function Field({
   value,
+  label,
   step,
   grow = true,
   placeholder,
@@ -425,6 +441,13 @@ function Field({
   inputRef,
 }: {
   value: number | null;
+  /**
+   * Dostępna nazwa pola — WYMAGANA. `placeholder` nią nie jest: znika po
+   * pierwszym znaku, a VoiceOver czytał wcześniej sam wynik poprzedniej sesji
+   * („edit text, 80”), bez informacji, czy to kilogramy, powtórzenia czy RPE.
+   * Nagłówki kolumn w `ExerciseCard` są czysto wizualne i nie wiążą się z inputem.
+   */
+  label: string;
   step?: string;
   grow?: boolean;
   placeholder?: string;
@@ -459,6 +482,7 @@ function Field({
   return (
     <Input
       ref={inputRef}
+      aria-label={label}
       type="text"
       inputMode="decimal"
       pattern="[0-9]*[.,]?[0-9]*"

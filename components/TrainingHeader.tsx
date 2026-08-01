@@ -50,7 +50,9 @@ export function TrainingHeader({
           aria-label="Profil i ustawienia"
           className="grid size-11 place-items-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="grid size-8 place-items-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+          {/* Monogram identyfikuje konto, nie zachęca do działania — rust na
+              `primary/15` dawał 4.13:1 (light) i 3.89:1 (dark). */}
+          <span className="grid size-8 place-items-center rounded-full bg-support-surface text-sm font-semibold text-support-surface-text">
             {monogram ?? <span aria-hidden>•</span>}
           </span>
         </Link>

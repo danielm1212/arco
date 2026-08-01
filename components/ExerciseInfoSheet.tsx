@@ -157,7 +157,7 @@ export function ExerciseInfoSheet({
                 variant="ghost"
                 disabled={pending}
                 onClick={() => setConfirmingDelete(true)}
-                className="w-full text-danger hover:bg-danger/10 hover:text-danger"
+                className="w-full text-danger-text hover:bg-danger/10 hover:text-danger-text"
               >
                 <Trash2 />
                 Usuń własne ćwiczenie

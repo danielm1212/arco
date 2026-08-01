@@ -196,7 +196,7 @@ export function ProgramEditor({
                     },
                   })
                 }
-                className="shrink-0 text-muted-foreground hover:text-danger"
+                className="shrink-0 text-muted-foreground hover:text-danger-text"
                 aria-label={`Usuń ${day.label}`}
               >
                 <Trash2 />
@@ -265,7 +265,7 @@ export function ProgramEditor({
               action: () => run(() => deleteProgram(programId)),
             })
           }
-          className="w-full text-danger hover:bg-danger/10 hover:text-danger"
+          className="w-full text-danger-text hover:bg-danger/10 hover:text-danger-text"
         >
           <Trash2 />
           Usuń program
@@ -323,7 +323,7 @@ function SlotRow({
         <Button type="button" variant="ghost" size="icon" onClick={onMoveDown} className="shrink-0 text-muted-foreground" aria-label="Ćwiczenie niżej">
           <ChevronDown />
         </Button>
-        <Button type="button" variant="ghost" size="icon" onClick={onDelete} className="shrink-0 text-muted-foreground hover:text-danger" aria-label={`Usuń ${slot.exerciseName}`}>
+        <Button type="button" variant="ghost" size="icon" onClick={onDelete} className="shrink-0 text-muted-foreground hover:text-danger-text" aria-label={`Usuń ${slot.exerciseName}`}>
           <Trash2 />
         </Button>
       </div>

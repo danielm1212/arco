@@ -32,19 +32,36 @@ Wagi: **P0** = utrata danych / zaufania · **P1** = blokuje użycie · **P2** = 
 
 ### P1 — dostępność
 
-| # | Problem | Miejsce | Dowód | Koszt |
-|---|---|---|---|---|
-| B1 | `text-white` na `bg-success` w dark = **2,37:1** — check zaliczonej serii znika | `SetRow.tsx:376` | jedyny magic-color w repo | 0,5 h |
-| B2 | `BottomSheet` bez pułapki fokusu; tło bez `inert` mimo `aria-modal="true"` | `components/ui/bottom-sheet.tsx:96-120` | wprost wbrew `CLAUDE.md` §overlaye | 3 h |
-| B3 | Pola liczbowe loggera bez dostępnej nazwy (tylko `placeholder`) | `SetRow.tsx:430-520`, `ExerciseCard.tsx:255-272` | VoiceOver: „edit text, 80" | 2 h |
-| B4 | „W" (rozgrzewka) = **1,91:1** w light; jedyny odróżnik od serii roboczej | `SetRow.tsx:218` | amber to token tła, nie tekstu | 1 h |
-| B5 | `destructive` w dark = **3,36:1**, na potwierdzeniach usuwania (8 miejsc) | `components/ui/button.tsx:16` | dark odziedziczony przez inwersję | 0,5 h |
-| B6 | Przyciski przerwy 36 px zamiast 44 | `RestTimer.tsx:117,120`, `TimedStopwatch.tsx:130` | `size="sm"` = `h-9` | 0,5 h |
-| B7 | Onboarding nie jest dialogiem; karty wyboru bez `aria-pressed` | `WelcomeOverlay.tsx:201,262,286,311,336` | `SettingsForm.tsx:275` robi to dobrze | 3 h |
-| B8 | Brak `h1` na Dziś/Plany; ćwiczenia w loggerze nie są nagłówkami | `TrainingHeader.tsx`, `ExerciseCard.tsx:145` | brak nawigacji rotorem po 30 seriach | 1,5 h |
-| B9 | `prefers-reduced-motion` pokrywa 3 z 6 animacji (brak `animate-in`, `animate-pulse`) | `globals.css:399-412` | `history/[id]:119` używa `motion-safe:` poprawnie | 0,5 h |
-| B10 | Tinty tekstu 3,89–4,13:1 (badge supersetu, monogram, prowadzenie progresji) | `ExerciseCard.tsx:233,150`, `TrainingHeader.tsx:53` | wzorzec „kolor na 10-15% tego samego koloru" | 1 h |
-| B11 | Chipy poziomu udają `role="tab"` bez `tabpanel`, `aria-controls` i strzałek | `ProgramLevelChips.tsx:58-75` | `ProgramFilters.tsx:52` używa `aria-pressed` | 1 h |
+Wszystkie jedenaście potwierdzone w kodzie przed naprawą (metoda: `arco-a11y-review`),
+kontrasty policzone z realnych tokenów `app/globals.css`. Zero fałszywych alarmów —
+jedyne odchylenie to B6, gdzie `TimedStopwatch` miał `min-h-11` już wcześniej.
+
+| # | Problem | Miejsce | Stan |
+|---|---|---|---|
+| B1 | `text-white` na `bg-success` w dark = **2,37:1** — check zaliczonej serii znika | `SetRow.tsx:376` | ✅ nowy `--color-success-contrast` → **7,90:1** |
+| B2 | `BottomSheet` bez pułapki fokusu; tło bez `inert` mimo `aria-modal="true"` | `components/ui/bottom-sheet.tsx:96-120` | ✅ `lib/inertBackground.ts` + pułapka Tab, test e2e w Chromium |
+| B3 | Pola liczbowe loggera bez dostępnej nazwy (tylko `placeholder`) | `SetRow.tsx:430-520`, `ExerciseCard.tsx:255-272` | ✅ `label` wymagany w `Field`, nazwa niesie numer serii |
+| B4 | „W" (rozgrzewka) = **1,91:1** w light; jedyny odróżnik od serii roboczej | `SetRow.tsx:218` | ✅ nowy `--arco-amber-700` → min. **4,89:1** |
+| B5 | `destructive` w dark = **3,36:1**, na potwierdzeniach usuwania (8 miejsc) | `components/ui/button.tsx:16` | ✅ `ink-900` w dark → **5,27:1** |
+| B6 | Przyciski przerwy 36 px zamiast 44 | `RestTimer.tsx:88,117,120` | ✅ `min-h-11` (w `TimedStopwatch` był już wcześniej — częściowo fałszywy alarm) |
+| B7 | Onboarding nie jest dialogiem; karty wyboru bez `aria-pressed` | `WelcomeOverlay.tsx:201,262,286,311,336` | ✅ `role="dialog"` + `inert` + fokus za krokiem + 4×`aria-pressed` |
+| B8 | Brak `h1` na Dziś/Plany; ćwiczenia w loggerze nie są nagłówkami | `TrainingHeader.tsx`, `ExerciseCard.tsx:145` | ✅ `h1` sr-only na obu trasach, tytuł sesji `h1`, ćwiczenia `h2` |
+| B9 | `prefers-reduced-motion` pokrywa 3 z 6 animacji (brak `animate-in`, `animate-pulse`) | `globals.css:399-412` | ✅ 6/6 |
+| B10 | Tinty tekstu 3,89–4,13:1 (badge supersetu, monogram, prowadzenie progresji) | `ExerciseCard.tsx:233,150`, `TrainingHeader.tsx:53` | ✅ przeniesione na violet support → **7,00 / 12,81:1** |
+| B11 | Chipy poziomu udają `role="tab"` bez `tabpanel`, `aria-controls` i strzałek | `ProgramLevelChips.tsx:58-75` | ✅ `role="group"` + `aria-pressed` |
+
+**Znalezione przy okazji, poza listą audytu (decyzja właściciela: naprawiamy w tej samej paczce).**
+Ta sama klasa błędu co B4 — stopień WYPEŁNIENIA użyty jako tekst:
+
+| # | Problem | Stan |
+|---|---|---|
+| B12 | `text-success` = **4,18:1** na canvas (light) — `/postępy`, `/ciało`, `SettingsForm` | ✅ nowy `--arco-green-600` → min. **4,98:1** |
+| B13 | `text-danger` w dark = **4,47:1** na powierzchni i **3,98:1** na `danger/10` — wszystkie komunikaty błędu | ✅ nowy `--arco-red-300` → min. **5,13:1** |
+
+Wnioskiem systemowym z całej paczki jest kontrakt trzech ról koloru semantycznego
+(`bg-<kolor>` · `text-<kolor>-foreground` · `text-<kolor>-text`), opisany przy tokenach
+w `app/globals.css` i w `tailwind.config.ts`. Cztery z trzynastu pozycji to jedna
+pomyłka powtórzona cztery razy: użycie stopnia wypełnienia jako tekstu.
 
 ### P2 — skala
 

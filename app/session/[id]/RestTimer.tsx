@@ -85,7 +85,7 @@ export function RestTimer({
           <p className="flex-1 text-base font-semibold">
             Koniec przerwy. Czas na serię! 💪
           </p>
-          <Button variant="secondary" size="sm" onClick={onDone}>
+          <Button variant="secondary" size="sm" className="min-h-11" onClick={onDone}>
             OK
           </Button>
         </div>
@@ -114,10 +114,13 @@ export function RestTimer({
             {mm}:{ss}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => onExtend(30)}>
+        {/* `size="sm"` daje h-9 — 36 px w najgęstszym miejscu apki, przy samej
+            krawędzi ekranu. `min-h-11` podnosi target do 44 px bez ruszania
+            typografii (ten sam zabieg co w TimedStopwatch). */}
+        <Button variant="outline" size="sm" className="min-h-11" onClick={() => onExtend(30)}>
           +30s
         </Button>
-        <Button variant="secondary" size="sm" onClick={onDismiss}>
+        <Button variant="secondary" size="sm" className="min-h-11" onClick={onDismiss}>
           Pomiń
         </Button>
       </div>

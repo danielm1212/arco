@@ -226,7 +226,7 @@ function MenuItem({
         type="button"
         onClick={onClick}
         className={`flex h-11 w-full items-center gap-sm px-md text-left text-sm ${
-          danger ? "text-danger" : muted ? "text-muted-foreground" : ""
+          danger ? "text-danger-text" : muted ? "text-muted-foreground" : ""
         }`}
       >
         {Icon && <Icon className="size-4 text-muted-foreground" aria-hidden />}

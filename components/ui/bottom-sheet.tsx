@@ -16,6 +16,7 @@ import {
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { acquireBodyScrollLock, releaseBodyScrollLock } from "@/lib/bodyScrollLock";
+import { focusableWithin, inertOutside } from "@/lib/inertBackground";
 
 type TriggerProps = {
   onClick?: (event: MouseEvent<HTMLElement>) => void;
@@ -51,6 +52,7 @@ export function BottomSheet({
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef<HTMLElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef<number | null>(null);
   const onOpenChangeRef = useRef(onOpenChange);
   const returnFocusRef = useRef<HTMLElement | null>(null);
@@ -102,13 +104,42 @@ export function BottomSheet({
     const focusDialog = window.requestAnimationFrame(() => {
       dialogRef.current?.focus({ preventScroll: true });
     });
+
+    const restoreBackground = inertOutside(overlayRef.current);
+
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
+      if (event.key === "Escape") {
+        close();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const root = dialogRef.current;
+      if (!root) return;
+      const items = focusableWithin(root);
+      const active = document.activeElement;
+      if (items.length === 0) {
+        event.preventDefault();
+        root.focus({ preventScroll: true });
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!root.contains(active)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus({ preventScroll: true });
+      } else if (event.shiftKey && (active === first || active === root)) {
+        event.preventDefault();
+        last.focus({ preventScroll: true });
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus({ preventScroll: true });
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
       window.cancelAnimationFrame(focusDialog);
       document.removeEventListener("keydown", onKeyDown);
+      restoreBackground();
       releaseBodyScrollLock();
       // preventScroll: fokus nie może walczyć z przywróceniem pozycji z locka.
       // Gdy od razu otwiera się kolejny sheet, jego własny rAF (focusDialog)
@@ -134,7 +165,7 @@ export function BottomSheet({
       {triggerElement}
       {open &&
         createPortal(
-          <div className="fixed inset-0 z-50 overscroll-none">
+          <div ref={overlayRef} className="fixed inset-0 z-50 overscroll-none">
             <div
               aria-hidden
               className="absolute inset-0 touch-none animate-in fade-in-0 bg-black/50 duration-200"
