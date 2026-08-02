@@ -21,6 +21,29 @@
 
 ## Ostatnie wpisy
 
+### 2026-08-01 · Claude Code · Paczka C z audytu (spójność `/postępy` + copy): ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/progress-consistency-copy` z `main` (365df40, po scaleniu #61).
+  D1–D5 + D7 z `audyt-kodu-i-ui-2026-07-31.md` §1 P3. Nowe pliki `lib/plural.ts`,
+  `lib/actionError.ts`, `tests/plural.test.ts`. Bez migracji. 19 plików.
+- **D3 (pasek 14 dni):** przebudowany na `WeekStrip`, czyli tę samą siatkę co Dziś i
+  kalendarz. Przy okazji zniknął dryf DST — stary pasek liczył dni jako
+  `Date.now() - n * 86_400_000`, mimo że `lib/week.ts` istnieje właśnie po to, żeby tego
+  nie robić. To trzeci raz w tym repo, gdy ta stała okazała się błędem.
+- **D1 (odmiana):** repo miało TRZY ręczne kopie tej samej reguły (`weekWord`, `setWord`,
+  `trainingWord`) i cztery miejsca, które ją pomijały. Reguła siedzi teraz w `lib/plural.ts`,
+  helpery delegują. Refaktor pilnowany testem, który porównuje stare implementacje z nową
+  na zakresie 0..130 — bez tego cicha zmiana jednego słowa byłaby nie do wyłapania.
+- **D2 (wycieki błędów):** to nie było tylko złe copy — toast pokazywał nazwy tabel i
+  polityk RLS. Surowy błąd idzie do logu serwera, do UI polskie zdanie nazywające operację.
+  **Otwarte:** copy komunikatów w samym SQL-u (migracja `20260720153000`) — osobna sesja.
+- **Środowisko:** iCloud zablokował dysk na tyle, że w repo na Desktopie `tsc`, `git add` i
+  `git fetch` wisiały po 10+ minut przy 0% CPU. Bramkę uruchomiłem w czystym klonie na
+  dysku lokalnym (`npm ci` + pełny zestaw w kilkadziesiąt sekund). **Repo na Desktopie ma
+  niezacommitowane zmiany paczki C i gałąź `agent/a11y-p1` — do posprzątania przez
+  właściciela** (`git checkout -- .` po weryfikacji, że wszystko jest w #62).
+- **Rezerwacja zdjęta.** Następny krok: D6 (daty bez strefy) albo paczka D (skala).
+
 ### 2026-08-01 · Claude Code · Paczka B z audytu (dostępność, P1): ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** gałąź `agent/a11y-p1` z `origin/main` (0ab1627, po scaleniu #60). Wszystkie
