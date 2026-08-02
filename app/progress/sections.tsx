@@ -2,7 +2,11 @@ import Link from "next/link";
 import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { Button } from "@/components/ui/button";
 import { StreakFlame } from "@/components/StreakFlame";
-import { streakWeeksText } from "@/lib/streakCopy";
+import { WeekStrip } from "@/components/WeekStrip";
+import type { WeekDay } from "@/lib/week";
+import { STREAK_NOT_STARTED, streakWeeksText } from "@/lib/streakCopy";
+import { countPl, WORDS } from "@/lib/plural";
+import { muscleLabelPl } from "@/lib/exerciseFilters";
 import { Sparkline } from "@/components/Sparkline";
 import { MuscleHeatmapLazy } from "@/components/MuscleHeatmapLazy";
 import type { UnitSystem } from "@/lib/types";
@@ -15,33 +19,56 @@ import { PERIODS, type PrEntry, type StrengthRow } from "./stats";
  */
 
 export function ActivitySection({
-  strip,
+  weekRows,
   streak,
+  weeklyGoal,
 }: {
-  strip: { key: string; on: boolean; dow: string }[];
+  /** Dwa tygodnie, poprzedni → bieżący; każdy poniedziałek → niedziela. */
+  weekRows: WeekDay[][];
   streak: number;
+  weeklyGoal: number;
 }) {
+  const weeksText = streakWeeksText(streak);
   return (
     <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-sm">
         <h2 className="text-base font-semibold">Aktywność</h2>
-        <span className="flex items-center gap-1 text-sm font-medium text-primary">
-          {/* HOME-05b: jeden glif passy w całej aplikacji (`StreakFlame`) —
-              wcześniej ten sam symbol miał tu `fill-current`, w karcie home
-              `fill-primary strokeWidth={0}`, w sheecie obrys, a w kalendarzu i
-              Ekipie emoji. Odmiana liczby też jest wspólna (`streakWeeksText`). */}
-          <StreakFlame className="size-4" /> {streakWeeksText(streak)}
-        </span>
+        {/* HOME-05b: jeden glif passy w całej aplikacji (`StreakFlame`) —
+            wcześniej ten sam symbol miał tu `fill-current`, w karcie home
+            `fill-primary strokeWidth={0}`, w sheecie obrys, a w kalendarzu i
+            Ekipie emoji. Odmiana liczby też jest wspólna (`streakWeeksText`).
+            D5: przy passie 0 nie ma płomienia ani liczby — „0 tygodni z rzędu"
+            było jedynym miejscem w aplikacji mówiącym o passie przez stratę. */}
+        {weeksText ? (
+          <span className="flex items-center gap-1 text-sm font-medium text-primary">
+            <StreakFlame className="size-4" /> {weeksText}
+          </span>
+        ) : (
+          <span className="text-sm text-muted-foreground">{STREAK_NOT_STARTED}</span>
+        )}
       </div>
-      <div className="flex gap-px">
-        {strip.map((d, i) => (
-          <div key={`${d.key}-${i}`} className="flex flex-1 flex-col items-center gap-0.5">
-            <div className={`h-6 w-full rounded-sm ${d.on ? "bg-primary" : "bg-muted"}`} />
-            <span className="text-xs text-muted-foreground">{d.dow}</span>
-          </div>
-        ))}
+      {/* D3: dwa rzędy po 7, nie jeden po 14 — kolumna to dzień tygodnia, więc
+          rytm („trenuję we wtorki") w ogóle daje się odczytać. Kółko, pierścień
+          „dziś" i dwuliterowe skróty pochodzą z `WeekStrip`, czyli z tej samej
+          siatki co Dziś i kalendarz historii; poprzednio był to trzeci,
+          niezależny język dnia treningowego. */}
+      <div className="space-y-xs">
+        {weekRows.map((week, i) => {
+          const previous = i < weekRows.length - 1;
+          return (
+            <div key={week[0]?.key ?? i} className="space-y-0.5">
+              <p className="text-xs text-muted-foreground">
+                {previous ? "Poprzedni tydzień" : "Ten tydzień"}
+              </p>
+              <WeekStrip
+                week={week}
+                weeklyGoal={weeklyGoal}
+                label={previous ? "Poprzedni tydzień" : "Ten tydzień"}
+              />
+            </div>
+          );
+        })}
       </div>
-      <p className="text-xs text-muted-foreground">Ostatnie 14 dni</p>
     </section>
   );
 }
@@ -158,7 +185,7 @@ export function BalanceSection({
               const max = muscleRows[0][1] || 1;
               return (
                 <li key={m} className="flex items-center gap-sm text-sm">
-                  <span className="w-24 shrink-0 truncate capitalize">{m}</span>
+                  <span className="w-24 shrink-0 truncate">{muscleLabelPl(m)}</span>
                   <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
                     <div
                       className="h-full rounded-full bg-chart-primary"
@@ -192,7 +219,7 @@ export function StrengthSection({ strength }: { strength: StrengthRow[] }) {
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{s.name}</p>
-              <p className="text-xs text-muted-foreground">{s.series.length} sesji</p>
+              <p className="text-xs text-muted-foreground">{countPl(s.series.length, WORDS.session)}</p>
             </div>
             <div className="w-20 shrink-0">
               <Sparkline values={s.series} className="h-9 w-full" />

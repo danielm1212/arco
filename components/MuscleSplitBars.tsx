@@ -1,6 +1,4 @@
-import { MUSCLE_OPTIONS } from "@/lib/exerciseFilters";
-
-const LABEL_PL = Object.fromEntries(MUSCLE_OPTIONS.map((m) => [m.id, m.label]));
+import { muscleLabelPl } from "@/lib/exerciseFilters";
 
 /** Serie robocze per partia → posortowane wiersze z udziałem %. */
 export function muscleSplit(
@@ -12,7 +10,7 @@ export function muscleSplit(
   return rows
     .map(([m, n]) => ({
       muscle: m,
-      label: LABEL_PL[m] ?? m,
+      label: muscleLabelPl(m),
       count: n,
       pct: Math.round((n / total) * 100),
     }))

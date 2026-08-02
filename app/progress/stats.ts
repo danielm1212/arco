@@ -2,7 +2,14 @@ import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { GUIDANCE, categoriesForExercise, type MuscleCategory } from "@/lib/guidance";
 import { setMetric, strengthTrendCutoff } from "@/lib/exerciseMetrics";
-import { localDayKey, computeStreak, dayOfWeek, weeksMeetingGoal } from "@/lib/week";
+import {
+  addWarsawDays,
+  buildWeekDays,
+  computeStreak,
+  localDayKey,
+  weekStart,
+  weeksMeetingGoal,
+} from "@/lib/week";
 import type { ExerciseType, UnitSystem } from "@/lib/types";
 import { joinMany, joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 import { weightToDisplay } from "@/lib/format";
@@ -182,17 +189,25 @@ export async function getActivity(supabase: Supabase, weeklyGoal: number) {
   // i niezależne od strefy środowiska Node — patrz komentarz w lib/week.ts).
   const dayKey = localDayKey;
   const doneDays = new Set((finished ?? []).map((s) => dayKey(new Date(s.started_at))));
-  const DOW = ["N", "P", "W", "Ś", "C", "P", "S"];
-  const strip = Array.from({ length: 14 }, (_, idx) => {
-    const d = new Date(Date.now() - (13 - idx) * 86_400_000);
-    return { key: dayKey(d), on: doneDays.has(dayKey(d)), dow: DOW[dayOfWeek(d)] };
-  });
+  // D3: było 14 dni w jednym rzędzie, liczone `Date.now() - n*86_400_000` i
+  // opisane jednoliterowo. Trzy wady naraz: rząd nie miał granicy tygodnia
+  // (kolumna nie znaczyła nic), litery były niejednoznaczne („P" = poniedziałek
+  // i piątek — `lib/week.ts` §WEEK_DOW opisuje ten dług wprost), a stała
+  // 86 400 000 ms gubi godzinę przy zmianie czasu. Teraz to dwa tygodnie
+  // zbudowane tym samym `buildWeekDays` co pasek na Dziś, więc kolumna to dzień
+  // tygodnia, „dziś" ma swój pierścień, a DST liczy `addWarsawDays`.
+  const todayKey = dayKey(new Date());
+  const thisMonday = weekStart(new Date());
+  const weekRows = [
+    buildWeekDays(addWarsawDays(thisMonday, -7), doneDays, todayKey),
+    buildWeekDays(thisMonday, doneDays, todayKey),
+  ];
   const weeks = weeksMeetingGoal(
     (finished ?? []).map((s) => s.started_at),
     weeklyGoal,
   );
   const streak = computeStreak(weeks);
-  return { strip, streak };
+  return { weekRows, streak };
 }
 
 export interface StrengthRow {

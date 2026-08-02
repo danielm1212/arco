@@ -19,6 +19,7 @@ import { HomeExerciseProgress } from "./HomeExerciseProgress";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { StreakBadge } from "@/components/StreakBadge";
+import { countPl, WORDS } from "@/lib/plural";
 import {
   formatCycleStructure,
   type ProgramCandidate,
@@ -283,7 +284,7 @@ export default async function HomePage() {
               {suggestedMeta && (
                 <>
                   <p className="mt-2xs text-sm font-medium text-muted-foreground">
-                    {suggestedMeta.count} ćwiczeń · ~{suggestedMeta.minutes} min
+                    {countPl(suggestedMeta.count, WORDS.exercise)} · ~{suggestedMeta.minutes} min
                   </p>
                   {suggestedMeta.preview.length > 0 && (
                     <p className="mt-2xs truncate text-xs text-muted-foreground">
@@ -323,7 +324,7 @@ export default async function HomePage() {
               <MomentIcon3D name="plan" className="mx-auto -my-xs" priority />
               <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-                Wybierz jeden z {presetCount} planów. Arco poprowadzi Cię przez trening serię po serii.
+                Wybierz jeden z {countPl(presetCount, WORDS.plan)}. Arco poprowadzi Cię przez trening serię po serii.
               </p>
               <Button asChild className="w-full">
                 <Link href="/programs">Wybierz program →</Link>

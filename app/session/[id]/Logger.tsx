@@ -15,6 +15,7 @@ import type {
   UnitSystem,
 } from "@/lib/types";
 import { trainingPriorityMeta } from "@/lib/trainingPriority";
+import { setWord } from "@/lib/streakCopy";
 import { useWakeLock } from "@/lib/useWakeLock";
 import { getKeepAwake, getLoggerHintSeen } from "@/lib/prefs";
 import { ChevronDown, ChevronLeft, Dumbbell, Timer, MoreVertical, Trash2 } from "lucide-react";
@@ -609,7 +610,7 @@ export function Logger({
             </span>
           </span>
           <span>
-            ✓ <span className="font-medium text-foreground">{doneSets}</span> serii
+            ✓ <span className="font-medium text-foreground">{doneSets}</span> {setWord(doneSets)}
           </span>
         </div>
         {isHistorical && (

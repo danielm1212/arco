@@ -70,6 +70,21 @@ pułapki fokusu w `BottomSheet` i check zaliczonej serii 2,37:1 w dark), **C** (
 + copy, w tym pasek 14 dni i 12 błędów odmiany liczebników), **D** (skala: `/postępy` 13 zapytań,
 kod zaproszenia Ekipy bez rotacji, brak CHECK-ów na wejściu).
 
+**Paczka C gotowa technicznie 2026-08-01 na `agent/progress-consistency-copy` (PR #62):**
+D1–D5 + D7. Pasek 14 dni na `/postępy` to teraz **dwa rzędy po siedem** zbudowane z
+kanonicznego `WeekStrip` — kolumna znaczy dzień tygodnia, „dziś" ma pierścień, a skróty są
+dwuliterowe (jednoliterowe „P" oznaczało poniedziałek i piątek). Przy przebudowie zniknął
+dryf przy zmianie czasu: stary pasek liczył dni stałą `86_400_000` ms zamiast
+`addWarsawDays`. Odmiana liczebników ma jedną regułę (`lib/plural.ts`) zamiast trzech
+ręcznych kopii i czterech miejsc, które ją pomijały („3 ćwiczeń", „1 serie", „22 treningów");
+refaktor pilnuje test porównujący stare implementacje z nową na 0..130. Surowe `error.message`
+z Postgresa nie docierają już do toastów (`lib/actionError.ts`) — to była też ekspozycja nazw
+tabel i polityk RLS. Do tego polskie nazwy partii na `/postępy`, strażnik zera w
+`streakWeeksText` i `/ciało`, które przestało się przedstawiać jako „Postępy".
+Bramka: typecheck, lint, **268/268** unit, build, **48/48** overflow. Bez migracji.
+**Otwarte z tej rodziny:** D6 (daty bez strefy na trzech ekranach) i copy komunikatów
+zaszytych w SQL-u. **Do [Ty]:** spojrzenie na nowy pasek na zalogowanym `/postępy`.
+
 **Paczka B gotowa technicznie 2026-08-01 na `agent/a11y-p1`:** wszystkie jedenaście pozycji
 P1 (dostępność) z audytu plus dwa znaleziska własne. Najważniejsze: `BottomSheet` i onboarding
 mają wreszcie pułapkę fokusu i `inert` na tle (wspólny `lib/inertBackground.ts`) — dotąd Tab

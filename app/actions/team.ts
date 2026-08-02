@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeTeamInviteCode, type TeamAvatar } from "@/lib/team";
+import { userFacingError } from "@/lib/actionError";
 
 const REACTIONS = ["💪", "🔥", "👏", "🎯"] as const;
 type TeamIdentity = { displayName: string; avatar: TeamAvatar; confirmed: boolean };
@@ -39,7 +40,7 @@ export async function createTeam(
       p_confirmed: identity.confirmed,
     })
     .single();
-  if (error || !data) return { error: error?.message ?? "Nie udało się utworzyć ekipy." };
+  if (error || !data) return { error: userFacingError(error, "Nie udało się utworzyć ekipy.") };
   refreshTeamPaths();
   return { podId: data.pod_id };
 }
@@ -59,7 +60,7 @@ export async function joinTeam(
     p_avatar: identity.avatar,
     p_confirmed: identity.confirmed,
   });
-  if (error || !data) return { error: error?.message ?? "Nie udało się dołączyć do ekipy." };
+  if (error || !data) return { error: userFacingError(error, "Nie udało się dołączyć do ekipy.") };
   refreshTeamPaths();
   return { podId: data };
 }
@@ -105,7 +106,7 @@ export async function removeTeamMember(podId: string, userId: string): Promise<{
     p_pod_id: podId,
     p_user_id: userId,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: userFacingError(error, "Nie udało się usunąć członka ekipy.") };
   refreshTeamPaths();
   return {};
 }
@@ -114,7 +115,7 @@ export async function renameTeam(podId: string, name: string): Promise<{ error?:
   const auth = await requireUser();
   if ("error" in auth) return auth;
   const { error } = await auth.supabase.rpc("rename_pod", { p_pod_id: podId, p_name: name.trim() });
-  if (error) return { error: error.message };
+  if (error) return { error: userFacingError(error, "Nie udało się zmienić nazwy ekipy.") };
   refreshTeamPaths();
   return {};
 }
@@ -162,7 +163,7 @@ export async function nudgeTeamMember(podId: string, userId: string): Promise<{ 
     p_pod_id: podId,
     p_to_user_id: userId,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: userFacingError(error, "Nie udało się wysłać szturchnięcia.") };
   refreshTeamPaths();
   return {};
 }

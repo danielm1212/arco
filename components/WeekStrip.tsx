@@ -29,11 +29,15 @@ import { trainingWord } from "@/lib/streakCopy";
 export function WeekStrip({
   week,
   weeklyGoal,
+  label = "Ten tydzień",
   className,
 }: {
   week: WeekDay[];
   /** Tylko do podsumowania w `aria-label` („3 z 4 treningów"). */
   weeklyGoal: number;
+  /** Nazwa okresu w `aria-label`. `/postępy` pokazuje dwa tygodnie pod sobą,
+   *  więc oba nie mogą ogłaszać się jako „Ten tydzień". */
+  label?: string;
   className?: string;
 }) {
   const doneCount = week.filter((d) => d.on).length;
@@ -44,7 +48,7 @@ export function WeekStrip({
        siedem kafelków ogłosiłoby się jako zwykły tekst na iPhone PWA. */
     <ol
       role="list"
-      aria-label={`Ten tydzień: ${doneCount} z ${weeklyGoal} ${trainingWord(weeklyGoal)}`}
+      aria-label={`${label}: ${doneCount} z ${weeklyGoal} ${trainingWord(weeklyGoal)}`}
       className={`m-0 grid list-none grid-cols-7 gap-1.5 p-0 ${className ?? ""}`}
     >
       {week.map((d) => (

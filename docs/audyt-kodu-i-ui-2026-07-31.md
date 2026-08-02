@@ -85,15 +85,17 @@ pomyłka powtórzona cztery razy: użycie stopnia wypełnienia jako tekstu.
 
 ### P3 — spójność, treść, dług testowy
 
-| # | Problem | Miejsce | Koszt |
+Paczka C (2026-08-01) zamknęła D1–D5 i D7. Pozostałe pozycje P3 są otwarte.
+
+| # | Problem | Miejsce | Stan |
 |---|---|---|---|
-| D1 | Odmiana liczebników zepsuta w 12 miejscach („3 ćwiczeń", „1 serie", „22 treningów") + **„gdy schudam"** (niesłowo) | `trainingPriority.ts:10` i 11 innych | 4 h |
-| D2 | Surowe `error.message` z Postgresa w polskich toastach (7 miejsc) + komunikaty w SQL-u poza recenzją copy („Jej cel… zagrożony", „szturchnięcie") | `app/actions/team.ts`, `userExercises.ts`, migracja `20260720153000:250` | 3 h |
-| D3 | **Pasek 14 dni na `/postępy`** — trzeci język dnia treningowego (prostokąty, brak „dziś", alfabet gdzie „P" = poniedziałek i piątek) | `progress/sections.tsx:36-43`, `stats.ts:183-187` | 3,5 h |
-| D4 | Nazwy mięśni po angielsku na `/postępy`, choć mapa PL istnieje i działa na Done | `progress/sections.tsx:159` | 0,5 h |
-| D5 | „0 tygodni z rzędu" — jedyne miejsce łamiące regułę „passa nigdy przez zero" | `progress/sections.tsx:33` | 1 h |
-| D6 | Trzy ekrany formatują daty bez strefy → Historia pokazuje inny dzień niż kalendarz nad nią | `history/page.tsx:119`, `exercise/[id]:306`, `body/page.tsx:109` | 1,5 h |
-| D7 | `/ciało` ma w nagłówku napis „Postępy" | `body/page.tsx:66`, `body/loading.tsx:4` | 0,5 h |
+| D1 | Odmiana liczebników zepsuta w 12 miejscach („3 ćwiczeń", „1 serie", „22 treningów") + **„gdy schudam"** (niesłowo) | `trainingPriority.ts:10` i 11 innych | ✅ jedna reguła w `lib/plural.ts`; trzy kopie helperów delegują do niej, test porównuje stare z nowym na 0..130 |
+| D2 | Surowe `error.message` z Postgresa w polskich toastach (7 miejsc) + komunikaty w SQL-u poza recenzją copy („Jej cel… zagrożony", „szturchnięcie") | `app/actions/team.ts`, `userExercises.ts`, migracja `20260720153000:250` | ✅ `lib/actionError.ts` — surowy błąd do logu serwera, do UI polskie zdanie. **Copy w SQL-u zostaje otwarte** (osobna sesja treściowa) |
+| D3 | **Pasek 14 dni na `/postępy`** — trzeci język dnia treningowego (prostokąty, brak „dziś", alfabet gdzie „P" = poniedziałek i piątek) | `progress/sections.tsx:36-43`, `stats.ts:183-187` | ✅ dwa rzędy po 7 na kanonicznym `WeekStrip`; przy okazji zniknęło liczenie dni stałą 86 400 000 ms (dryf przy zmianie czasu) |
+| D4 | Nazwy mięśni po angielsku na `/postępy`, choć mapa PL istnieje i działa na Done | `progress/sections.tsx:159` | ✅ `muscleLabelPl` w `lib/exerciseFilters.ts`, jedno źródło dla Done i `/postępy` |
+| D5 | „0 tygodni z rzędu" — jedyne miejsce łamiące regułę „passa nigdy przez zero" | `progress/sections.tsx:33` | ✅ strażnik przeniesiony do `streakWeeksText` (zwraca `null`), jak w rodzeństwie |
+| D6 | Trzy ekrany formatują daty bez strefy → Historia pokazuje inny dzień niż kalendarz nad nią | `history/page.tsx:119`, `exercise/[id]:306`, `body/page.tsx:109` | otwarte |
+| D7 | `/ciało` ma w nagłówku napis „Postępy" | `body/page.tsx:66`, `body/loading.tsx:4` | ✅ nagłówek i szkielet mówią „Ciało" |
 | D8 | Elevation E0–E3 zadeklarowane i nieużywane; nawigacja rzuca twardszy cień niż modal nad nią | `globals.css:113-121` vs 43× `shadow-sm`, 5× `shadow-lg` | 4 h |
 | D9 | Cztery podwidoki Treningu, trzy różne headery; skeleton Historii nie zgadza się ze stroną | `TrainingHeader` / `PageHeader` / ręczne `<header>` | 3 h |
 | D10 | Rust + violet w jednym komponencie na karcie planu — obok komentarza cytującego regułę, którą łamie | `programs/page.tsx:239,285` | 1,5 h |
