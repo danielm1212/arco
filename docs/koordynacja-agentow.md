@@ -21,6 +21,26 @@
 
 ## Ostatnie wpisy
 
+### 2026-08-01 · Claude Code · D6 (daty bez strefy): ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/dates-timezone` z `main` (224bae5, po scaleniu #62).
+  `lib/dateTime.ts`, `eslint.config.mjs`, trzy ekrany, `tests/date-time.test.ts`.
+- **Naprawa:** `formatWarsawDate` przyjmuje wariant zapisu (`weekdayDayMonth`,
+  `dayMonthYear`, `weekdayDayMonthYear`), więc ekrany dostają ładny format BEZ możliwości
+  pominięcia strefy. Wcześniej helper miał tylko `01.08.2026`, a każdy, kto chciał
+  „pt, 1 sie", pisał własne `toLocaleDateString` — i tak powstały te trzy miejsca.
+- **Guard w LINCIE, nie w teście:** `no-restricted-syntax` na `toLocaleDateString`/
+  `toLocaleTimeString` (plus `new Date(…).toLocaleString`) poza `lib/dateTime.ts`.
+  Test asertujący regex na źródle byłby długiem sam w sobie (audyt §D16).
+  **Pierwsza wersja reguły dała 9 fałszywych trafień** — wszystkie to `toLocaleString`
+  na LICZBACH (separator tysięcy w tonażu). Zawężone do metod jednoznacznie datowych;
+  reguła, która krzyczy na poprawny kod, kończy jako `eslint-disable`.
+- **Test opisuje defekt, nie implementację:** trening o 23:30 czasu polskiego (21:30 UTC)
+  i data tuż po północy w Sylwestra, plus asercja zgodności z `localDayKey` — czyli z tą
+  drugą stroną sprzeczności, którą widział użytkownik (lista vs kalendarz nad nią).
+  `test:unit` puszczany z `TZ=UTC`, żeby odwzorować Vercel.
+- **Bramka:** typecheck, lint, **271/271** unit, build, **48/48** overflow.
+
 ### 2026-08-01 · Claude Code · Paczka C z audytu (spójność `/postępy` + copy): ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** gałąź `agent/progress-consistency-copy` z `main` (365df40, po scaleniu #61).
