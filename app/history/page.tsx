@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/navigation/PageHeader";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 import { joinMany, joinMaybe, type DayJoin } from "@/lib/dbJoins";
 import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
+import { formatWarsawDate } from "@/lib/dateTime";
 
 export const dynamic = "force-dynamic";
 
@@ -116,11 +117,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
                   )}
                 </div>
                 <p className="mt-2xs text-sm text-muted-foreground">
-                  {new Date(s.started_at).toLocaleDateString("pl-PL", {
-                    weekday: "short",
-                    day: "numeric",
-                    month: "short",
-                  })}{" "}
+                  {formatWarsawDate(s.started_at, "weekdayDayMonth")}{" "}
                   · {exs.length} ćwiczeń · {doneSets} zaliczonych serii
                 </p>
               </Link>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkline } from "@/components/Sparkline";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
+import { formatWarsawDate } from "@/lib/dateTime";
 
 export const dynamic = "force-dynamic";
 
@@ -108,7 +109,7 @@ export default async function BodyPage() {
           )}
           <ul className="space-y-2xs">
             {metricRows.map((m) => {
-              const date = new Date(m.date).toLocaleDateString("pl-PL", { day: "numeric", month: "short", year: "numeric" });
+              const date = formatWarsawDate(m.date, "dayMonthYear");
               const photoPaths = pathsFor(m);
               const photos = photoPaths.flatMap((path, index) => photoUrls[path] ? [{ src: photoUrls[path], alt: `Zdjęcie postępu ${index + 1} z ${date}` }] : []);
               return (

@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/navigation/PageHeader";
 import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { joinMany } from "@/lib/dbJoins";
 import { isCompletedWorkingSet, sumVolumeKg } from "@/lib/sessionSetFacts";
+import { formatWarsawDate } from "@/lib/dateTime";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
@@ -302,12 +303,7 @@ export default async function ExercisePage(props: {
           sessions.map((s, i) => (
             <section key={i} className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
               <p className="text-sm text-muted-foreground">
-                {new Date(s.date).toLocaleDateString("pl-PL", {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
+                {formatWarsawDate(s.date, "weekdayDayMonthYear")}
               </p>
               <p className="mt-2xs font-medium">
                 {s.sets.map((set) => formatSet(type, set, unit)).join("  ·  ")}
