@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-30
+**Aktualizacja:** 2026-08-03
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -18,8 +18,23 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
+| — | — | — | — | Brak aktywnych rezerwacji |
 
 ## Ostatnie wpisy
+
+### 2026-08-03 · Codex · Paczka E i guardy po audycie: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/package-e-history-chrome`; E2/E1/E3, `WeekStrip`, guard
+  trzywarstwowego stosu arkuszy oraz rebaseline dokumentacji i reguł pracy. Bez migracji.
+- **Wynik:** wspólny lekki chrome Planów/Postępów/Ciała/Historii; CTA Historii pod
+  kalendarzem; historia bez timera przerwy i prowadzenia progresji, bez regresji zwykłej
+  edycji zakończonej sesji. Poprzedni tydzień nie używa dzisiejszego celu. Typecheck i lint ✓,
+  unit **274/274** ✓, przeglądarkowe **53/53** ✓, build ✓, walidacja treści ✓,
+  rekomendacje **60/60** ✓.
+- **Czego nie dotknięto:** brak migracji, danych testowych, produkcji i Lineara. Nieśledzone
+  `docs/arco-home-agent-handoff/`, materiały okładek i skrypty `.home03-*` pozostawione bez zmian.
+- **Zaległości:** [Ty] VoiceOver i checkpoint iPhone PWA; decyzja, czy
+  `docs/arco-home-agent-handoff/` ma wejść do repo. Następna sesja: D17, potem paczka F.
 
 ### 2026-08-01 · Claude Code · D6 (daty bez strefy): ZAKOŃCZONE TECHNICZNIE
 

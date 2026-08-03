@@ -24,8 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ProgramFilters } from "./ProgramFilters";
 import { ProgramLevelChips } from "./ProgramLevelChips";
-import { TrainingHeader } from "@/components/TrainingHeader";
-import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
+import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -75,7 +74,7 @@ export default async function ProgramsPage({
       .select("id, name, short_name, split_key, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, cover_image_url, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
-    supabase.from("user_settings").select("training_focus, display_name, available_equipment").maybeSingle(),
+    supabase.from("user_settings").select("training_focus, available_equipment").maybeSingle(),
   ]);
   const activeId = active?.program_id ?? null;
   const preferredFocus = settings?.training_focus ?? "balanced";
@@ -121,16 +120,9 @@ export default async function ProgramsPage({
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      {/* R2: Plany są podwidokiem Treningu — wspólny header i lokalna nawigacja
-          zamiast strzałki Back (przełączanie przez replace, jak Postępy/Ciało).
-          Badge celu zostaje na Dziś — tu odpowiadałby na pytanie innego ekranu. */}
-      <TrainingHeader displayName={settings?.display_name ?? null} />
-      <TrainingSubnav active="plans" />
+      <TrainingRouteHeader active="plans" title="Plany" />
 
       <main className="flex-1 space-y-lg p-md">
-        {/* B8: jak na Dziś — tytuł strony niesie wizualnie `TrainingSubnav`,
-            więc `h1` jest sr-only, a sekcje zostają na `h2`. */}
-        <h1 className="sr-only">Plany</h1>
         {activeProgram && (
           <section className="space-y-sm">
             <h2 className="text-base font-semibold">Aktywny plan</h2>

@@ -38,7 +38,7 @@ Stare audyty, briefy i archiwum nie są backlogiem ani źródłem bieżącego st
 - Każde zadanie przygotuj i domknij według `docs/standard-zadania-agentow.md`.
 - Deploy na produkcję wykonuj wyłącznie procedurą z `.claude/skills/arco-release/SKILL.md` — w tym obowiązkowe smoke'i przy zmianie kontraktu danych.
 - Commity i PR-y (tytuł, opis, nazwa gałęzi) pisz po angielsku, format Conventional Commits — reguły i przykłady w `docs/konwencja-commitow-i-pr.md`. Dokumenty w `docs/` i komentarze w kodzie zostają po polsku.
-- Każdą sesję zamykaj procedurą z `.claude/skills/arco-session-close/SKILL.md` — wpis w dzienniku koordynacji, HANDOFF i aktualizacja zadań w Linear.
+- Każdą sesję zamykaj procedurą z `.claude/skills/arco-session-close/SKILL.md` — wpis w dzienniku koordynacji i HANDOFF; Linear aktualizuj wyłącznie na wyraźną prośbę właściciela.
 - Migracje bazy wykonuj wyłącznie przez `supabase/migrations`, według reguł z `.claude/skills/arco-migration/SKILL.md`.
 - Każda tabela z danymi użytkownika dostaje RLS i test wielokontowy w tej samej zmianie.
 - Service role może występować wyłącznie w skryptach i środowisku serwerowym.
@@ -47,7 +47,7 @@ Stare audyty, briefy i archiwum nie są backlogiem ani źródłem bieżącego st
 - Przy zmianach UI stosuj checklistę z `docs/wytyczne-designu.md`.
 - Zmiany animacji/przejść przeglądaj skillem `.claude/skills/arco-motion-review/SKILL.md`.
 - Nowe funkcje muszą mieć stany pusty, ładowania, błędu i jasne CTA.
-- Warstwą operacyjną zadań jest **Linear** (workspace `trainarco`, team „Daniel"; decyzja 2026-07-21 — zastąpił Notion). Źródłem prawdy pozostają repo docs (`backlog-produktu.md`, plan sprintów); w Linear aktualizuj status issue dotkniętych sesją. Notion nie synchronizujemy; `docs/notion-sync-queue.md` jest zamknięte.
+- Warstwą operacyjną zadań jest **Linear** (workspace `trainarco`, team „Daniel"; decyzja 2026-07-21 — zastąpił Notion). Źródłem prawdy pozostają repo docs (`backlog-produktu.md`, plan sprintów); Linear aktualizujemy tylko na wyraźną prośbę właściciela. Notion nie synchronizujemy; `docs/notion-sync-queue.md` jest zamknięte.
 
 ## Kierunek UX/UI
 

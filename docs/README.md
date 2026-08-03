@@ -1,6 +1,6 @@
 # Dokumentacja Arco
 
-**Aktualizacja:** 2026-07-27
+**Aktualizacja:** 2026-08-03
 
 ## Źródła prawdy
 
@@ -22,6 +22,8 @@ Jeżeli stary audyt, notatka lub komentarz przeczy tej kolejności, obowiązuje 
 - `workflow-zespolu.md` — gałąź → PR → zielone CI → merge; nazewnictwo gałęzi, ochrona `main`.
 - `konwencja-commitow-i-pr.md` — format commita i PR-a (Conventional Commits, po angielsku), squash-merge.
 - `koordynacja-agentow.md` — wyłącznie aktywne rezerwacje i krótki log ostatnich zmian.
+- `handoff-2026-08-01-claude-code.md` — samowystarczalne przekazanie po paczkach A/B/C i D6/D7.
+- `plan-po-audycie-2026-08-01.md` — aktualna kolejka E → D17 → F → D po audycie 2026-07-31.
 - `notion-sync-queue.md` — tylko zmiany oczekujące na ręczną synchronizację, gdy właściciel jej zażąda.
 
 Agent zaczyna od `CLAUDE.md`, HANDOFF i aktywnego sprintu. Nie traktuje archiwum ani starego

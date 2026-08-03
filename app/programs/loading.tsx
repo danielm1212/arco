@@ -1,5 +1,4 @@
-import { TrainingHeader } from "@/components/TrainingHeader";
-import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
+import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader";
 
 /**
  * NAV-01: loading Planów zachowuje wspólny chrome przestrzeni Trening —
@@ -9,8 +8,7 @@ import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 export default function Loading() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <TrainingHeader displayName={null} />
-      <TrainingSubnav active="plans" />
+      <TrainingRouteHeader active="plans" title="Plany" />
       <main className="flex-1 animate-pulse space-y-lg p-md">
         <div className="space-y-sm">
           <div className="h-5 w-32 rounded bg-muted" />

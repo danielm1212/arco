@@ -27,6 +27,7 @@ import { WEIGHT_REVIEW_KG, VERY_HIGH_WEIGHT_REVIEW_KG } from "@/lib/setValidatio
 import { RestTimer } from "./RestTimer";
 import { ExercisePicker } from "./ExercisePicker";
 import { ExerciseCard } from "./ExerciseCard";
+import { sessionInteractionMode } from "@/lib/sessionMode";
 import { FinishSheet } from "./FinishSheet";
 import { EmptySessionSheet } from "./EmptySessionSheet";
 import type { PrevSet } from "./SetRow";
@@ -124,6 +125,7 @@ export function Logger({
   trainingPriority: TrainingPriority;
   initialExercises: LoggerExercise[];
 }) {
+  const interactionMode = sessionInteractionMode({ isFinished, isHistorical });
   const router = useRouter();
   const { goBack, replace } = useNavigationHistory();
   const [recoveredChanges, setRecoveredChanges] = useState(0);
@@ -227,7 +229,7 @@ export function Logger({
     removeSet,
     saveNotes,
     startRest,
-    allowRest: !isFinished,
+    mode: interactionMode,
     requestWeightReview: (request) => setWeightReview(request),
     onSetCompletionChange: handleSetCompletionChange,
     onCompletedEditSaved: clearCompletedEdit,
@@ -680,6 +682,7 @@ export function Logger({
             sessionId={sessionId}
             unit={unit}
             trainingPriority={trainingPriority}
+            mode={interactionMode}
             restSeconds={restFor(ex)}
             swapOpen={!!swapOpen[ex.sessionExerciseId]}
             noteOpen={noteOpen[ex.sessionExerciseId]}

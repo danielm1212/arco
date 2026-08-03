@@ -10,6 +10,7 @@ import { SwapPanel } from "./SwapPanel";
 import { SetRow } from "./SetRow";
 import { ExerciseCardMenu } from "./ExerciseCardMenu";
 import type { LoggerExercise } from "./Logger";
+import { modeShowsProgression, type SessionInteractionMode } from "@/lib/sessionMode";
 
 /** Cel progresji na dzisiejszą sesję — jawny i zawsze nadpisywalny przez użytkownika. */
 function progressionGoal(ex: LoggerExercise, unit: UnitSystem, trainingPriority: TrainingPriority) {
@@ -33,6 +34,7 @@ export interface ExerciseCardProps {
   sessionId: string;
   unit: UnitSystem;
   trainingPriority: TrainingPriority;
+  mode: SessionInteractionMode;
   /** restFor(ex) policzone w rodzicu — prymityw, żeby memo widziało zmianę */
   restSeconds: number;
   swapOpen: boolean;
@@ -83,6 +85,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   sessionId,
   unit,
   trainingPriority,
+  mode,
   restSeconds,
   swapOpen,
   noteOpen,
@@ -230,7 +233,7 @@ export const ExerciseCard = memo(function ExerciseCard({
             />
           )}
 
-          {(() => {
+          {modeShowsProgression(mode) && (() => {
             const goal = progressionGoal(ex, unit, trainingPriority);
             return goal ? (
               // Prowadzenie = violet (v1.4), nie zielony: zielony ma zostać przy
@@ -324,6 +327,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   prev.ex === next.ex &&
   prev.index === next.index &&
   prev.unit === next.unit &&
+  prev.mode === next.mode &&
   prev.restSeconds === next.restSeconds &&
   prev.swapOpen === next.swapOpen &&
   prev.noteOpen === next.noteOpen &&

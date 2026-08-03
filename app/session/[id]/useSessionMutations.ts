@@ -19,6 +19,7 @@ import {
 } from "@/lib/setValidation";
 import { LIMITS } from "@/lib/format";
 import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
+import { modeAllowsRest, type SessionInteractionMode } from "@/lib/sessionMode";
 import type { LoggerExercise } from "./Logger";
 
 const SAVE_ERR = "Nie udało się zapisać. Sprawdź internet i spróbuj ponownie.";
@@ -39,7 +40,7 @@ export function useSessionMutations({
   removeSet,
   saveNotes,
   startRest,
-  allowRest,
+  mode,
   requestWeightReview,
   onSetCompletionChange,
   onCompletedEditSaved,
@@ -51,8 +52,7 @@ export function useSessionMutations({
   removeSet: (setId: string) => void;
   saveNotes: (sessionExerciseId: string, notes: string) => void;
   startRest: (ex: LoggerExercise, label?: string) => void;
-  /** W trybie edycji historii nie uruchamiamy timera przerw. */
-  allowRest: boolean;
+  mode: SessionInteractionMode;
   requestWeightReview: (request: {
     ex: LoggerExercise;
     set: SessionSet;
@@ -131,7 +131,7 @@ export function useSessionMutations({
   // metody: A→od razu B), zamiast tego mikro-hint kto teraz. Przerwa odpala się
   // dopiero po ostatnim ogniwie rundy, z labelem "Przerwa po supersecie".
   function maybeStartRest(ex: LoggerExercise, set: SessionSet) {
-    if (!allowRest) return;
+    if (!modeAllowsRest(mode)) return;
     if (!getAutoRest()) return;
     if (set.set_type !== "working") {
       startRest(ex, "Przerwa po rozgrzewce");

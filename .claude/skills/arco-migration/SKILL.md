@@ -49,12 +49,18 @@ $tag$;
 - Jeśli niezmiennik może kolidować z istniejącymi danymi (backfill, stare rekordy) —
   rozstrzygnij konflikt jawnie w migracji, nie licz na szczęście.
 
-## 4. Test przed wyjściem z sesji — świeża baza, potem smoke'i
+## 4. Test przed wyjściem z sesji — świeża, jednorazowa baza, potem smoke'i
+
+`supabase db reset` jest operacją destrukcyjną. Uruchamiaj ją wyłącznie na **izolowanym,
+jednorazowym lokalnym stacku**, nigdy na stacku właściciela zawierającym jego dziennik
+treningowy. Samo słowo „local" nie znaczy „bezpieczny do skasowania".
 
 Obowiązkowa sekwencja zanim migracja opuści sesję (commit/push):
 
-1. `supabase db reset` — pełny przebieg wszystkich migracji na świeżej bazie,
-   dokładnie to samo robi CI.
+1. Na izolowanym stacku: `supabase db reset` — pełny przebieg wszystkich migracji na świeżej
+   bazie, dokładnie to samo robi CI. Jeśli izolowany stack nie jest dostępny, nie resetuj
+   dziennika właściciela: zastosuj migrację punktowo przez `migration up`, a świeży przebieg
+   musi przejść w CI przed merge; odnotuj jawnie, że lokalny reset został zastąpiony bramką CI.
 2. `npm run seed` + `npm run bootstrap:user` na zresetowanej bazie.
 3. `npm run validate:training` i `npm run validate:recommendations` — liczby muszą się
    zgadzać z oczekiwanymi z `docs/HANDOFF.md`.
@@ -80,6 +86,7 @@ zależy od schematu. Service role nigdy w repo ani logach.
 - [ ] timestamp unikalny, z realnego czasu
 - [ ] migracja danych ma guard na pusty stan i jest zgodna z seedem
 - [ ] tabele użytkownika: RLS + test wielokontowy w tej samej paczce
-- [ ] `supabase db reset` przechodzi na świeżej bazie
+- [ ] `supabase db reset` przechodzi na izolowanej świeżej bazie albo świeży przebieg CI jest
+      wymagany przed merge (nigdy reset stacka właściciela)
 - [ ] walidatory zgodne, przy zmianie kontraktu danych smoke'i zielone
 - [ ] rozjazdy danych: punktowy sync po ID, zero re-seeda proda

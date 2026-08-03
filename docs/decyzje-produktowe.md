@@ -1,6 +1,6 @@
 # Arco — rejestr decyzji produktowych
 
-**Aktualizacja:** 2026-07-21
+**Aktualizacja:** 2026-08-03
 **Zasada:** decyzja z tego pliku obowiązuje do czasu jawnego wpisu zastępującego. Pomysł z notatki nie nadpisuje decyzji.
 
 ## Decyzje obowiązujące
@@ -55,6 +55,9 @@
 | D-45 | `intermediate-gym-fbw2` jest **planem z lekkim naciskiem na górę, projektowanym na 3 dni**: jedno duże ćwiczenie na dół w sesji, przysiad i RDL po 5 serii, łydki jako jedna dodatkowa pozycja w B. Karta podaje objętość na partię i mówi wprost, czego plan nie robi | Krótka sesja poniżej godziny jest obietnicą produktu. W tych ramach maksimum, jakie da się dołożyć dolnej części ciała, to serie do ruchu, który już tam jest — jeden ruch podnosi naraz czworogłowe, dwugłowe i pośladki. Czworogłowe (7,5) i pośladki (7,5) zostają poniżej progu ACSM 2026; to zaakceptowany koszt, nie regresja. Kto chce to zmienić, zmienia decyzję, nie „poprawia błąd”. Zastępuje pierwotne brzmienie D-45 z 2026-07-28 (4 serie czworogłowych, zero łydek) |
 | D-46 | Każda zmiana recepty planu wymaga **policzonego pokrycia mięśni przed i po** (`npm run audit:muscle-coverage`), nie przeglądu nazw ćwiczeń | PLAN-C1 zabrał trzy serie czworogłowych, dwie dwugłowych i całe uginanie nóg dodane wcześniej przez TRAIN-01. Tabela ćwiczeń wyglądała poprawnie; ubytek było widać dopiero w liczbach. Walidator tego nie złapie, bo progi objętości są decyzją programową, nie regułą techniczną |
 | D-47 | Operacja usuwająca dane produkcyjne ma mieć warunki bezpieczeństwa **w SQL**, nie w analizie poprzedzającej. Migracja kasująca pinuje stan, na podstawie którego podjęto decyzję (ID, status, liczba wierszy potomnych) i nie robi nic, gdy stan się nie zgadza | 2026-07-29 zaraportowałem sesję jako pustą na podstawie zapytania, które szukało nieistniejącej kolumny. Zgoda na usunięcie padła na podstawie tej pomyłki. Warunek `not exists (… session_sets …)` w migracji odmówił usunięcia i to jedyny powód, dla którego 10 zaliczonych serii nie zniknęło. Analiza przed operacją może być błędna; warunek w `WHERE` nie kłamie |
+| D-48 | Ulubionym jest **cały plan**, nie dzień planu; sekcja Ulubione żyje wyłącznie na `/programs`, pod aktywnym planem, i nie pojawia się na Dziś | Ulubione są skrótem do biblioteki planów, nie drugim mechanizmem wyboru dzisiejszej sesji. Start dnia z dowolnego planu pozostaje osobnym zachowaniem z D-41 |
+| D-49 | Badge passy i monogram profilu występują wyłącznie w nagłówku Dziś. Plany, Postępy, Ciało i Historia mają wspólny lekki nagłówek tytułowy bez tych elementów | Passa odpowiada na pytanie Home, a profil nie powinien powtarzać się w każdym podwidoku Treningu. Wejście do Ustawień pozostaje przez monogram na Dziś |
+| D-50 | W warstwie narzędzia prowadzenie progresji, badge supersetu i monogram używają roli violet/support, nie rust; `--arco-amber-700` pozostaje `hsl(40 98% 26%)` | Violet oznacza prowadzenie/plany/dane, rust działanie. Wybrany amber jest najjaśniejszym zaakceptowanym stopniem przechodzącym AA na realnych złożonych tłach |
 
 ## Otwarte decyzje z bramką
 

@@ -18,3 +18,7 @@ export function useRouter() {
 export function useSearchParams(): URLSearchParams {
   return new URLSearchParams(typeof window === "undefined" ? "" : window.location.search);
 }
+
+export function usePathname(): string {
+  return typeof window === "undefined" ? "/" : window.location.pathname;
+}
