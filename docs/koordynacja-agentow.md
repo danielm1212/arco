@@ -22,6 +22,21 @@
 
 ## Ostatnie wpisy
 
+### 2026-08-03 · Codex · F2 release i okładki programów: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `agent/f2-program-covers`, draft PR #66; migracja wariantów okładek, seed,
+  typy, smoke, lista/detal Planów, `ProgramCover` i 30 finalnych WebP.
+- **Wynik:** produkcyjny `db push` zastosował F2 `favorite_programs` i warianty okładek;
+  historia migracji lokalna=zdalna. Lista używa 1:1, detal 16:9, Home bez zmian UI/query.
+  Własne plany zachowują fallback, a dekoracyjne obrazy nie dublują nazwy w VoiceOver.
+- **Bramka:** izolowany `db reset`, seed **907/15/336**, wszystkie smoke'i, lint, typecheck,
+  build, **276/276 unit**, **56/56 overflow**, rekomendacje **60/60**, CI PR #66 zielone;
+  ręcznie 393 px: 15 miniatur 64×64, hero 361×203, zero overflow.
+- **Czego nie dotknięto:** Home, dane właściciela, Linear, źródłowe PNG/contact sheety/drafty,
+  `docs/arco-home-agent-handoff/`, lokalne skrypty `.home03-*`/`.nav01-*` i D17.
+- **Zaległości:** [Ty] review + merge PR #66 oraz checkpoint VoiceOver/iPhone PWA; projekt
+  okładki aktywnego planu na Home pozostaje osobnym zadaniem.
+
 ### 2026-08-03 · Codex · Paczka F — wybór treningu i ulubione: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `agent/package-f-plan-favorites`; F1 start dowolnego dnia, F2 ulubione całych

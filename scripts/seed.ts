@@ -1339,6 +1339,8 @@ async function seedPrograms() {
       optional_equipment: prog.optional_equipment,
       content_version: prog.content_version,
       days_per_week: prog.days_per_week,
+      cover_image_url: `/program-covers/${prog.slug}.webp`,
+      cover_thumbnail_url: `/program-covers-square/${prog.slug}.webp`,
       is_default: true,
       user_id: null,
     };

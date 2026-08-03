@@ -4,20 +4,17 @@
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** scalić paczkę E, niezależne D17 i paczkę F; następnie kontrolowany
-release migracji F2. Dalsza kolejka: D-1 → D-3+D-2 → D-4 → reszta P3.
+**Najbliższy etap:** [Ty] review i merge PR #66 z okładkami programów; niezależne D17
+pozostaje lokalnym follow-upem. Dalsza kolejka: D-1 → D-3+D-2 → D-4 → reszta P3.
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
 
 ## 0. Rebaseline po audycie — 2026-08-03
 
-`main` po PR #60–#64 ma zamknięte paczki A/B/C, D6/D7 i porządek po duplikatach
-iCloud. Paczka E jest gotowa lokalnie na `agent/package-e-history-chrome`. Bramka
-2026-08-03: typecheck i lint czysto, **274/274 unit** przy `TZ=UTC`,
-**53/53 przeglądarkowych**, build zielony (kompilacja 2,4 s). Walidacja treści treningowej
-bez błędów integralności, rekomendacje **60/60**. CI na `main` ma sześć checków, w tym
-osobny `typecheck`; wynik tej gałęzi nie był jeszcze sprawdzany przez zdalne CI.
+`main` po PR #60–#65 ma zamknięte paczki A/B/C/E, D6/D7, paczkę F i porządek po
+duplikatach iCloud. Produkcyjna baza ma od 2026-08-03 migrację F2 ulubionych
+`20260803141543_favorite_programs.sql`. CI PR #66 z wariantami okładek jest zielone.
 
 Kanon dalszej pracy i wyceny: `docs/plan-po-audycie-2026-08-01.md`; samowystarczalne
 przekazanie sesji: `docs/handoff-2026-08-01-claude-code.md`. Paczka E domknięta technicznie:
@@ -31,7 +28,7 @@ dzisiejszego celu jako historycznego. Baza nie przechowuje historii celu, więc 
 poprzedniego tygodnia podaje samą liczbę treningów, bez mianownika. Guard przeglądarkowy
 sprawdza też poprawną polską odmianę obu etykiet.
 
-**Paczka F gotowa technicznie 2026-08-03 na `agent/package-f-plan-favorites`:** detal
+**Paczka F na `main` od 2026-08-03 (PR #65):** detal
 każdego planu pozwala rozpocząć wybrany dzień bez aktywacji planu. Potwierdzenie mówi wprost,
 że aktywny plan i rotacja się nie zmienią; istniejące RPC nadal wznawia jedyną otwartą sesję
 zamiast tworzyć drugą. Ulubionym jest cały plan: serce działa na liście i detalu, sekcja
@@ -42,13 +39,22 @@ RLS i stały smoke dwóch kont w CI; nie pozwala polubić cudzego prywatnego pla
 Bramka F: świeży, odizolowany `db reset`, seed **907/15/336**, bootstrap, walidatory,
 smoke Phase 1/2/offline/Ekipa/programy, typecheck i lint czysto, **274/274 unit**,
 **56/56 przeglądarkowych**, build zielony (kompilacja 2,1 s). Typ tabeli porównany z
-`supabase gen types`. Izolowany stack i jednorazowe konta usunięte. **Bez `db push`, deployu,
-zmian produkcji i danych właściciela.** D17 pozostaje osobnym lokalnym commitem na
-`agent/d17-write-error-contract` i nie jest częścią gałęzi F.
+`supabase gen types`. Izolowany stack i jednorazowe konta usunięte. D17 pozostaje osobnym
+lokalnym commitem na `agent/d17-write-error-contract` i nie jest częścią gałęzi F.
 
-Decyzje właściciela z 2026-08-01 są utrwalone w `decyzje-produktowe.md` D-41 i D-48–D-50.
-`docs/arco-home-agent-handoff/`, materiały okładek i skrypty zaczynające się kropką pozostają
-obcymi, nieśledzonymi artefaktami — nie commitować bez osobnej decyzji.
+**Okładki programów gotowe technicznie 2026-08-03 w draft PR #66:** każdy z 15 planów
+systemowych ma jawny WebP 1:1 na listę oraz WebP 16:9 na detal. Home nie dostał ani UI,
+ani nowego zapytania; wariant 16:9 jest tylko kontraktem pod przyszły projekt. Własne plany
+zachowują fallback. Obrazy są dekoracyjne dla czytnika, bo nazwa planu jest już w karcie.
+Migracja `20260803150358_program_cover_variants.sql` jest na produkcji; dry-run wskazał
+dokładnie dwie oczekiwane migracje, `db push` przeszedł, a lokalna i zdalna historia są
+zgodne. Bramka PR #66: lint, typecheck, build, **276/276 unit**, **56/56 overflow**, pełne
+smoke'i i ręczny checkpoint 393 px (15 miniatur 64×64, detal 361×203, zero overflow).
+
+Decyzje właściciela z 2026-08-01/03 są utrwalone w `decyzje-produktowe.md` D-41 i
+D-48–D-51. Finalne WebP okładek są częścią PR #66. Źródłowe PNG, contact sheety, drafty,
+`docs/arco-home-agent-handoff/` i skrypty zaczynające się kropką pozostają obcymi,
+nieśledzonymi artefaktami — nie commitować bez osobnej decyzji.
 
 ## 1. Stan produktu
 
