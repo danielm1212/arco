@@ -98,6 +98,8 @@ async function bottomSheetBundle(): Promise<string> {
         function Harness() {
           const [open, setOpen] = useState(false);
           const [nestedOpen, setNestedOpen] = useState(false);
+          const [secondLevelOpen, setSecondLevelOpen] = useState(false);
+          const [thirdLevelOpen, setThirdLevelOpen] = useState(false);
           const [renderCount, setRenderCount] = useState(0);
 
           return <main>
@@ -121,6 +123,9 @@ async function bottomSheetBundle(): Promise<string> {
               <button type="button" onClick={() => { setOpen(false); setNestedOpen(true); }}>
                 Podmień
               </button>
+              <button type="button" onClick={() => setSecondLevelOpen(true)}>
+                Otwórz drugi poziom
+              </button>
             </BottomSheet>
             <BottomSheet
               open={nestedOpen}
@@ -130,6 +135,26 @@ async function bottomSheetBundle(): Promise<string> {
             >
               <button type="button" onClick={() => setNestedOpen(false)}>
                 Zamknij zagnieżdżony
+              </button>
+            </BottomSheet>
+            <BottomSheet
+              open={secondLevelOpen}
+              onOpenChange={setSecondLevelOpen}
+              title="Drugi poziom"
+              description="Drugi równocześnie otwarty arkusz"
+            >
+              <button type="button" onClick={() => setThirdLevelOpen(true)}>
+                Otwórz trzeci poziom
+              </button>
+            </BottomSheet>
+            <BottomSheet
+              open={thirdLevelOpen}
+              onOpenChange={setThirdLevelOpen}
+              title="Trzeci poziom"
+              description="Trzeci równocześnie otwarty arkusz"
+            >
+              <button type="button" onClick={() => setThirdLevelOpen(false)}>
+                Zamknij trzeci poziom
               </button>
             </BottomSheet>
             <div style={{ height: 1800 }} />
@@ -344,7 +369,8 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
             : ""
         }
       </a>
-      <div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end">
+      <div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end gap-xs">
+        <button data-program-favorite aria-label="Dodaj plan do ulubionych" aria-pressed="false" class="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground">♡</button>
         ${
           isActive
             ? '<span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span>'
@@ -394,6 +420,12 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
         ),
         meterCount: document.querySelectorAll('[role="img"][aria-label^="Poziom"]').length,
         activeCount: document.querySelectorAll("[data-program-active]").length,
+        favoriteBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-favorite]")].map(
+          (action) => {
+            const box = action.getBoundingClientRect();
+            return { width: box.width, height: box.height };
+          },
+        ),
         actionBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-action]")].map(
           (action) => {
             const box = action.getBoundingClientRect();
@@ -453,6 +485,11 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
 
       // Aktywny plan sygnalizuje stan całej karty + tekst, nie przycisk „Aktywny".
       assert.equal(metrics.activeCount, 1);
+      assert.equal(metrics.favoriteBoxes.length, 16);
+      assert.ok(
+        metrics.favoriteBoxes.every((box) => box.height >= 44 && box.width >= 44),
+        `serce poniżej 44×44 px przy ${width}px`,
+      );
       assert.equal(metrics.actionBoxes.length, 15);
       assert.ok(
         metrics.actionBoxes.every((box) => box.height >= 44 && box.width >= 44),
@@ -1302,6 +1339,49 @@ test("sheet-w-sheecie (Podmień ćwiczenie): blokada przejmuje pozycję, zamkni�
     await page.getByRole("button", { name: "Zamknij zagnieżdżony" }).click();
     await page.getByRole("dialog", { name: "Arkusz zagnieżdżony" }).waitFor({ state: "detached" });
     await expectRestoredScroll(page, scrollY);
+  } finally {
+    await context.close();
+  }
+});
+
+test("trzypoziomowy stos arkuszy przywraca inert wyłącznie warstwa po warstwie", async () => {
+  const { context, page } = await bottomSheetPage({ width: 375, height: 780 });
+  try {
+    await page.getByRole("button", { name: "Otwórz drugi poziom" }).click();
+    await page.getByRole("dialog", { name: "Drugi poziom" }).waitFor();
+    await page.getByRole("button", { name: "Otwórz trzeci poziom" }).click();
+    await page.getByRole("dialog", { name: "Trzeci poziom" }).waitFor();
+
+    const inertStack = () =>
+      page.evaluate(() => ({
+        root: document.getElementById("root")?.inert ?? false,
+        overlays: [...document.body.children]
+          .filter((element) => element.querySelector('[role="dialog"]'))
+          .map((element) => (element as HTMLElement).inert),
+      }));
+
+    assert.deepEqual(await inertStack(), {
+      root: true,
+      overlays: [true, true, false],
+    });
+
+    await page.getByRole("button", { name: "Zamknij trzeci poziom" }).click();
+    await page.getByRole("dialog", { name: "Trzeci poziom" }).waitFor({ state: "detached" });
+    assert.deepEqual(await inertStack(), { root: true, overlays: [true, false] });
+
+    await page
+      .getByRole("dialog", { name: "Drugi poziom" })
+      .getByRole("button", { name: "Zamknij", exact: true })
+      .click();
+    await page.getByRole("dialog", { name: "Drugi poziom" }).waitFor({ state: "detached" });
+    assert.deepEqual(await inertStack(), { root: true, overlays: [false] });
+
+    await page
+      .getByRole("dialog", { name: "Arkusz testowy" })
+      .getByRole("button", { name: "Zamknij", exact: true })
+      .click();
+    await page.getByRole("dialog", { name: "Arkusz testowy" }).waitFor({ state: "detached" });
+    assert.deepEqual(await inertStack(), { root: false, overlays: [] });
   } finally {
     await context.close();
   }

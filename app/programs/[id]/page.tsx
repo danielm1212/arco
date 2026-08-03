@@ -29,6 +29,8 @@ import {
   formatProgramLevelLabel,
   formatProgramTrainingCount,
 } from "@/lib/programDetail";
+import { FavoriteProgramButton } from "../FavoriteProgramButton";
+import { ProgramDayStartButton } from "../ProgramDayStartButton";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +41,12 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: program }, { data: settings }, { data: activeProgram }] = await Promise.all([
+  const [
+    { data: program },
+    { data: settings },
+    { data: activeProgram },
+    { data: favorite },
+  ] = await Promise.all([
     supabase
       .from("programs")
       .select(
@@ -49,6 +56,11 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
       .maybeSingle(),
     supabase.from("user_settings").select("weekly_goal, training_focus").maybeSingle(),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
+    supabase
+      .from("favorite_programs")
+      .select("program_id")
+      .eq("program_id", params.id)
+      .maybeSingle(),
   ]);
 
   if (!program) notFound();
@@ -91,9 +103,21 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
     }))
     .sort((a, b) => a.position - b.position);
 
+  const isActive = activeProgram?.program_id === program.id;
+  const isFavorite = favorite?.program_id === program.id;
+  const alongsideActivePlan = !!activeProgram?.program_id && !isActive;
+
   // Własny program → edytor; preset → podgląd read-only z akcjami
   if (program.user_id === user?.id) {
-    return <ProgramEditor programId={program.id} name={program.name} days={days} />;
+    return (
+      <ProgramEditor
+        programId={program.id}
+        name={program.name}
+        days={days}
+        isFavorite={isFavorite}
+        alongsideActivePlan={alongsideActivePlan}
+      />
+    );
   }
 
   const frequency = formatProgramFrequency(program.frequency_min, program.frequency_max);
@@ -105,14 +129,19 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
   const matchesPreferredFocus =
     settings?.training_focus === "lower_body" &&
     program.focus_key === settings.training_focus;
-  const isActive = activeProgram?.program_id === program.id;
-
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
       <PageHeader
         title="Plan treningowy"
         fallback="/programs"
         backLabel="Wróć do biblioteki programów"
+        action={
+          <FavoriteProgramButton
+            programId={program.id}
+            programName={program.name}
+            isFavorite={isFavorite}
+          />
+        }
         sticky
       />
 
@@ -307,6 +336,14 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
                   );
                 })}
               </ul>
+              <div className="mt-sm">
+                <ProgramDayStartButton
+                  dayId={day.id}
+                  dayLabel={day.label}
+                  programName={program.name}
+                  alongsideActivePlan={alongsideActivePlan}
+                />
+              </div>
             </article>
           ))}
         </section>

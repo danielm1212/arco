@@ -1,14 +1,54 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-07-30
+**Aktualizacja:** 2026-08-03
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** PLAN-Q (treść 15/15 zamknięta przez PLAN-C, reszta = `droga-do-gotowosci-bety-2026-07.md`)
-→ R2.2 → R4B–R4D → CORE-1 → R4E → R3b. Równolegle: HOME-NAV/PLAN-05 (§6 punkty 5–6).
+**Najbliższy etap:** scalić paczkę E, niezależne D17 i paczkę F; następnie kontrolowany
+release migracji F2. Dalsza kolejka: D-1 → D-3+D-2 → D-4 → reszta P3.
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
+
+## 0. Rebaseline po audycie — 2026-08-03
+
+`main` po PR #60–#64 ma zamknięte paczki A/B/C, D6/D7 i porządek po duplikatach
+iCloud. Paczka E jest gotowa lokalnie na `agent/package-e-history-chrome`. Bramka
+2026-08-03: typecheck i lint czysto, **274/274 unit** przy `TZ=UTC`,
+**53/53 przeglądarkowych**, build zielony (kompilacja 2,4 s). Walidacja treści treningowej
+bez błędów integralności, rekomendacje **60/60**. CI na `main` ma sześć checków, w tym
+osobny `typecheck`; wynik tej gałęzi nie był jeszcze sprawdzany przez zdalne CI.
+
+Kanon dalszej pracy i wyceny: `docs/plan-po-audycie-2026-08-01.md`; samowystarczalne
+przekazanie sesji: `docs/handoff-2026-08-01-claude-code.md`. Paczka E domknięta technicznie:
+
+1. E2 — „Dodaj trening" jest bezpośrednio pod kalendarzem Historii;
+2. E1 — Plany, Postępy, Ciało i Historia używają jednego lekkiego nagłówka; passa i monogram są tylko na Dziś;
+3. E3 — `live | finished | historical` steruje zachowaniem sesji; historia nie startuje przerwy i nie pokazuje guidance progresji.
+
+Follow-up po paczce C również zamknięty: poprzedni tydzień na `/progress` nie ogłasza
+dzisiejszego celu jako historycznego. Baza nie przechowuje historii celu, więc etykieta
+poprzedniego tygodnia podaje samą liczbę treningów, bez mianownika. Guard przeglądarkowy
+sprawdza też poprawną polską odmianę obu etykiet.
+
+**Paczka F gotowa technicznie 2026-08-03 na `agent/package-f-plan-favorites`:** detal
+każdego planu pozwala rozpocząć wybrany dzień bez aktywacji planu. Potwierdzenie mówi wprost,
+że aktywny plan i rotacja się nie zmienią; istniejące RPC nadal wznawia jedyną otwartą sesję
+zamiast tworzyć drugą. Ulubionym jest cały plan: serce działa na liście i detalu, sekcja
+„Ulubione” jest wyłącznie na `/programs`, a kolejność to Aktywny → Utwórz własny → Ulubione
+→ Moje → Biblioteka. Migracja `20260803141543_favorite_programs.sql` ma unikalność pary,
+RLS i stały smoke dwóch kont w CI; nie pozwala polubić cudzego prywatnego planu.
+
+Bramka F: świeży, odizolowany `db reset`, seed **907/15/336**, bootstrap, walidatory,
+smoke Phase 1/2/offline/Ekipa/programy, typecheck i lint czysto, **274/274 unit**,
+**56/56 przeglądarkowych**, build zielony (kompilacja 2,1 s). Typ tabeli porównany z
+`supabase gen types`. Izolowany stack i jednorazowe konta usunięte. **Bez `db push`, deployu,
+zmian produkcji i danych właściciela.** D17 pozostaje osobnym lokalnym commitem na
+`agent/d17-write-error-contract` i nie jest częścią gałęzi F.
+
+Decyzje właściciela z 2026-08-01 są utrwalone w `decyzje-produktowe.md` D-41 i D-48–D-50.
+`docs/arco-home-agent-handoff/`, materiały okładek i skrypty zaczynające się kropką pozostają
+obcymi, nieśledzonymi artefaktami — nie commitować bez osobnej decyzji.
 
 ## 1. Stan produktu
 
@@ -64,11 +104,10 @@ wchodzi do repo (folder nieśledzony).
 **Audyt kodu/UI 2026-07-31 → `docs/audyt-kodu-i-ui-2026-07-31.md`.** Siedem przebiegów
 (architektura, UI/DS, a11y, wydajność, testy, treść, bezpieczeństwo). Fundamenty są zdrowe: RLS
 kompletne na 20 tabelach, niezmienniki w bazie, zero magic-hexów, service role tylko w skryptach.
-Problem jest w egzekucji: v1.4 i budżety z `optymalizacja.md` żyją w tokenach i w dokumencie, nie
-w komponentach i trasach. Kolejka: **A (P0) zrobione**, otwarte **B** (11 pozycji a11y, m.in. brak
-pułapki fokusu w `BottomSheet` i check zaliczonej serii 2,37:1 w dark), **C** (spójność `/postępy`
-+ copy, w tym pasek 14 dni i 12 błędów odmiany liczebników), **D** (skala: `/postępy` 13 zapytań,
-kod zaproszenia Ekipy bez rotacji, brak CHECK-ów na wejściu).
+Problem był w egzekucji: v1.4 i budżety z `optymalizacja.md` żyły w tokenach i dokumencie,
+nie w komponentach i trasach. **A, B, C oraz D6/D7 są zamknięte** w PR #60–#63.
+Gotowe lokalnie są D17 i paczka F. Otwarte pozostaje scalenie/release oraz D (skala:
+`/postępy` 13 zapytań, kod zaproszenia Ekipy bez rotacji, brak CHECK-ów na wejściu).
 
 **Paczka C gotowa technicznie 2026-08-01 na `agent/progress-consistency-copy` (PR #62):**
 D1–D5 + D7. Pasek 14 dni na `/postępy` to teraz **dwa rzędy po siedem** zbudowane z
@@ -82,8 +121,9 @@ z Postgresa nie docierają już do toastów (`lib/actionError.ts`) — to była 
 tabel i polityk RLS. Do tego polskie nazwy partii na `/postępy`, strażnik zera w
 `streakWeeksText` i `/ciało`, które przestało się przedstawiać jako „Postępy".
 Bramka: typecheck, lint, **268/268** unit, build, **48/48** overflow. Bez migracji.
-**Otwarte z tej rodziny:** D6 (daty bez strefy na trzech ekranach) i copy komunikatów
-zaszytych w SQL-u. **Do [Ty]:** spojrzenie na nowy pasek na zalogowanym `/postępy`.
+**Otwarte z tej rodziny:** copy komunikatów zaszytych w SQL-u oraz poprawa etykiety
+poprzedniego tygodnia bez historycznego celu. D6 zamknięte w PR #63.
+**Do [Ty]:** spojrzenie na nowy pasek na zalogowanym `/postępy`.
 
 **Paczka B gotowa technicznie 2026-08-01 na `agent/a11y-p1`:** wszystkie jedenaście pozycji
 P1 (dostępność) z audytu plus dwa znaleziska własne. Najważniejsze: `BottomSheet` i onboarding
@@ -100,8 +140,10 @@ trzech ról koloru semantycznego — `bg-<kolor>` (wypełnienie) · `text-<kolor
 tekstowe stopnie: `amber-700`, `green-600`, `red-300`. Kanon w `paleta-arco-warm.md`
 §„Trzy role koloru semantycznego". Progi liczy `tests/token-contrast.test.ts` na tincie
 złożonym nad KAŻDYM realnym tłem wiersza — pierwsza wersja `amber-700` przechodziła tylko
-na białej karcie i test to wyłapał. CI dostało brakujący krok `npm run typecheck`
-(`next build` nie typuje plików testowych, więc błąd typów z #60 przeszedł niezauważony).
+na białej karcie i test to wyłapał. CI dostało brakujący krok `npm run typecheck`.
+Pierwotne wyjaśnienie, że `next build` nie typuje testów, było fałszywe: `tsconfig` obejmuje
+`**/*.ts`, a build później realnie wyłożył się na pliku testowym. Przyczyna wcześniejszego
+przejścia błędu pozostaje niewyjaśniona; osobny typecheck jest obroną niezależnie od niej.
 Bez migracji. **Do [Ty]:** przejście po zalogowanej trasie z VoiceOverem — arkusze, onboarding
 i logger.
 
@@ -324,11 +366,10 @@ koordynacji (2026-07-23).
    usunięcie historii — zero P0/P1); brakuje wyłącznie regresji na fizycznym nowym
    urządzeniu (iPhone PWA, razem z TRUST-01/03).
 5. **Android:** brak pełnego checkpointu systemowego Back/PWA.
-6. **A11y:** funkcjonalne sheety nadal nie mają kompletnego focus trapu i zwrotu fokusu.
-   SESSION-01A3 dodało gotowe narzędzie — `lib/useFocusTrap.ts`, używane przez podpowiedź
-   startową loggera — ale **nie podpięło go do sheetów**. Spłata długu to podmiana obsługi
-   fokusu w `components/ui/bottom-sheet.tsx` na ten hook; blokada tła jest już współdzielona
-   (`lib/bodyScrollLock.ts`).
+6. **A11y:** `BottomSheet` ma już focus trap, zwrot fokusu, `inert` tła i obsługę stosu
+   arkuszy; bramka przeglądarkowa obejmuje klawiaturę i trzy poziomy. Nadal brakuje
+   ręcznego przejścia VoiceOver na fizycznym iPhonie — automaty nie potwierdzają jakości
+   ogłoszeń i gestów czytnika.
 7. **Backup:** zweryfikowana kopia pozostaje na laptopie; potrzebna zaszyfrowana kopia poza nim.
 8. **Publiczność:** signup, RODO, eksport/usunięcie, abuse protection i publiczna Ekipa są zamknięte.
 9. **Badania:** większość wiedzy pochodzi z dogfoodu właściciela; wymagane są H2-Lab oraz
@@ -408,7 +449,8 @@ koordynacji (2026-07-23).
    nie zweryfikowano z tej sesji, bo lokalne konto nie odpowiada produkcyjnemu.
    **Do [Ty]: checkpoint fizycznego iPhone PWA/Androida dla HOME-01…03 i nowego chrome.**
    Bramka kolejności została spełniona: NAV-01 weszło przed PLAN-05D i R2.2.
-   PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może iść równolegle.
+   **PLAN-04 gotowe technicznie w paczce F:** dowolny dzień startuje bez zmiany aktywnego
+   planu, a test RPC pilnuje także wznowienia jedynej otwartej sesji.
 6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
    CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").
    Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`. **05C (`LevelMeter`) gotowe

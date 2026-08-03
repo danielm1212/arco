@@ -1,6 +1,6 @@
 # Arco — koordynacja agentów
 
-**Aktualizacja:** 2026-07-30
+**Aktualizacja:** 2026-08-03
 **Rola:** aktywne rezerwacje i krótki log operacyjny. Historia pełna jest w Git.
 
 ## Zasady
@@ -18,8 +18,37 @@
 
 | Agent | Zadanie | Obszar | Od | Stan |
 |---|---|---|---|---|
+| — | — | — | — | Brak aktywnych rezerwacji |
 
 ## Ostatnie wpisy
+
+### 2026-08-03 · Codex · Paczka F — wybór treningu i ulubione: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `agent/package-f-plan-favorites`; F1 start dowolnego dnia, F2 ulubione całych
+  planów z migracją `20260803141543_favorite_programs.sql`, F3 kolejność sekcji `/programs`.
+- **Wynik:** aktywny plan i rotacja zostają bez zmian; drugi start wznawia otwartą sesję.
+  RLS izoluje ulubione dwóch kont i odrzuca cudzy prywatny plan. UI ma 44 px, pełne nazwy,
+  focus trap, Escape, zwrot fokusu i brak overflow przy 320 px.
+- **Bramka:** izolowany świeży `db reset`, seed 907/15/336, typy zgodne z generatorem,
+  smoke programów + Phase 1/2/offline/Ekipa, typecheck, lint, **274/274 unit**,
+  **56/56 przeglądarkowych**, build (2,1 s), walidatory **60/60**.
+- **Czego nie dotknięto:** zero `db push`, deployu, produkcji, danych właściciela i Lineara;
+  stack izolowany oraz konta testowe usunięte. Obce nieśledzone materiały bez zmian.
+- **Następny krok:** merge E → D17/F według review, potem kontrolowany release migracji F2.
+
+### 2026-08-03 · Codex · Paczka E i guardy po audycie: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** gałąź `agent/package-e-history-chrome`; E2/E1/E3, `WeekStrip`, guard
+  trzywarstwowego stosu arkuszy oraz rebaseline dokumentacji i reguł pracy. Bez migracji.
+- **Wynik:** wspólny lekki chrome Planów/Postępów/Ciała/Historii; CTA Historii pod
+  kalendarzem; historia bez timera przerwy i prowadzenia progresji, bez regresji zwykłej
+  edycji zakończonej sesji. Poprzedni tydzień nie używa dzisiejszego celu. Typecheck i lint ✓,
+  unit **274/274** ✓, przeglądarkowe **53/53** ✓, build ✓, walidacja treści ✓,
+  rekomendacje **60/60** ✓.
+- **Czego nie dotknięto:** brak migracji, danych testowych, produkcji i Lineara. Nieśledzone
+  `docs/arco-home-agent-handoff/`, materiały okładek i skrypty `.home03-*` pozostawione bez zmian.
+- **Zaległości:** [Ty] VoiceOver i checkpoint iPhone PWA; decyzja, czy
+  `docs/arco-home-agent-handoff/` ma wejść do repo. Następna sesja: D17, potem paczka F.
 
 ### 2026-08-01 · Claude Code · D6 (daty bez strefy): ZAKOŃCZONE TECHNICZNIE
 

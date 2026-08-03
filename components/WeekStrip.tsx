@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import type { WeekDay } from "@/lib/week";
-import { trainingWord } from "@/lib/streakCopy";
+import { countPl, WORDS } from "@/lib/plural";
+import { formatGoalSentence } from "@/lib/programRecommendation";
 
 /**
  * HOME-05b: JEDNA siatka siedmiu dni tygodnia dla całej aplikacji.
@@ -34,13 +35,17 @@ export function WeekStrip({
 }: {
   week: WeekDay[];
   /** Tylko do podsumowania w `aria-label` („3 z 4 treningów"). */
-  weeklyGoal: number;
+  weeklyGoal?: number;
   /** Nazwa okresu w `aria-label`. `/postępy` pokazuje dwa tygodnie pod sobą,
    *  więc oba nie mogą ogłaszać się jako „Ten tydzień". */
   label?: string;
   className?: string;
 }) {
   const doneCount = week.filter((d) => d.on).length;
+  const progressLabel =
+    weeklyGoal == null
+      ? countPl(doneCount, WORDS.training)
+      : formatGoalSentence(doneCount, weeklyGoal);
 
   return (
     /* role="list" jawnie: Safari/VoiceOver zdejmuje domyślną rolę listy z <ol>,
@@ -48,7 +53,7 @@ export function WeekStrip({
        siedem kafelków ogłosiłoby się jako zwykły tekst na iPhone PWA. */
     <ol
       role="list"
-      aria-label={`${label}: ${doneCount} z ${weeklyGoal} ${trainingWord(weeklyGoal)}`}
+      aria-label={`${label}: ${progressLabel}`}
       className={`m-0 grid list-none grid-cols-7 gap-1.5 p-0 ${className ?? ""}`}
     >
       {week.map((d) => (

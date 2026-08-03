@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { startFreestyle } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
-import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
+import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader";
 import type { UnitSystem } from "@/lib/types";
 import { weightToDisplay } from "@/lib/format";
 import {
@@ -52,10 +52,7 @@ export default async function ProgressPage(props: { searchParams: Promise<{ okre
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <header className="border-b px-md py-md text-center">
-        <h1 className="font-semibold">Postępy</h1>
-      </header>
-      <TrainingSubnav active="progress" />
+      <TrainingRouteHeader active="progress" title="Postępy" />
 
       <main className="flex-1 space-y-lg p-md">
         {fresh ? (

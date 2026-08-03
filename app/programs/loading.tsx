@@ -1,5 +1,4 @@
-import { TrainingHeader } from "@/components/TrainingHeader";
-import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
+import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader";
 
 /**
  * NAV-01: loading Planów zachowuje wspólny chrome przestrzeni Trening —
@@ -9,12 +8,15 @@ import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
 export default function Loading() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <TrainingHeader displayName={null} />
-      <TrainingSubnav active="plans" />
+      <TrainingRouteHeader active="plans" title="Plany" />
       <main className="flex-1 animate-pulse space-y-lg p-md">
         <div className="space-y-sm">
           <div className="h-5 w-32 rounded bg-muted" />
           <RowSkeleton />
+        </div>
+        <div className="space-y-xs">
+          <div className="h-4 w-52 rounded bg-muted" />
+          <div className="h-11 w-full rounded-md bg-muted" />
         </div>
         <div className="space-y-sm">
           <div className="h-5 w-44 rounded bg-muted" />
@@ -48,7 +50,8 @@ function RowSkeleton() {
       <div className="col-start-2 row-start-2 mt-xs flex min-h-11 items-center gap-sm">
         {/* trzy kropki poziomu */}
         <div className="h-2 w-8 rounded-full bg-background/60" />
-        <div className="ml-auto h-8 w-16 rounded-md bg-background/60" />
+        <div className="ml-auto size-11 rounded-md bg-background/60" />
+        <div className="h-11 w-16 rounded-md bg-background/60" />
       </div>
     </div>
   );

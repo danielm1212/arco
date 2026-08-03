@@ -44,6 +44,24 @@ export async function createProgram() {
   redirect(`/programs/${prog.id}`);
 }
 
+/** Dodaj lub usuń cały plan z prywatnych ulubionych użytkownika. */
+export async function setProgramFavorite(programId: string, favorite: boolean) {
+  const { supabase, user } = await ctx();
+  const query = favorite
+    ? supabase
+        .from("favorite_programs")
+        .insert({ user_id: user.id, program_id: programId })
+    : supabase
+        .from("favorite_programs")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("program_id", programId);
+  const { error } = await query;
+  if (error && !(favorite && error.code === "23505")) throw new Error(error.message);
+  revalidatePath("/programs");
+  revalidatePath(`/programs/${programId}`);
+}
+
 /** Duplikuj program (seed lub własny) jako własny — punkt startu do edycji. */
 export async function duplicateProgram(sourceId: string) {
   const { supabase, user } = await ctx();

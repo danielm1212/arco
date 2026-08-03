@@ -5,8 +5,7 @@ import { MonthCalendar } from "@/components/MonthCalendar";
 import { weekStart, computeStreak, localDayKey } from "@/lib/week";
 import { DeleteSessionButton } from "./DeleteSessionButton";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
-import { PageHeader } from "@/components/navigation/PageHeader";
-import { TrainingSubnav } from "@/components/navigation/TrainingSubnav";
+import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader";
 import { joinMany, joinMaybe, type DayJoin } from "@/lib/dbJoins";
 import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
 import { formatWarsawDate } from "@/lib/dateTime";
@@ -51,19 +50,13 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-      <PageHeader
-        title="Historia"
-        mode="none"
-        action={
-          <Button asChild>
-            <Link href="/history/add" aria-label="Dodaj trening po fakcie">Dodaj</Link>
-          </Button>
-        }
-      />
-      <TrainingSubnav active="history" />
+      <TrainingRouteHeader active="history" title="Historia" />
 
       <main className="flex-1 space-y-md p-md">
         <MonthCalendar trainingDays={trainingDays} streak={streak} />
+        <Button asChild className="w-full">
+          <Link href="/history/add">Dodaj trening</Link>
+        </Button>
 
         {sessions.length === 0 && !before && (
           /* S14 #2: kalendarz zostaje, pustka = obietnica + jeden krok */
@@ -73,15 +66,9 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
             <p className="mt-xs text-sm text-muted-foreground">
               Każdy zakończony trening zapisze się w kalendarzu i na liście poniżej.
             </p>
-            <Button asChild className="mt-sm">
+            <Button asChild variant="outline" className="mt-sm">
               <Link href="/">Zacznij pierwszy trening</Link>
             </Button>
-            <Link
-              href="/history/add"
-              className="mt-xs inline-flex min-h-11 items-center text-sm font-medium text-primary underline-offset-2 hover:underline"
-            >
-              Dodaj trening z przeszłości
-            </Link>
           </div>
         )}
 

@@ -62,7 +62,7 @@ export function ActivitySection({
               </p>
               <WeekStrip
                 week={week}
-                weeklyGoal={weeklyGoal}
+                weeklyGoal={previous ? undefined : weeklyGoal}
                 label={previous ? "Poprzedni tydzień" : "Ten tydzień"}
               />
             </div>

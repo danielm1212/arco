@@ -90,6 +90,7 @@ async function harnessBundle(): Promise<string> {
         import { TrainingHeader } from "./components/TrainingHeader";
         import { StreakBadge } from "./components/StreakBadge";
         import { MonthCalendar } from "./components/MonthCalendar";
+        import { WeekStrip } from "./components/WeekStrip";
         import { WeekCard } from "./app/WeekCard";
         import { localDayKey, weekStart, addWarsawDays, buildWeekDays } from "./lib/week";
 
@@ -125,6 +126,7 @@ async function harnessBundle(): Promise<string> {
             />
             <main className="space-y-lg p-md">
               <WeekCard week={week} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />
+              <WeekStrip week={week} label="Poprzedni tydzień" />
               <MonthCalendar trainingDays={calendarDays} streak={streak} />
             </main>
           </div>;
@@ -158,6 +160,20 @@ async function harnessPage(
 }
 
 const DAY_CIRCLE = 'ol[role="list"] li > span[aria-hidden]';
+
+test("poprzedni tydzień nie udaje, że zna historyczny cel", async () => {
+  const { context, page } = await harnessPage(375);
+  try {
+    await page.getByRole("list", { name: "Poprzedni tydzień: 2 treningi" }).waitFor();
+    await page.getByRole("list", { name: "Ten tydzień: 2 z 4 treningów" }).first().waitFor();
+    assert.equal(
+      await page.getByRole("list", { name: /Poprzedni tydzień/ }).getAttribute("aria-label"),
+      "Poprzedni tydzień: 2 treningi",
+    );
+  } finally {
+    await context.close();
+  }
+});
 
 for (const width of [320, 375, 393]) {
   test(`header z passą nie przelewa się i trzyma 44 px targetu (${width} px)`, async () => {
