@@ -58,6 +58,7 @@
 | D-48 | Ulubionym jest **cały plan**, nie dzień planu; sekcja Ulubione żyje wyłącznie na `/programs`, pod aktywnym planem, i nie pojawia się na Dziś | Ulubione są skrótem do biblioteki planów, nie drugim mechanizmem wyboru dzisiejszej sesji. Start dnia z dowolnego planu pozostaje osobnym zachowaniem z D-41 |
 | D-49 | Badge passy i monogram profilu występują wyłącznie w nagłówku Dziś. Plany, Postępy, Ciało i Historia mają wspólny lekki nagłówek tytułowy bez tych elementów | Passa odpowiada na pytanie Home, a profil nie powinien powtarzać się w każdym podwidoku Treningu. Wejście do Ustawień pozostaje przez monogram na Dziś |
 | D-50 | W warstwie narzędzia prowadzenie progresji, badge supersetu i monogram używają roli violet/support, nie rust; `--arco-amber-700` pozostaje `hsl(40 98% 26%)` | Violet oznacza prowadzenie/plany/dane, rust działanie. Wybrany amber jest najjaśniejszym zaakceptowanym stopniem przechodzącym AA na realnych złożonych tłach |
+| D-51 | Program ma dwa jawne warianty okładki: 1:1 na liście Planów oraz 16:9 na detalu i w przyszłym projekcie aktywnego planu na Home. Home nie dostaje teraz ani nowego UI, ani zapytania | Osobne pola i pliki chronią kadrowanie obu powierzchni. Kontrakt danych przygotowuje Home bez uprzedzania jego projektu i bez dokładania kosztu do bieżącej trasy |
 
 ## Otwarte decyzje z bramką
 
