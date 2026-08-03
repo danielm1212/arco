@@ -4,17 +4,17 @@
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** [Ty] review i merge PR #66 z okładkami programów; niezależne D17
-pozostaje lokalnym follow-upem. Dalsza kolejka: D-1 → D-3+D-2 → D-4 → reszta P3.
+**Najbliższy etap:** [Ty] review i merge małego follow-upu feedbacku ulubionych na
+`agent/favorite-feedback`; potem niezależne D17. Dalsza kolejka: D-1 → D-3+D-2 → D-4 → reszta P3.
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
 
 ## 0. Rebaseline po audycie — 2026-08-03
 
-`main` po PR #60–#65 ma zamknięte paczki A/B/C/E, D6/D7, paczkę F i porządek po
+`main` po PR #60–#66 ma zamknięte paczki A/B/C/E, D6/D7, paczkę F i porządek po
 duplikatach iCloud. Produkcyjna baza ma od 2026-08-03 migrację F2 ulubionych
-`20260803141543_favorite_programs.sql`. CI PR #66 z wariantami okładek jest zielone.
+`20260803141543_favorite_programs.sql` oraz warianty okładek. Produkcyjny deploy PR #66 jest zielony.
 
 Kanon dalszej pracy i wyceny: `docs/plan-po-audycie-2026-08-01.md`; samowystarczalne
 przekazanie sesji: `docs/handoff-2026-08-01-claude-code.md`. Paczka E domknięta technicznie:
@@ -42,7 +42,7 @@ smoke Phase 1/2/offline/Ekipa/programy, typecheck i lint czysto, **274/274 unit*
 `supabase gen types`. Izolowany stack i jednorazowe konta usunięte. D17 pozostaje osobnym
 lokalnym commitem na `agent/d17-write-error-contract` i nie jest częścią gałęzi F.
 
-**Okładki programów gotowe technicznie 2026-08-03 w draft PR #66:** każdy z 15 planów
+**Okładki programów na `main` i produkcji od 2026-08-03 (PR #66):** każdy z 15 planów
 systemowych ma jawny WebP 1:1 na listę oraz WebP 16:9 na detal. Home nie dostał ani UI,
 ani nowego zapytania; wariant 16:9 jest tylko kontraktem pod przyszły projekt. Własne plany
 zachowują fallback. Obrazy są dekoracyjne dla czytnika, bo nazwa planu jest już w karcie.
@@ -50,6 +50,13 @@ Migracja `20260803150358_program_cover_variants.sql` jest na produkcji; dry-run 
 dokładnie dwie oczekiwane migracje, `db push` przeszedł, a lokalna i zdalna historia są
 zgodne. Bramka PR #66: lint, typecheck, build, **276/276 unit**, **56/56 overflow**, pełne
 smoke'i i ręczny checkpoint 393 px (15 miniatur 64×64, detal 361×203, zero overflow).
+Produkcyjne assety odpowiadają w wymiarach 512×512 i 1672×941.
+
+**Feedback ulubionych gotowy technicznie 2026-08-03 na `agent/favorite-feedback`:** dodanie
+i usunięcie planu pokazują zwięzły toast, błąd nie ujawnia surowej odpowiedzi bazy, a serce
+jest zablokowane i ma `aria-busy` podczas zapisu. Po zmianie fokus wraca na to samo serce lub
+na jego pozostałą kopię, gdy wiersz znika z sekcji Ulubione. Prawdziwy Sonner jest objęty
+testem sukcesu w obie strony, błędu, `aria-live`, pending i fokusu.
 
 Decyzje właściciela z 2026-08-01/03 są utrwalone w `decyzje-produktowe.md` D-41 i
 D-48–D-51. Finalne WebP okładek są częścią PR #66. Źródłowe PNG, contact sheety, drafty,
