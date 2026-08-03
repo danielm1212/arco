@@ -52,33 +52,42 @@ async function actionsBundle(): Promise<string> {
       contents: `
         import React from "react";
         import { createRoot } from "react-dom/client";
+        import { Toaster } from "sonner";
         import { FavoriteProgramButton } from "./app/programs/FavoriteProgramButton";
         import { ProgramDayStartButton } from "./app/programs/ProgramDayStartButton";
 
         createRoot(document.getElementById("root")).render(
-          <main className="mx-auto max-w-md space-y-md p-md">
-            <FavoriteProgramButton
-              programId="program-1"
-              programName="Pośladki i nogi — średniozaawansowany"
-              isFavorite={false}
-            />
-            <div data-with-active-plan>
-              <ProgramDayStartButton
-                dayId="day-2"
-                dayLabel="Dzień B — plecy i tylna taśma"
+          <>
+            <main className="mx-auto max-w-md space-y-md p-md">
+              <FavoriteProgramButton
+                programId="program-1"
                 programName="Pośladki i nogi — średniozaawansowany"
-                alongsideActivePlan
+                isFavorite={false}
               />
-            </div>
-            <div data-without-active-plan>
-              <ProgramDayStartButton
-                dayId="day-3"
-                dayLabel="Pierwszy trening"
-                programName="Plan startowy"
-                alongsideActivePlan={false}
+              <FavoriteProgramButton
+                programId="program-2"
+                programName="Plan już ulubiony"
+                isFavorite
               />
-            </div>
-          </main>,
+              <div data-with-active-plan>
+                <ProgramDayStartButton
+                  dayId="day-2"
+                  dayLabel="Dzień B — plecy i tylna taśma"
+                  programName="Pośladki i nogi — średniozaawansowany"
+                  alongsideActivePlan
+                />
+              </div>
+              <div data-without-active-plan>
+                <ProgramDayStartButton
+                  dayId="day-3"
+                  dayLabel="Pierwszy trening"
+                  programName="Plan startowy"
+                  alongsideActivePlan={false}
+                />
+              </div>
+            </main>
+            <Toaster position="top-center" richColors closeButton />
+          </>,
         );
       `,
     },
@@ -106,11 +115,79 @@ test("F1/F2: kontrolki mają poprawne nazwy, targety i dialog bez overflow", asy
     assert.equal(await favorite.getAttribute("aria-pressed"), "false");
     const favoriteBox = await favorite.boundingBox();
     assert.ok(favoriteBox && favoriteBox.width >= 44 && favoriteBox.height >= 44);
+    await page.evaluate(() => {
+      (window as unknown as { __favoriteProgramActionDelay?: boolean })
+        .__favoriteProgramActionDelay = true;
+    });
     await favorite.click();
+    const pendingFavorite = page.getByRole("button", {
+      name: "Zapisuję ulubiony plan „Pośladki i nogi — średniozaawansowany”",
+    });
+    await pendingFavorite.waitFor();
+    assert.equal(await pendingFavorite.isDisabled(), true);
+    assert.equal(await pendingFavorite.getAttribute("aria-busy"), "true");
+    await page.evaluate(() => {
+      (window as unknown as { __resolveFavoriteProgramAction?: () => void })
+        .__resolveFavoriteProgramAction?.();
+    });
     await page.waitForFunction(
       () =>
         (window as unknown as { __favoriteProgramAction?: { favorite: boolean } })
           .__favoriteProgramAction?.favorite === true,
+    );
+    const successToast = page.getByText("Dodano do ulubionych.", { exact: true });
+    await successToast.waitFor();
+    assert.equal(await successToast.locator("xpath=ancestor::*[@data-sonner-toast]").count(), 1);
+    const notificationRegion = page.locator('section[aria-label="Notifications alt+T"]');
+    assert.equal(await notificationRegion.getAttribute("aria-live"), "polite");
+    await favorite.waitFor();
+    assert.equal(await favorite.isEnabled(), true);
+    await page.waitForFunction(
+      () => document.activeElement?.getAttribute("data-program-favorite-id") === "program-1",
+    );
+
+    await page.evaluate(() => {
+      const testWindow = window as unknown as {
+        __favoriteProgramActionDelay?: boolean;
+        __favoriteProgramActionShouldFail?: boolean;
+      };
+      testWindow.__favoriteProgramActionDelay = false;
+      testWindow.__favoriteProgramActionShouldFail = true;
+    });
+    await favorite.click();
+    await page
+      .getByText("Nie udało się zmienić ulubionych. Spróbuj ponownie.", { exact: true })
+      .waitFor();
+    assert.equal(await favorite.isEnabled(), true);
+    await page.locator("[data-sonner-toast] [data-close-button]").evaluateAll((buttons) => {
+      buttons.forEach((button) => (button as HTMLButtonElement).click());
+    });
+    await page.waitForFunction(
+      () => document.querySelectorAll("[data-sonner-toast]:not([data-removed='true'])").length === 0,
+    );
+
+    await page.evaluate(() => {
+      (window as unknown as { __favoriteProgramActionShouldFail?: boolean })
+        .__favoriteProgramActionShouldFail = false;
+    });
+    const removeFavorite = page.getByRole("button", {
+      name: "Usuń plan „Plan już ulubiony” z ulubionych",
+    });
+    await removeFavorite.click();
+    await page.waitForFunction(
+      () => {
+        const action = (
+          window as unknown as {
+            __favoriteProgramAction?: { programId: string; favorite: boolean };
+          }
+        ).__favoriteProgramAction;
+        return action?.programId === "program-2" && action.favorite === false;
+      },
+    );
+    await page.getByText("Usunięto z ulubionych.", { exact: true }).waitFor();
+    await page.locator("[data-sonner-toast] [data-close-button]").click();
+    await page.waitForFunction(
+      () => document.querySelectorAll("[data-sonner-toast]:not([data-removed='true'])").length === 0,
     );
 
     const trigger = page

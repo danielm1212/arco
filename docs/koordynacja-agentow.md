@@ -22,6 +22,19 @@
 
 ## Ostatnie wpisy
 
+### 2026-08-03 · Codex · Feedback ulubionych planów: ZAKOŃCZONE TECHNICZNIE
+
+- **Zakres:** `agent/favorite-feedback`; `FavoriteProgramButton` oraz przeglądarkowy harness
+  akcji Planów. Bez migracji i bez zmiany kontraktu serwerowego.
+- **Wynik:** toast dla dodania/usunięcia, bezpieczny komunikat błędu, disabled + `aria-busy`
+  w pending i przywrócenie fokusu także po zniknięciu wiersza z sekcji Ulubione.
+- **Bramka:** lint, typecheck i build ✓, **276/276 unit**, **56/56 overflow**; prawdziwy Sonner
+  sprawdzony dla obu sukcesów, błędu, `aria-live`, pending, 44 px i fokusu.
+- **Czego nie dotknięto:** baza, produkcja, Home, Linear, źródłowe PNG/contact sheety/drafty,
+  `docs/arco-home-agent-handoff/`, lokalne skrypty `.home03-*`/`.nav01-*` i D17.
+- **Zaległości:** [Ty] review + merge follow-upu i krótki checkpoint VoiceOver/iPhone PWA;
+  następna praca techniczna: niezależne D17.
+
 ### 2026-08-03 · Codex · F2 release i okładki programów: ZAKOŃCZONE TECHNICZNIE
 
 - **Zakres:** `agent/f2-program-covers`, draft PR #66; migracja wariantów okładek, seed,
