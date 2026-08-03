@@ -73,11 +73,22 @@ async function main() {
 
     const { data: systemPrograms, error: programsError } = await alpha.client
       .from("programs")
-      .select("id, program_days(id, position)")
+      .select("id, slug, cover_image_url, cover_thumbnail_url, program_days(id, position)")
       .is("user_id", null)
-      .order("id")
-      .limit(2);
-    assert(!programsError && systemPrograms?.length === 2, "brak dwóch planów systemowych");
+      .order("id");
+    assert(!programsError && systemPrograms?.length === 15, "brak 15 planów systemowych");
+    for (const program of systemPrograms) {
+      assert(program.slug, `plan ${program.id} nie ma sluga okładki`);
+      assert(
+        program.cover_image_url === `/program-covers/${program.slug}.webp`,
+        `plan ${program.slug} ma zły wariant okładki 16:9`,
+      );
+      assert(
+        program.cover_thumbnail_url === `/program-covers-square/${program.slug}.webp`,
+        `plan ${program.slug} ma zły wariant okładki 1:1`,
+      );
+    }
+    ok("15 planów systemowych ma sparowane okładki 16:9 i 1:1");
     const activeProgram = systemPrograms[0];
     const sideProgram = systemPrograms[1];
     const activeDay = [...activeProgram.program_days].sort((a, b) => a.position - b.position)[0];
