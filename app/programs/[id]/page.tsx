@@ -153,7 +153,6 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           <ProgramCover
             coverImageUrl={program.cover_image_url}
             focusKey={program.focus_key}
-            programName={program.name}
             size="hero"
           />
 

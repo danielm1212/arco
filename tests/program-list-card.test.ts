@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { test } from "node:test";
 import {
   formatProgramCardTitle,
@@ -9,6 +11,7 @@ import {
 import { PROGRAMS } from "../scripts/seed";
 import { buildLevelMeter } from "../lib/levelMeter";
 import { formatProgramLevelLabel } from "../lib/programDetail";
+import { programCoverSizeClass } from "../lib/programCover";
 
 /** PLAN-05E: nazwa prezentacyjna wiersza biblioteki. Wejścia to realne nazwy
  *  z migracji `20260716160000_program_names_and_rotation_copy.sql` — jeśli
@@ -160,6 +163,25 @@ test("katalog: każdy preset ma uzupełnione short_name i split_key", () => {
       `${program.slug}: split_key nie daje taga`,
     );
   }
+});
+
+test("katalog: każdy preset ma finalną okładkę 16:9 i miniaturę 1:1", () => {
+  assert.equal(PROGRAMS.length, 15, "kontrakt okładek wymaga aktualizacji dla nowego programu");
+  for (const program of PROGRAMS) {
+    assert.ok(
+      existsSync(join(process.cwd(), "public", "program-covers", `${program.slug}.webp`)),
+      `${program.slug}: brak finalnej okładki 16:9`,
+    );
+    assert.ok(
+      existsSync(join(process.cwd(), "public", "program-covers-square", `${program.slug}.webp`)),
+      `${program.slug}: brak finalnej miniatury 1:1`,
+    );
+  }
+});
+
+test("okładki: lista jest kwadratowa, a detal zachowuje 16:9", () => {
+  assert.match(programCoverSizeClass("row"), /size-16/);
+  assert.match(programCoverSizeClass("hero"), /aspect-video/);
 });
 
 /**

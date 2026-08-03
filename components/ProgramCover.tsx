@@ -14,7 +14,6 @@ import { cn } from "@/lib/utils";
 type ProgramCoverProps = {
   coverImageUrl: string | null;
   focusKey: ProgramFocus | null;
-  programName: string;
   size: ProgramCoverSize;
   className?: string;
 };
@@ -27,7 +26,6 @@ type ProgramCoverProps = {
 export function ProgramCover({
   coverImageUrl,
   focusKey,
-  programName,
   size,
   className,
 }: ProgramCoverProps) {
@@ -52,7 +50,7 @@ export function ProgramCover({
       {showImage && (
         <Image
           src={coverImageUrl!}
-          alt={`Okładka planu: ${programName}`}
+          alt=""
           fill
           sizes={size === "hero" ? "(max-width: 448px) 100vw, 448px" : "64px"}
           className="object-cover"

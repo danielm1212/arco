@@ -46,7 +46,7 @@ type Prog = {
   frequency_max: number | null;
   estimated_minutes_min: number | null;
   estimated_minutes_max: number | null;
-  cover_image_url: string | null;
+  cover_thumbnail_url: string | null;
   required_equipment: string[];
   program_days: { id: string }[];
 };
@@ -77,7 +77,7 @@ export default async function ProgramsPage({
   ] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, name, short_name, split_key, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, cover_image_url, required_equipment, program_days(id)")
+      .select("id, name, short_name, split_key, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, cover_thumbnail_url, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
     supabase.from("user_settings").select("training_focus, available_equipment").maybeSingle(),
@@ -294,9 +294,8 @@ function ProgramRow({
         className="col-span-2 row-start-1 grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <ProgramCover
-          coverImageUrl={p.cover_image_url}
+          coverImageUrl={p.cover_thumbnail_url}
           focusKey={p.focus_key}
-          programName={p.name}
           size="row"
         />
         <div className="min-w-0">

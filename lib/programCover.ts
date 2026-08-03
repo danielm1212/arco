@@ -17,5 +17,5 @@ export function programCoverGradient(focusKey: ProgramCoverFocus): string {
 }
 
 export function programCoverSizeClass(size: ProgramCoverSize): string {
-  return size === "hero" ? "aspect-[4/3] w-full rounded-t-xl" : "size-16 rounded-lg";
+  return size === "hero" ? "aspect-video w-full rounded-t-xl" : "size-16 rounded-lg";
 }
