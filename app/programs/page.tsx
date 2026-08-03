@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { ProgramFilters } from "./ProgramFilters";
 import { ProgramLevelChips } from "./ProgramLevelChips";
 import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader";
+import { FavoriteProgramButton } from "./FavoriteProgramButton";
 
 export const dynamic = "force-dynamic";
 
@@ -68,20 +69,35 @@ export default async function ProgramsPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: programs }, { data: active }, { data: settings }] = await Promise.all([
+  const [
+    { data: programs },
+    { data: active },
+    { data: settings },
+    { data: favorites },
+  ] = await Promise.all([
     supabase
       .from("programs")
       .select("id, name, short_name, split_key, cycle_days, user_id, goal, level, level_min, level_max, environment, focus_key, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, cover_image_url, required_equipment, program_days(id)")
       .order("user_id", { nullsFirst: true }),
     supabase.from("user_active_program").select("program_id").maybeSingle(),
     supabase.from("user_settings").select("training_focus, available_equipment").maybeSingle(),
+    supabase
+      .from("favorite_programs")
+      .select("program_id, created_at")
+      .order("created_at", { ascending: false }),
   ]);
   const activeId = active?.program_id ?? null;
   const preferredFocus = settings?.training_focus ?? "balanced";
   const availableEquipment = settings?.available_equipment ?? [];
-  const activeProgram = ((programs as Prog[]) ?? []).find((p) => p.id === activeId) ?? null;
-  const own = ((programs as Prog[]) ?? []).filter((p) => p.user_id === user?.id && p.id !== activeId);
-  const presets = ((programs as Prog[]) ?? [])
+  const allPrograms = (programs as Prog[]) ?? [];
+  const programById = new Map(allPrograms.map((program) => [program.id, program]));
+  const favoriteIds = new Set((favorites ?? []).map((favorite) => favorite.program_id));
+  const favoritePrograms = (favorites ?? [])
+    .map((favorite) => programById.get(favorite.program_id))
+    .filter((program): program is Prog => !!program && program.id !== activeId);
+  const activeProgram = allPrograms.find((p) => p.id === activeId) ?? null;
+  const own = allPrograms.filter((p) => p.user_id === user?.id && p.id !== activeId);
+  const presets = allPrograms
     .filter((p) => p.user_id === null && p.id !== activeId)
     .sort((a, b) => {
       const environmentOrder = { gym: 0, home: 1, bodyweight: 2 } as Record<string, number>;
@@ -130,9 +146,39 @@ export default async function ProgramsPage({
               p={activeProgram}
               kind={activeProgram.user_id ? "own" : "preset"}
               isActive
+              isFavorite={favoriteIds.has(activeProgram.id)}
               preferredFocus={preferredFocus}
               missingEquipment={missingProgramEquipment(activeProgram.required_equipment, availableEquipment)}
             />
+          </section>
+        )}
+
+        <section className="space-y-xs">
+          <p className="text-sm text-muted-foreground">Chcesz ułożyć trening po swojemu?</p>
+          <form action={createProgram}>
+            <Button type="submit" variant="outline" className="w-full">
+              Utwórz własny program
+            </Button>
+          </form>
+        </section>
+
+        {favoritePrograms.length > 0 && (
+          <section className="space-y-sm">
+            <h2 className="text-base font-semibold">Ulubione</h2>
+            {favoritePrograms.map((p) => (
+              <ProgramRow
+                key={p.id}
+                p={p}
+                kind={p.user_id ? "own" : "preset"}
+                isActive={false}
+                isFavorite
+                preferredFocus={preferredFocus}
+                missingEquipment={missingProgramEquipment(
+                  p.required_equipment,
+                  availableEquipment,
+                )}
+              />
+            ))}
           </section>
         )}
 
@@ -140,7 +186,14 @@ export default async function ProgramsPage({
           <section className="space-y-sm">
             <h2 className="text-base font-semibold">Moje programy</h2>
             {own.map((p) => (
-              <ProgramRow key={p.id} p={p} kind="own" isActive={false} preferredFocus={preferredFocus} />
+              <ProgramRow
+                key={p.id}
+                p={p}
+                kind="own"
+                isActive={false}
+                isFavorite={favoriteIds.has(p.id)}
+                preferredFocus={preferredFocus}
+              />
             ))}
           </section>
         )}
@@ -176,20 +229,13 @@ export default async function ProgramsPage({
               p={p}
               kind="preset"
               isActive={false}
+              isFavorite={favoriteIds.has(p.id)}
               preferredFocus={preferredFocus}
               missingEquipment={missingProgramEquipment(p.required_equipment, availableEquipment)}
             />
           ))}
         </section>
 
-        <section className="space-y-xs border-t pt-md">
-          <p className="text-sm text-muted-foreground">Masz własny plan?</p>
-          <form action={createProgram}>
-            <Button type="submit" variant="outline" className="w-full">
-              Utwórz własny program
-            </Button>
-          </form>
-        </section>
       </main>
     </div>
   );
@@ -199,12 +245,14 @@ function ProgramRow({
   p,
   kind,
   isActive,
+  isFavorite,
   preferredFocus,
   missingEquipment = [],
 }: {
   p: Prog;
   kind: "own" | "preset";
   isActive: boolean;
+  isFavorite: boolean;
   preferredFocus: string;
   missingEquipment?: string[];
 }) {
@@ -334,12 +382,16 @@ function ProgramRow({
           )}
         </div>
       </Link>
-      {/* PLAN-05H: stopka to teraz WYŁĄCZNIE akcja, dosunięta do prawej krawędzi —
-          poziom przeniósł się na własną linię wyżej (patrz komentarz w `<Link>`), więc
-          stopka nie ma już z czym dzielić wiersza i zawsze mieści się w jednej linii,
-          niezależnie od długości etykiety poziomu. „Ustaw” zostaje poza miniaturą i
-          poza `<Link>` — wejście w szczegół i aktywacja planu to dwie różne akcje. */}
-      <div className="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end">
+      {/* PLAN-05H/F2: stopka zawiera wyłącznie dwie zwarte akcje planu. Poziom jest
+          na osobnej linii wyżej, więc serce i „Ustaw” mieszczą się przy 320 px.
+          Obie akcje zostają poza `<Link>` — wejście w szczegół, ulubione i aktywacja
+          to trzy różne zachowania. */}
+      <div className="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end gap-xs">
+        <FavoriteProgramButton
+          programId={p.id}
+          programName={p.name}
+          isFavorite={isFavorite}
+        />
         {isActive ? (
           <span className="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground">
             <Check aria-hidden className="size-4 text-primary" />

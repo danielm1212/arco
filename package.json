@@ -27,6 +27,7 @@
     "bootstrap:test-user": "node --import tsx scripts/bootstrap-test-user.ts",
     "smoke": "node --import tsx scripts/smoke-phase1.ts",
     "smoke:phase2": "node --import tsx scripts/smoke-phase2.ts",
+    "smoke:programs": "node --import tsx scripts/smoke-programs.ts",
     "smoke:team": "node --import tsx scripts/smoke-team.ts",
     "smoke:offline": "node --import tsx scripts/smoke-offline.ts",
     "audit:muscle-coverage": "node --import tsx scripts/audit-muscle-coverage.ts"

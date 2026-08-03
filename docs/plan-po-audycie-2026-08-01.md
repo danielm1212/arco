@@ -4,7 +4,7 @@ Kontynuacja `audyt-kodu-i-ui-2026-07-31.md` po zamknięciu paczek A, B, C oraz D
 Dokument istnieje po to, żeby kolejna sesja nie zaczynała od czytania całego audytu.
 
 **Zamknięte:** A (PR #60) · B (#61) · C (#62) · D6+D7 (#63) · martwy wpis w tsconfig (#64).
-**Otwarte:** paczka D (C1–C15), paczka F i reszta P3 (D8–D25).
+**Otwarte:** paczka D (C1–C15), release migracji F2 i reszta P3 (D8–D25).
 
 **Domknięte 2026-08-03:** paczka E (E2 → E1 → E3) oraz guard historycznego celu
 tygodniowego i trzywarstwowego stosu arkuszy. Bramka: typecheck i lint czysto,
@@ -110,6 +110,12 @@ Skala biblioteki dla wyceny: **19 presetów** + programy własne.
 ## Priorytet 2 — Paczka F: wybór treningu i ulubione
 
 Zgłoszenie właściciela 2026-08-01, po refinemencie i decyzjach z tego samego dnia.
+
+**Status 2026-08-03: ZAKOŃCZONE TECHNICZNIE** na `agent/package-f-plan-favorites`.
+F1 używa istniejącego atomowego RPC i ma smoke potwierdzający brak zmiany aktywnego planu
+oraz wznowienie zamiast drugiej sesji. F2 ma `favorite_programs`, RLS, unikalność i test dwóch
+kont; F3 ustawia docelową kolejność sekcji. Świeży izolowany `db reset`, pełne smoke'i,
+274/274 unit i 56/56 przeglądarkowych są zielone. Migracja nie została wypchnięta ani wdrożona.
 
 ### F1 · Uruchom dzień z dowolnego planu, bez zmiany aktywnego — ~4 h, bez migracji
 

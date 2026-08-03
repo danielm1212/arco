@@ -25,6 +25,8 @@ import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { DraftRecoveryNotice } from "@/components/forms/DraftRecoveryNotice";
 import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
 import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
+import { FavoriteProgramButton } from "../FavoriteProgramButton";
+import { ProgramDayStartButton } from "../ProgramDayStartButton";
 
 export interface EditorSlot {
   id: string;
@@ -64,10 +66,14 @@ export function ProgramEditor({
   programId,
   name,
   days,
+  isFavorite,
+  alongsideActivePlan,
 }: {
   programId: string;
   name: string;
   days: EditorDay[];
+  isFavorite: boolean;
+  alongsideActivePlan: boolean;
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -116,7 +122,19 @@ export function ProgramEditor({
         showSessionMiniBar={false}
         miniBarPosition="safe-bottom"
       />
-      <PageHeader title="Edytor" fallback="/programs" backLabel="Wróć do programów" sticky />
+      <PageHeader
+        title="Edytor"
+        fallback="/programs"
+        backLabel="Wróć do programów"
+        action={
+          <FavoriteProgramButton
+            programId={programId}
+            programName={name}
+            isFavorite={isFavorite}
+          />
+        }
+        sticky
+      />
 
       <main className="flex-1 space-y-lg p-md">
         {recovered && (
@@ -243,16 +261,19 @@ export function ProgramEditor({
             <AddSlot
               onPick={(exId) => run(() => addSlot(programId, day.id, exId), true)}
             />
+
+            <ProgramDayStartButton
+              dayId={day.id}
+              dayLabel={day.label}
+              programName={name}
+              alongsideActivePlan={alongsideActivePlan}
+            />
           </section>
         ))}
 
         <Button variant="outline" className="w-full" onClick={() => run(() => addDay(programId), true)}>
           + Dodaj dzień
         </Button>
-
-        <p className="text-center text-xs text-muted-foreground">
-          Aby trenować według tego programu, ustaw go jako aktywny na ekranie głównym.
-        </p>
 
         <Button
           type="button"

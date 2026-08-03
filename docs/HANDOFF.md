@@ -4,8 +4,8 @@
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** D17, potem paczka F. Dalsza kolejka:
-D-1 → D-3+D-2 → D-4 → reszta P3.
+**Najbliższy etap:** scalić paczkę E, niezależne D17 i paczkę F; następnie kontrolowany
+release migracji F2. Dalsza kolejka: D-1 → D-3+D-2 → D-4 → reszta P3.
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
@@ -30,6 +30,21 @@ Follow-up po paczce C również zamknięty: poprzedni tydzień na `/progress` ni
 dzisiejszego celu jako historycznego. Baza nie przechowuje historii celu, więc etykieta
 poprzedniego tygodnia podaje samą liczbę treningów, bez mianownika. Guard przeglądarkowy
 sprawdza też poprawną polską odmianę obu etykiet.
+
+**Paczka F gotowa technicznie 2026-08-03 na `agent/package-f-plan-favorites`:** detal
+każdego planu pozwala rozpocząć wybrany dzień bez aktywacji planu. Potwierdzenie mówi wprost,
+że aktywny plan i rotacja się nie zmienią; istniejące RPC nadal wznawia jedyną otwartą sesję
+zamiast tworzyć drugą. Ulubionym jest cały plan: serce działa na liście i detalu, sekcja
+„Ulubione” jest wyłącznie na `/programs`, a kolejność to Aktywny → Utwórz własny → Ulubione
+→ Moje → Biblioteka. Migracja `20260803141543_favorite_programs.sql` ma unikalność pary,
+RLS i stały smoke dwóch kont w CI; nie pozwala polubić cudzego prywatnego planu.
+
+Bramka F: świeży, odizolowany `db reset`, seed **907/15/336**, bootstrap, walidatory,
+smoke Phase 1/2/offline/Ekipa/programy, typecheck i lint czysto, **274/274 unit**,
+**56/56 przeglądarkowych**, build zielony (kompilacja 2,1 s). Typ tabeli porównany z
+`supabase gen types`. Izolowany stack i jednorazowe konta usunięte. **Bez `db push`, deployu,
+zmian produkcji i danych właściciela.** D17 pozostaje osobnym lokalnym commitem na
+`agent/d17-write-error-contract` i nie jest częścią gałęzi F.
 
 Decyzje właściciela z 2026-08-01 są utrwalone w `decyzje-produktowe.md` D-41 i D-48–D-50.
 `docs/arco-home-agent-handoff/`, materiały okładek i skrypty zaczynające się kropką pozostają
@@ -91,8 +106,8 @@ wchodzi do repo (folder nieśledzony).
 kompletne na 20 tabelach, niezmienniki w bazie, zero magic-hexów, service role tylko w skryptach.
 Problem był w egzekucji: v1.4 i budżety z `optymalizacja.md` żyły w tokenach i dokumencie,
 nie w komponentach i trasach. **A, B, C oraz D6/D7 są zamknięte** w PR #60–#63.
-Otwarte pozostają D17, paczka F oraz D (skala: `/postępy` 13 zapytań, kod
-zaproszenia Ekipy bez rotacji, brak CHECK-ów na wejściu).
+Gotowe lokalnie są D17 i paczka F. Otwarte pozostaje scalenie/release oraz D (skala:
+`/postępy` 13 zapytań, kod zaproszenia Ekipy bez rotacji, brak CHECK-ów na wejściu).
 
 **Paczka C gotowa technicznie 2026-08-01 na `agent/progress-consistency-copy` (PR #62):**
 D1–D5 + D7. Pasek 14 dni na `/postępy` to teraz **dwa rzędy po siedem** zbudowane z
@@ -434,7 +449,8 @@ koordynacji (2026-07-23).
    nie zweryfikowano z tej sesji, bo lokalne konto nie odpowiada produkcyjnemu.
    **Do [Ty]: checkpoint fizycznego iPhone PWA/Androida dla HOME-01…03 i nowego chrome.**
    Bramka kolejności została spełniona: NAV-01 weszło przed PLAN-05D i R2.2.
-   PLAN-04 (start dowolnego planu bez zmiany aktywnego) jest niezależny i może iść równolegle.
+   **PLAN-04 gotowe technicznie w paczce F:** dowolny dzień startuje bez zmiany aktywnego
+   planu, a test RPC pilnuje także wznowienia jedynej otwartej sesji.
 6. **PLAN-05 — w toku:** redesign karty i listy planu (zdjęcie/fallback, poziom w paskach,
    CTA nad zgięciem, akordeon opisu, usunięcie zahardkodowanej karty „Jak robić postęp").
    Paczki 05A…05E rozpisane w `spec-plan-detail-card.md`. **05C (`LevelMeter`) gotowe

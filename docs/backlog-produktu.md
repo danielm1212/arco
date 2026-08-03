@@ -123,7 +123,7 @@ CORE-0 jest twardą bramką przed R4A. Szczegół dowodu, architektury i ogranic
 | HOME-02 | Podsumowanie okresu i kafle na Home | Trzy liczby na wejściu mówią, czy idzie do przodu; pełna analiza zostaje w Treningu | scalone do `main` · PR #48 |
 | HOME-03 | Postęp ćwiczeń na Home | Widzę, które ćwiczenia idą do przodu, a które stoją, bez wchodzenia w Postępy | na `main` · PR #49; pozostaje checkpoint [Ty] |
 | NAV-01 | Trzy taby i zakładki Treningu | Nawigacja ma trzy jasne miejsca; Plany, Postępy, Ciało i Historia są w jednym pasku (D-38) | na `main` i produkcji · PR #50; CI zielone, pozostaje fizyczny checkpoint iPhone PWA/Android [Ty] |
-| PLAN-04 | Start dowolnego planu bez zmiany aktywnego | Jestem w domu, robię dzień z planu domowego, a plan siłowni czeka nietknięty; rotacja się nie przesuwa (D-41) | gotowe do podjęcia, niezależne — może iść równolegle |
+| PLAN-04 | Start dowolnego planu bez zmiany aktywnego | Jestem w domu, robię dzień z planu domowego, a plan siłowni czeka nietknięty; rotacja się nie przesuwa (D-41) | gotowe technicznie 2026-08-03 w paczce F; czeka na merge i release migracji F2 |
 | PLAN-05A | Migracja: slot medialny na kartę planu | `programs.cover_image_url` (nullable) — realne zdjęcie wchodzi później jako dane, nie jako kolejny redesign | na `main` i produkcji · PR #47; wdrożone 2026-07-30, 61/61 migracji |
 | PLAN-05B | Komponent `ProgramCover` (zdjęcie / fallback) | Karta ma kotwicę wizualną nawet bez zdjęcia — gradient wg `focus_key` + istniejąca ikona 3D `plan`, zero nowych assetów | na `main` · PR #52 |
 | PLAN-05C | Komponent `LevelMeter` (poziom w paskach) | Poziom trudności czytelny jednym rzutem oka, z pełnym `aria-label` dla czytnika ekranu | kod na `main` · PR #34; detal wpięty w PLAN-05D, lista i checkpoint czekają na PLAN-05E |
@@ -140,7 +140,7 @@ rollbacku i review jest w `spec-plan-q-biblioteka-treningow.md`.
 | ID | Zadanie | Zakres | Status |
 |---|---|---|---|
 | PLAN-01 | Filtr „Tylko z moim sprzętem” | Filtr czyta zapisany inwentarz i wynik wykonalności TRAIN-05; ustawienia pozostają źródłem prawdy; link „Zmień sprzęt” | po TRAIN-05 |
-| PLAN-02 | Sprawdzić odkrywalność „Utwórz własny program” | Akcja istnieje; poprawiamy hierarchię tylko jeśli test first-click wykaże problem | eksperyment |
+| PLAN-02 | Odkrywalność „Utwórz własny program” | Akcja jest bezpośrednio pod aktywnym planem, przed Ulubionymi, Moimi programami i biblioteką | gotowe technicznie 2026-08-03 w paczce F |
 | PLAN-03 | Własne ćwiczenie bez opuszczania kreatora | Utworzenie ćwiczenia wraca do właściwego miejsca w edytowanym planie | R4 |
 
 ### R3b — Ekipa jako prawdziwy hub

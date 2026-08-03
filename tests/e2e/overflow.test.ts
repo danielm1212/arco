@@ -369,7 +369,8 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
             : ""
         }
       </a>
-      <div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end">
+      <div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end gap-xs">
+        <button data-program-favorite aria-label="Dodaj plan do ulubionych" aria-pressed="false" class="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground">♡</button>
         ${
           isActive
             ? '<span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span>'
@@ -419,6 +420,12 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
         ),
         meterCount: document.querySelectorAll('[role="img"][aria-label^="Poziom"]').length,
         activeCount: document.querySelectorAll("[data-program-active]").length,
+        favoriteBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-favorite]")].map(
+          (action) => {
+            const box = action.getBoundingClientRect();
+            return { width: box.width, height: box.height };
+          },
+        ),
         actionBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-action]")].map(
           (action) => {
             const box = action.getBoundingClientRect();
@@ -478,6 +485,11 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
 
       // Aktywny plan sygnalizuje stan całej karty + tekst, nie przycisk „Aktywny".
       assert.equal(metrics.activeCount, 1);
+      assert.equal(metrics.favoriteBoxes.length, 16);
+      assert.ok(
+        metrics.favoriteBoxes.every((box) => box.height >= 44 && box.width >= 44),
+        `serce poniżej 44×44 px przy ${width}px`,
+      );
       assert.equal(metrics.actionBoxes.length, 15);
       assert.ok(
         metrics.actionBoxes.every((box) => box.height >= 44 && box.width >= 44),
