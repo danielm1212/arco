@@ -56,6 +56,8 @@ export function BottomSheet({
   const dragStartY = useRef<number | null>(null);
   const onOpenChangeRef = useRef(onOpenChange);
   const returnFocusRef = useRef<HTMLElement | null>(null);
+  /** Element, który realnie otworzył arkusz — ustawiany w sklonowanym `onClick`. */
+  const invokerRef = useRef<HTMLElement | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
 
@@ -66,6 +68,25 @@ export function BottomSheet({
   // Referencja pozostaje stabilna, więc inline callback rodzica nie może
   // przeinicjalizować scroll-locka w trakcie otwartego sheeta.
   const close = useCallback(() => onOpenChangeRef.current?.(false), []);
+
+  // Ten sam wzorzec co wyżej, z tego samego powodu: handler triggera musi być
+  // STABILNY, bo trafia do `cloneElement` w trakcie renderu. Domknięcie tworzone
+  // per render, dotykające refów, `react-hooks/refs` odrzuca — i słusznie, bo nie
+  // jest w stanie odróżnić zapisu w zdarzeniu od zapisu podczas renderu.
+  const triggerClickRef = useRef<((event: MouseEvent<HTMLElement>) => void) | undefined>(undefined);
+  useEffect(() => {
+    triggerClickRef.current = isValidElement<TriggerProps>(trigger)
+      ? trigger.props.onClick
+      : undefined;
+  }, [trigger]);
+
+  const handleTriggerClick = useCallback((event: MouseEvent<HTMLElement>) => {
+    // `currentTarget` to zawsze sam trigger, nawet gdy klik trafił w ikonę w jego
+    // wnętrzu — i jest odczytany, zanim cokolwiek zdąży ruszyć fokus.
+    invokerRef.current = event.currentTarget;
+    triggerClickRef.current?.(event);
+    if (!event.defaultPrevented) onOpenChangeRef.current?.(true);
+  }, []);
 
   function beginDrag(event: ReactPointerEvent<HTMLButtonElement>) {
     if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -96,10 +117,31 @@ export function BottomSheet({
     if (!open) return;
 
     acquireBodyScrollLock();
+    /**
+     * Fokus po zamknięciu wraca do elementu, który arkusz OTWORZYŁ (WAI-ARIA
+     * Dialog). `document.activeElement` był tylko przybliżeniem tej reguły —
+     * trafnym dopóki nikt nie rusza fokusu asynchronicznie.
+     *
+     * Przybliżenie pękło na parze „ulubione + start dnia": `FavoriteProgramButton`
+     * po akcji serwerowej przywraca sobie fokus łańcuchem `rAF` (React przemontowuje
+     * przycisk, więc fokus spada na `<body>`). Gdy ten łańcuch domknie się między
+     * kliknięciem triggera a tym efektem, arkusz zapamiętuje SERDUSZKO zamiast
+     * triggera i po Escape lojalnie oddaje fokus tam — wyrzucając użytkownika
+     * z interakcji, którą właśnie prowadził. Wyścig rozstrzygał się losowo, więc
+     * `tests/e2e/program-plan-actions.test.ts` („F1/F2") przez dwa dni przechodził
+     * na tym samym kodzie, a potem zaczął padać bez żadnej zmiany w repo.
+     *
+     * Trigger klonujemy niżej i sami podpinamy mu `onClick`, więc znamy go dokładnie
+     * — nie ma powodu zgadywać. `activeElement` zostaje wyłącznie fallbackiem dla
+     * arkuszy otwieranych programowo, bez triggera.
+     */
     const activeElement = document.activeElement;
-    returnFocusRef.current = activeElement instanceof HTMLElement && activeElement !== document.body
-      ? activeElement
-      : null;
+    const activeFallback =
+      activeElement instanceof HTMLElement && activeElement !== document.body
+        ? activeElement
+        : null;
+    const invoker = invokerRef.current;
+    returnFocusRef.current = invoker?.isConnected ? invoker : activeFallback;
 
     const focusDialog = window.requestAnimationFrame(() => {
       dialogRef.current?.focus({ preventScroll: true });
@@ -152,12 +194,15 @@ export function BottomSheet({
   }, [close, open]);
 
   const triggerElement = isValidElement<TriggerProps>(trigger)
-    ? cloneElement(trigger as ReactElement<TriggerProps>, {
-        onClick: (event: MouseEvent<HTMLElement>) => {
-          trigger.props.onClick?.(event);
-          if (!event.defaultPrevented) onOpenChange?.(true);
-        },
-      })
+    ? // `react-hooks/refs` flaguje przekazanie do `cloneElement` funkcji, która
+      // dotyka refów — nie potrafi udowodnić, że zapis nie zajdzie w renderze.
+      // Tutaj zajść nie może: `handleTriggerClick` to stabilny `useCallback`
+      // wywoływany wyłącznie ze zdarzenia `click`, a jedyny zapis (`invokerRef`)
+      // dzieje się w jego ciele. Reguły nie da się spełnić strukturalnie — próba
+      // z osobnym callbackiem na sam zapis też jest odrzucana, bo heurystyka
+      // patrzy tranzytywnie. Wyłączenie jest punktowe, na jedną linię.
+      // eslint-disable-next-line react-hooks/refs
+      cloneElement(trigger as ReactElement<TriggerProps>, { onClick: handleTriggerClick })
     : trigger;
 
   return (
