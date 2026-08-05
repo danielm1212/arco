@@ -5,6 +5,7 @@ import { ArrowRight, Dumbbell } from "lucide-react";
 import { startFreestyle } from "@/app/actions/session";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { cardVariants } from "@/components/ui/card";
 
 /**
  * Własny trening jest równoprawnym, lecz świadomym wyjściem z hero planu.
@@ -23,7 +24,7 @@ export function FreestyleStartButton({ variant }: { variant: "inline" | "card" }
         className={
           variant === "inline"
             ? "ml-auto flex min-h-11 items-center gap-1.5 font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            : "flex w-full items-center gap-sm rounded-xl bg-card p-md text-left text-sm font-semibold shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            : cardVariants({ className: "flex w-full items-center gap-sm text-left text-sm font-semibold transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" })
         }
       >
         {variant === "card" && <Dumbbell className="size-4 shrink-0" aria-hidden />}

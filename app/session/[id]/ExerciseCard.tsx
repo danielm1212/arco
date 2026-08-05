@@ -11,6 +11,7 @@ import { SetRow } from "./SetRow";
 import { ExerciseCardMenu } from "./ExerciseCardMenu";
 import type { LoggerExercise } from "./Logger";
 import { modeShowsProgression, type SessionInteractionMode } from "@/lib/sessionMode";
+import { cardVariants } from "@/components/ui/card";
 
 /** Cel progresji na dzisiejszą sesję — jawny i zawsze nadpisywalny przez użytkownika. */
 function progressionGoal(ex: LoggerExercise, unit: UnitSystem, trainingPriority: TrainingPriority) {
@@ -121,7 +122,7 @@ export const ExerciseCard = memo(function ExerciseCard({
   const swapped = ex.slot != null && ex.exerciseId !== ex.slot.default_exercise_id;
   return (
     <section
-      className={`space-y-sm rounded-xl bg-card p-md text-card-foreground ${
+      className={`${cardVariants({ elevation: "none", className: "space-y-sm" })} ${
         grouped ? "border-l-4 border-l-primary" : ""
       } ${ex.skipped ? "opacity-60" : ""}`}
     >

@@ -146,7 +146,7 @@ export function ExerciseInfoSheet({
                   <Button variant="outline" disabled={pending} onClick={() => setConfirmingDelete(false)}>
                     Anuluj
                   </Button>
-                  <Button variant="destructive" disabled={pending} onClick={removeExercise}>
+                  <Button variant="destructive" pending={pending} onClick={removeExercise}>
                     {pending ? "Usuwam…" : "Usuń"}
                   </Button>
                 </div>

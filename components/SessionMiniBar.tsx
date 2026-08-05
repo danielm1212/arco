@@ -97,7 +97,7 @@ export function SessionMiniBar({
           : "bottom-[calc(var(--safe-area-bottom)+var(--floating-nav-gap))]",
       )}
     >
-      <div className="flex items-center gap-sm rounded-xl bg-primary px-sm py-1.5 text-primary-foreground shadow-lg">
+      <div className="flex items-center gap-sm rounded-xl bg-primary px-sm py-1.5 text-primary-foreground shadow-e2">
         <Link href={`/session/${open.id}`} className="flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-md px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-foreground">
           <p className="flex items-center gap-1 truncate text-sm font-semibold">
             <Play className="size-3.5 shrink-0 fill-current" /> Trening w toku
@@ -118,7 +118,7 @@ export function SessionMiniBar({
     <BottomSheet open={confirmOpen} onOpenChange={setConfirmOpen} title="Porzucić trening?" description="Usunie trening w toku i zapisane w nim serie">
       <div className="space-y-md">
         <p className="text-sm text-muted-foreground">Trening w toku i zapisane w nim serie zostaną trwale usunięte.</p>
-        <Button className="w-full" variant="destructive" disabled={busy} onClick={discard}>{busy ? "Usuwam…" : "Porzuć trening"}</Button>
+        <Button className="w-full" variant="destructive" pending={busy} onClick={discard}>{busy ? "Usuwam…" : "Porzuć trening"}</Button>
         <Button className="w-full" variant="ghost" disabled={busy} onClick={() => setConfirmOpen(false)}>Wróć do treningu</Button>
       </div>
     </BottomSheet>

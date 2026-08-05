@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { DraftRecoveryNotice } from "@/components/forms/DraftRecoveryNotice";
 import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
 import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
+import { cardVariants } from "@/components/ui/card";
 
 export type HistoricalProgram = {
   id: string;
@@ -54,7 +55,7 @@ function defaultOccurredAt() {
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full" size="lg" disabled={pending}>
+    <Button type="submit" className="w-full" size="lg" pending={pending}>
       {pending ? "Przygotowuję trening…" : "Dodaj ćwiczenia"}
     </Button>
   );
@@ -125,7 +126,7 @@ export function HistoricalWorkoutForm({
           Wróciliśmy do daty, czasu i rodzaju treningu wybranego przed przerwaniem.
         </DraftRecoveryNotice>
       )}
-      <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+      <section className={cardVariants({ className: "space-y-sm" })}>
         <div className="flex items-start gap-sm">
           <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
             <CalendarClock className="size-5" aria-hidden />
@@ -149,7 +150,7 @@ export function HistoricalWorkoutForm({
         <input type="hidden" name="occurredOn" value={occurredAt.slice(0, 10)} />
       </section>
 
-      <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+      <section className={cardVariants({ className: "space-y-sm" })}>
         <div className="flex items-start gap-sm">
           <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
             <Timer className="size-5" aria-hidden />
@@ -177,7 +178,7 @@ export function HistoricalWorkoutForm({
         </label>
       </section>
 
-      <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+      <section className={cardVariants({ className: "space-y-sm" })}>
         <div className="flex items-start gap-sm">
           <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
             <Dumbbell className="size-5" aria-hidden />

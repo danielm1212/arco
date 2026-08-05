@@ -27,6 +27,7 @@ import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
 import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
 import { FavoriteProgramButton } from "../FavoriteProgramButton";
 import { ProgramDayStartButton } from "../ProgramDayStartButton";
+import { cardVariants } from "@/components/ui/card";
 
 export interface EditorSlot {
   id: string;
@@ -164,7 +165,7 @@ export function ProgramEditor({
         </div>
 
         {days.map((day) => (
-          <section key={day.id} className="space-y-sm rounded-xl border bg-card p-md">
+          <section key={day.id} className={cardVariants({ elevation: "none", className: "space-y-sm border" })}>
             <div className="flex items-center gap-sm">
               <Input
                 value={fieldDrafts[`day:${day.id}:label`] ?? day.label}

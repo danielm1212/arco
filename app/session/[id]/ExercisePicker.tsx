@@ -8,6 +8,7 @@ import { ensureOnline } from "@/lib/offlineGuard";
 import { getReorderHintSeen, setReorderHintSeen } from "@/lib/prefs";
 import { Button } from "@/components/ui/button";
 import { ExerciseBrowser } from "./ExerciseBrowser";
+import { cardVariants } from "@/components/ui/card";
 
 // R7 (audyt-loggera.md §6): jednorazowa edukacja gestu — dodane ćwiczenie ląduje
 // na końcu, a reorder (⋯ → Przenieś wyżej/niżej) żyje na karcie, nie tutaj.
@@ -62,7 +63,7 @@ export function ExercisePicker({ sessionId }: { sessionId: string }) {
   }
 
   return (
-    <div className="space-y-sm rounded-xl border bg-card p-md">
+    <div className={cardVariants({ elevation: "none", className: "space-y-sm border" })}>
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">Dodaj ćwiczenie</p>
         <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>

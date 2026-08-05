@@ -12,6 +12,7 @@ import { ScreenChrome } from "@/components/navigation/ScreenChrome";
 import { joinMany } from "@/lib/dbJoins";
 import { isCompletedWorkingSet, sumVolumeKg } from "@/lib/sessionSetFacts";
 import { formatWarsawDate } from "@/lib/dateTime";
+import { cardVariants } from "@/components/ui/card";
 
 /** Najlepsza metryka sesji wg typu: e1RM (weighted) / powt. (bodyweight) / czas (timed). */
 function bestMetric(type: ExerciseType, sets: SessionSet[]): number | null {
@@ -194,7 +195,7 @@ export default async function ExercisePage(props: {
         {/* Jak wykonać — zdjęcia + instrukcje (free-exercise-db) */}
         {(((exercise.images as string[]) ?? []).length > 0 ||
           ((exercise.instructions as string[]) ?? []).length > 0) && (
-          <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
+          <section className={cardVariants({ className: "space-y-sm" })}>
             <h2 className="text-base font-semibold">Jak wykonać</h2>
             {((exercise.images as string[]) ?? []).length > 0 && (
               <div className="grid grid-cols-2 gap-xs">
@@ -224,7 +225,7 @@ export default async function ExercisePage(props: {
         )}
 
         {(isWeighted || trend.length >= 2) && (
-          <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+          <section className={cardVariants({ className: "space-y-sm" })}>
             <div className="flex items-baseline justify-between">
               <h2 className="text-base font-semibold">
                 Trend{!isWeighted ? ` · ${metricLabel}` : ""}
@@ -275,7 +276,7 @@ export default async function ExercisePage(props: {
           </p>
         )}
         {isWeighted && repRows.length > 0 && (
-          <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
+          <section className={cardVariants({ className: "space-y-sm" })}>
             <h2 className="text-base font-semibold">Rekordy dla liczby powtórzeń</h2>
             <ul className="space-y-px text-sm">
               {repRows.map((r) => (
@@ -301,7 +302,7 @@ export default async function ExercisePage(props: {
           </p>
         ) : (
           sessions.map((s, i) => (
-            <section key={i} className="rounded-xl bg-card p-md text-card-foreground shadow-sm">
+            <section key={i} className={cardVariants()}>
               <p className="text-sm text-muted-foreground">
                 {formatWarsawDate(s.date, "weekdayDayMonthYear")}
               </p>

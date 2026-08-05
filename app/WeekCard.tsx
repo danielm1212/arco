@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { WeekStrip } from "@/components/WeekStrip";
 import type { WeekDay } from "@/lib/week";
 import { streakStatusText } from "@/lib/streakCopy";
@@ -32,24 +33,23 @@ export function WeekCard({
   weeklyGoal: number;
 }) {
   return (
-    <section
-      aria-label="Ten tydzień"
-      className="rounded-xl bg-card p-md text-card-foreground shadow-sm"
-    >
-      <div className="flex items-baseline justify-between gap-sm">
-        <h2 className="text-base font-semibold tracking-tight">Ten tydzień</h2>
-        {/* Audyt P0 4.1: „6/5" wyglądałoby jak błąd — nadwyżkę obsługuje
-            `formatGoalRatio`. */}
-        <span className="text-sm font-semibold tabular-nums text-muted-foreground">
-          {formatGoalRatio(weeklyDone, weeklyGoal)}
-        </span>
-      </div>
+    <Card asChild>
+      <section aria-label="Ten tydzień">
+        <div className="flex items-baseline justify-between gap-sm">
+          <h2 className="text-base font-semibold tracking-tight">Ten tydzień</h2>
+          {/* Audyt P0 4.1: „6/5" wyglądałoby jak błąd — nadwyżkę obsługuje
+              `formatGoalRatio`. */}
+          <span className="text-sm font-semibold tabular-nums text-muted-foreground">
+            {formatGoalRatio(weeklyDone, weeklyGoal)}
+          </span>
+        </div>
 
-      <WeekStrip week={week} weeklyGoal={weeklyGoal} className="mt-sm" />
+        <WeekStrip week={week} weeklyGoal={weeklyGoal} className="mt-sm" />
 
-      <p className="mt-sm text-xs font-semibold text-muted-foreground">
-        {streakStatusText(weeklyDone, weeklyGoal)}
-      </p>
-    </section>
+        <p className="mt-sm text-xs font-semibold text-muted-foreground">
+          {streakStatusText(weeklyDone, weeklyGoal)}
+        </p>
+      </section>
+    </Card>
   );
 }

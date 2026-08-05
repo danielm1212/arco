@@ -4,6 +4,7 @@ import { useState } from "react";
 import { StreakFlame } from "@/components/StreakFlame";
 import { localDayKey } from "@/lib/week";
 import { STREAK_NOT_STARTED, streakWeeksText } from "@/lib/streakCopy";
+import { cardVariants } from "@/components/ui/card";
 
 const DOW = ["Pn", "Wt", "Śr", "Cz", "Pt", "So", "Nd"];
 const MONTHS = [
@@ -45,7 +46,7 @@ export function MonthCalendar({
     });
 
   return (
-    <section className="rounded-xl bg-card p-md shadow-sm">
+    <section className={cardVariants()}>
       <div className="mb-sm flex items-center justify-between">
         <button
           onClick={() => step(-1)}

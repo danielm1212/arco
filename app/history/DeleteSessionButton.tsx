@@ -27,9 +27,9 @@ export function DeleteSessionButton({ id }: { id: string }) {
 
   return (
     <>
-      <button type="button" aria-label="Usuń sesję" disabled={pending} onClick={() => setOpen(true)} className="grid size-11 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-danger/10 hover:text-danger-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"><Trash2 className="size-4" aria-hidden /></button>
+      <button type="button" aria-label="Usuń sesję" aria-busy={pending || undefined} disabled={pending} onClick={() => setOpen(true)} className="grid size-11 shrink-0 place-items-center rounded-md text-muted-foreground hover:bg-danger/10 hover:text-danger-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"><Trash2 className="size-4" aria-hidden /></button>
       <BottomSheet open={open} onOpenChange={setOpen} title="Usunąć trening?" description="Potwierdzenie trwałego usunięcia treningu.">
-        <div className="space-y-md"><p className="text-sm text-muted-foreground">Trening i wszystkie zapisane w nim serie znikną z historii. Tej operacji nie można cofnąć.</p><Button className="w-full" variant="destructive" disabled={pending} onClick={remove}>{pending ? "Usuwam…" : "Usuń trening"}</Button><Button className="w-full" variant="ghost" disabled={pending} onClick={() => setOpen(false)}>Anuluj</Button></div>
+        <div className="space-y-md"><p className="text-sm text-muted-foreground">Trening i wszystkie zapisane w nim serie znikną z historii. Tej operacji nie można cofnąć.</p><Button className="w-full" variant="destructive" pending={pending} onClick={remove}>{pending ? "Usuwam…" : "Usuń trening"}</Button><Button className="w-full" variant="ghost" disabled={pending} onClick={() => setOpen(false)}>Anuluj</Button></div>
       </BottomSheet>
     </>
   );

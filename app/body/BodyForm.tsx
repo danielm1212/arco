@@ -13,6 +13,7 @@ import { DraftRecoveryNotice } from "@/components/forms/DraftRecoveryNotice";
 import { useDirtyGuard } from "@/components/navigation/DirtyGuard";
 import { clearFileDraft, loadFileDraft, saveFileDraft } from "@/lib/blobDrafts";
 import { usePersistentFormDraft } from "@/lib/usePersistentFormDraft";
+import { cardVariants } from "@/components/ui/card";
 
 const num = (v: string) => (v.trim() === "" ? null : Number(v.replace(",", ".")));
 const decimalInput = (value: string) => value.replace(/[^0-9,.]/g, "").replace(/([,.].*)[,.]/g, "$1");
@@ -186,7 +187,7 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
   }
 
   return (
-    <div className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+    <div className={cardVariants({ className: "space-y-sm" })}>
       {(textRecovered || filesRecovered) && (
         <DraftRecoveryNotice
           onClear={() => {
@@ -278,7 +279,7 @@ export function BodyForm({ unit, userId }: { unit: string; userId: string }) {
         )}
       </div>
 
-      <Button onClick={save} disabled={pending} className="w-full">
+      <Button onClick={save} pending={pending} className="w-full">
         {pending ? "Zapisuję…" : "Zapisz pomiar"}
       </Button>
     </div>

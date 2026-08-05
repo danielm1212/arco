@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { UsersRound } from "lucide-react";
+import { cardVariants } from "@/components/ui/card";
 
 // UWAGA: komponent celowo bez importów od R2 (stała karta Ekipy zeszła z Home).
 // Zachowany do R3b (Ekipa jako hub) — nie usuwać jako martwy kod.
@@ -11,7 +12,7 @@ export function TeamHomeCard({
   members: { id: string; name: string; avatar: string; active: boolean }[];
 }) {
   return (
-    <Link href="/ekipa" className="block rounded-xl bg-card p-md text-card-foreground shadow-sm">
+    <Link href="/ekipa" className={cardVariants({ className: "block" })}>
       <div className="flex items-center justify-between gap-sm">
         <span className="flex items-center gap-2 text-sm font-semibold">
           <UsersRound className="size-4 text-primary" aria-hidden />

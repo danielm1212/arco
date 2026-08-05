@@ -20,6 +20,7 @@ import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingHeader } from "@/components/TrainingHeader";
 import { StreakBadge } from "@/components/StreakBadge";
 import { countPl, WORDS } from "@/lib/plural";
+import { cardVariants } from "@/components/ui/card";
 import {
   formatCycleStructure,
   type ProgramCandidate,
@@ -260,7 +261,7 @@ export default async function HomePage() {
           // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.
           // R2: karta NIE jest jednym wielkim przyciskiem — osobne cele tapnięcia:
           // CTA startuje sesję, nazwa planu otwiera szczegół, stopka = podgląd/zmiana.
-          <div className="surface-polished surface-polished-subtle overflow-hidden rounded-xl text-card-foreground">
+          <div className={cardVariants({ polished: true, padding: "none", className: "overflow-hidden" })}>
             <div className="p-md">
               <div className="flex items-center justify-between gap-sm">
                 <span className="shrink-0 text-xs font-medium text-muted-foreground">
@@ -320,7 +321,7 @@ export default async function HomePage() {
              sugestii z onboardingu; wariant A wymaga persystencji poziom/
              środowisko z WelcomeOverlay, nie w tym zakresie, patrz HANDOFF) */
           <div className="space-y-sm">
-            <div className="space-y-sm rounded-xl bg-card p-md text-center text-card-foreground shadow-md">
+            <div className={cardVariants({ className: "space-y-sm text-center" })}>
               <MomentIcon3D name="plan" className="mx-auto -my-xs" priority />
               <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
               <p className="mx-auto max-w-sm text-sm text-muted-foreground">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { acquireBodyScrollLock, releaseBodyScrollLock } from "@/lib/bodyScrollLock";
 import { setLoggerHintSeen } from "@/lib/prefs";
 import { useFocusTrap } from "@/lib/useFocusTrap";
+import { cardVariants } from "@/components/ui/card";
 
 type Anchor = { top: number; arrowLeft: number };
 
@@ -105,8 +106,8 @@ export function LoggerHint({ onDismiss }: { onDismiss: () => void }) {
         }
         className={
           anchor
-            ? "rounded-xl bg-card p-md shadow-lg focus-visible:outline-none"
-            : "absolute inset-x-md top-1/2 -translate-y-1/2 rounded-xl bg-card p-md shadow-lg focus-visible:outline-none"
+            ? cardVariants({ elevation: "overlay", className: "focus-visible:outline-none" })
+            : cardVariants({ elevation: "overlay", className: "absolute inset-x-md top-1/2 -translate-y-1/2 focus-visible:outline-none" })
         }
       >
         {anchor && (

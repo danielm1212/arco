@@ -31,6 +31,7 @@ import {
 } from "@/lib/programDetail";
 import { FavoriteProgramButton } from "../FavoriteProgramButton";
 import { ProgramDayStartButton } from "../ProgramDayStartButton";
+import { cardVariants } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
@@ -148,7 +149,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
       <main className="flex-1 space-y-lg p-md">
         <section
           data-program-detail
-          className="overflow-hidden rounded-xl bg-card text-card-foreground shadow-sm"
+          className={cardVariants({ padding: "none", className: "overflow-hidden" })}
         >
           <ProgramCover
             coverImageUrl={program.cover_image_url}
@@ -233,7 +234,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           <details
             data-program-description
             open
-            className="group rounded-xl bg-card text-card-foreground shadow-sm"
+            className={cardVariants({ padding: "none", className: "group" })}
           >
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-sm rounded-xl px-md py-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden">
               Opis
@@ -250,7 +251,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
 
         <section
           aria-labelledby="program-details-heading"
-          className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm"
+          className={cardVariants({ className: "space-y-sm" })}
         >
           <h2 id="program-details-heading" className="text-base font-semibold">
             Szczegóły planu
@@ -291,7 +292,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           {days.map((day) => (
             <article
               key={day.id}
-              className="rounded-xl bg-card p-md text-card-foreground shadow-sm"
+              className={cardVariants()}
             >
               <h3 className="font-medium">{day.label}</h3>
               <ul className="mt-xs space-y-2xs text-sm">

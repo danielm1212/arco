@@ -22,6 +22,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
+import { cardVariants } from "@/components/ui/card";
 
 type Team = { id: string; name: string | null; inviteCode: string; createdBy: string | null };
 type Member = {
@@ -169,13 +170,13 @@ export function TeamPanel({
         </section>
 
         {entryMode === "choose" ? (
-          <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+          <section className={cardVariants({ className: "space-y-sm" })}>
             <Button size="lg" className="w-full" onClick={() => setEntryMode("create")}>Załóż ekipę</Button>
             <Button size="lg" className="w-full" variant="outline" onClick={() => setEntryMode("join")}>Mam kod zaproszenia</Button>
             <p className="px-2 pt-1 text-center text-xs leading-relaxed text-muted-foreground">Profil i zakres udostępnianych danych ustawisz w następnym kroku.</p>
           </section>
         ) : (
-          <section className="rounded-xl bg-card p-md shadow-sm">
+          <section className={cardVariants()}>
             <button type="button" onClick={() => setEntryMode("choose")} className="-ml-2 mb-sm inline-flex min-h-11 items-center gap-2 rounded-md px-2 text-sm text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ArrowLeft className="size-4" />Wróć</button>
             <div className="mb-md">
               <h2 className="font-semibold">{entryMode === "create" ? "Załóż ekipę" : "Dołącz do ekipy"}</h2>
@@ -239,7 +240,7 @@ export function TeamPanel({
         <p className="mt-2 text-center font-mono text-sm font-semibold tracking-[0.14em] text-muted-foreground">{formatTeamInviteCode(selected.inviteCode)}</p>
       </section>
 
-      <section className="overflow-hidden rounded-xl bg-card shadow-sm">
+      <section className={cardVariants({ padding: "none", className: "overflow-hidden" })}>
         <div className="flex items-center justify-between px-md py-md"><div><h2 className="font-semibold">Ten tydzień</h2><p className="mt-0.5 text-xs text-muted-foreground">Widać tylko regularność, bez porównywania wyników.</p></div><UsersRound className="size-5 text-primary" aria-hidden /></div>
         <ul className="divide-y">
           {members.map((member) => {
@@ -266,7 +267,7 @@ export function TeamPanel({
       <BottomSheet open={memberAction !== null} onOpenChange={(open) => !open && setMemberAction(null)} title={memberAction ? `Wesprzyj: ${memberAction.name}` : "Wsparcie"} description="Wybierz reakcję albo wyślij wsparcie">
         {memberAction && <div className="space-y-md"><p className="text-sm text-muted-foreground">Wybierz mały, życzliwy gest. Druga osoba nie widzi Twoich danych treningowych.</p>
           {memberAction.latestEventId ? <div><p className="mb-2 text-sm font-medium">Reakcja na ostatni trening</p><div className="grid grid-cols-4 gap-2">{(["💪", "🔥", "👏", "🎯"] as const).map((emoji) => <button key={emoji} type="button" disabled={pending} onClick={() => run(() => reactToTeamEvent(memberAction.latestEventId!, emoji), "Reakcja wysłana.", () => setMemberAction(null))} className={`flex h-12 items-center justify-center rounded-lg text-xl ${memberAction.myReaction === emoji ? "bg-primary/20 ring-2 ring-primary" : "bg-muted hover:bg-primary/15"}`} aria-label={`Wyślij reakcję ${emoji}`}>{emoji}</button>)}</div></div> : <p className="rounded-lg bg-muted p-3 text-xs text-muted-foreground">Ta osoba nie ma jeszcze treningu, na który można zareagować.</p>}
-          {memberAction.canNudge && <Button className="w-full" disabled={pending} onClick={() => run(() => nudgeTeamMember(selected.id, memberAction.id), "Wysłano sygnał wsparcia.", () => setMemberAction(null))}><Send className="size-4" />Wyślij sygnał wsparcia</Button>}
+          {memberAction.canNudge && <Button className="w-full" pending={pending} onClick={() => run(() => nudgeTeamMember(selected.id, memberAction.id), "Wysłano sygnał wsparcia.", () => setMemberAction(null))}><Send className="size-4" />Wyślij sygnał wsparcia</Button>}
           {isOwner && <Button className="w-full" variant="destructive" disabled={pending} onClick={() => { setRemoveTarget(memberAction); setMemberAction(null); }}>Usuń z ekipy</Button>}
         </div>}
       </BottomSheet>
@@ -277,7 +278,7 @@ export function TeamPanel({
 
       <BottomSheet open={settingsOpen} onOpenChange={setSettingsOpen} title="Ustawienia ekipy" description="Zmień nazwę, sprawdź kod lub opuść ekipę">
         <div className="space-y-md">
-          {isOwner && <form className="space-y-sm" onSubmit={(event) => { event.preventDefault(); run(() => renameTeam(selected.id, renameValue), "Nazwa ekipy zmieniona.", () => setSettingsOpen(false)); }}><label className="block space-y-1 text-sm font-medium"><span>Nazwa ekipy</span><Input value={renameValue} onChange={(event) => setRenameValue(event.target.value)} maxLength={48} /></label><Button className="w-full" variant="outline" disabled={pending}>Zapisz nazwę</Button></form>}
+          {isOwner && <form className="space-y-sm" onSubmit={(event) => { event.preventDefault(); run(() => renameTeam(selected.id, renameValue), "Nazwa ekipy zmieniona.", () => setSettingsOpen(false)); }}><label className="block space-y-1 text-sm font-medium"><span>Nazwa ekipy</span><Input value={renameValue} onChange={(event) => setRenameValue(event.target.value)} maxLength={48} /></label><Button className="w-full" variant="outline" pending={pending}>Zapisz nazwę</Button></form>}
           <div className="rounded-lg bg-muted p-3 text-xs leading-relaxed text-muted-foreground">Kod zaproszenia jest prywatny. Przekazuj go wyłącznie osobom, które chcesz dodać do tej ekipy.</div>
           {isOwner && members.length > 1 && <p className="text-xs leading-relaxed text-muted-foreground">Aby usunąć ekipę, najpierw usuń pozostałe osoby. Dzięki temu grupa nie zostanie bez właściciela.</p>}
           <Button className="w-full" variant="ghost" disabled={pending || (isOwner && members.length > 1)} onClick={() => { setSettingsOpen(false); setLeaveOpen(true); }}>{isOwner ? "Usuń ekipę" : "Opuść ekipę"}</Button>
@@ -285,7 +286,7 @@ export function TeamPanel({
       </BottomSheet>
 
       <BottomSheet open={leaveOpen} onOpenChange={setLeaveOpen} title={isOwner ? "Usunąć ekipę?" : "Opuścić ekipę?"} description="Sprawdź, co stanie się dalej">
-        <div className="space-y-md"><p className="text-sm text-muted-foreground">{isOwner ? "Ekipa i jej zaproszenie przestaną działać. Tej operacji nie można cofnąć." : "Przestaniesz widzieć aktywność tej ekipy. Możesz dołączyć ponownie kodem zaproszenia."}</p><Button className="w-full" variant="destructive" disabled={pending} onClick={() => run(() => leaveTeam(selected.id), isOwner ? "Ekipa usunięta." : "Wyszedłeś z ekipy.", () => { setLeaveOpen(false); setEntryMode("choose"); router.replace("/ekipa"); })}>{isOwner ? "Usuń ekipę" : "Opuść ekipę"}</Button><Button className="w-full" variant="ghost" onClick={() => setLeaveOpen(false)}>{isOwner ? "Anuluj" : "Zostań"}</Button></div>
+        <div className="space-y-md"><p className="text-sm text-muted-foreground">{isOwner ? "Ekipa i jej zaproszenie przestaną działać. Tej operacji nie można cofnąć." : "Przestaniesz widzieć aktywność tej ekipy. Możesz dołączyć ponownie kodem zaproszenia."}</p><Button className="w-full" variant="destructive" pending={pending} onClick={() => run(() => leaveTeam(selected.id), isOwner ? "Ekipa usunięta." : "Wyszedłeś z ekipy.", () => { setLeaveOpen(false); setEntryMode("choose"); router.replace("/ekipa"); })}>{isOwner ? "Usuń ekipę" : "Opuść ekipę"}</Button><Button className="w-full" variant="ghost" onClick={() => setLeaveOpen(false)}>{isOwner ? "Anuluj" : "Zostań"}</Button></div>
       </BottomSheet>
     </div>
   );

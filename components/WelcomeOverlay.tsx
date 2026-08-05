@@ -27,6 +27,7 @@ import {
   type TrainingLevel,
 } from "@/lib/programRecommendation";
 import type { UnitSystem } from "@/lib/types";
+import { cardVariants } from "@/components/ui/card";
 import {
   DEFAULT_TRAINING_PRIORITY,
   TRAINING_PRIORITIES,
@@ -473,7 +474,7 @@ export function WelcomeOverlay({
                 <p className="text-sm text-brand-muted">
                   {suggestion.exact ? "Dopasowany plan" : "Najbliższy plan w bibliotece"}
                 </p>
-                <div className="rounded-xl bg-card p-md text-card-foreground shadow-md">
+                <div className={cardVariants()}>
                   <p className="text-xl font-semibold leading-tight">{suggestion.program.name}</p>
                   <p className="mt-2xs text-sm text-muted-foreground">
                     Wybraliśmy go, bo {LEVEL_REASON[level!]}, {ENV_REASON[env!]} i wybierasz {effectiveGoal}{" "}
