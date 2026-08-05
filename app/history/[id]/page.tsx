@@ -12,6 +12,7 @@ import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { joinMany, joinMaybe, type DayJoin, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatWarsawDateTime } from "@/lib/dateTime";
 import { isCompletedWorkingSet, setVolumeKg } from "@/lib/sessionSetFacts";
+import { cardVariants } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
@@ -139,17 +140,17 @@ export default async function SessionDetailPage(props: {
         )}
 
         <section className="grid grid-cols-3 gap-sm">
-          <div className="rounded-xl bg-card p-sm text-center shadow-sm">
+          <div className={cardVariants({ padding: "sm", className: "text-center" })}>
             <p className="font-display text-2xl tabular-nums">{completed.length}</p>
             <p className="text-xs text-muted-foreground">serie</p>
           </div>
-          <div className="rounded-xl bg-card p-sm text-center shadow-sm">
+          <div className={cardVariants({ padding: "sm", className: "text-center" })}>
             <p className="font-display text-2xl tabular-nums">
               {Math.round(weightToDisplay(volume, unit)).toLocaleString("pl-PL")}
             </p>
             <p className="text-xs text-muted-foreground">objętość {unit}</p>
           </div>
-          <div className="rounded-xl bg-card p-sm text-center shadow-sm">
+          <div className={cardVariants({ padding: "sm", className: "text-center" })}>
             <p className="font-display text-2xl tabular-nums">
               {durationMin != null ? `${durationMin}'` : "Brak"}
             </p>
@@ -158,7 +159,7 @@ export default async function SessionDetailPage(props: {
         </section>
 
         {split.length > 0 && (
-          <section className="space-y-sm rounded-xl bg-card p-md text-card-foreground shadow-sm">
+          <section className={cardVariants({ className: "space-y-sm" })}>
             <h2 className="text-sm font-semibold text-muted-foreground">Pracujące partie</h2>
             <MuscleSplitBars rows={split} />
           </section>
@@ -185,7 +186,7 @@ export default async function SessionDetailPage(props: {
         {exercises.map((ex) => (
           <section
             key={ex.id}
-            className={`rounded-xl bg-card p-md text-card-foreground shadow-sm ${
+            className={`${cardVariants()} ${
               ex.superset_group != null ? "border-l-4 border-l-primary" : ""
             }`}
           >

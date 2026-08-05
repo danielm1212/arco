@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Sparkline } from "@/components/Sparkline";
 import type { HomeExerciseProgressRow } from "@/lib/homeExerciseProgress";
+import { cardVariants } from "@/components/ui/card";
 
 /**
  * HOME-03/04: zwarty wyciąg trendów na Home. Trzy ostatnio trenowane ćwiczenia
@@ -24,7 +25,7 @@ export function HomeExerciseProgress({
   return (
     <section
       aria-labelledby="home-exercise-progress-title"
-      className="rounded-xl bg-card p-md text-card-foreground shadow-sm"
+      className={cardVariants()}
     >
       <div className="flex items-center justify-between gap-sm">
         <div className="min-w-0">

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" size="lg" className="w-full" disabled={pending}>
+    <Button type="submit" size="lg" className="w-full" pending={pending}>
       {pending ? "Logowanie…" : "Zaloguj"}
     </Button>
   );

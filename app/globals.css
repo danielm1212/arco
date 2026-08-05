@@ -167,8 +167,23 @@
     --color-success-contrast: var(--arco-grey-0);      /* tekst/glif NA success (4.53:1) */
     --color-success-text:    var(--arco-green-600);    /* sukces jako TEKST (min. 4.98:1) */
     --color-warning:         var(--arco-amber-500);    /* wypełnienie/obramowanie, NIE tekst */
+    /* Trzecia roli brakowało tylko warning i danger — success miał komplet od początku.
+       Skutek był widoczny w kodzie: `OfflineBanner` (jedyna powierzchnia `bg-warning`
+       z tekstem) używał `text-black`, bo nie miał czego użyć. Magic-color powstał
+       z DZIURY W TOKENACH, nie z niedbałości — stąd token, nie sam sweep klasy.
+       Amber jest jasny w OBU motywach (ten sam stopień 500), więc tekst na nim jest
+       ciemny w obu — inaczej niż przy rust/violet, gdzie inwersja dotyczy tylko dark.
+       `ink-900` na `amber-500`: 8.76:1. Czerń dałaby 9.85:1, ale czerni nie ma
+       w palecie — `ink-900` to kanoniczny „ciemny tekst na barwie chromatycznej"
+       (ten sam token co `accent-contrast` i `success-contrast` w dark). */
+    --color-warning-contrast: var(--arco-ink-900);     /* tekst/glif NA warning (8.76:1) */
     --color-warning-text:    var(--arco-amber-700);    /* tekst w barwie ostrzeżenia (min. 4.89:1) */
     --color-danger:          var(--arco-red-500);
+    /* Wartość nie jest nowa — mieszkała w moście jako `--destructive-foreground`.
+       To była inwersja warstw: most (L3) ma CZYTAĆ z semantyki (L2), nigdy jej
+       definiować, inaczej `bg-danger` z tailwinda nie ma skąd wziąć koloru tekstu
+       i każdy consumer wymyśla własny. Most niżej aliasuje już ten token. */
+    --color-danger-contrast: var(--arco-grey-0);       /* tekst/glif NA danger (5.72:1) */
     --color-danger-text:     var(--arco-red-500);      /* w light ta sama barwa wystarcza (5.29:1) */
     --color-ring:            var(--arco-violet-400); /* focus = violet (guide §5/§10), 3.22:1 na canvas */
 
@@ -208,7 +223,7 @@
     --accent:                var(--color-surface-muted);
     --accent-foreground:     var(--color-text);
     --destructive:           var(--color-danger);
-    --destructive-foreground: var(--arco-grey-0);
+    --destructive-foreground: var(--color-danger-contrast);
     --border:                var(--color-border);
     --input:                 var(--color-border-control);  /* kontrolka = mocniejsza krawędź (≥3:1), nie dekoracyjny border-subtle */
     --ring:                  var(--color-ring);
@@ -262,8 +277,14 @@
     --color-success-contrast: var(--arco-ink-900);     /* 7.90:1 */
     --color-success-text:    var(--arco-green-400);    /* w dark stopień wypełnienia wystarcza */
     --color-warning:         var(--arco-amber-500);
+    /* Ten sam stopień wypełnienia co w light, więc i ten sam ciemny tekst (8.76:1).
+       To jedyna barwa funkcyjna BEZ inwersji między motywami. */
+    --color-warning-contrast: var(--arco-ink-900);
     --color-warning-text:    var(--arco-amber-500);    /* w dark bez ciemnego stopnia: 7.43:1 na surface */
     --color-danger:          var(--arco-red-400);
+    /* B5: na `red-400` biel daje tylko 3.56:1 — w dark tekst na barwie chromatycznej
+       jest CIEMNY, jak przy accent/support/success. `ink-900`: 5.25:1. */
+    --color-danger-contrast: var(--arco-ink-900);
     --color-danger-text:     var(--arco-red-300);      /* jaśniejszy stopień: 4.47 → min. 5.13:1 */
     --color-ring:            var(--arco-violet-400);
 
@@ -302,8 +323,10 @@
     /* B5 (a11y): `sand-50` na `red-400` to 3.36:1 — a ten wariant siedzi na
        ośmiu potwierdzeniach nieodwracalnych operacji. W dark tekst na barwie
        chromatycznej jest CIEMNY (jak `accent-contrast` i `support-contrast`):
-       `ink-900` daje 5.27:1. Light zostaje bielą — tam `red-500` ma 5.73:1. */
-    --destructive-foreground: var(--arco-ink-900);
+       `ink-900` daje 5.27:1. Light zostaje bielą — tam `red-500` ma 5.73:1.
+       Sama decyzja przeniosła się wyżej, do `--color-danger-contrast` — most tylko
+       ją czyta, żeby `bg-danger` i `bg-destructive` nie mogły się rozejść. */
+    --destructive-foreground: var(--color-danger-contrast);
 
     /* L3-bridge musi być re-deklarowany w .dark — inaczej var() w moście
        (zadeklarowanym w :root) nie re-resolvuje się w poddrzewie z klasą .dark

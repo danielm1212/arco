@@ -85,7 +85,7 @@ export function RestTimer({
           <p className="flex-1 text-base font-semibold">
             Koniec przerwy. Czas na serię! 💪
           </p>
-          <Button variant="secondary" size="sm" className="min-h-11" onClick={onDone}>
+          <Button variant="secondary" size="sm" onClick={onDone}>
             OK
           </Button>
         </div>
@@ -114,13 +114,15 @@ export function RestTimer({
             {mm}:{ss}
           </p>
         </div>
-        {/* `size="sm"` daje h-9 — 36 px w najgęstszym miejscu apki, przy samej
-            krawędzi ekranu. `min-h-11` podnosi target do 44 px bez ruszania
-            typografii (ten sam zabieg co w TimedStopwatch). */}
-        <Button variant="outline" size="sm" className="min-h-11" onClick={() => onExtend(30)}>
+        {/* Ręczne `min-h-11` zniknęło stąd 2026-08-04: `size="sm"` samo trzyma już
+            44 px (audyt komponentów, M2). Ta łatka była tu nieprzypadkowo — to
+            najgęstsze miejsce apki, przy samej krawędzi ekranu — ale próg dotyku
+            należy do wariantu, nie do wywołania: łatka po stronie wywołań pokrywała
+            4 z 14 miejsc, więc w pozostałych 10 target po cichu został na 36 px. */}
+        <Button variant="outline" size="sm" onClick={() => onExtend(30)}>
           +30s
         </Button>
-        <Button variant="secondary" size="sm" className="min-h-11" onClick={onDismiss}>
+        <Button variant="secondary" size="sm" onClick={onDismiss}>
           Pomiń
         </Button>
       </div>

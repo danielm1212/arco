@@ -41,9 +41,20 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Pasek systemowy = CANVAS, nie powierzchnia: `<body>` ma `bg-background`, a header
+  // jest przezroczysty, więc pod status barem (pt-safe) widać właśnie canvas.
+  // Jedyne miejsce w repo, gdzie hex jest nieunikniony — `Viewport` musi być statyczny,
+  // więc nie da się czytać `var(--color-bg)`. PRZY ZMIANIE CANVASU ZAKTUALIZUJ TU RĘCZNIE.
+  // Wartości = `--color-bg` rozwinięte do primitive'ów (`--arco-grey-100` /
+  // `--arco-ink-850`) i PRZELICZONE z HSL — nie przepisane z komentarzy przy tokenach,
+  // bo te są zaokrąglone o 1/255 (mówią #F7F7F5/#18171A, a renderuje się #F6F6F4/#19181B).
+  // Pilnuje tego `tests/theme-color.test.ts`, liczący hex z realnych wartości w CSS.
+  // Poprzednia para (#F6F2ED / #1E1C1A) została z czasów sprzed v1.4: pierwsza
+  // wskazywała brand-surface zamiast canvasu, druga — ciepły `ink-800`, który po
+  // przejściu na neutralne ciemne nie istnieje już w palecie w ogóle.
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F6F2ED" },
-    { media: "(prefers-color-scheme: dark)", color: "#1E1C1A" },
+    { media: "(prefers-color-scheme: light)", color: "#F6F6F4" },
+    { media: "(prefers-color-scheme: dark)", color: "#19181B" },
   ],
   width: "device-width",
   initialScale: 1,

@@ -130,15 +130,27 @@ function themeBlock(scope: "light" | "dark"): string {
   return CSS.slice(start, end);
 }
 
-/** Token semantyczny → primitive, na który wskazuje w danym motywie. */
-function semantic(name: string, scope: "light" | "dark"): Hsl {
+/**
+ * Token semantyczny → primitive, na który wskazuje w danym motywie.
+ *
+ * Podąża za CAŁYM łańcuchem aliasów, nie tylko za skokiem wprost do `--arco-*`:
+ * most (L3) czyta z semantyki (L2), więc np. `--destructive-foreground` →
+ * `--color-danger-contrast` → `--arco-grey-0` to trzy ogniwa. Wcześniej helper
+ * zakładał jeden skok i przy porządkowaniu warstw wywaliłby się na moście, mimo że
+ * kontrast byłby poprawny — czyli testowałby kształt zapisu, nie kolor.
+ */
+function semantic(name: string, scope: "light" | "dark", depth = 0): Hsl {
+  assert.ok(depth < 8, `cykl aliasów przy ${name} (motyw ${scope})`);
   const found = [
-    ...themeBlock(scope).matchAll(new RegExp(`${name}:\\s*var\\((--arco-[\\w-]+)\\)`, "g")),
+    ...themeBlock(scope).matchAll(new RegExp(`${name}:\\s*var\\((--[\\w-]+)\\)`, "g")),
   ];
   // Ostatnia deklaracja wygrywa — tak jak w kaskadzie.
   const last = found.at(-1);
   assert.ok(last, `nie znalazłem ${name} w motywie ${scope}`);
-  return primitive(last![1]);
+  const target = last![1];
+  return target.startsWith("--arco-")
+    ? primitive(target)
+    : semantic(target, scope, depth + 1);
 }
 
 /** Tint `bg-<kolor>/<alpha>` skomponowany na tle powierzchni. */
@@ -168,6 +180,26 @@ function rgbToHsl([r, g, b]: [number, number, number]): Hsl {
     max === r ? ((g - b) / d + (g < b ? 6 : 0)) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
   return [h * 60, s * 100, l * 100];
 }
+
+test("każda barwa funkcyjna ma `*-contrast` i trzyma ≥4,5:1 na własnym wypełnieniu", () => {
+  // Audyt komponentów 2026-08-04 (M5): `success` miał komplet trzech ról od początku,
+  // `warning` i `danger` tylko dwie. Skutek nie był teoretyczny — `OfflineBanner`,
+  // jedyna powierzchnia `bg-warning` z tekstem, wpisał `text-black`, bo nie miał
+  // czego użyć. Ten test pilnuje, żeby dziura nie wróciła: brak tokenu wywali się
+  // tak samo jak zły kontrast, więc nie da się dodać `bg-*` bez pary `*-foreground`.
+  for (const role of ["success", "warning", "danger"] as const) {
+    for (const scope of ["light", "dark"] as const) {
+      const ratio = contrast(
+        semantic(`--color-${role}-contrast`, scope),
+        semantic(`--color-${role}`, scope),
+      );
+      assert.ok(
+        ratio >= 4.5,
+        `${role}-contrast na ${role} (${scope}) = ${round(ratio)}:1, poniżej 4,5:1`,
+      );
+    }
+  }
+});
 
 test("B1 — check zaliczonej serii: tekst na `bg-success` trzyma ≥4,5:1", () => {
   // Był to jedyny magic-color w repo (`text-white`): biel na `green-400`

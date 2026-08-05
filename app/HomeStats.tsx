@@ -4,6 +4,7 @@ import {
   type HomePeriodFacts,
 } from "@/lib/homePeriods";
 import { trainingWord } from "@/lib/streakCopy";
+import { cardVariants } from "@/components/ui/card";
 
 /**
  * HOME-02/04: „Podsumowanie" — liczby, które mówią, czy idzie do przodu.
@@ -109,7 +110,7 @@ export function HomeStats({ periods }: { periods: HomePeriodFacts | null }) {
   return (
     <section
       aria-label="Podsumowanie postępu"
-      className="rounded-xl bg-card p-md text-card-foreground shadow-sm"
+      className={cardVariants()}
     >
       <p className="text-xs font-medium text-muted-foreground">Podsumowanie</p>
 

@@ -11,6 +11,7 @@ import {
   setWarmupMinutes,
 } from "@/lib/prefs";
 import { cn } from "@/lib/utils";
+import { cardVariants } from "@/components/ui/card";
 
 type RoutineKind = "warmup" | "stretching";
 
@@ -142,7 +143,7 @@ export function RoutineTimer({
   return (
     <section
       className={cn(
-        "rounded-xl border border-support/20 bg-card px-sm py-sm text-left shadow-sm",
+        cardVariants({ padding: "none", className: "border border-support/20 px-sm py-sm text-left" }),
         className,
       )}
     >
