@@ -241,7 +241,7 @@ export const SetRow = memo(function SetRow({
           ref={menuRef}
           role="menu"
           aria-label="Opcje serii"
-          className="absolute left-0 top-12 z-30 w-52 overflow-hidden rounded-md border border-border bg-popover p-2xs text-popover-foreground shadow-lg"
+          className="absolute left-0 top-12 z-30 w-52 overflow-hidden rounded-md border border-border bg-popover p-2xs text-popover-foreground shadow-e2"
         >
           <button
             type="button"

@@ -12,6 +12,7 @@ import { MuscleHeatmapLazy } from "@/components/MuscleHeatmapLazy";
 import type { UnitSystem } from "@/lib/types";
 import { weightToDisplay } from "@/lib/format";
 import { PERIODS, type PrEntry, type StrengthRow } from "./stats";
+import { cardVariants } from "@/components/ui/card";
 
 /**
  * Sekcje trasy /progress — S9-cz.2 paczka 4: JSX przeniesiony 1:1 z page.tsx.
@@ -30,7 +31,7 @@ export function ActivitySection({
 }) {
   const weeksText = streakWeeksText(streak);
   return (
-    <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+    <section className={cardVariants({ className: "space-y-sm" })}>
       <div className="flex items-center justify-between gap-sm">
         <h2 className="text-base font-semibold">Aktywność</h2>
         {/* HOME-05b: jeden glif passy w całej aplikacji (`StreakFlame`) —
@@ -108,7 +109,7 @@ export function Stat({
   // S13: delta vs poprzedni okres — ↑ support (dane) / ↓ stonowane / → neutralne (±10% = bez zmiany)
   const d = delta == null ? null : delta >= 10 ? "up" : delta <= -10 ? "down" : "flat";
   return (
-    <div className="rounded-xl bg-card p-sm text-center shadow-sm">
+    <div className={cardVariants({ padding: "sm", className: "text-center" })}>
       {/* Liczba-bohater (wzorzec Withings) — font-display jak na done-screen:
           liczby-momenty mówią Gambarino w całej apce (audyt wizualny 2026-07-11) */}
       <p className="font-display text-2xl tabular-nums">{value}</p>
@@ -147,7 +148,7 @@ export function BalanceSection({
       {muscleRows.length === 0 ? (
         fresh ? (
           /* S14 #3a: świeże konto — ghost zamiast „brak danych" */
-          <div className="space-y-sm rounded-xl bg-card p-md text-center shadow-sm">
+          <div className={cardVariants({ className: "space-y-sm text-center" })}>
             <div className="pointer-events-none opacity-40" aria-hidden>
               <Sparkline values={[2, 3, 3, 4, 5, 5, 6]} className="h-16 w-full" />
             </div>
@@ -163,7 +164,7 @@ export function BalanceSection({
           </div>
         ) : (
           /* S14 #3b: pusty OKRES przy starszych danych — pokaż wyjście */
-          <div className="flex items-center justify-between gap-sm rounded-xl bg-card p-md shadow-sm">
+          <div className={cardVariants({ className: "flex items-center justify-between gap-sm" })}>
             <p className="text-sm text-muted-foreground">
               Brak treningów z ostatnich {periodDays} dni. Starsze dane nadal są dostępne.
             </p>
@@ -177,7 +178,7 @@ export function BalanceSection({
         )
       ) : (
         <>
-          <div className="rounded-xl bg-card p-md shadow-sm">
+          <div className={cardVariants()}>
             <MuscleHeatmapLazy setsPerMuscle={muscleRows} />
           </div>
           <ul className="space-y-xs">

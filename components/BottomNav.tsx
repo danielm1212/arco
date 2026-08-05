@@ -19,7 +19,7 @@ export function BottomNav({ activeTab }: { activeTab: AppTab }) {
   const pathname = usePathname();
   const { markNextNavigation } = useNavigationHistory();
   return (
-    <nav aria-label="Główna nawigacja" className="fixed inset-x-[var(--floating-nav-gap)] bottom-[var(--floating-nav-gap)] z-40 mx-auto max-w-[424px] rounded-full border border-border/70 bg-card p-1.5 shadow-lg">
+    <nav aria-label="Główna nawigacja" className="fixed inset-x-[var(--floating-nav-gap)] bottom-[var(--floating-nav-gap)] z-40 mx-auto max-w-[424px] rounded-full border border-border/70 bg-card p-1.5 shadow-e2">
       <div className="flex">
         {TABS.map((t) => {
           const Icon = t.icon;

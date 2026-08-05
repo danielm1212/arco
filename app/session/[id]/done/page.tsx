@@ -11,6 +11,7 @@ import { joinMany, type ExerciseJoin } from "@/lib/dbJoins";
 import { formatGoalProgress } from "@/lib/programRecommendation";
 import { weightToDisplay } from "@/lib/format";
 import { isCompletedWorkingSet, sumVolumeKg } from "@/lib/sessionSetFacts";
+import { cardVariants } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
@@ -166,7 +167,7 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
 
       {/* S13: Muscle Split — co dziś pracowało */}
       {split.length > 0 && (
-        <div className="w-full rounded-xl bg-card p-md text-left shadow-sm">
+        <div className={cardVariants({ className: "w-full text-left" })}>
           {/* W9 (audyt-wizualny): cichsza etykieta — celebracja = liczba + headline,
               sekcje pomocnicze nie krzyczą uppercasem */}
           <p className="mb-sm text-xs font-medium text-muted-foreground">

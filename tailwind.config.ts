@@ -78,10 +78,12 @@ const config: Config = {
         },
         warning: {
           DEFAULT: "hsl(var(--color-warning))",
+          foreground: "hsl(var(--color-warning-contrast))",
           text: "hsl(var(--color-warning-text))",
         },
         danger: {
           DEFAULT: "hsl(var(--color-danger))",
+          foreground: "hsl(var(--color-danger-contrast))",
           text: "hsl(var(--color-danger-text))",
         },
         // Support (violet) — prowadzenie, plany, dane; oś uzupełniająca akcentu

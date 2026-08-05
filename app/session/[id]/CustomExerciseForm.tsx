@@ -155,7 +155,7 @@ export function CustomExerciseForm({
       </label>
 
       <div className="flex gap-sm">
-        <Button className="flex-1" disabled={pending} onClick={submit}>
+        <Button className="flex-1" pending={pending} onClick={submit}>
           {pending ? "Zapisuję…" : "Dodaj ćwiczenie"}
         </Button>
         <Button variant="ghost" disabled={pending} onClick={onCancel}>

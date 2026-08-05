@@ -7,6 +7,7 @@ import { Sparkline } from "@/components/Sparkline";
 import { MomentIcon3D } from "@/components/MomentIcon3D";
 import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader";
 import { formatWarsawDate } from "@/lib/dateTime";
+import { cardVariants } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
@@ -70,7 +71,7 @@ export default async function BodyPage() {
         </Button>
 
         {latest != null && (
-          <section className="space-y-sm rounded-xl bg-card p-md shadow-sm">
+          <section className={cardVariants({ className: "space-y-sm" })}>
             <div className="flex items-baseline justify-between">
               <span className="font-display text-3xl tabular-nums">
                 {latest}
@@ -90,7 +91,7 @@ export default async function BodyPage() {
         <section className="space-y-sm">
           <h2 className="text-base font-semibold">Historia pomiarów</h2>
           {metricRows.length === 0 && (
-            <div className="flex items-center gap-sm rounded-xl bg-card p-md shadow-sm">
+            <div className={cardVariants({ className: "flex items-center gap-sm" })}>
               <MomentIcon3D name="bodyMeasurements" className="size-16" />
               <div className="min-w-0">
                 <p className="font-semibold">Tu pojawi się historia pomiarów</p>

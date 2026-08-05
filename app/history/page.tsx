@@ -9,6 +9,7 @@ import { TrainingRouteHeader } from "@/components/navigation/TrainingRouteHeader
 import { joinMany, joinMaybe, type DayJoin } from "@/lib/dbJoins";
 import { isCompletedWorkingSet } from "@/lib/sessionSetFacts";
 import { formatWarsawDate } from "@/lib/dateTime";
+import { cardVariants } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
@@ -92,7 +93,7 @@ export default async function HistoryPage(props: { searchParams: Promise<{ befor
           return (
             <div
               key={s.id}
-              className="flex items-stretch rounded-xl bg-card text-card-foreground shadow-sm"
+              className={cardVariants({ padding: "none", className: "flex items-stretch" })}
             >
               <Link href={`/history/${s.id}`} className="block min-w-0 flex-1 p-md">
                 <div className="flex items-center justify-between gap-sm">

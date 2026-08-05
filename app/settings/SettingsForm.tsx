@@ -388,7 +388,7 @@ export function SettingsForm({
       </section>
 
       <div className="flex items-center gap-sm">
-        <Button onClick={save} disabled={pending}>
+        <Button onClick={save} pending={pending}>
           {pending ? "Zapisuję…" : "Zapisz"}
         </Button>
         {saved && <span className="text-sm text-success-text">Zapisano ✓</span>}

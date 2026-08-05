@@ -60,7 +60,7 @@ export function DateEditor({ sessionId, startedAt }: { sessionId: string; starte
         onChange={(e) => setValue(e.target.value)}
         className="h-11 rounded-md border border-input bg-background px-2 text-sm"
       />
-      <Button disabled={pending} onClick={save}>
+      <Button pending={pending} onClick={save}>
         {pending ? "Zapisuję…" : "Zapisz"}
       </Button>
       <Button variant="ghost" disabled={pending} onClick={() => setEditing(false)}>
