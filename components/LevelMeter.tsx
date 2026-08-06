@@ -42,10 +42,51 @@ export function LevelMeter({
   levelMin: number | null;
   levelMax: number | null;
   label: string | null;
-  variant?: "bars" | "list";
+  variant?: "bars" | "list" | "icon";
 }) {
   const meter = buildLevelMeter(levelMin, levelMax, label);
   if (!meter) return null;
+
+  /* Wariant `icon` (POC widgetu treningu): kształt ikony lucide
+     `chart-no-axes-column-increasing`, ale słupki kolorowane WEDŁUG POZIOMU —
+     zapalone akcentem, wygaszone neutralnie. Zwykła ikona z lucide ma jeden
+     `currentColor` na wszystkie trzy kreski i nie potrafi nieść wartości.
+
+     Ścieżki są przepisane z `lucide-react@1.23.0` (ISC), tak samo jak w
+     `StreakFlame` — to ustalony w tym repo wzorzec na „glif lucide, który musi
+     coś znaczyć". Etykieta obok mówi tylko „trudność"; pełny poziom
+     („Średniozaawansowany") idzie w `aria-label`, żeby czytnik dostał wartość,
+     a wiersz meta nie zawijał się przez długie słowo. */
+  if (variant === "icon") {
+    const filledClass = "stroke-primary";
+    const emptyClass = "stroke-border";
+    return (
+      <span
+        role="img"
+        aria-label={meter.ariaLabel}
+        className="inline-flex shrink-0 items-center gap-xs"
+      >
+        <svg
+          aria-hidden
+          viewBox="0 0 24 24"
+          fill="none"
+          /* 3, nie 2: ikona ma viewBox 24, a wyświetla się w 16 px, więc kreska
+             skaluje się o 2/3. `strokeWidth={2}` dałoby na ekranie 1,33 px i słupki
+             wyglądałyby na cieńsze niż reszta ikonografii. 3 × (16/24) = 2 px. */
+          strokeWidth={3}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="size-4 shrink-0"
+        >
+          {/* Kolejność ścieżek = rosnąca wysokość słupka, więc i rosnący poziom. */}
+          {["M5 21v-6", "M12 21V9", "M19 21V3"].map((d, i) => (
+            <path key={d} d={d} className={meter.segments[i] ? filledClass : emptyClass} />
+          ))}
+        </svg>
+        <span aria-hidden>trudność</span>
+      </span>
+    );
+  }
 
   if (variant === "list") {
     return (
