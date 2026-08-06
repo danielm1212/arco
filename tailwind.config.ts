@@ -96,6 +96,11 @@ const config: Config = {
           "surface-strong": "hsl(var(--color-support-surface-strong))",
           "surface-text": "hsl(var(--color-support-surface-text))",
         },
+        // Chip na mediach — para STAŁA, nie adaptacyjna (patrz globals.css)
+        "media-chip": {
+          DEFAULT: "hsl(var(--color-media-chip))",
+          foreground: "hsl(var(--color-media-chip-contrast))",
+        },
         // Wykresy — osobna paleta serii, nie dziedziczy z CTA
         chart: {
           primary: "hsl(var(--color-chart-primary))",

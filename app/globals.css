@@ -142,6 +142,30 @@
       0 4px 10px rgb(20 18 16 / 7%),
       0 20px 42px rgb(20 18 16 / 9%);
 
+    /* Scrim mediów — przyciemnienie chroniące tekst leżący na zdjęciu.
+       Token, a nie doraźne `bg-background/90` przy każdym użyciu, bo to ROLA,
+       nie przypadkowe krycie: „tyle, ile trzeba, żeby jasny tekst utrzymał AA
+       nad dowolną okładką". Wartość wzięta z pomiaru wszystkich okładek —
+       poniżej 80% przestaje wystarczać, więc próg mieszka w jednym miejscu
+       i zmienia się raz, a nie w pięciu klasach naraz.
+
+       Barwa to `ink-850` (ten sam stopień, co canvas dark) zapisana wprost jako
+       kanały, bo `hsl(var(--arco-ink-850) / α)` nie zadziała: primitive trzyma
+       surową trójkę HSL, a nie gotowy kolor. Gradient gaśnie do zera, żeby środek
+       kadru został nietknięty — chronimy pas z tekstem, nie całe zdjęcie. */
+    --media-scrim-top: linear-gradient(
+      to bottom,
+      hsl(260 6% 10% / 0.9) 0%,
+      hsl(260 6% 10% / 0.5) 50%,
+      transparent 100%
+    );
+    --media-scrim-bottom: linear-gradient(
+      to top,
+      hsl(260 6% 10% / 0.9) 0%,
+      hsl(260 6% 10% / 0.5) 50%,
+      transparent 100%
+    );
+
     /* polished edge (guide §10) — dopracowana, lekko refleksyjna krawędź; NIE glassmorphism.
        Ślad violet tylko na końcu gradientu, nieczytelny jako „fioletowa ramka". */
     --polished-rim: linear-gradient(145deg,
@@ -206,6 +230,18 @@
     --color-chart-positive:  var(--arco-green-500);
     --color-chart-warning:   var(--arco-amber-500);
     --color-chart-neutral:   var(--arco-stone-500);
+
+    /* Chip NA MEDIACH (pigułka aktywnego dnia w hero).
+       Para STAŁA, celowo identyczna w obu motywach — i to jest cała jej racja bytu.
+       Pod chipem leży fotografia, a nie powierzchnia UI, więc nie ma powodu, żeby
+       zmieniał się razem z motywem aplikacji.
+
+       Bez tego tokenu chip brał `support`/`support-contrast`, a te w `.dark`
+       odwracają się (violet-400 jest jasny, więc tekst na nim jest CIEMNY) —
+       i litera aktywnego dnia wychodziła czarna zamiast białej. Nazwa mówi
+       wprost „na mediach", żeby nikt nie podstawił tu pary adaptacyjnej. */
+    --color-media-chip: var(--arco-violet-500);
+    --color-media-chip-contrast: var(--arco-grey-0);
 
     /* ── L3-bridge · zmienne shadcn (czytają z warstwy semantycznej) ──────── */
     --background:            var(--color-bg);
@@ -328,6 +364,10 @@
        ją czyta, żeby `bg-danger` i `bg-destructive` nie mogły się rozejść. */
     --destructive-foreground: var(--color-danger-contrast);
 
+    /* Chip na mediach: ta sama para co w light — patrz komentarz wyżej. */
+    --color-media-chip: var(--arco-violet-500);
+    --color-media-chip-contrast: var(--arco-grey-0);
+
     /* L3-bridge musi być re-deklarowany w .dark — inaczej var() w moście
        (zadeklarowanym w :root) nie re-resolvuje się w poddrzewie z klasą .dark
        (np. wymuszony dark logger). Most czyta z ciemnej semantyki powyżej. */
@@ -391,6 +431,24 @@
     background:
       linear-gradient(hsl(var(--color-surface)), hsl(var(--color-surface))) padding-box,
       var(--polished-rim) border-box;
+  }
+  /* Krawędź kafla rust→violet (POC widgetu treningu, Figma 171:477).
+     ŚWIADOMY wyjątek od reguły „jeden kolor chromatyczny na komponent" (v1.4) —
+     tak samo jak konfetti (D-20). Tam uzasadnieniem była warstwa momentu; tutaj
+     to jedyny element karty, który miesza obie osie, i robi to celowo: rust =
+     działanie (CTA), violet = prowadzenie (plan, następny dzień). Krawędź spina
+     wizualnie te dwie rzeczy, które karta łączy.
+
+     Oba przystanki to ISTNIEJĄCE tokeny semantyczne, nie nowe barwy — gradient
+     jest pochodną, nie kolejnym kolorem w palecie. Dlatego mieszka tu, a nie
+     w Variables: Figma nie przechowuje gradientów, więc token po stronie kodu
+     jest jedynym miejscem, gdzie ta definicja może żyć bez duplikatu. */
+  .surface-tile-rim {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(hsl(var(--color-surface)), hsl(var(--color-surface))) padding-box,
+      linear-gradient(135deg, hsl(var(--color-accent)) 0%, hsl(var(--color-support)) 100%)
+        border-box;
   }
   .surface-polished-subtle {
     box-shadow: var(--shadow-e1);

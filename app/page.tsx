@@ -1,3 +1,5 @@
+import Image from "next/image";
+import { Clock, Dumbbell } from "lucide-react";
 import { joinMaybe } from "@/lib/dbJoins";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -9,9 +11,10 @@ import { WelcomeOverlay } from "@/components/WelcomeOverlay";
 import { getHomeInsights } from "@/lib/getHomeGuidance";
 import type { UnitSystem } from "@/lib/types";
 import { localDayKey, weekStart, computeStreak, buildWeekDays, weeksMeetingGoal } from "@/lib/week";
-import { DayPickerSheet } from "./DayPickerSheet";
 import { FreestyleStartButton } from "./FreestyleStartButton";
 import { GuidanceChip } from "./GuidanceChip";
+import { HeroDayPills } from "./HeroDayPills";
+import { HeroWorkoutMenu } from "./HeroWorkoutMenu";
 import { ProgramReviewInsight } from "./ProgramReviewInsight";
 import { WeekCard } from "./WeekCard";
 import { HomeStats } from "./HomeStats";
@@ -21,8 +24,13 @@ import { TrainingHeader } from "@/components/TrainingHeader";
 import { StreakBadge } from "@/components/StreakBadge";
 import { countPl, WORDS } from "@/lib/plural";
 import { cardVariants } from "@/components/ui/card";
+import { LevelMeter } from "@/components/LevelMeter";
 import {
-  formatCycleStructure,
+  formatProgramCardTitle,
+  formatProgramEnvironmentTag,
+  formatProgramSplitTag,
+} from "@/lib/programListCard";
+import {
   type ProgramCandidate,
   type ProgramFocus,
   type TrainingEnvironment,
@@ -102,7 +110,7 @@ export default async function HomePage() {
   ] = await Promise.all([
     supabase
       .from("programs")
-      .select("id, slug, name, cycle_days, environment, focus_key, level_min, level_max, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment")
+      .select("id, slug, name, cycle_days, environment, focus_key, level_min, level_max, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, cover_image_url, short_name, split_key, level")
       .order("cycle_days"),
     supabase
       .from("user_active_program")
@@ -168,6 +176,19 @@ export default async function HomePage() {
   // świeże konto nie widzi zer, nie brakującej karty z zerowaną liczbą.
   const hasHistory = (finished ?? []).length > 0;
   const greetingName = settings?.display_name?.trim() || null;
+
+  /* Tagi karty („FBW · Siłownia") z tych samych formaterów, co lista planów —
+     zero nowej logiki i spójność z `/programs` za darmo.
+
+     `formatProgramSplitTag` dostaje 0, a nie liczbę dni, celowo: przy 2–8 dniach
+     zwraca „FBW A/B/C", a te litery pokazują teraz pigułki nad tagiem. Powtórzenie
+     ich w tagu byłoby duplikatem tej samej informacji o dwa wiersze od siebie. */
+  const heroTags = activeProgram
+    ? [
+        formatProgramSplitTag(activeProgram.split_key, 0),
+        formatProgramEnvironmentTag(activeProgram.environment),
+      ].filter((tag): tag is string => Boolean(tag))
+    : [];
 
   // Sugestia kolejnego dnia: rotacja liczona z już pobranej historii (bez
   // dodatkowego zapytania). Ostatnia ukończona sesja aktywnego planu → następna
@@ -257,63 +278,118 @@ export default async function HomePage() {
             szczegół tygodnia żyje w sheecie badge'a w headerze. Hero jest
             pierwszym merytorycznym modułem pod nagłówkiem. */}
         {openSession ? null : suggested ? (
-          // F1 (redesign-home.md V4): hero = BIAŁY kafel (nie sand) — hierarchię
-          // robi skala typografii + jedyne wypełnione rust-CTA na ekranie.
-          // R2: karta NIE jest jednym wielkim przyciskiem — osobne cele tapnięcia:
-          // CTA startuje sesję, nazwa planu otwiera szczegół, stopka = podgląd/zmiana.
-          <div className={cardVariants({ polished: true, padding: "none", className: "overflow-hidden" })}>
-            <div className="p-md">
-              <div className="flex items-center justify-between gap-sm">
-                <span className="shrink-0 text-xs font-medium text-muted-foreground">
+          /* POC widgetu treningu (Figma 171:477). Układ: zdjęcie jako PAS u góry
+             (201 px), treść na jasnej powierzchni pod spodem — a nie treść na
+             przyciemnionym zdjęciu.
+
+             To nie jest kosmetyka. Pierwsza wersja kładła tekst na okładce i wpadła
+             w ścianę kontrastu: biały tekst na dowolnym zdjęciu trzyma 4,5:1 dopiero
+             przy ≥80% przyciemnienia, czyli gdy okładka przestaje być zdjęciem.
+             Zejście z treści na własną powierzchnię usuwa problem u źródła — na
+             fotografii zostają tylko dwa drobne elementy, każdy z własnym tłem.
+
+             Wymiary z pliku Figmy (`get_metadata`), nie z oka: karta 358×411,
+             pas zdjęcia 201, body 210, tytuł 24/30, meta 20, oba CTA po 44. */
+          <div className={cardVariants({ padding: "none", className: "surface-tile-rim overflow-hidden" })}>
+            {/* PAS ZDJĘCIA — `dark` tylko tutaj, bo tylko tu tekst leży na obrazie. */}
+            <div className="dark relative h-[201px] w-full">
+              {activeProgram?.cover_image_url ? (
+                <Image
+                  src={activeProgram.cover_image_url}
+                  alt=""
+                  aria-hidden
+                  fill
+                  sizes="(max-width: 448px) 100vw, 448px"
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div aria-hidden className="absolute inset-0 bg-muted" />
+              )}
+              {/* Scrim wyłącznie pod dwoma elementami, które siedzą na zdjęciu:
+                  etykietą u góry i pigułkami u dołu. Środek kadru zostaje czysty —
+                  to cała różnica względem poprzedniego podejścia, gdzie treść leżała
+                  na całej okładce i wymagała 85% przyciemnienia wszędzie.
+
+                  Krycie i barwa siedzą w tokenach `--media-scrim-*` (globals.css),
+                  a nie w klasach `bg-background/90` rozsypanych po znaczniku: to ROLA
+                  („chroń tekst na mediach"), a jej próg wyszedł z pomiaru wszystkich
+                  okładek. Trzymany w jednym miejscu zmienia się raz, a nie w pięciu
+                  klasach naraz — i nie da się go przypadkiem osłabić lokalnie. */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-20"
+                style={{ backgroundImage: "var(--media-scrim-top)" }}
+              />
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-24"
+                style={{ backgroundImage: "var(--media-scrim-bottom)" }}
+              />
+              <div className="absolute inset-x-0 top-0 flex items-start justify-between p-sm">
+                <span className="px-2xs pt-xs text-sm font-medium text-foreground">
                   Następny trening
                 </span>
+                {/* BEZ `activeProgram &&`: menu jest jedyną drogą do własnego treningu
+                    z Home, odkąd stopka hero zniknęła. Gdyby zabrakło rekordu planu
+                    (a `suggested` opiera się na osobnym joinie, więc teoretycznie może),
+                    użytkownik zostałby bez tej ścieżki w ogóle. Nazwa ma fallback,
+                    funkcja nie znika. */}
+                <HeroWorkoutMenu
+                  programName={activeProgram?.name ?? "Aktywny plan"}
+                  dayLabel={suggested.label}
+                  days={activeDays.map(({ id, label }) => ({ id, label }))}
+                />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 p-sm">
+                <HeroDayPills
+                  days={activeDays.map(({ id, label }) => ({ id, label }))}
+                  activeDayId={suggested.dayId}
+                />
+              </div>
+            </div>
+
+            {/* BODY — jasna powierzchnia, zero problemów z kontrastem. */}
+            <div className="p-md">
+              {heroTags.length > 0 && (
+                <p className="text-xs font-semibold text-primary">{heroTags.join(" · ")}</p>
+              )}
+              <h2 className="mt-sm text-2xl font-semibold leading-tight">
+                {activeProgram
+                  ? formatProgramCardTitle(activeProgram.short_name, activeProgram.name)
+                  : suggested.label}
+              </h2>
+              <div className="mt-sm flex flex-wrap items-center gap-x-md gap-y-2xs text-sm font-medium text-muted-foreground">
+                {suggestedMeta && (
+                  <>
+                    <span className="flex items-center gap-xs">
+                      <Clock className="size-4 shrink-0" aria-hidden />~{suggestedMeta.minutes} min
+                    </span>
+                    <span className="flex items-center gap-xs">
+                      <Dumbbell className="size-4 shrink-0" aria-hidden />
+                      {countPl(suggestedMeta.count, WORDS.exercise)}
+                    </span>
+                  </>
+                )}
+                {/* Słupki trudności to gotowy komponent z listy planów — ten sam
+                    miernik, te same progi kontrastu, zero nowego rysunku. */}
                 {activeProgram && (
-                  <Link
-                    href={`/programs/${activeId}`}
-                    className="-my-xs flex min-h-11 min-w-0 items-center text-xs font-medium text-primary underline-offset-2 hover:underline"
-                  >
-                    <span className="truncate">{activeProgram.name}</span>
-                  </Link>
+                  <LevelMeter
+                    levelMin={activeProgram.level_min}
+                    levelMax={activeProgram.level_max}
+                    label={activeProgram.level}
+                    variant="icon"
+                  />
                 )}
               </div>
-              <p className="mt-sm text-2xl font-semibold leading-tight">{suggested.label}</p>
-              {activeProgram && activeDays.length > 1 && (
-                <p className="mt-2xs text-xs text-muted-foreground">
-                  Następny w rotacji {formatCycleStructure(activeProgram.cycle_days)}
-                </p>
-              )}
-              {suggestedMeta && (
-                <>
-                  <p className="mt-2xs text-sm font-medium text-muted-foreground">
-                    {countPl(suggestedMeta.count, WORDS.exercise)} · ~{suggestedMeta.minutes} min
-                  </p>
-                  {suggestedMeta.preview.length > 0 && (
-                    <p className="mt-2xs truncate text-xs text-muted-foreground">
-                      {suggestedMeta.preview.join(" · ")}
-                      {suggestedMeta.count > suggestedMeta.preview.length ? " …" : ""}
-                    </p>
-                  )}
-                </>
-              )}
               <form action={startSession.bind(null, suggested.dayId)} className="mt-md">
                 <Button type="submit" className="w-full">
                   Zacznij trening
                 </Button>
               </form>
-            </div>
-            {/* F1 (§3.2): stopka hero przejmuje WSZYSTKIE alternatywy jako ciche
-                tekst-linki — koniec z trzema równorzędnymi drogami startu */}
-            <div className="flex items-center gap-sm border-t px-md text-xs font-semibold text-primary">
-              <Link href={`/programs/${activeId}`} className="flex min-h-11 items-center underline-offset-2 hover:underline">
-                Podgląd ćwiczeń
-              </Link>
-              {activeDays.length > 1 && (
-                <DayPickerSheet
-                  programName={activeProgram?.name ?? "Aktywny plan"}
-                  days={activeDays.map(({ id, label, position }) => ({ id, label, position }))}
-                />
-              )}
-              <FreestyleStartButton variant="inline" />
+              <Button asChild variant="ghost" className="mt-2xs w-full">
+                <Link href={`/programs/${activeId}`}>Zobacz plan</Link>
+              </Button>
             </div>
           </div>
         ) : (
