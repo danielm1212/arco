@@ -190,7 +190,6 @@ export default async function HomePage() {
   // HOME-01: karta passy renderuje się tylko z historią (POC data-when="rich") —
   // świeże konto nie widzi zer, nie brakującej karty z zerowaną liczbą.
   const hasHistory = (finished ?? []).length > 0;
-  const greetingName = settings?.display_name?.trim() || null;
 
   /* Tagi karty („FBW · Siłownia") z tych samych formaterów, co lista planów —
      zero nowej logiki i spójność z `/programs` za darmo.
@@ -276,6 +275,7 @@ export default async function HomePage() {
           ) : null
         }
         displayName={settings?.display_name ?? null}
+        greeting
       />
       {/* `pt-sm` zamiast pełnego `p-md`: powitanie ma być 12 px od belki, tyle samo
           co od widgetu (para niżej trzyma `space-y-sm`). Bez powitania ten sam
@@ -285,154 +285,146 @@ export default async function HomePage() {
             zakładka nawigacji, a powitanie jest treścią, nie tytułem strony (i
             znika bez imienia, więc nie może pełnić roli `h1`). */}
         <h1 className="sr-only">Dziś</h1>
-        {/* HOME-01: powitanie jest linią treści nad hero, nie modułem — karta
-            startu zostaje pierwszym modułem (D-03, audyt R2.1). Brak imienia =
-            węzeł w ogóle nie istnieje (POC: "brak imienia = brak powitania"). */}
-        {/* Powitanie i widget to JEDNA para, nie dwa moduły: 12 px między nimi
-            i tyle samo od belki (`pt-sm` na `main` wyżej). Reszta strony trzyma
-            rytm modułów `space-y-lg`. */}
-        <div className="space-y-sm">
-          {greetingName && (
-            <p className="text-lg font-semibold tracking-tight">Cześć, {greetingName}</p>
-          )}
+        {/* Powitanie przeniosło się do belki (`TrainingHeader greeting`), więc
+            widget treningu jest teraz PIERWSZYM elementem treści — bez linii nad
+            nim. Zmiana wobec D-39, ale w jej duchu: „personalizacja bez kosztu
+            hierarchii" realizuje się mocniej, gdy powitanie siedzi w chrome. */}
+        {/* R2.1 (audyt P0): pełna karta tygodnia zniknęła z domyślnego Home —
+            szczegół tygodnia żyje w sheecie badge'a w headerze. Hero jest
+            pierwszym merytorycznym modułem pod nagłówkiem. */}
+        {openSession ? null : suggested ? (
+          /* POC widgetu treningu (Figma 171:477). Układ: zdjęcie jako PAS u góry
+             (201 px), treść na jasnej powierzchni pod spodem — a nie treść na
+             przyciemnionym zdjęciu.
 
-          {/* R2.1 (audyt P0): pełna karta tygodnia zniknęła z domyślnego Home —
-              szczegół tygodnia żyje w sheecie badge'a w headerze. Hero jest
-              pierwszym merytorycznym modułem pod nagłówkiem. */}
-          {openSession ? null : suggested ? (
-            /* POC widgetu treningu (Figma 171:477). Układ: zdjęcie jako PAS u góry
-               (201 px), treść na jasnej powierzchni pod spodem — a nie treść na
-               przyciemnionym zdjęciu.
+             To nie jest kosmetyka. Pierwsza wersja kładła tekst na okładce i wpadła
+             w ścianę kontrastu: biały tekst na dowolnym zdjęciu trzyma 4,5:1 dopiero
+             przy ≥80% przyciemnienia, czyli gdy okładka przestaje być zdjęciem.
+             Zejście z treści na własną powierzchnię usuwa problem u źródła — na
+             fotografii zostają tylko dwa drobne elementy, każdy z własnym tłem.
 
-               To nie jest kosmetyka. Pierwsza wersja kładła tekst na okładce i wpadła
-               w ścianę kontrastu: biały tekst na dowolnym zdjęciu trzyma 4,5:1 dopiero
-               przy ≥80% przyciemnienia, czyli gdy okładka przestaje być zdjęciem.
-               Zejście z treści na własną powierzchnię usuwa problem u źródła — na
-               fotografii zostają tylko dwa drobne elementy, każdy z własnym tłem.
-
-               Wymiary z pliku Figmy (`get_metadata`), nie z oka: karta 358×411,
-               pas zdjęcia 201, body 210, tytuł 24/30, meta 20, oba CTA po 44. */
-            <div className={cardVariants({ padding: "none", className: "surface-tile-rim overflow-hidden" })}>
-              {/* PAS ZDJĘCIA — `dark` tylko tutaj, bo tylko tu tekst leży na obrazie. */}
-              <div className="dark relative h-[201px] w-full">
-                {activeProgram?.cover_image_url ? (
-                  <Image
-                    src={activeProgram.cover_image_url}
-                    alt=""
-                    aria-hidden
-                    fill
-                    sizes="(max-width: 448px) 100vw, 448px"
-                    className="object-cover"
-                    priority
-                  />
-                ) : (
-                  <div aria-hidden className="absolute inset-0 bg-muted" />
-                )}
-                {/* Scrim wyłącznie pod dwoma elementami, które siedzą na zdjęciu:
-                    etykietą u góry i pigułkami u dołu. Środek kadru zostaje czysty —
-                    to cała różnica względem poprzedniego podejścia, gdzie treść leżała
-                    na całej okładce i wymagała 85% przyciemnienia wszędzie.
-
-                    Krycie i barwa siedzą w tokenach `--media-scrim-*` (globals.css),
-                    a nie w klasach `bg-background/90` rozsypanych po znaczniku: to ROLA
-                    („chroń tekst na mediach"), a jej próg wyszedł z pomiaru wszystkich
-                    okładek. Trzymany w jednym miejscu zmienia się raz, a nie w pięciu
-                    klasach naraz — i nie da się go przypadkiem osłabić lokalnie. */}
-                <div
+             Wymiary z pliku Figmy (`get_metadata`), nie z oka: karta 358×411,
+             pas zdjęcia 201, body 210, tytuł 24/30, meta 20, oba CTA po 44. */
+          <div className={cardVariants({ padding: "none", className: "surface-tile-rim overflow-hidden" })}>
+            {/* PAS ZDJĘCIA — `dark` tylko tutaj, bo tylko tu tekst leży na obrazie. */}
+            <div className="dark relative h-[201px] w-full">
+              {activeProgram?.cover_image_url ? (
+                <Image
+                  src={activeProgram.cover_image_url}
+                  alt=""
                   aria-hidden
-                  className="absolute inset-x-0 top-0 h-20"
-                  style={{ backgroundImage: "var(--media-scrim-top)" }}
+                  fill
+                  sizes="(max-width: 448px) 100vw, 448px"
+                  className="object-cover"
+                  priority
                 />
-                <div
-                  aria-hidden
-                  className="absolute inset-x-0 bottom-0 h-24"
-                  style={{ backgroundImage: "var(--media-scrim-bottom)" }}
+              ) : (
+                <div aria-hidden className="absolute inset-0 bg-muted" />
+              )}
+              {/* Scrim wyłącznie pod dwoma elementami, które siedzą na zdjęciu:
+                  etykietą u góry i pigułkami u dołu. Środek kadru zostaje czysty —
+                  to cała różnica względem poprzedniego podejścia, gdzie treść leżała
+                  na całej okładce i wymagała 85% przyciemnienia wszędzie.
+
+                  Krycie i barwa siedzą w tokenach `--media-scrim-*` (globals.css),
+                  a nie w klasach `bg-background/90` rozsypanych po znaczniku: to ROLA
+                  („chroń tekst na mediach"), a jej próg wyszedł z pomiaru wszystkich
+                  okładek. Trzymany w jednym miejscu zmienia się raz, a nie w pięciu
+                  klasach naraz — i nie da się go przypadkiem osłabić lokalnie. */}
+              <div
+                aria-hidden
+                className="absolute inset-x-0 top-0 h-20"
+                style={{ backgroundImage: "var(--media-scrim-top)" }}
+              />
+              <div
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-24"
+                style={{ backgroundImage: "var(--media-scrim-bottom)" }}
+              />
+              <div className="absolute inset-x-0 top-0 flex items-start justify-between p-sm">
+                <span className="px-2xs pt-xs text-sm font-medium text-foreground">
+                  Następny trening
+                </span>
+                {/* BEZ `activeProgram &&`: menu jest jedyną drogą do własnego treningu
+                    z Home, odkąd stopka hero zniknęła. Gdyby zabrakło rekordu planu
+                    (a `suggested` opiera się na osobnym joinie, więc teoretycznie może),
+                    użytkownik zostałby bez tej ścieżki w ogóle. Nazwa ma fallback,
+                    funkcja nie znika. */}
+                <HeroWorkoutMenu
+                  programName={activeProgram?.name ?? "Aktywny plan"}
+                  dayLabel={suggested.label}
+                  days={activeDays.map(({ id, label }) => ({ id, label }))}
                 />
-                <div className="absolute inset-x-0 top-0 flex items-start justify-between p-sm">
-                  <span className="px-2xs pt-xs text-sm font-medium text-foreground">
-                    Następny trening
-                  </span>
-                  {/* BEZ `activeProgram &&`: menu jest jedyną drogą do własnego treningu
-                      z Home, odkąd stopka hero zniknęła. Gdyby zabrakło rekordu planu
-                      (a `suggested` opiera się na osobnym joinie, więc teoretycznie może),
-                      użytkownik zostałby bez tej ścieżki w ogóle. Nazwa ma fallback,
-                      funkcja nie znika. */}
-                  <HeroWorkoutMenu
-                    programName={activeProgram?.name ?? "Aktywny plan"}
-                    dayLabel={suggested.label}
-                    days={activeDays.map(({ id, label }) => ({ id, label }))}
-                  />
-                </div>
-                <div className="absolute inset-x-0 bottom-0 p-sm">
-                  <HeroDayPills
-                    days={activeDays.map(({ id, label }) => ({ id, label }))}
-                    activeDayId={suggested.dayId}
-                  />
-                </div>
               </div>
-
-              {/* BODY — jasna powierzchnia, zero problemów z kontrastem. */}
-              <div className="p-md">
-                {heroTags.length > 0 && (
-                  <p className="text-xs font-semibold text-primary">{heroTags.join(" · ")}</p>
-                )}
-                <h2 className="mt-sm text-2xl font-semibold leading-tight">
-                  {activeProgram
-                    ? formatProgramCardTitle(activeProgram.short_name, activeProgram.name)
-                    : suggested.label}
-                </h2>
-                <div className="mt-sm flex flex-wrap items-center gap-x-md gap-y-2xs text-sm font-medium text-muted-foreground">
-                  {suggestedMeta && (
-                    <>
-                      <span className="flex items-center gap-xs">
-                        <Clock className="size-4 shrink-0" aria-hidden />~{suggestedMeta.minutes} min
-                      </span>
-                      <span className="flex items-center gap-xs">
-                        <Dumbbell className="size-4 shrink-0" aria-hidden />
-                        {countPl(suggestedMeta.count, WORDS.exercise)}
-                      </span>
-                    </>
-                  )}
-                  {/* Słupki trudności to gotowy komponent z listy planów — ten sam
-                      miernik, te same progi kontrastu, zero nowego rysunku. */}
-                  {activeProgram && (
-                    <LevelMeter
-                      levelMin={activeProgram.level_min}
-                      levelMax={activeProgram.level_max}
-                      label={activeProgram.level}
-                      variant="icon"
-                    />
-                  )}
-                </div>
-                <form action={startSession.bind(null, suggested.dayId)} className="mt-md">
-                  <Button type="submit" className="w-full">
-                    Zacznij trening
-                  </Button>
-                </form>
-                <Button asChild variant="ghost" className="mt-2xs w-full">
-                  <Link href={`/programs/${activeId}`}>Zobacz plan</Link>
-                </Button>
+              <div className="absolute inset-x-0 bottom-0 p-sm">
+                <HeroDayPills
+                  days={activeDays.map(({ id, label }) => ({ id, label }))}
+                  activeDayId={suggested.dayId}
+                />
               </div>
             </div>
-          ) : (
-            /* Pusty stan (redesign-home.md §3.6, wariant B — bez zapamiętanej
-               sugestii z onboardingu; wariant A wymaga persystencji poziom/
-               środowisko z WelcomeOverlay, nie w tym zakresie, patrz HANDOFF) */
-            <div className="space-y-sm">
-              <div className={cardVariants({ className: "space-y-sm text-center" })}>
-                <MomentIcon3D name="plan" className="mx-auto -my-xs" priority />
-                <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
-                <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-                  Wybierz jeden z {countPl(presetCount, WORDS.plan)}. Arco poprowadzi Cię przez trening serię po serii.
-                </p>
-                <Button asChild className="w-full">
-                  <Link href="/programs">Wybierz program →</Link>
-                </Button>
+
+            {/* BODY — jasna powierzchnia, zero problemów z kontrastem. */}
+            <div className="p-md">
+              {heroTags.length > 0 && (
+                <p className="text-xs font-semibold text-primary">{heroTags.join(" · ")}</p>
+              )}
+              <h2 className="mt-sm text-2xl font-semibold leading-tight">
+                {activeProgram
+                  ? formatProgramCardTitle(activeProgram.short_name, activeProgram.name)
+                  : suggested.label}
+              </h2>
+              <div className="mt-sm flex flex-wrap items-center gap-x-md gap-y-2xs text-sm font-medium text-muted-foreground">
+                {suggestedMeta && (
+                  <>
+                    <span className="flex items-center gap-xs">
+                      <Clock className="size-4 shrink-0" aria-hidden />~{suggestedMeta.minutes} min
+                    </span>
+                    <span className="flex items-center gap-xs">
+                      <Dumbbell className="size-4 shrink-0" aria-hidden />
+                      {countPl(suggestedMeta.count, WORDS.exercise)}
+                    </span>
+                  </>
+                )}
+                {/* Słupki trudności to gotowy komponent z listy planów — ten sam
+                    miernik, te same progi kontrastu, zero nowego rysunku. */}
+                {activeProgram && (
+                  <LevelMeter
+                    levelMin={activeProgram.level_min}
+                    levelMax={activeProgram.level_max}
+                    label={activeProgram.level}
+                    variant="icon"
+                  />
+                )}
               </div>
-              <FreestyleStartButton variant="card" />
+              <form action={startSession.bind(null, suggested.dayId)} className="mt-md">
+                <Button type="submit" className="w-full">
+                  Zacznij trening
+                </Button>
+              </form>
+              <Button asChild variant="ghost" className="mt-2xs w-full">
+                <Link href={`/programs/${activeId}`}>Zobacz plan</Link>
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          /* Pusty stan (redesign-home.md §3.6, wariant B — bez zapamiętanej
+             sugestii z onboardingu; wariant A wymaga persystencji poziom/
+             środowisko z WelcomeOverlay, nie w tym zakresie, patrz HANDOFF) */
+          <div className="space-y-sm">
+            <div className={cardVariants({ className: "space-y-sm text-center" })}>
+              <MomentIcon3D name="plan" className="mx-auto -my-xs" priority />
+              <p className="text-2xl font-semibold leading-tight">Zacznij od planu</p>
+              <p className="mx-auto max-w-sm text-sm text-muted-foreground">
+                Wybierz jeden z {countPl(presetCount, WORDS.plan)}. Arco poprowadzi Cię przez trening serię po serii.
+              </p>
+              <Button asChild className="w-full">
+                <Link href="/programs">Wybierz program →</Link>
+              </Button>
+            </div>
+            <FreestyleStartButton variant="card" />
+          </div>
+        )}
 
         {/* Wskazówki PRZED statystykami: na dole strony praktycznie nic nie
             dawały, bo na Home wchodzi się po to, żeby zacząć trening, i rzadko
