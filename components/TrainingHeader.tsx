@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { ArcoSygnet } from "@/components/ArcoSygnet";
 import { STICKY_HEADER_SAFE_AREA } from "@/components/navigation/stickyHeader";
 
 /**
@@ -58,27 +59,14 @@ export function TrainingHeader({
         "z-30 flex items-center gap-xs bg-background px-sm py-sm",
       )}
     >
-      {/* `shrink-0`: sygnet nigdy nie ustępuje miejsca — to on identyfikuje
-          aplikację, a powitanie jest dodatkiem. */}
-      <span className="shrink-0 pl-2xs">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo.svg"
-          alt="Arco"
-          width={690}
-          height={317}
-          className="h-8 w-auto dark:hidden"
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo-dark.svg"
-          alt=""
-          aria-hidden
-          width={690}
-          height={317}
-          className="hidden h-8 w-auto dark:block"
-        />
-      </span>
+      {/* SYGNET, nie wordmark — wzorzec z InPostu: znak marki oddaje miejsce
+          powitaniu. Wordmark ma ~70 px szerokości przy tej wysokości, sygnet 32,
+          więc same te 38 px decydują o tym, czy powitanie mieści się na wąskich
+          ekranach. Pełna nazwa zostaje tam, gdzie jest na nią miejsce (logowanie).
+
+          `shrink-0`: sygnet nigdy nie ustępuje — to on identyfikuje aplikację,
+          a powitanie jest dodatkiem. */}
+      <ArcoSygnet className="size-8 shrink-0" />
 
       {/* Powitanie zjada całą wolną przestrzeń i USTĘPUJE jako pierwsze:
           `min-w-0` + `truncate` sprawiają, że przy 320 px skraca się ono,
@@ -88,16 +76,16 @@ export function TrainingHeader({
           Gdy powitania nie ma, pusty `div` nadal rozpycha układ, więc badge
           i awatar zostają przy prawej krawędzi.
 
-          Poniżej 360 px powitanie ZNIKA, zamiast się skracać. Przy 320 px zostaje
-          na nie ~93 px, czyli „Cześć, Al…" — to już nie jest personalizacja, tylko
-          szum zajmujący miejsce obok dwóch elementów funkcjonalnych (passa,
-          awatar). Sprawdzone renderem, nie oszacowane. Powyżej progu skracanie
-          jest w porządku, bo zostaje czytelny kawałek imienia. */}
+          Był tu `max-[359px]:hidden` — powitanie znikało poniżej 360 px, bo przy
+          wordmarku zostawało na nie 93 px, czyli „Cześć, Al…". Sygnet oddał 24 px
+          i przy 320 px jest ich 117: „Cześć, Aleksandra" mieści się w CAŁOŚCI
+          (zmierzone, nie oszacowane). Reguła broniła progu, którego już nie ma,
+          więc znika razem z nim — samo `truncate` wystarcza dla nazw skrajnych
+          („Aleksandra-Katarzyna" skraca się przy 320 px o 52 px i to jest w porządku,
+          bo zostaje czytelny kawałek imienia). */}
       <div className="min-w-0 flex-1">
         {greeting && name && (
-          <p className="truncate text-sm font-semibold tracking-tight max-[359px]:hidden">
-            Cześć, {name}
-          </p>
+          <p className="truncate text-sm font-semibold tracking-tight">Cześć, {name}</p>
         )}
       </div>
 

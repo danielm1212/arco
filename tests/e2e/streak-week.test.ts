@@ -214,6 +214,54 @@ for (const width of [320, 375, 393]) {
   });
 }
 
+/**
+ * Sygnet w belce bierze barwę z TOKENÓW (`text-primary` / `dark:text-foreground`),
+ * a nie z hexów wklejonych w plik. Sam typecheck ani build tego nie złapią: SVG
+ * z `fill="#C63F21"` skompiluje się bez słowa skargi i będzie wyglądał poprawnie
+ * w light, a w dark zostanie rdzawą plamą na ciemnym tle. Dlatego sprawdzamy
+ * ZRENDEROWANY kolor w obu motywach.
+ *
+ * Wartości niżej to nasze tokeny po zaokrągleniu HSL→RGB (rust-500 i sand-100),
+ * czyli o ≤2/255 na kanał obok hexów z eksportu z Figmy — cała aplikacja maluje
+ * markę właśnie tak. Jeśli ten test padnie z kolorem BLIŻSZYM eksportowi, to znak,
+ * że ktoś wpisał hex na sztywno; poprawką jest token, nie zmiana oczekiwania.
+ */
+for (const [theme, expected] of [
+  ["light", "rgb(196, 63, 33)"],
+  ["dark", "rgb(246, 243, 238)"],
+] as const) {
+  test(`sygnet w belce bierze kolor z tokenów marki (${theme})`, async () => {
+    const { context, page } = await harnessPage(375, { theme });
+    try {
+      const marks = page.locator('header [aria-label="Arco"]');
+      assert.equal(
+        await marks.count(),
+        1,
+        "belka powinna mieć DOKŁADNIE jeden znak marki — dwa oznaczają powrót do pary <img> z `dark:hidden`",
+      );
+      const mark = marks.first();
+      assert.equal(
+        await mark.evaluate((el) => el.tagName.toLowerCase()),
+        "svg",
+        "znak marki przestał być inline SVG — kolor nie pójdzie już za motywem",
+      );
+      assert.equal(
+        await mark.evaluate((el) => getComputedStyle(el).color),
+        expected,
+        `sygnet nie bierze koloru z tokenu w motywie ${theme}`,
+      );
+      // Żaden logotyp z `public/` nie może wrócić obok sygnetu.
+      assert.equal(
+        await page.locator('header img[src*="logo"]').count(),
+        0,
+        "w belce został plikowy logotyp — sygnet miał go zastąpić",
+      );
+    } finally {
+      await context.close();
+    }
+  });
+}
+
 test("dzień zaliczony wygląda identycznie w karcie na home i w sheecie passy", async () => {
   const { context, page } = await harnessPage(375);
   try {
