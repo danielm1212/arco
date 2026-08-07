@@ -1,11 +1,16 @@
 # Arco — bieżący handoff
 
-**Aktualizacja:** 2026-08-03
+**Aktualizacja:** 2026-08-07
 **Gałąź docelowa:** `main`
 **Stan Git:** dokładny SHA i różnicę względem origin sprawdzaj w Git; handoff nie utrwala dynamicznych hashy
 **Produkcja:** https://arco-olive.vercel.app
-**Najbliższy etap:** [Ty] review i merge małego follow-upu feedbacku ulubionych na
-`agent/favorite-feedback`; potem niezależne D17. Dalsza kolejka: D-1 → D-3+D-2 → D-4 → reszta P3.
+**Najbliższy etap:** [Ty] przegląd na Vercelu widgetu treningu i sticky belki na Home (§0b) —
+całość testowana renderem z harnessu (esbuild + Playwright na skompilowanym CSS), nigdy w
+zalogowanej aplikacji z prawdziwymi danymi. Po przeglądzie do wyboru: pełna synchronizacja
+Figmy (czeka na sygnał [Ty]), redesign ramki logowania, albo domknięcie `aria-invalid`
+(WCAG 3.3.1, sześć ekranów z formularzami — patrz §0b i `component-audit.md`).
+Poprzedni etap (feedback ulubionych, D17, D-1…D-4/P3) — status w Git/Linear, nieaktualizowany
+tym przebiegiem.
 
 Ten plik opisuje wyłącznie stan na dziś. Historia jest w Git, kolejność w
 `plan-sprintow-2026-07.md`, a pełna kolejka w `backlog-produktu.md`.
@@ -62,6 +67,125 @@ Decyzje właściciela z 2026-08-01/03 są utrwalone w `decyzje-produktowe.md` D-
 D-48–D-51. Finalne WebP okładek są częścią PR #66. Źródłowe PNG, contact sheety, drafty,
 `docs/arco-home-agent-handoff/` i skrypty zaczynające się kropką pozostają obcymi,
 nieśledzonymi artefaktami — nie commitować bez osobnej decyzji.
+
+## 0b. Widget treningu, sticky belka i porządek komponentów — 2026-08-05→07
+
+Osobny tor od PLAN-05 (§6 punkt 6, który dotyczy `/programs`) — tu chodzi o samą stronę Home
+(`app/page.tsx`) i prymitywy UI pod nią. Siedem PR-ów (#68, #70–#74) plus trzy commity
+bezpośrednio na `main` (bez PR-a — drobne, mierzalne poprawki, zero migracji, zero zmiany
+zapytań). Kolejność w Git: `c5d211e` (#74, ostatni merge) → `57631a9` → `a68eb5f` → `e610557`
+→ `e29179a` (obecny `HEAD`).
+
+**PR #68 — prymityw `Card`, `pending` w `Button`, brakujące tokeny kontrastu.** Realizacja
+`docs/component-audit.md` (74 komponenty, audyt w tym samym PR-ze). Karta była łańcuchem klas
+w 44 miejscach/20 plikach z realnym dryfem (3 elewacje, 2 paddingi, 3 karty z `border` mimo że
+HOME-04 borderki zdjęło) — teraz jedno źródło, `cardVariants()`. `shadow-lg` był magic value
+(`tailwind.config.ts` go nie definiuje, 5 użyć spadało na stockowy cień Tailwinda poza paletą
+i dark-modem) — zastąpiony kanonicznym E2/E3. `pending` w `Button` (13 przycisków akcji,
+`aria-busy`) zamiast ręcznego `disabled` w 15 plikach. `size="sm"` wrócił do 44 px (było 36,
+4/14 wywołań łatało to ręcznie). `Input` dostał wariant błędu (`aria-invalid`) — **nadal nie
+podpięty w żadnym z sześciu formularzy**, patrz „Otwarte” niżej. Pierwsze testy renderujące
+w repo (`tests/ui-primitives.test.ts`, `react-dom/server`), złapały dwa błędy niewidoczne
+okiem: `cva` dokleja `compoundVariants` zamiast podmieniać (wariant `polished` emitował dwa
+cienie naraz), i brak tailwind-merge przy bezpośrednich wywołaniach `cardVariants()`. Audyt
+zgłaszał `TeamHomeCard.tsx` jako martwy kod — **fałszywy alarm**, plik ma adnotację „zachowany
+do R3b, nie usuwać”; wycofane. Bramka: lint, tsc, build, **289/290** unit (jedyny czerwony,
+`CONTENT-02: Chin-Up`, padał już przed tym PR-em — cudza podmiana zdjęć w drzewie roboczym).
+
+**PR #70 — `BottomSheet` oddaje fokus triggerowi, nie ostatniemu aktywnemu elementowi.**
+Realny błąd dostępności: `FavoriteProgramButton` po akcji serwerowej przywracał sobie fokus
+łańcuchem `requestAnimationFrame`, więc jeśli ten łańcuch domknął się między kliknięciem
+triggera „Zacznij ten trening” a otwarciem arkusza, `BottomSheet` zapamiętywał **serduszko**
+zamiast triggera i po Escape oddawał fokus tam — wyrzucając z interakcji. Ten sam commit
+przechodził CI 3 sierpnia i zaczął padać 5 sierpnia bez żadnej zmiany w repo (wyścig).
+Naprawa: trigger jest klonowany z własnym `onClick`, więc `currentTarget` czytamy w handlerze,
+zanim cokolwiek ruszy fokus; `document.activeElement` zostaje wyłącznie fallbackiem dla
+arkuszy otwieranych programowo. Bramka: **56/56** `test:overflow`, trzy kolejne przebiegi
+(wyścig — jeden zielony wynik nic by nie dowodził).
+
+**PR #72 — jeden glif trudności zamiast trzech różnych rysunków.** Miernik rysował się inaczej
+na `/programs` (pionowe słupki), `/programs/[id]` (poziome, puste z obrysem) i w nowym
+widgecie Home (ikona lucide) — ta sama klasa rozjazdu co przy glifie passy przed HOME-05b.
+Jeden `LevelGlyph` (kształt lucide `chart-no-axes-column-increasing`, ścieżki przepisane wprost
+bo zwykła ikona ma jeden `currentColor` i nie umie nieść wartości per segment, wzorzec jak
+`StreakFlame`). `strokeWidth=3`, nie 2 — viewBox 24 renderowany w 16 px skaluje kreskę o 2/3.
+Etykieta różni się celowo: lista/szczegół piszą pełną nazwę poziomu (porównujesz plany między
+sobą), wariant `icon` na Home pisze „trudność” (pełna nazwa łamała wiersz meta do drugiej
+linii) — pełna nazwa zawsze w `aria-label`. Skala bez zmian: początkujący 1/3, średnio 2/3,
+zaawansowany 3/3.
+
+**PR #71 — widget treningu na Home** ([Figma 171:477](https://www.figma.com/design/HTkBggPmirjWk2ivzFX78r/Arco?node-id=171-477)),
+oparty na #72. Okładka planu jako pas u góry (nie treść na przyciemnionym zdjęciu — pierwsze
+podejście wpadło w ścianę kontrastu: jasny tekst trzyma 4,5:1 dopiero przy ≥80% przyciemnienia
+całej okładki, zmierzone na wszystkich 15 okładkach), treść na jasnej powierzchni pod spodem,
+alternatywy startu pod „⋯” (jeden `BottomSheet` z dwoma widokami, nie sheet w sheecie).
+Zero migracji — cztery nowe kolumny w istniejącym zapytaniu Home (`cover_image_url,
+short_name, split_key, level`), te same formatery co `/programs`. Nowe tokeny:
+`--media-scrim-top/bottom` (rola „chroń tekst na mediach”, nie `bg-background/90` na sztywno),
+`--color-media-chip(-contrast)` (para stała, celowo identyczna w obu motywach — chip leży na
+fotografii, nie na powierzchni UI), `.surface-tile-rim` (krawędź rust→violet, świadomy wyjątek
+od „jeden kolor chromatyczny na komponent”, analogiczny do D-20). Pigułki A/B/C są
+**wskaźnikiem, nie kontrolką** (klikalne dublowałyby „⋯”, co F1 §3.2 świadomie likwidowało).
+Guard: `tests/e2e/hero-scrim-contrast.test.ts` liczy najjaśniejszy piksel każdej okładki.
+Bramka: **57/57** `test:overflow`, oba motywy.
+
+**PR #73 — wskazówki pod widgetem, ciaśniejsze powitanie, pigułki wg Figmy.** `GuidanceChip`
+przeniósł się z samego dołu strony (praktycznie niewidoczny) pod widget; `getHomeInsights`
+przeszło na `cache()` z Reacta, żeby dwa punkty renderu (wskazówki + statystyki niżej) dzieliły
+jeden komplet zapytań zamiast podwajać budżet z HOME-03. Powitanie: `text-xl`→`text-lg`,
+równe 12 px od belki i do widgetu (tokenowe, nie liczby). Pigułki dni: 24×24 px (było 28) wg
+wymiarów z Figmy. Bramka: **57/57** `test:overflow`.
+
+**PR #74 — powitanie w sticky belce, bez obramowania.** Wzorzec z InPostu: sygnet po lewej,
+powitanie obok niego w chrome zamiast linii nad kartą. **Zmiana wobec D-39** — idzie dalej
+w tym samym kierunku (personalizacja bez kosztu hierarchii), nie przeciw niemu: widget staje
+się dosłownie pierwszym elementem treści. Obramowanie zdjęte — przy sticky treść wjeżdża pod
+nieprzezroczyste `bg-background` i znika, zamiast kończyć się kreską czytającą się jak krawędź
+karty. Guard: `TrainingHeader` dodany do `tests/sticky-header.test.ts` (kontrola negatywna —
+dopisanie `relative` obok `STICKY_HEADER_SAFE_AREA` cicho wypycha `sticky` przez
+tailwind-merge; build i typy przechodzą, header po prostu przestaje się kleić). Bramka:
+**57/57** `test:overflow`.
+
+**Trzy commity bezpośrednio na `main` (bez PR-a), tego samego dnia po merge #74:**
+
+1. **Sygnet zamiast wordmarku** w `TrainingHeader` (zgłoszenie właściciela — PR #74 zostawił
+   pełny logotyp). `components/ArcoSygnet.tsx`, inline SVG na `currentColor` +
+   `text-primary dark:text-foreground` (dostarczone hexy `#C63F21`/`#F6F2ED` to dokładnie
+   `--arco-rust-500`/`--arco-sand-100`, więc token zamiast dwóch plików z hexem na sztywno).
+   Przy okazji zmierzone: próg `max-[359px]:hidden` na powitaniu stracił uzasadnienie (wordmark
+   zostawiał 93 px na powitanie przy 320 px, sygnet zostawia 117 — „Cześć, Aleksandra” mieści
+   się w całości) i został usunięty. **D-39 w `decyzje-produktowe.md` zaktualizowane** (PR #74
+   zostawił to świadomie nietknięte, żeby decyzja nie przechodziła przy okazji kodu).
+2. **`fix(home): jeden odstęp 12 px między belką a widgetem, nie 24`** — dwa nakładające się
+   źródła tej samej przestrzeni: relikt `pt-sm` na `<main>` sprzed przeniesienia powitania do
+   belki (belka ma już własne `py-sm`) ORAZ `space-y-lg` na `<main>`, które liczyło DOM-owe
+   rodzeństwo, nie widoczność (`h1.sr-only` jako pierwsze dziecko, widget jako drugie dostawał
+   margin-top 24 px mimo że nic nad nim wizualnie nie ma). Zmierzone na skompilowanym CSS-ie:
+   36 px → 12 px.
+3. **`fix(ui): karty i shadow-sm dostają realny cień w dark mode`** — `--shadow-sm` nie miał
+   definicji w `.dark` (w przeciwieństwie do E1–E3). Zmierzone: piksel pod kartą różnił się od
+   tła o ~1/255, czyli cień był efektywnie niewidoczny na ciemnym tle. Dwie poprawki: (a)
+   `cardVariants` `subtle` (35 kart) przechodzi z legacy `shadow-sm` na kanoniczne E1 —
+   decyzja z audytu #68 („do decyzji właściciela identyfikacji”), zatwierdzona teraz z powodem
+   silniejszym niż estetyka; (b) `--shadow-sm` dostał własną definicję w `.dark` (czysta czerń,
+   wyższe krycie — ten sam zabieg co E1), co naprawia też pozostałe, niekartowe użycia
+   (`TeamPanel`, `switch`, wiersz programu, pigułka `TrainingSubnav`) bez dotykania tamtych
+   plików. Usunięta też martwa dokumentacja jednorazowego zlecenia dla agenta Figmy (spec,
+   skrypty, prompt, referencyjny render — opisywały kartę hero sprzed redesignu #71–73).
+
+**Otwarte z tego toru** (nieprzypisane, żaden PR w toku):
+
+- **Pełna synchronizacja Figmy** (tokeny + nowy widok karty) — czeka na sygnał [Ty]; blokował
+  ją też limit MCP na planie Starter, do sprawdzenia przy starcie.
+- **Redesign ramki logowania** (`app/login/page.tsx`) — wordmark tam zostaje świadomie (pełny
+  ekran, moment marki, nie chrome), ale cała ramka czeka na osobne podejście projektowe.
+- **`aria-invalid` bez podpięcia** — prymityw `Input` wspiera stan błędu od PR #68, ale żaden
+  z sześciu formularzy go nie ustawia (WCAG 3.3.1). Osobna sesja per ekran.
+- **Reszta mapowania violet per ekran** (Faza 3 DS-UI-v1.4, patrz §2) — status niezweryfikowany
+  w tym przebiegu, nie było w zakresie żadnego z PR-ów #68–74.
+- **Dwie karty zdegradowane z `shadow-md` do `subtle` przy #68** (empty state Home, karta
+  onboardingu) — audyt pytał, czy to zaprojektowana hierarchia czy dryf. Nierozstrzygnięte;
+  wraca jednym propem `elevation="floating"`, jeśli hierarchia.
 
 ## 1. Stan produktu
 
@@ -192,7 +316,16 @@ prowadzenie/plany/dane/wykresy), `chart-*`, elevation E1–E3, role `border-*`, 
 Kanon: `paleta-arco-warm.md` §„Adopcja Arco UI v1.4". Build/lint/unit zielone, weryfikacja wizualna
 (light+dark) OK. **Faza 3 — pierwszy slice wdrożony:** violet na `GuidanceChip`/`Sparkline`/
 `MuscleHeatmap`/`ProgramReviewInsight` + `Button variant="support"`, inputy na `border-control`,
-polished edge na karcie home. **Otwarte:** reszta mapowania violet per ekran.
+polished edge na karcie home. **Otwarte:** reszta mapowania violet per ekran (status
+niezweryfikowany od 2026-08-03, patrz §0b).
+
+**Prymityw `Card` i elewacja E1–E3 (§0b, PR #68 + fix 2026-08-07):** 44 karty (dziś 35 na
+`subtle`, reszta `floating`/`overlay`) mają jedno źródło (`cardVariants()`) zamiast ręcznego
+łańcucha klas w 20 plikach. `subtle` czyta teraz kanoniczne E1 zamiast legacy `shadow-sm` —
+`--shadow-sm` nie miał definicji w `.dark` i był efektywnie niewidoczny na ciemnym tle
+(zmierzone: ~1/255 różnicy od tła); naprawiony też na poziomie tokenu, więc pozostałe
+niekartowe użycia (`TeamPanel`, `switch`, wiersz programu) odzyskały cień bez zmian w tamtych
+plikach. `shadow-lg` (magic value spoza `tailwind.config.ts`) usunięty z kodu.
 
 **Ikony 3D (PR [#13](https://github.com/danielm1212/arco/pull/13), scalony do `main`):**
 podmienione z generycznego pakietu 3dicons.co
@@ -583,6 +716,15 @@ koordynacji (2026-07-23).
    w PLAN-05, nie tutaj.
 9. R2.2 → R4B–R4D → CORE-1 → R4E → R3b → R5b → R6 → H2. Domowy plan 20–30 minut
    (`PROGRAM-01A`) pozostaje osobnym eksperymentem po sygnale H2, nie dodatkowym dniem.
+10. **Widget treningu, sticky belka, porządek komponentów — technicznie gotowe 2026-08-07,
+    na `main` i wdrożone** (§0b, PR #68/#70–#74 + trzy commity bezpośrednio na `main`).
+    Osobny tor od PLAN-05 (punkt 6, dotyczy wyłącznie `/programs`) — tu chodzi o `app/page.tsx`
+    i prymitywy UI. **Do [Ty]:** przegląd na Vercelu (całość testowana wyłącznie renderem
+    z harnessu, nigdy w zalogowanej aplikacji). **Otwarte, nieprzypisane:** pełna
+    synchronizacja Figmy (czeka na sygnał [Ty]), redesign ramki logowania, `aria-invalid`
+    bez podpięcia w sześciu formularzach (WCAG 3.3.1), status mapowania violet per ekran
+    (Faza 3 DS-UI-v1.4) niezweryfikowany, decyzja o dwóch kartach zdegradowanych z
+    `shadow-md` do `subtle` przy PR #68 (zaprojektowana hierarchia czy dryf).
 
 ## 7. Reguły operacyjne
 
