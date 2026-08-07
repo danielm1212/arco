@@ -120,8 +120,15 @@ async function harnessBundle(): Promise<string> {
 
         function Harness() {
           return <div className="mx-auto flex max-w-md flex-col">
+            {/* greeting + DŁUGIE imię celowo: belka Home pokazuje od 2026-08-07
+                powitanie obok sygnetu, a to ono jako pierwsze walczy o miejsce
+                przy 320 px. Bez tego propu asercje overflow niżej sprawdzałyby
+                układ, którego Home już nie używa. Krótkie imię (Daniel)
+                zmieściłoby się zawsze i test nie pilnowałby niczego.
+                (Bez backticków — harness siedzi w template literalu.) */}
             <TrainingHeader
-              displayName="Daniel"
+              greeting
+              displayName={window.__harnessName ?? "Aleksandra-Katarzyna"}
               badgeSlot={<StreakBadge streak={streak} week={week} weeklyDone={weeklyDone} weeklyGoal={weeklyGoal} />}
             />
             <main className="space-y-lg p-md">

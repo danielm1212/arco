@@ -33,6 +33,21 @@ test("kontrola negatywna: dodanie `relative` FAKTYCZNIE gubi `sticky` (dokumentu
   assert.ok(hasClass(broken, "relative"));
 });
 
+test("TrainingHeader (Home) też zachowuje `sticky`", () => {
+  // Belka Home stała się sticky i bezramkowa (2026-08-07). Dokładnie ten łańcuch
+  // klas siedzi w `components/TrainingHeader.tsx` — jeśli ktoś dopisze tam
+  // `relative`, tailwind-merge wypchnie `sticky`, header przestanie się przyklejać,
+  // a build i typy nadal przejdą. Kontrola negatywna niżej pokazuje, że to realne.
+  const composed = cn(
+    STICKY_HEADER_SAFE_AREA,
+    "z-30 flex items-center gap-xs bg-background px-sm py-sm",
+  );
+  assert.ok(hasClass(composed, "sticky"), `TrainingHeader zgubił 'sticky': "${composed}"`);
+  for (const p of POSITIONS.filter((p) => p !== "sticky")) {
+    assert.ok(!hasClass(composed, p), `konflikt position '${p}' w TrainingHeader: "${composed}"`);
+  }
+});
+
 test("PageHeader (tryb sticky) też zachowuje `sticky`", () => {
   const composed = cn(STICKY_HEADER_SAFE_AREA, "z-30");
   assert.ok(hasClass(composed, "sticky"), `PageHeader zgubił 'sticky': "${composed}"`);
