@@ -1,6 +1,6 @@
 # Arco — rejestr decyzji produktowych
 
-**Aktualizacja:** 2026-08-03
+**Aktualizacja:** 2026-08-07
 **Zasada:** decyzja z tego pliku obowiązuje do czasu jawnego wpisu zastępującego. Pomysł z notatki nie nadpisuje decyzji.
 
 ## Decyzje obowiązujące
@@ -46,7 +46,7 @@
 | D-36 | Przed H2 poprawiamy i mierzymy obecne 15 programów; nowe programy, warianty sesji i opcjonalna rozgrzewka wymagają danych po H2 | Większy katalog nie kompensuje błędnej recepty, sprzętu ani braku wersjonowanego audytu |
 | D-37 | Przed monetyzacją recepty P01–P15 zatwierdza wersjonowany audyt Codex S&C; zewnętrzny trener nie jest bramką Q1, PLAN-Q ani H2 | Właściciel świadomie wybiera szybszą walidację produktu; konsultant może wrócić po przychodzie jako audyt jakości, nie blokada wdrożenia |
 | D-38 | Trzy taby: **Home · Trening · Ekipa**; Plany, Postępy, Ciało i Historia są równorzędnymi zakładkami wewnątrz Treningu. Nazwa „Trening" świadomie w liczbie pojedynczej | Liczba mnoga zapowiadałaby listę odbytych treningów, czyli zawartość własnej podzakładki Historia. Układ zmniejsza chrome: z 4 pozycji i dwóch pasków zakładek do 3 pozycji i jednego. Zmierzone POC-em: cztery zakładki mieszczą się na 320 px |
-| D-39 | Powitanie po imieniu wraca na Home jako **jedna linia nad kartą startu** — nigdy blok ani karta; znika całkowicie przy braku imienia | Personalizacja bez kosztu hierarchii. Karta startu pozostaje pierwszym modułem (D-03), a pusty placeholder byłby szumem |
+| D-39 | Powitanie po imieniu żyje w **sticky belce Home**, obok sygnetu — nie jako linia nad kartą startu; znika całkowicie przy braku imienia | Idzie dalej w tym samym kierunku co pierwotne brzmienie, nie przeciw niemu: personalizacja przenosi się do chrome'u, gdzie nic nie kosztuje hierarchii, a widget treningu (D-03) staje się dosłownie pierwszym elementem treści zamiast dzielić czoło ekranu z linią tekstu. Pusty placeholder przy braku imienia wciąż nie istnieje. Zastępuje pierwotne brzmienie D-39 z 2026-07-28 („jedna linia nad kartą startu”), wdrożone w PR #74 (2026-08-07) |
 | D-40 | Home pokazuje **wyciąg** z postępów (passa, podsumowanie, kafle, najważniejsze ćwiczenia); pełna analiza zostaje w Treningu | Home ma motywować i prowadzić do treningu, nie zastępować Postępów. Dashboard nie może zepchnąć CTA poniżej folda |
 | D-41 | Trening z dowolnego planu można zacząć bez zmiany aktywnego planu; taka sesja **nie przesuwa rotacji**, ale liczy się do celu tygodniowego i Historii | Trening w domu zamiast na siłowni nie może rozbijać rotacji A → B ani progresji; jednocześnie wykonana praca jest wykonaną pracą (spójne z D-07 i D-10) |
 | D-42 | Kanonem recept jest **biblioteka v2.1** (`training_programs_v2`, audyt z 2026-07-28). `audyt-biblioteki-programow-2026-07.md` ma status **superseded z wyjątkami** | Nie utrzymujemy dwóch „zatwierdzonych” źródeł recepty. Wyjątkiem pozostają trzy reguły kolejności power/skill wdrożone patchem TRAIN-01 — v2.1 przesuwa HSPU i Jump Squat w głąb sesji, co jest sprzeczne z jej własnym kryterium i z walidatorem TRAIN-07 |
