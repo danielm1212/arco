@@ -32,7 +32,43 @@ import { buildLevelMeter } from "@/lib/levelMeter";
  * `aria-label` niesie pełne zdanie, więc słupki są warstwą pomocniczą, nie jedynym
  * nośnikiem znaczenia.
  */
-const LIST_BAR_HEIGHTS = ["h-2", "h-3", "h-4"];
+/**
+ * Glif poziomu — JEDEN rysunek dla wszystkich trzech widoków.
+ *
+ * Kształt to ikona lucide `chart-no-axes-column-increasing` (v1.23.0, ISC),
+ * ale ze słupkami kolorowanymi WEDŁUG POZIOMU: zapalone akcentem, wygaszone
+ * neutralnie. Zwykła ikona z lucide ma jeden `currentColor` na wszystkie trzy
+ * kreski i nie potrafi nieść wartości — stąd ścieżki przepisane wprost, ten sam
+ * wzorzec co `StreakFlame` („glif lucide, który musi coś znaczyć").
+ *
+ * Wcześniej każdy widok rysował własne słupki: lista pionowe `w-2` rosnącej
+ * wysokości, szczegół poziome `h-2 w-5` z obrysem, widget hero ikonę. Trzy
+ * rysunki tego samego znaczenia to ta sama klasa rozjazdu, którą HOME-05b
+ * likwidowało przy glifie passy.
+ *
+ * `strokeWidth` 3, nie 2: viewBox ma 24, a glif renderuje się w 16 px, więc
+ * kreska skaluje się o 2/3. Dwójka dałaby na ekranie 1,33 px i słupki byłyby
+ * cieńsze niż reszta ikonografii. 3 × (16/24) = 2 px.
+ */
+function LevelGlyph({ segments }: { segments: boolean[] }) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth={3}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-4 shrink-0"
+    >
+      {/* Kolejność ścieżek = rosnąca wysokość słupka, więc i rosnący poziom. */}
+      {["M5 21v-6", "M12 21V9", "M19 21V3"].map((d, i) => (
+        <path key={d} d={d} className={segments[i] ? "stroke-primary" : "stroke-border"} />
+      ))}
+    </svg>
+  );
+}
+
 export function LevelMeter({
   levelMin,
   levelMax,
@@ -47,92 +83,34 @@ export function LevelMeter({
   const meter = buildLevelMeter(levelMin, levelMax, label);
   if (!meter) return null;
 
-  /* Wariant `icon` (POC widgetu treningu): kształt ikony lucide
-     `chart-no-axes-column-increasing`, ale słupki kolorowane WEDŁUG POZIOMU —
-     zapalone akcentem, wygaszone neutralnie. Zwykła ikona z lucide ma jeden
-     `currentColor` na wszystkie trzy kreski i nie potrafi nieść wartości.
-
-     Ścieżki są przepisane z `lucide-react@1.23.0` (ISC), tak samo jak w
-     `StreakFlame` — to ustalony w tym repo wzorzec na „glif lucide, który musi
-     coś znaczyć". Etykieta obok mówi tylko „trudność"; pełny poziom
-     („Średniozaawansowany") idzie w `aria-label`, żeby czytnik dostał wartość,
-     a wiersz meta nie zawijał się przez długie słowo. */
-  if (variant === "icon") {
-    const filledClass = "stroke-primary";
-    const emptyClass = "stroke-border";
-    return (
-      <span
-        role="img"
-        aria-label={meter.ariaLabel}
-        className="inline-flex shrink-0 items-center gap-xs"
-      >
-        <svg
-          aria-hidden
-          viewBox="0 0 24 24"
-          fill="none"
-          /* 3, nie 2: ikona ma viewBox 24, a wyświetla się w 16 px, więc kreska
-             skaluje się o 2/3. `strokeWidth={2}` dałoby na ekranie 1,33 px i słupki
-             wyglądałyby na cieńsze niż reszta ikonografii. 3 × (16/24) = 2 px. */
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="size-4 shrink-0"
-        >
-          {/* Kolejność ścieżek = rosnąca wysokość słupka, więc i rosnący poziom. */}
-          {["M5 21v-6", "M12 21V9", "M19 21V3"].map((d, i) => (
-            <path key={d} d={d} className={meter.segments[i] ? filledClass : emptyClass} />
-          ))}
-        </svg>
-        <span aria-hidden>trudność</span>
-      </span>
-    );
-  }
-
-  if (variant === "list") {
-    return (
-      <span
-        role="img"
-        aria-label={meter.ariaLabel}
-        className="inline-flex min-w-0 flex-wrap items-center gap-x-xs gap-y-2xs"
-      >
-        <span aria-hidden className="flex shrink-0 items-end gap-1">
-          {meter.segments.map((filled, i) => (
-            <span
-              key={i}
-              className={`w-2 rounded-full ${LIST_BAR_HEIGHTS[i]} ${
-                filled ? "bg-primary" : "bg-muted-foreground/30"
-              }`}
-            />
-          ))}
-        </span>
-        <span aria-hidden className="min-w-0 break-words text-xs text-muted-foreground">
-          {meter.label}
-        </span>
-      </span>
-    );
-  }
+  /* Glif jest wspólny, RÓŻNI SIĘ TYLKO ETYKIETA — i to celowo.
+     Na liście i w szczegółach planu liczy się NAZWA poziomu, bo porównujesz
+     plany między sobą; „trudność" przy każdym z piętnastu nie niosłaby nic.
+     W widgecie hero odwrotnie: nazwa poziomu jest najdłuższym słowem w wierszu
+     meta i łamała go do drugiej linii, a poziom i tak nie jest tam powodem,
+     dla którego patrzysz na kartę. Pełna nazwa idzie wszędzie w `aria-label`,
+     więc czytnik ekranu nigdy nie dostaje samego „trudność". */
+  const labelText = variant === "icon" ? "trudność" : meter.label;
+  const labelClass =
+    variant === "bars"
+      ? "min-w-0 max-w-full break-words text-sm text-muted-foreground"
+      : variant === "list"
+        ? "min-w-0 break-words text-xs text-muted-foreground"
+        : "";
 
   return (
     <span
       role="img"
       aria-label={meter.ariaLabel}
-      className="inline-flex max-w-full flex-wrap items-center gap-x-xs gap-y-2xs"
+      className={
+        variant === "icon"
+          ? "inline-flex shrink-0 items-center gap-xs"
+          : "inline-flex min-w-0 max-w-full flex-wrap items-center gap-x-xs gap-y-2xs"
+      }
     >
-      <span aria-hidden className="flex gap-2xs">
-        {meter.segments.map((filled, i) => (
-          <span
-            key={i}
-            className={`h-2 w-5 rounded-full ${
-              filled ? "bg-primary" : "border border-primary bg-transparent"
-            }`}
-          />
-        ))}
-      </span>
-      <span
-        aria-hidden
-        className="min-w-0 max-w-full break-words text-sm text-muted-foreground"
-      >
-        {meter.label}
+      <LevelGlyph segments={meter.segments} />
+      <span aria-hidden className={labelClass}>
+        {labelText}
       </span>
     </span>
   );
