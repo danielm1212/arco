@@ -1,4 +1,5 @@
 // server-only: importuje `@/lib/supabase/server` (next/headers) → nie trafia do klienta.
+import { cache } from "react";
 import { joinMaybe, type ExerciseJoin } from "@/lib/dbJoins";
 import { createClient } from "@/lib/supabase/server";
 import { exerciseDisplayName } from "@/lib/exerciseSearch";
@@ -51,7 +52,18 @@ export interface HomeInsights {
  * Definicje trzymamy zgodne z `periodStats`/`getStrengthTrends` (patrz
  * `lib/homePeriods.ts`), żeby Home i `/progress` nie mogły się rozjechać.
  */
-export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
+/**
+ * `cache()` — bo Home renderuje te dane w DWÓCH miejscach: wskazówki tuż pod
+ * widgetem treningu (żeby były widoczne, a nie na samym dole), a statystyki
+ * i postęp ćwiczeń niżej. Bez tego każdy punkt renderowania odpalałby własny
+ * komplet zapytań i budżet gorącej trasy podwoiłby się po cichu.
+ *
+ * Dedup działa w obrębie JEDNEGO przebiegu renderu (React RSC), więc nie jest to
+ * cache międzyżądaniowy i nie koliduje z `force-dynamic` na stronie.
+ */
+export const getHomeInsights = cache(async function getHomeInsights(
+  unit: UnitSystem,
+): Promise<HomeInsights> {
   const supabase = await createClient();
   const since90 = strengthTrendCutoff();
   const since30 = new Date(Date.now() - 30 * DAY).toISOString();
@@ -189,4 +201,4 @@ export async function getHomeInsights(unit: UnitSystem): Promise<HomeInsights> {
     periods: aggregateHomePeriods({ rows: factRows, sessionDates, prCount30, unit }),
     exerciseProgress: aggregateHomeExerciseProgress(factRows, unit),
   };
-}
+});
