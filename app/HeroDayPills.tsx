@@ -59,13 +59,18 @@ export function HeroDayPills({
         aria-hidden
         /* Powyżej czterech dni (PPL ma sześć) rząd nie mieści się w 358 px,
            więc przewija się poziomo zamiast zawijać. */
-        className="inline-flex h-8 max-w-full list-none items-center gap-2xs overflow-x-auto rounded-full px-2xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        /* Wymiary z Figmy: kafelek 24, gap 4, padding 4 → grupa 3 dni = 88×32
+           (24×3 + 4×2 gapów + 4×2 paddingu). */
+        className="inline-flex max-w-full list-none items-center gap-2xs overflow-x-auto rounded-full p-2xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {days.map((day, index) => (
           <li key={day.id}>
             <span
               className={
-                "grid size-7 place-items-center rounded-full text-xs font-semibold " +
+                /* 24×24 i `Typography/Caption` (12/16 Regular) — bez pogrubienia:
+                   w projekcie litera jest zwykłej wagi, a przy 24 px kółku
+                   semibold robił się cięższy niż reszta karty. */
+                "grid size-6 place-items-center rounded-full text-xs " +
                 (day.id === activeDayId
                   ? /* Para STAŁA, nie `support` — ta w `.dark` odwraca się i dawała
                        CZARNĄ literę na jasnym violecie. Chip leży na zdjęciu, więc
