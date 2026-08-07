@@ -277,14 +277,26 @@ export default async function HomePage() {
         displayName={settings?.display_name ?? null}
         greeting
       />
-      {/* `pt-sm` zamiast pełnego `p-md`: powitanie ma być 12 px od belki, tyle samo
-          co od widgetu (para niżej trzyma `space-y-sm`). Bez powitania ten sam
-          odstęp dostaje hero — 12 px zamiast 16, spójnie w obu przypadkach. */}
-      <main className="flex-1 space-y-lg p-md pt-sm">
+      {/* `pt-0`, nie `pt-sm`: belka kończy się WŁASNYM `py-sm`, czyli już ma 12 px
+          w dolnym paddingu. `pt-sm` tutaj dokładał drugie 12 px na wierzch —
+          widget treningu zaczynał się 24 px pod belką zamiast 12, dublując
+          odstęp zamiast go dawać raz. Ten komentarz jest reliktem sprzed
+          przeniesienia powitania do belki (D-39): wtedy `pt-sm` faktycznie
+          liczył odstęp od linii tekstu nad kartą, nie od paddingu headera.
+
+          `space-y-lg` zeszło z `<main>` na wewnętrzny `<div>` z tego samego
+          powodu: Tailwine liczy DOM-owe rodzeństwo, nie widoczność, więc na
+          `<main>` margines lądował też PRZED widgetem — `h1` jest tu pierwszym
+          dzieckiem mimo `sr-only`, a widget drugim. Wynik: 24 px marginesu nad
+          kartą, której według komentarza niżej "nic nie dzieli od nagłówka".
+          Owinięcie realnej treści osobnym `space-y-lg` zachowuje odstępy
+          MIĘDZY sekcjami i usuwa ten jeden, niezamierzony, nad pierwszą. */}
+      <main className="flex-1 p-md pt-0">
         {/* B8: nazwa ekranu wyłącznie dla czytnika — wizualnie niesie ją aktywna
             zakładka nawigacji, a powitanie jest treścią, nie tytułem strony (i
             znika bez imienia, więc nie może pełnić roli `h1`). */}
         <h1 className="sr-only">Dziś</h1>
+        <div className="space-y-lg">
         {/* Powitanie przeniosło się do belki (`TrainingHeader greeting`), więc
             widget treningu jest teraz PIERWSZYM elementem treści — bez linii nad
             nim. Zmiana wobec D-39, ale w jej duchu: „personalizacja bez kosztu
@@ -449,6 +461,7 @@ export default async function HomePage() {
             }
           />
         </Suspense>
+        </div>
       </main>
     </div>
   );
