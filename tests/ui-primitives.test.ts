@@ -76,12 +76,16 @@ test("Card: `polished` wyklucza się z `bg-card`", () => {
   assert.doesNotMatch(plain, /surface-polished/);
 });
 
-test("Card: `polished` paruje się z elewacją E1 (kanon §9/§10)", () => {
-  // Hero na Home to jedyne miejsce już na kanonie — po refaktorze ma wyglądać
-  // identycznie, więc `polished` + domyślne `subtle` musi dać E1, nie legacy shadow-sm.
-  const markup = cardVariants({ polished: true, padding: "none" });
-  assert.match(markup, /shadow-e1/);
-  assert.doesNotMatch(markup, /shadow-sm/);
+test("Card: `subtle` zawsze daje E1, niezależnie od `polished` (kanon §9/§10, 2026-08-07)", () => {
+  // `--shadow-sm` nie ma definicji w `.dark` — na ciemnym tle był efektywnie
+  // niewidoczny (zmierzone: ~1/255 różnicy względem tła). Migracja na E1 nie
+  // jest już tylko kosmetyką kanonu, więc oba warianty `polished` muszą dać
+  // ten sam cień, i żaden nie może wrócić do legacy `shadow-sm`.
+  for (const polished of [true, false] as const) {
+    const markup = cardVariants({ polished, padding: "none" });
+    assert.match(markup, /shadow-e1/, `polished=${polished}`);
+    assert.doesNotMatch(markup, /shadow-sm/, `polished=${polished}`);
+  }
 });
 
 test("Card: żaden wariant nie sięga po `shadow-lg` (magic value spoza tokenów)", () => {

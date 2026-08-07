@@ -343,6 +343,14 @@
     --color-chart-neutral:   var(--arco-sand-400);
 
     /* elevation dark — tonalne + delikatny cień (guide §9) */
+    /* `--shadow-sm` nie miał tu odpowiednika (jedyna definicja: linia ~130,
+       poza `.dark`), więc każdy element, który go używa BEZPOŚREDNIO (nie
+       przez `cardVariants` — te przeszły na E1, patrz card.tsx), renderował
+       na ciemnym tle tę samą ciemnobrązową barwę co na jasnym, przy tym
+       samym 6% krycia: różnica względem tła ~1/255, czyli niewidoczna.
+       Naprawa jak przy E1/E2/E3 — czysta czerń zamiast barwy tokenu, wyższe
+       krycie zamiast tego samego. */
+    --shadow-sm: 0 2px 6px rgb(0 0 0 / 12%);
     --shadow-e1: 0 4px 14px rgb(0 0 0 / 12%);
     --shadow-e2:
       0 4px 10px rgb(0 0 0 / 18%),
