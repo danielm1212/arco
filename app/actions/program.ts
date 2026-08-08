@@ -68,7 +68,9 @@ export async function duplicateProgram(sourceId: string) {
 
   const { data: src } = await supabase
     .from("programs")
-    .select("name, cycle_days, days_per_week, program_days(id, label, position)")
+    .select(
+      "name, cycle_days, days_per_week, cover_image_url, cover_thumbnail_url, program_days(id, label, position)",
+    )
     .eq("id", sourceId)
     .single();
   if (!src) throw new Error("Nie znaleziono programu źródłowego");
@@ -79,6 +81,8 @@ export async function duplicateProgram(sourceId: string) {
       name: `${src.name} (kopia)`,
       cycle_days: src.cycle_days,
       days_per_week: src.days_per_week,
+      cover_image_url: src.cover_image_url,
+      cover_thumbnail_url: src.cover_thumbnail_url,
       is_default: false,
       user_id: user.id,
     })
@@ -111,6 +115,38 @@ export async function updateProgramName(programId: string, name: string) {
   const { error } = await supabase.from("programs").update({ name }).eq("id", programId);
   if (error) throw new Error(error.message);
   revalidatePath(`/programs/${programId}`);
+}
+
+/**
+ * Ustaw okładkę własnego programu na jedną z okładek systemowych (albo `null` = brak).
+ *
+ * `sourceProgramId` NIE jest ścieżką pliku wysłaną z klienta — akcja sama odczytuje
+ * `cover_image_url`/`cover_thumbnail_url` z wybranego programu SYSTEMOWEGO
+ * (`user_id is null`, wymuszone w zapytaniu). Dowolny string z formularza mógłby
+ * wskazać cokolwiek; to samo źródło prawdy, którym program już się posługuje.
+ */
+export async function updateProgramCover(programId: string, sourceProgramId: string | null) {
+  const { supabase } = await ctx();
+  let cover_image_url: string | null = null;
+  let cover_thumbnail_url: string | null = null;
+  if (sourceProgramId) {
+    const { data: source, error: sourceError } = await supabase
+      .from("programs")
+      .select("cover_image_url, cover_thumbnail_url")
+      .eq("id", sourceProgramId)
+      .is("user_id", null)
+      .single();
+    if (sourceError || !source) throw new Error("Nie znaleziono wybranej okładki");
+    cover_image_url = source.cover_image_url;
+    cover_thumbnail_url = source.cover_thumbnail_url;
+  }
+  const { error } = await supabase
+    .from("programs")
+    .update({ cover_image_url, cover_thumbnail_url })
+    .eq("id", programId);
+  if (error) throw new Error(error.message);
+  revalidatePath(`/programs/${programId}`);
+  revalidatePath("/programs");
 }
 
 export async function deleteProgram(programId: string) {

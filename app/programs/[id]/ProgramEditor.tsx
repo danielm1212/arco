@@ -7,6 +7,7 @@ import { ChevronDown, ChevronUp, Plus, Trash2, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
   updateProgramName,
+  updateProgramCover,
   addDay,
   updateDayLabel,
   deleteDay,
@@ -17,6 +18,7 @@ import {
   moveDay,
   moveSlot,
 } from "@/app/actions/program";
+import { ProgramCoverPicker } from "./ProgramCoverPicker";
 import { Button } from "@/components/ui/button";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Input } from "@/components/ui/input";
@@ -69,12 +71,14 @@ export function ProgramEditor({
   days,
   isFavorite,
   alongsideActivePlan,
+  coverThumbnailUrl,
 }: {
   programId: string;
   name: string;
   days: EditorDay[];
   isFavorite: boolean;
   alongsideActivePlan: boolean;
+  coverThumbnailUrl: string | null;
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -163,6 +167,11 @@ export function ProgramEditor({
             }
           />
         </div>
+
+        <ProgramCoverPicker
+          coverThumbnailUrl={coverThumbnailUrl}
+          onPick={(sourceProgramId) => run(() => updateProgramCover(programId, sourceProgramId), true)}
+        />
 
         {days.map((day) => (
           <section key={day.id} className={cardVariants({ elevation: "none", className: "space-y-sm border" })}>

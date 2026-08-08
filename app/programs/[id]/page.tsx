@@ -52,7 +52,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
     supabase
       .from("programs")
       .select(
-        "id, name, user_id, description, goal, level, level_min, level_max, focus_key, cover_image_url, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name, name_pl)))",
+        "id, name, user_id, description, goal, level, level_min, level_max, focus_key, cover_image_url, cover_thumbnail_url, cycle_days, frequency_min, frequency_max, estimated_minutes_min, estimated_minutes_max, required_equipment, optional_equipment, program_days(id, label, position, program_day_slots(id, default_exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, exercises(name, name_pl)))",
       )
       .eq("id", params.id)
       .maybeSingle(),
@@ -118,6 +118,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
         days={days}
         isFavorite={isFavorite}
         alongsideActivePlan={alongsideActivePlan}
+        coverThumbnailUrl={program.cover_thumbnail_url}
       />
     );
   }
