@@ -173,7 +173,7 @@ export default async function SessionDonePage(props: { params: Promise<{ id: str
           <p className="mb-sm text-xs font-medium text-muted-foreground">
             Co dziś pracowało
           </p>
-          <MuscleSplitBars rows={split} max={4} />
+          <MuscleSplitBars rows={split} />
         </div>
       )}
 
