@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, Check, Clock } from "lucide-react";
+import { CalendarDays, Clock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
 import { Button } from "@/components/ui/button";
@@ -399,19 +399,10 @@ function ProgramRow({
           )}
         </div>
       </Link>
-      {/* Stopka zostaje wyłącznie dla „Aktywny” — „Ustaw” usunięte (2026-08-08,
-          zgłoszenie właściciela): aktywacja jest teraz TYLKO ze szczegółu planu
-          (`PlanActivateFloatingCta`), dwie równorzędne drogi do tego samego
-          dublowałyby się bez potrzeby. Bez tego dla nieaktywnych kart nie ma
-          już nic do pokazania w stopce — karta kończy się na treści `<Link>`. */}
-      {isActive && (
-        <div className="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end">
-          <span className="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground">
-            <Check aria-hidden className="size-4 text-primary" />
-            Aktywny
-          </span>
-        </div>
-      )}
+      {/* Bez stopki „✓ Aktywny” (2026-08-08, zgłoszenie właściciela) — obrys karty
+          i nagłówek sekcji „Aktywny plan” (zawsze dokładnie nad tą jedną kartą)
+          już oznaczają stan; trzeci, tekstowy sygnał był nadmiarowy. Karta kończy
+          się teraz na treści `<Link>` niezależnie od `isActive`. */}
     </article>
   );
 }

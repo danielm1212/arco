@@ -372,11 +372,6 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
             : ""
         }
       </a>
-      ${
-        isActive
-          ? '<div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end"><span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span></div>'
-          : ""
-      }
     </article>`;
   };
 
@@ -419,7 +414,7 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
           (tags) => Math.round(tags.getBoundingClientRect().height),
         ),
         meterCount: document.querySelectorAll('[role="img"][aria-label^="Poziom"]').length,
-        activeCount: document.querySelectorAll("[data-program-active]").length,
+        activeCount: document.querySelectorAll("[data-program-row].border-primary\\/80").length,
         favoriteBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-favorite]")].map(
           (action) => {
             const box = action.getBoundingClientRect();
@@ -472,7 +467,8 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
         `wiersz tagów zawija się przy ${width}px: ${metrics.tagRowHeights.join(", ")}`,
       );
 
-      // Aktywny plan sygnalizuje stan całej karty + tekst, nie przycisk „Aktywny".
+      // Aktywny plan sygnalizuje stan wyłącznie obrysem karty (2026-08-08: zniknął
+      // też tekst „✓ Aktywny” — obrys + nagłówek sekcji „Aktywny plan” wystarczą).
       assert.equal(metrics.activeCount, 1);
       assert.equal(metrics.favoriteBoxes.length, 16);
       assert.ok(
