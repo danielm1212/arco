@@ -169,42 +169,38 @@ export function ExerciseBrowser({
   return (
     <div className="space-y-sm">
       {/* Chipy NAD inputem, nie pod nim (zgłoszenie właściciela): wyniki/wyszukiwarka
-          były „pod ścianą chipsów" — trzy rzędy po 7-8 elementów zawijały się na
-          320-390 px do 6-9 linii, zanim cokolwiek innego było widać. Rząd nie
-          zawija się już wcale (`ChipRow` niżej: `overflow-x-auto`, nie `flex-wrap`),
-          więc to zawsze dokładnie trzy linie, niezależnie od liczby chipów. */}
-      <div className="space-y-xs">
-        <ChipRow ariaLabel="Filtruj po partii mięśniowej">
-          {BODY_PART_GROUPS.map((g) => (
-            <Chip key={g.id} active={parts.includes(g.id)} onClick={() => toggle(setParts, g.id)}>
-              {g.label}
-            </Chip>
-          ))}
-        </ChipRow>
-        <ChipRow ariaLabel="Filtruj po sprzęcie">
-          {shownEquip.map((g) => (
-            <Chip key={g.id} active={equip.includes(g.id)} onClick={() => toggle(setEquip, g.id)}>
-              {g.label}
-            </Chip>
-          ))}
-          {!moreEquip && (
-            <Chip active={false} onClick={() => setMoreEquip(true)}>
-              więcej…
-            </Chip>
-          )}
-        </ChipRow>
-        <ChipRow ariaLabel="Filtruj po wzorcu ruchu">
-          {MOVEMENT_PATTERNS.map((p) => (
-            <Chip
-              key={p.id}
-              active={patterns.includes(p.id)}
-              onClick={() => toggle(setPatterns, p.id)}
-            >
-              {p.label}
-            </Chip>
-          ))}
-        </ChipRow>
-      </div>
+          były „pod ścianą chipsów". Jeden przewijalny rząd, nie trzy osobne
+          (drugie zgłoszenie) — trzy grupy (partia/sprzęt/wzorzec) rozdzielone
+          cienką kreską zamiast osobnych linii, żeby dało się je wciąż odróżnić
+          mimo wspólnego rzędu. */}
+      <ChipRow ariaLabel="Filtruj po partii mięśniowej, sprzęcie i wzorcu ruchu">
+        {BODY_PART_GROUPS.map((g) => (
+          <Chip key={g.id} active={parts.includes(g.id)} onClick={() => toggle(setParts, g.id)}>
+            {g.label}
+          </Chip>
+        ))}
+        <ChipDivider />
+        {shownEquip.map((g) => (
+          <Chip key={g.id} active={equip.includes(g.id)} onClick={() => toggle(setEquip, g.id)}>
+            {g.label}
+          </Chip>
+        ))}
+        {!moreEquip && (
+          <Chip active={false} onClick={() => setMoreEquip(true)}>
+            więcej…
+          </Chip>
+        )}
+        <ChipDivider />
+        {MOVEMENT_PATTERNS.map((p) => (
+          <Chip
+            key={p.id}
+            active={patterns.includes(p.id)}
+            onClick={() => toggle(setPatterns, p.id)}
+          >
+            {p.label}
+          </Chip>
+        ))}
+      </ChipRow>
 
       <Input
         autoFocus={autoFocus}
@@ -347,10 +343,11 @@ function ChipRow({
   return (
     // `role="group"`, nie `tablist`: chipy filtrują listę pod spodem, nie
     // przełączają panele (ten sam wybór co `ProgramLevelChips`/`ProgramFilters`).
-    // `overflow-x-auto`, nie `flex-wrap`: rząd 7-8 chipów zawijał się na 320-390 px
-    // do 2-3 linii — trzy rzędy naraz robiły „ścianę chipsów" nad wynikami
-    // (zgłoszenie właściciela). Pasek przewijania schowany — sam gest przewinięcia
-    // wystarcza, widoczny track tylko dodawał szum pod krótkim rzędem chipów.
+    // `overflow-x-auto`, nie `flex-wrap`: ~22 chipy (partia+sprzęt+wzorzec) w jednym
+    // rzędzie zawijałyby się na 320-390 px do wielu linii — teraz to zawsze jedna
+    // linia, przewijana, niezależnie od liczby aktywnych filtrów (drugie zgłoszenie
+    // właściciela: jeden rząd zamiast trzech osobnych). Pasek przewijania schowany —
+    // sam gest przewinięcia wystarcza, widoczny track tylko dodawał szum.
     <div
       role="group"
       aria-label={ariaLabel}
@@ -384,4 +381,10 @@ function Chip({
       {children}
     </button>
   );
+}
+
+/** Rozdziela partia/sprzęt/wzorzec w jednym rzędzie — bez tego trzy różne
+ * osie filtrowania zlewałyby się w jedną nieczytelną listę chipów. */
+function ChipDivider() {
+  return <span aria-hidden className="my-2 w-px shrink-0 self-stretch bg-border" />;
 }
