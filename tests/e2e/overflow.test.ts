@@ -299,7 +299,7 @@ test("PLAN-05B: miniatura ProgramCover size=row nie rozpycha wąskiej listy", as
   }
 });
 
-test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, dwa tagi, ikony, kropki i CTA na 320/393 px", async () => {
+test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, dwa tagi, ikony, kropki i serce na 320/393 px", async () => {
   // Dane idą z REALNEGO seeda przez REALNE formattery — nie z ręcznie przepisanej
   // kopii katalogu. Zmiana `short_name`/`split_key` w treści albo zmiana notacji
   // metody wywala ten test, a nie dopiero podgląd na telefonie.
@@ -346,12 +346,15 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
     )}`;
     const isActive = index === 0;
 
-    return `<article data-program-row class="grid min-w-0 grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-xl border p-sm text-card-foreground shadow-sm ${
-      isActive ? "border-primary/80 bg-primary/5" : "border-transparent bg-card"
+    return `<article data-program-row class="relative grid min-w-0 grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-xl border bg-card p-sm text-card-foreground shadow-sm ${
+      isActive ? "border-primary/80" : "border-transparent"
     }">
+      <div class="absolute right-xs top-xs z-10">
+        <button data-program-favorite aria-label="Dodaj plan do ulubionych" aria-pressed="false" class="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground">♡</button>
+      </div>
       <div data-program-cover aria-hidden="true" class="${coverClass}"></div>
       <a href="#" class="col-start-2 row-start-1 block min-w-0 rounded-md">
-        <p data-program-title class="break-words font-medium leading-snug">${card.title}</p>
+        <p data-program-title class="break-words pr-11 font-medium leading-snug">${card.title}</p>
         <div data-program-tags class="mt-2xs flex flex-wrap items-center gap-2xs">
           ${card.environment ? tag(card.environment) : ""}${own || !card.split ? "" : tag(card.split)}
         </div>
@@ -369,14 +372,11 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
             : ""
         }
       </a>
-      <div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end gap-xs">
-        <button data-program-favorite aria-label="Dodaj plan do ulubionych" aria-pressed="false" class="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground">♡</button>
-        ${
-          isActive
-            ? '<span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span>'
-            : '<button data-program-action class="inline-flex h-11 items-center justify-center rounded-md px-3 text-sm font-medium text-primary">Ustaw</button>'
-        }
-      </div>
+      ${
+        isActive
+          ? '<div class="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end"><span data-program-active class="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground"><svg aria-hidden="true" class="size-4 text-primary"></svg>Aktywny</span></div>'
+          : ""
+      }
     </article>`;
   };
 
@@ -423,20 +423,9 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
         favoriteBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-favorite]")].map(
           (action) => {
             const box = action.getBoundingClientRect();
-            return { width: box.width, height: box.height };
-          },
-        ),
-        actionBoxes: [...document.querySelectorAll<HTMLElement>("[data-program-action]")].map(
-          (action) => {
-            const box = action.getBoundingClientRect();
             const card = action.closest("[data-program-row]") as HTMLElement;
             const cardBox = card.getBoundingClientRect();
-            const padding = parseFloat(getComputedStyle(card).paddingRight);
-            return {
-              width: box.width,
-              height: box.height,
-              rightGap: cardBox.right - padding - box.right,
-            };
+            return { width: box.width, height: box.height, top: box.top - cardBox.top, right: cardBox.right - box.right };
           },
         ),
       }));
@@ -490,20 +479,16 @@ test("PLAN-05F/05G: pełna lista 15 presetów i własnego planu mieści tytuł, 
         metrics.favoriteBoxes.every((box) => box.height >= 44 && box.width >= 44),
         `serce poniżej 44×44 px przy ${width}px`,
       );
-      assert.equal(metrics.actionBoxes.length, 15);
+      // 2026-08-08 (zgłoszenie właściciela): „Ustaw" usunięte z karty (aktywacja
+      // tylko ze szczegółu planu), serce przeniesione z prawego dolnego rogu
+      // stopki do prawego górnego rogu całej karty.
+      // `--space-xs` = 8px; próg 10 daje margines na subpikselowe zaokrąglenie
+      // layoutu (zmierzone konsekwentnie 9px), nie rozszerza realnej tolerancji —
+      // stopka („Ustaw"/serce na dole) dawałaby dziesiątki pikseli, nie ~9.
       assert.ok(
-        metrics.actionBoxes.every((box) => box.height >= 44 && box.width >= 44),
-        `CTA poniżej 44×44 px przy ${width}px: ${metrics.actionBoxes
-          .map((box) => `${Math.round(box.width)}×${Math.round(box.height)}`)
-          .join(", ")}`,
-      );
-
-      // Regresja z podglądu 2026-07-30: przy `flex-wrap` długa etykieta poziomu
-      // spychała „Ustaw" do własnej linii i CTA lądowało po lewej.
-      assert.ok(
-        metrics.actionBoxes.every((box) => Math.abs(box.rightGap) <= 1),
-        `CTA nie trzyma prawej krawędzi przy ${width}px: ${metrics.actionBoxes
-          .map((box) => Math.round(box.rightGap))
+        metrics.favoriteBoxes.every((box) => box.top <= 10 && box.right <= 10),
+        `serce nie siedzi w prawym górnym rogu karty przy ${width}px: ${metrics.favoriteBoxes
+          .map((box) => `top=${Math.round(box.top)} right=${Math.round(box.right)}`)
           .join(", ")}`,
       );
     } finally {

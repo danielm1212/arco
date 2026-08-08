@@ -2,7 +2,6 @@ import Link from "next/link";
 import { CalendarDays, Check, Clock } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createProgram } from "@/app/actions/program";
-import { setActiveProgram } from "@/app/actions/session";
 import { Button } from "@/components/ui/button";
 import { LevelMeter } from "@/components/LevelMeter";
 import { ProgramCover } from "@/components/ProgramCover";
@@ -274,16 +273,33 @@ function ProgramRow({
     <article
       data-program-row
       className={cn(
-        "grid min-w-0 grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-xl border p-sm text-card-foreground shadow-sm",
+        "relative grid min-w-0 grid-cols-[4rem_minmax(0,1fr)] items-start gap-x-sm rounded-xl border bg-card p-sm text-card-foreground shadow-sm",
         // PLAN-05E: aktywny plan to stan całej karty, nie osobna pigułka obok CTA.
         // Znaczenie niesie nagłówek sekcji „Aktywny plan” i tekst „Aktywny” w stopce,
-        // więc stan nie zależy od koloru (WCAG 1.4.1); obrys i tło tylko go wzmacniają.
+        // więc stan nie zależy od koloru (WCAG 1.4.1); obrys tylko go wzmacnia.
         // Krycie 80%, nie 40%: policzone 3.42:1 (light) i 3.92:1 (dark) wobec canvasu —
         // przy 40% obrys miał 1.71:1 i praktycznie nie było go widać (pomiar 2026-07-30).
-        // `border-transparent` na nieaktywnych: karty nie zmieniają rozmiaru przy zmianie stanu.
-        isActive ? "border-primary/80 bg-primary/5" : "border-transparent bg-card",
+        // Tło aktywnej karty świadomie zrównane z resztą (2026-08-08, zgłoszenie
+        // właściciela): nagłówek sekcji „Aktywny plan” już oznacza wyjątkowość tej
+        // karty, więc dokładanie koloru tła obok obrysu było powtórzeniem tego
+        // samego sygnału. `border-transparent` na nieaktywnych: karty nie zmieniają
+        // rozmiaru przy zmianie stanu.
+        isActive ? "border-primary/80" : "border-transparent",
       )}
     >
+      {/* Serce w prawym górnym rogu całej karty, nie w stopce (2026-08-08,
+          zgłoszenie właściciela) — usunięcie „Ustaw” (aktywacja jest teraz
+          wyłącznie ze szczegółu planu, `PlanActivateFloatingCta`) zostawiłoby
+          serce jako jedyny element stopki, więc przenosi się wyżej, a karta
+          traci całą stopkę dla nieaktywnych wierszy. Poza `<Link>` — to
+          osobne zachowanie, nie wejście w szczegół planu. */}
+      <div className="absolute right-xs top-xs z-10">
+        <FavoriteProgramButton
+          programId={p.id}
+          programName={p.name}
+          isFavorite={isFavorite}
+        />
+      </div>
       {/* PLAN-05H: miniatura wchodzi do wnętrza `<Link>` (bug z audytu 2026-07-30 —
           `ProgramCover` leżał poza linkiem jako osobne dziecko grida, więc klikanie
           w zdjęcie, najbardziej rzucający się w oczy element karty, nic nie robiło).
@@ -304,7 +320,9 @@ function ProgramRow({
               zostaje w bazie i na `/programs/[id]`. Karta wciąż wypowiada komplet
               informacji dla czytnika (tag, fakty, `aria-label` miernika), dlatego nie
               doklejamy tu ukrytej kopii pełnej nazwy. */}
-          <p className="break-words font-medium leading-snug">
+          {/* `pr-11`: rezerwuje miejsce na serce w prawym górnym rogu karty (44 px),
+              żeby długi tytuł się pod nim nie chował. */}
+          <p className="break-words pr-11 font-medium leading-snug">
             {formatProgramCardTitle(p.short_name, p.name)}
           </p>
           {/* PLAN-05F: dwa tagi — gdzie trenujesz + jaką metodą. Oba neutralne: violet
@@ -381,30 +399,19 @@ function ProgramRow({
           )}
         </div>
       </Link>
-      {/* PLAN-05H/F2: stopka zawiera wyłącznie dwie zwarte akcje planu. Poziom jest
-          na osobnej linii wyżej, więc serce i „Ustaw” mieszczą się przy 320 px.
-          Obie akcje zostają poza `<Link>` — wejście w szczegół, ulubione i aktywacja
-          to trzy różne zachowania. */}
-      <div className="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end gap-xs">
-        <FavoriteProgramButton
-          programId={p.id}
-          programName={p.name}
-          isFavorite={isFavorite}
-        />
-        {isActive ? (
+      {/* Stopka zostaje wyłącznie dla „Aktywny” — „Ustaw” usunięte (2026-08-08,
+          zgłoszenie właściciela): aktywacja jest teraz TYLKO ze szczegółu planu
+          (`PlanActivateFloatingCta`), dwie równorzędne drogi do tego samego
+          dublowałyby się bez potrzeby. Bez tego dla nieaktywnych kart nie ma
+          już nic do pokazania w stopce — karta kończy się na treści `<Link>`. */}
+      {isActive && (
+        <div className="col-start-2 row-start-2 mt-xs flex min-h-11 min-w-0 items-center justify-end">
           <span className="inline-flex items-center gap-2xs px-1 text-xs font-medium text-foreground">
             <Check aria-hidden className="size-4 text-primary" />
             Aktywny
           </span>
-        ) : (
-          <form action={setActiveProgram.bind(null, p.id)}>
-            {/* R2.1: aktywacja podporządkowana wyborowi karty — ghost zamiast outline */}
-            <Button variant="ghost" type="submit" className="px-3 text-primary">
-              Ustaw
-            </Button>
-          </form>
-        )}
-      </div>
+        </div>
+      )}
     </article>
   );
 }
