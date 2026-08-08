@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { MuscleSplitBars, muscleSplit } from "@/components/MuscleSplitBars";
+import { MuscleSplitBars } from "@/components/MuscleSplitBars";
+import { muscleSplit } from "@/lib/muscleSplit";
 import type { SessionSet, UnitSystem } from "@/lib/types";
 import { ReplaceLink } from "@/components/navigation/ReplaceLink";
 import { CountUpNumber } from "./CountUpNumber";

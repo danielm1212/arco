@@ -1,25 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { muscleLabelPl } from "@/lib/exerciseFilters";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
-
-/** Serie robocze per partia → posortowane wiersze z udziałem %. */
-export function muscleSplit(
-  perMuscle: Iterable<[string, number]>,
-): { muscle: string; label: string; count: number; pct: number }[] {
-  const rows = [...perMuscle].filter(([, n]) => n > 0);
-  const total = rows.reduce((s, [, n]) => s + n, 0);
-  if (total === 0) return [];
-  return rows
-    .map(([m, n]) => ({
-      muscle: m,
-      label: muscleLabelPl(m),
-      count: n,
-      pct: Math.round((n / total) * 100),
-    }))
-    .sort((a, b) => b.count - a.count);
-}
+import { muscleSplit } from "@/lib/muscleSplit";
 
 function Bar({ row }: { row: ReturnType<typeof muscleSplit>[number] }) {
   return (
