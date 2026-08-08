@@ -12,6 +12,7 @@ import {
 } from "./navigation/ScreenChrome";
 import { NavigationHistoryProvider } from "./navigation/NavigationHistory";
 import { DirtyGuardProvider } from "./navigation/DirtyGuard";
+import { SessionMiniVisibilityProvider } from "./navigation/SessionMiniVisibility";
 
 export function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -37,17 +38,19 @@ export function AppChrome({ children }: { children: React.ReactNode }) {
     <DirtyGuardProvider>
       <NavigationHistoryProvider>
         <ScreenChromeContext.Provider value={setOverride}>
-          <OfflineBanner />
-          <div style={{ paddingBottom }} data-screen-type={config.screenType}>
-            {children}
-          </div>
-          {config.showSessionMiniBar ? (
-            <SessionMiniBar
-              position={config.miniBarPosition}
-              onVisibilityChange={setSessionMiniVisible}
-            />
-          ) : null}
-          {hasBottomNav ? <BottomNav activeTab={config.activeTab!} /> : null}
+          <SessionMiniVisibilityProvider visible={hasSessionMini}>
+            <OfflineBanner />
+            <div style={{ paddingBottom }} data-screen-type={config.screenType}>
+              {children}
+            </div>
+            {config.showSessionMiniBar ? (
+              <SessionMiniBar
+                position={config.miniBarPosition}
+                onVisibilityChange={setSessionMiniVisible}
+              />
+            ) : null}
+            {hasBottomNav ? <BottomNav activeTab={config.activeTab!} /> : null}
+          </SessionMiniVisibilityProvider>
         </ScreenChromeContext.Provider>
       </NavigationHistoryProvider>
     </DirtyGuardProvider>

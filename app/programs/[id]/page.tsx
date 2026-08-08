@@ -31,6 +31,7 @@ import {
 } from "@/lib/programDetail";
 import { FavoriteProgramButton } from "../FavoriteProgramButton";
 import { ProgramDayStartButton } from "../ProgramDayStartButton";
+import { PlanActivateFloatingCta } from "./PlanActivateFloatingCta";
 import { cardVariants } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
@@ -146,7 +147,16 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
         sticky
       />
 
-      <main className="flex-1 space-y-lg p-md">
+      {/* Rezerwuje miejsce na floating CTA (renderowany niżej), tak jak `AppChrome`
+          rezerwuje je dla `SessionMiniBar` — inaczej ostatni element strony
+          („Duplikuj i edytuj") chowałby się pod barem, gdy ten jest widoczny. */}
+      <main
+        className={`flex-1 space-y-lg p-md ${
+          isActive
+            ? ""
+            : "pb-[calc(var(--session-mini-height)_+_var(--floating-nav-gap)_+_var(--floating-nav-gap))]"
+        }`}
+      >
         <section
           data-program-detail
           className={cardVariants({ padding: "none", className: "overflow-hidden" })}
@@ -351,12 +361,18 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           ))}
         </section>
 
-        <form action={duplicateProgram.bind(null, program.id)}>
-          <Button type="submit" variant="outline" className="w-full">
+        {/* `ghost`, nie `outline`+`w-full`: to akcja drugorzędna (kopia do edycji),
+            nie „Ustaw jako aktywny". Pełna szerokość i wyraźny obrys sprawiały, że
+            po przewinięciu na sam dół to ONA wyglądała jak główne CTA strony —
+            zgłoszenie właściciela, ten sam problem co brak floating CTA wyżej. */}
+        <form action={duplicateProgram.bind(null, program.id)} className="flex justify-center">
+          <Button type="submit" variant="ghost">
             Duplikuj i edytuj
           </Button>
         </form>
       </main>
+
+      {!isActive && <PlanActivateFloatingCta programId={program.id} />}
     </div>
   );
 }
