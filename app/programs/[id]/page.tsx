@@ -233,7 +233,6 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
         {program.description && (
           <details
             data-program-description
-            open
             className={cardVariants({ padding: "none", className: "group" })}
           >
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-sm rounded-xl px-md py-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden">
@@ -249,14 +248,18 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
           </details>
         )}
 
-        <section
-          aria-labelledby="program-details-heading"
-          className={cardVariants({ className: "space-y-sm" })}
+        <details
+          data-plan-details
+          className={cardVariants({ padding: "none", className: "group" })}
         >
-          <h2 id="program-details-heading" className="text-base font-semibold">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-sm rounded-xl px-md py-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-details-marker]:hidden">
             Szczegóły planu
-          </h2>
-          <dl className="space-y-sm text-sm">
+            <ChevronDown
+              aria-hidden="true"
+              className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180 motion-reduce:transition-none"
+            />
+          </summary>
+          <dl className="space-y-sm border-t px-md pb-md pt-sm text-sm">
             <div>
               <dt className="text-xs text-muted-foreground">Wymagany sprzęt</dt>
               <dd className="mt-2xs font-medium">
@@ -283,7 +286,7 @@ export default async function ProgramEditorPage(props: { params: Promise<{ id: s
               )}
             </div>
           </dl>
-        </section>
+        </details>
 
         <section aria-labelledby="program-days-heading" className="space-y-sm">
           <h2 id="program-days-heading" className="text-base font-semibold">

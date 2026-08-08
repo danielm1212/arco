@@ -579,7 +579,7 @@ test("PLAN-05D: hero, pełne fakty, poziom i opis mieszczą się na 320/375/393 
     "Dwa treningi całego ciała na pełnym sprzęcie, z lekkim naciskiem na górę. Jedno duże ćwiczenie na dół w sesji, pełny push i pull, bezpośredni biceps i triceps. Plan projektowany na 3 dni w tygodniu — przy dwóch działa, ale rozwija wolniej. Zostaw 1 lub 2 powtórzenia w zapasie.";
   const heroClass = `${programCoverSizeClass("hero")} ${programCoverGradient("lower_body")}`;
   const icon = '<span aria-hidden="true" class="block size-3.5 shrink-0 rounded-sm border min-[360px]:size-4"></span>';
-  const description = `<details data-program-description open class="group rounded-xl bg-card text-card-foreground shadow-sm">
+  const description = `<details data-program-description class="group rounded-xl bg-card text-card-foreground shadow-sm">
     <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-sm rounded-xl px-md py-sm font-semibold">
       Opis <span aria-hidden="true">⌄</span>
     </summary>
@@ -635,7 +635,12 @@ test("PLAN-05D: hero, pełne fakty, poziom i opis mieszczą się na 320/375/393 
         const level = document.querySelector<HTMLElement>("[data-program-level]")!;
         const cta = document.querySelector<HTMLElement>("[data-program-cta]")!;
         const bottomNav = document.querySelector<HTMLElement>("[data-bottom-nav]")!;
-        const description = document.querySelector<HTMLElement>("[data-program-description]")!;
+        const description = document.querySelector<HTMLElement>("[data-program-description]") as HTMLDetailsElement;
+        const descriptionOpenByDefault = description.open;
+        // Overflow tylko obchodzi, jak wygląda OTWARTY akordeon — zamknięty domyślnie
+        // (właściciel: mniej treści na pierwszy rzut oka) nie ma czego przelewać.
+        description.open = true;
+        const descriptionOverflow = description.scrollWidth - description.clientWidth;
         return {
           overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
           factTexts: facts.map((fact) => fact.textContent?.trim()),
@@ -646,8 +651,8 @@ test("PLAN-05D: hero, pełne fakty, poziom i opis mieszczą się na 320/375/393 
             new Set(facts.map((fact) => Math.round(fact.getBoundingClientRect().top))).size === 1,
           ctaBottom: cta.getBoundingClientRect().bottom,
           navTop: bottomNav.getBoundingClientRect().top,
-          descriptionOverflow: description.scrollWidth - description.clientWidth,
-          descriptionOpen: (description as HTMLDetailsElement).open,
+          descriptionOverflow,
+          descriptionOpenByDefault,
         };
       });
 
@@ -657,10 +662,10 @@ test("PLAN-05D: hero, pełne fakty, poziom i opis mieszczą się na 320/375/393 
         metrics.factOverflow.every((overflow) => overflow <= 1),
         `ucięty fakt przy ${width}px: ${metrics.factOverflow.join(", ")}`,
       );
-      assert.equal(metrics.descriptionOpen, true, "opis nie jest domyślnie otwarty");
+      assert.equal(metrics.descriptionOpenByDefault, false, "opis powinien być domyślnie zamknięty");
       assert.ok(
         metrics.descriptionOverflow <= 1,
-        `opis ma overflow ${metrics.descriptionOverflow}px przy ${width}px`,
+        `opis ma overflow ${metrics.descriptionOverflow}px przy ${width}px (po otwarciu)`,
       );
       if (width === 320) {
         assert.equal(metrics.factsShareRow, true, "trzy fakty nie mieszczą się w jednym rzędzie");
