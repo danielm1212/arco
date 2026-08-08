@@ -7,10 +7,12 @@ import { createClient } from "@/lib/supabase/client";
 import { deleteUserExercise } from "@/app/actions/userExercises";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { exerciseDisplayName } from "@/lib/exerciseSearch";
 import { Trash2 } from "lucide-react";
 
 interface Detail {
   name: string;
+  name_pl: string | null;
   images: string[];
   instructions: string[];
   primary_muscles: string[];
@@ -48,7 +50,7 @@ export function ExerciseInfoSheet({
     const { data, error } = await sb
       .from("exercises")
       .select(
-        "name, images, instructions, primary_muscles, secondary_muscles, equipment, level, user_id",
+        "name, name_pl, images, instructions, primary_muscles, secondary_muscles, equipment, level, user_id",
       )
       .eq("id", exerciseId)
       .maybeSingle();
@@ -85,7 +87,7 @@ export function ExerciseInfoSheet({
         if (nextOpen) load();
         else setConfirmingDelete(false);
       }}
-      title={detail?.name ?? "Ćwiczenie"}
+      title={detail ? exerciseDisplayName(detail) : "Ćwiczenie"}
       description="Instrukcja wykonania ćwiczenia"
     >
       {loading && !detail && <p className="text-sm text-muted-foreground">Wczytuję…</p>}
@@ -113,7 +115,7 @@ export function ExerciseInfoSheet({
                 <img
                   key={src}
                   src={src}
-                  alt={detail.name}
+                  alt={exerciseDisplayName(detail)}
                   loading="lazy"
                   decoding="async"
                   width={800}
@@ -138,7 +140,7 @@ export function ExerciseInfoSheet({
           {detail.user_id != null && (
             confirmingDelete ? (
               <div className="space-y-sm rounded-lg border border-danger/20 bg-danger/5 p-md">
-                <p className="text-sm font-medium">Usunąć „{detail.name}”?</p>
+                <p className="text-sm font-medium">Usunąć „{exerciseDisplayName(detail)}”?</p>
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   Tej operacji nie można cofnąć. Ćwiczenia używanego w historii lub programie nie da się usunąć.
                 </p>
