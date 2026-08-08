@@ -168,22 +168,20 @@ export function ExerciseBrowser({
 
   return (
     <div className="space-y-sm">
-      <Input
-        autoFocus={autoFocus}
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Szukaj ćwiczenia…"
-      />
-
+      {/* Chipy NAD inputem, nie pod nim (zgłoszenie właściciela): wyniki/wyszukiwarka
+          były „pod ścianą chipsów" — trzy rzędy po 7-8 elementów zawijały się na
+          320-390 px do 6-9 linii, zanim cokolwiek innego było widać. Rząd nie
+          zawija się już wcale (`ChipRow` niżej: `overflow-x-auto`, nie `flex-wrap`),
+          więc to zawsze dokładnie trzy linie, niezależnie od liczby chipów. */}
       <div className="space-y-xs">
-        <ChipRow>
+        <ChipRow ariaLabel="Filtruj po partii mięśniowej">
           {BODY_PART_GROUPS.map((g) => (
             <Chip key={g.id} active={parts.includes(g.id)} onClick={() => toggle(setParts, g.id)}>
               {g.label}
             </Chip>
           ))}
         </ChipRow>
-        <ChipRow>
+        <ChipRow ariaLabel="Filtruj po sprzęcie">
           {shownEquip.map((g) => (
             <Chip key={g.id} active={equip.includes(g.id)} onClick={() => toggle(setEquip, g.id)}>
               {g.label}
@@ -195,7 +193,7 @@ export function ExerciseBrowser({
             </Chip>
           )}
         </ChipRow>
-        <ChipRow>
+        <ChipRow ariaLabel="Filtruj po wzorcu ruchu">
           {MOVEMENT_PATTERNS.map((p) => (
             <Chip
               key={p.id}
@@ -207,6 +205,13 @@ export function ExerciseBrowser({
           ))}
         </ChipRow>
       </div>
+
+      <Input
+        autoFocus={autoFocus}
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Szukaj ćwiczenia…"
+      />
 
       {showDefault && defaultNote && (
         <p className="text-xs text-warning-text">{defaultNote}</p>
@@ -332,8 +337,28 @@ export function ExerciseBrowser({
   );
 }
 
-function ChipRow({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-wrap gap-xs">{children}</div>;
+function ChipRow({
+  children,
+  ariaLabel,
+}: {
+  children: React.ReactNode;
+  ariaLabel: string;
+}) {
+  return (
+    // `role="group"`, nie `tablist`: chipy filtrują listę pod spodem, nie
+    // przełączają panele (ten sam wybór co `ProgramLevelChips`/`ProgramFilters`).
+    // `overflow-x-auto`, nie `flex-wrap`: rząd 7-8 chipów zawijał się na 320-390 px
+    // do 2-3 linii — trzy rzędy naraz robiły „ścianę chipsów" nad wynikami
+    // (zgłoszenie właściciela). Pasek przewijania schowany — sam gest przewinięcia
+    // wystarcza, widoczny track tylko dodawał szum pod krótkim rzędem chipów.
+    <div
+      role="group"
+      aria-label={ariaLabel}
+      className="flex gap-xs overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
+      {children}
+    </div>
+  );
 }
 
 function Chip({
