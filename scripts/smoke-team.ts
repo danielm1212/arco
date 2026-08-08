@@ -88,6 +88,7 @@ async function main() {
     for (const person of people) ids.push(await ensureUser(person.email, person.name));
     const [alfa, beta, gamma] = await Promise.all(people.map((person) => signIn(person.email)));
     const today = warsawDay();
+    const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
     const { data: created, error: createError } = await alfa.client.rpc("create_pod", {
       p_name: teamName,
       p_display_name: people[0].name,
@@ -99,6 +100,26 @@ async function main() {
     assert(/^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]{8}$/.test(pod.invite_code), "kod zaproszenia nie ma 8 znaków Base32");
     ok("konto Alfa założyło prywatną ekipę z 8-znakowym kodem zaproszenia");
 
+    // Zgłoszenie właściciela (dogfood, 2026-08-08): dołączenie do JUŻ ISTNIEJĄCEJ
+    // ekipy z treningiem ukończonym PRZED dołączeniem pokazywało 0 zamiast 1 we
+    // WŁASNYM liczniku Bety. L9/L10 — "ten sam tydzień co reszta Arco", nie "od
+    // momentu dołączenia do TEJ ekipy". To osobna reguła od prywatności wobec
+    // peera (Alfa dalej nie zobaczy sesji Bety sprzed wspólnego członkostwa —
+    // niżej, `alfaOverview`).
+    //
+    // `date: yesterday`, nie `today` — bug operuje na granulacji DATY
+    // (`joined_at::date`), więc sesja tego samego dnia co dołączenie (`>=`,
+    // nie `>`) nie odtwarzała problemu. Musi być kalendarzowo WCZEŚNIEJ niż
+    // dołączenie, a wciąż w bieżącym tygodniu ISO (ryzyko znane: to samo
+    // założenie ma test korekty daty Alfy niżej — może być kruche w nocy
+    // z niedzieli na poniedziałek).
+    const { data: betaPreJoinSession, error: betaPreJoinSessionError } = await beta.client
+      .from("sessions")
+      .insert({ user_id: beta.id, program_day_id: null, date: yesterday, finished_at: new Date().toISOString() })
+      .select("id")
+      .single();
+    assert(!betaPreJoinSessionError && betaPreJoinSession, `sesja Bety sprzed dołączenia: ${betaPreJoinSessionError?.message ?? "brak sesji"}`);
+
     const { data: joinedPodId, error: joinError } = await beta.client.rpc("join_pod_by_invite", {
       p_invite_code: `${pod.invite_code.slice(0, 4)}-${pod.invite_code.slice(4)}`.toLowerCase(),
       p_display_name: people[1].name,
@@ -107,6 +128,12 @@ async function main() {
     });
     assert(!joinError && joinedPodId === pod.pod_id, `join_pod_by_invite: ${joinError?.message ?? "nieprawidłowe ID"}`);
     ok("konto Beta dołączyło kodem zaproszenia");
+
+    const { data: betaOwnView, error: betaOwnViewError } = await beta.client.rpc("get_pod_members", { p_pod_id: pod.pod_id });
+    const betaSelf = betaOwnView?.find((member) => member.member_id === beta.id);
+    assert(!betaOwnViewError && betaSelf?.weekly_done === 1,
+      "własny licznik Bety nie liczy treningu ukończonego przed dołączeniem do ekipy");
+    ok("dołączenie do ekipy z już ukończonym treningiem w tym tygodniu liczy się do własnego celu");
 
     const { data: hiddenPods, error: hiddenPodsError } = await gamma.client.from("pods").select("id").eq("id", pod.pod_id);
     assert(!hiddenPodsError && hiddenPods?.length === 0, "konto spoza ekipy widzi jej metadane");
@@ -124,7 +151,6 @@ async function main() {
     assert(!sessionError && session, `utworzenie ukończonej sesji: ${sessionError?.message ?? "brak sesji"}`);
     const { error: emitError } = await alfa.client.rpc("emit_workout_activity", { p_session_id: session.id });
     assert(!emitError, `emit_workout_activity: ${emitError?.message}`);
-    const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
     const { error: backdateError } = await alfa.client
       .from("sessions")
       .update({ date: yesterday })
